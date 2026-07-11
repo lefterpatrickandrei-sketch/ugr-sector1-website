@@ -161,17 +161,23 @@
             }
         }
 
-        // Convertor Stereo 70 -> WGS84 demonstrativ local
+        // Definim sistemul Stereo 70 (EPSG:31700) pentru proj4
+        proj4.defs("EPSG:31700",
+            "+proj=sterea +lat_0=46 +lon_0=25 +k=0.99975 +x_0=500000 +y_0=500000 " +
+            "+ellps=krass +towgs84=33.4,-146.6,-76.3,-0.359,-0.053,0.844,-0.84 " +
+            "+units=m +no_defs"
+        );
+
         function handleCoordinateConversion(event) {
             event.preventDefault();
-            const x = parseFloat(document.getElementById('coord-x').value) || 0;
-            const y = parseFloat(document.getElementById('coord-y').value) || 0;
+            const xNord = parseFloat(document.getElementById('coord-x').value) || 0;
+            const yEst = parseFloat(document.getElementById('coord-y').value) || 0;
 
-            const lat = (44.4268 + (x - 500000) * 0.000009).toFixed(6);
-            const lon = (26.1025 + (y - 300000) * 0.000012).toFixed(6);
+            // Atenție: proj4 așteaptă ordinea [Est, Nord], nu [Nord, Est]
+            const [lon, lat] = proj4("EPSG:31700", "WGS84", [yEst, xNord]);
 
-            document.getElementById('res-lat').innerText = lat;
-            document.getElementById('res-lon').innerText = lon;
+            document.getElementById('res-lat').innerText = lat.toFixed(6);
+            document.getElementById('res-lon').innerText = lon.toFixed(6);
             document.getElementById('coord-result-panel').classList.remove('hidden');
         }
 
