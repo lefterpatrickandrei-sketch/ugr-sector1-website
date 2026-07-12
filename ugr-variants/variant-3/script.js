@@ -369,6 +369,91 @@
             }, 3000);
         }
 
+        // Caseta de Sugestii - Salvare in localStorage
+        function handleSuggestionSubmission(event) {
+            event.preventDefault();
+            const suggestionText = document.getElementById('suggestion-mesaj').value.trim();
+            if (!suggestionText) return;
+
+            let suggestions = [];
+            try {
+                const stored = localStorage.getItem('ugr_suggestions');
+                if (stored) suggestions = JSON.parse(stored);
+            } catch (e) {
+                console.error(e);
+            }
+
+            const newSuggestion = {
+                text: suggestionText,
+                date: new Date().toLocaleString('ro-RO')
+            };
+            suggestions.push(newSuggestion);
+            localStorage.setItem('ugr_suggestions', JSON.stringify(suggestions));
+
+            document.getElementById('suggestion-success-msg').classList.remove('hidden');
+            document.getElementById('suggestion-mesaj').value = '';
+            
+            // Reload suggestions list if open
+            if (!document.getElementById('admin-suggestions-container').classList.contains('hidden')) {
+                loadAdminSuggestions();
+            }
+
+            setTimeout(() => {
+                document.getElementById('suggestion-success-msg').classList.add('hidden');
+            }, 3000);
+        }
+
+        function loadAdminSuggestions() {
+            const container = document.getElementById('admin-suggestions-container');
+            const clearBtn = document.getElementById('btn-clear-suggestions');
+            if (!container) return;
+
+            let suggestions = [];
+            try {
+                const stored = localStorage.getItem('ugr_suggestions');
+                if (stored) suggestions = JSON.parse(stored);
+            } catch (e) {
+                console.error(e);
+            }
+
+            if (suggestions.length === 0) {
+                container.innerHTML = '<p class="text-ink/40 italic">Nicio sugestie trimisă momentan.</p>';
+                if (clearBtn) clearBtn.classList.add('hidden');
+            } else {
+                container.innerHTML = suggestions.map((s, idx) => `
+                    <div class="p-2 border-b border-ink/5 last:border-b-0">
+                        <div class="flex justify-between text-[9px] text-ink/40 mb-1">
+                            <span>#${idx + 1}</span>
+                            <span>${s.date}</span>
+                        </div>
+                        <p class="whitespace-pre-line text-ink/80">${s.text}</p>
+                    </div>
+                `).join('');
+                if (clearBtn) clearBtn.classList.remove('hidden');
+            }
+        }
+
+        function toggleAdminSuggestions() {
+            const container = document.getElementById('admin-suggestions-container');
+            const clearBtn = document.getElementById('btn-clear-suggestions');
+            if (!container) return;
+
+            if (container.classList.contains('hidden')) {
+                loadAdminSuggestions();
+                container.classList.remove('hidden');
+            } else {
+                container.classList.add('hidden');
+                if (clearBtn) clearBtn.classList.add('hidden');
+            }
+        }
+
+        function clearSuggestions() {
+            if (confirm("Sigur doriți să ștergeți toate sugestiile salvate?")) {
+                localStorage.removeItem('ugr_suggestions');
+                loadAdminSuggestions();
+            }
+        }
+
         // Modal înscriere multi-step
         function openRegistrationModal() {
             document.getElementById('registration-modal').classList.remove('hidden');
