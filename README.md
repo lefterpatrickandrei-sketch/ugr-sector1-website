@@ -2,7 +2,8 @@
 
 > [!IMPORTANT]  
 > **Status Proiect:** 🚧 Proiect în lucru (Under Construction).  
-> Design-ul actual este în curs de dezvoltare. Urmează să fie adăugate fotografii reale de la evenimente, detalii administrative suplimentare, și alte date necesare pentru a completa structura finală a website-ului.
+> * Design-ul actual este în curs de dezvoltare. Urmează să fie adăugate fotografii reale de la evenimente, detalii administrative suplimentare, și alte date necesare pentru a completa structura finală a website-ului.
+> * **Loc de îmbunătățire (Room for Improvement):** Există permanent loc de mai bine pentru a optimiza performanța, a face animațiile și încărcarea hărții 3D cât mai fluide, rapide și plăcute din punct de vedere vizual pentru vizitatori.
 
 Acest repository conține codul sursă pentru website-ul oficial al Filialei Sector 1 a Uniunii Geodezilor din România.
 
