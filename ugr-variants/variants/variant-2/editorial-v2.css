@@ -1,0 +1,317 @@
+/* 
+   VARIANT 2: HARTA TERESTRĂ & RELIEF (TERRAIN & EARTH)
+   Organic Topographical & Surveyor's Brass Style
+*/
+
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+
+:root {
+    --bg-paper: #F5F2EB;      /* Warm Sand Paper */
+    --bg-card: #FAF8F5;       /* Ivory Soft Card */
+    --text-ink: #0F2A30;      /* Deep Forest Green-Blue */
+    --text-muted: #4E656B;    /* Muted Slate Green */
+    --accent: #C3905C;        /* Surveyor's Brass Gold */
+    --accent-light: #D4A77A;  /* Light Brass */
+    --border-color: rgba(15, 42, 48, 0.1); /* Fine Earth Border */
+    
+    --font-display: 'Fraunces', serif;
+    --font-body: 'Instrument Sans', sans-serif;
+    --font-mono: 'IBM Plex Mono', monospace;
+}
+
+/* Reset & Base Overrides */
+body {
+    background-color: var(--bg-paper) !important;
+    color: var(--text-ink) !important;
+    font-family: var(--font-body) !important;
+}
+
+.ugr-logo {
+    height: 32px !important;
+    width: 32px !important;
+    object-fit: contain !important;
+}
+
+.font-serif { font-family: var(--font-display) !important; font-style: normal; }
+.font-mono { font-family: var(--font-mono) !important; }
+.font-sans, .font-semibold, .font-bold { font-family: var(--font-body) !important; }
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display) !important;
+    color: var(--text-ink) !important;
+    font-weight: 600 !important;
+    letter-spacing: -0.01em;
+}
+
+h1 em {
+    font-style: italic !important;
+    color: var(--accent) !important;
+}
+
+p {
+    color: var(--text-muted) !important;
+}
+
+/* Topographic Contour lines pattern background */
+.grid-fade {
+    background-image: radial-gradient(var(--accent) 0.75px, transparent 0.75px) !important;
+    background-size: 30px 30px !important;
+    opacity: 0.12 !important;
+    mask-image: radial-gradient(80% 80% at 50% 50%, #000 50%, transparent 100%) !important;
+}
+
+/* Header styling */
+header {
+    background-color: rgba(245, 242, 235, 0.95) !important;
+    border-bottom: 1px solid var(--border-color) !important;
+    backdrop-filter: blur(8px) !important;
+}
+
+header .text-chalk {
+    color: var(--text-ink) !important;
+}
+
+.nav-link {
+    color: var(--text-ink) !important;
+    font-family: var(--font-display) !important;
+    font-style: italic !important;
+    font-size: 16px !important;
+    opacity: 0.8;
+}
+
+.nav-link:hover {
+    color: var(--accent) !important;
+    opacity: 1;
+}
+
+.nav-link.text-brass-light {
+    color: var(--accent) !important;
+    font-weight: 700 !important;
+    opacity: 1;
+    border-bottom: 1.5px solid var(--accent);
+}
+
+/* devino membru button */
+button.bg-brass {
+    background-color: transparent !important;
+    color: var(--accent) !important;
+    border: 1px solid var(--accent) !important;
+    border-radius: 30px !important;
+    padding: 10px 24px !important;
+    font-family: var(--font-display) !important;
+    font-style: italic !important;
+    font-weight: 500 !important;
+    transition: all 0.3s ease !important;
+}
+
+button.bg-brass:hover {
+    background-color: var(--accent) !important;
+    color: #ffffff !important;
+    transform: scale(1.02);
+}
+
+/* Background Color Class Overrides */
+.bg-ink {
+    background-color: var(--text-ink) !important;
+    color: var(--bg-paper) !important;
+}
+
+.bg-ink h1, .bg-ink h2, .bg-ink h3, .bg-ink h4 {
+    color: var(--bg-paper) !important;
+}
+
+.bg-paper {
+    background-color: var(--bg-paper) !important;
+}
+
+.bg-ink-soft {
+    background-color: #0B1E22 !important; /* Lighter deep green-blue for footer */
+}
+
+.bg-chalk {
+    background-color: var(--bg-card) !important;
+    border: 1px solid var(--border-color) !important;
+}
+
+.bg-white\/\[0\.02\] {
+    background-color: rgba(195, 144, 92, 0.03) !important;
+    border: 1px solid rgba(195, 144, 92, 0.1) !important;
+}
+
+.bg-brass {
+    background-color: var(--accent) !important;
+    color: #ffffff !important;
+}
+
+.bg-brass\/5 {
+    background-color: rgba(195, 144, 92, 0.05) !important;
+}
+
+/* Text Overrides */
+.text-ink { color: var(--text-ink) !important; }
+.text-ink\/75 { color: var(--text-muted) !important; }
+.text-ink\/85 { color: var(--text-ink) !important; }
+.text-chalk { color: var(--bg-paper) !important; }
+.text-brass-light { color: var(--accent-light) !important; }
+.text-brass { color: var(--accent) !important; }
+
+/* Borders */
+.border-ink\/10, .border-ink\/15, .border-ink\/5 {
+    border-color: var(--border-color) !important;
+}
+
+.border-brass {
+    border-color: var(--accent) !important;
+}
+
+.border-brass\/20 {
+    border-color: rgba(195, 144, 92, 0.2) !important;
+}
+
+.border-brass\/30 {
+    border-color: rgba(195, 144, 92, 0.3) !important;
+}
+
+/* Interactive Map Overrides */
+.map-node circle:first-child {
+    fill: var(--accent) !important;
+}
+
+.node-pulse {
+    stroke: var(--accent) !important;
+}
+
+.edge-draw {
+    stroke: var(--accent) !important;
+    stroke-opacity: 0.5 !important;
+}
+
+#node-details-panel {
+    background-color: var(--bg-card) !important;
+    border: 1px solid var(--accent) !important;
+    border-radius: 8px !important;
+}
+
+#node-details-panel span {
+    color: var(--accent) !important;
+}
+
+/* Technical Ticker */
+.ticker-container {
+    background-color: var(--bg-card) !important;
+    border-top: 1px solid var(--border-color) !important;
+    border-bottom: 1px solid var(--border-color) !important;
+}
+
+.ticker-wrapper span {
+    color: var(--text-muted) !important;
+}
+
+.ticker-wrapper b {
+    color: var(--accent) !important;
+}
+
+/* Mission section stat-block styling */
+.stat-block {
+    border-top: 1.5px solid var(--accent) !important;
+    padding-top: 16px !important;
+}
+
+/* Timeline of UGR */
+.border-l.border-ink\/15 {
+    border-left: 1.5px solid rgba(195, 144, 92, 0.2) !important;
+}
+
+.absolute.-left-\[31px\].sm\:-left-\[47px\] {
+    background-color: var(--bg-paper) !important;
+    border: 1.5px solid var(--accent) !important;
+}
+
+/* Tables */
+table {
+    border-collapse: separate !important;
+    border-spacing: 0 8px !important;
+}
+
+table thead tr {
+    background-color: transparent !important;
+    border-bottom: 2px solid var(--text-ink) !important;
+}
+
+table thead th {
+    color: var(--text-ink) !important;
+    border-bottom: 2px solid var(--text-ink) !important;
+    font-family: var(--font-display) !important;
+    font-style: italic !important;
+    font-size: 14px !important;
+}
+
+.member-row {
+    background-color: var(--bg-card) !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: 6px !important;
+}
+
+.member-row td {
+    padding: 14px 16px !important;
+}
+
+.member-row:hover {
+    background-color: rgba(195, 144, 92, 0.05) !important;
+}
+
+/* Form Inputs and Modals */
+input, select, textarea {
+    background-color: #ffffff !important;
+    color: var(--text-ink) !important;
+    border: 1px solid rgba(15, 42, 48, 0.15) !important;
+    border-radius: 4px !important;
+}
+
+input:focus, select:focus, textarea:focus {
+    border-color: var(--accent) !important;
+    outline: none !important;
+    box-shadow: 0 0 6px rgba(195, 144, 92, 0.2) !important;
+}
+
+#registration-modal {
+    background-color: rgba(15, 42, 48, 0.5) !important;
+    backdrop-blur: 4px !important;
+}
+
+#registration-modal .bg-chalk {
+    background-color: var(--bg-paper) !important;
+    border: 1px solid var(--accent) !important;
+    border-radius: 12px !important;
+}
+
+#opt-profesionist, #opt-student {
+    border-color: rgba(15, 42, 48, 0.1) !important;
+    background-color: #ffffff !important;
+}
+
+#opt-profesionist.border-brass, #opt-student.border-brass {
+    border-color: var(--accent) !important;
+    background-color: rgba(195, 144, 92, 0.04) !important;
+}
+
+/* Bottom CTA section */
+main > section.bg-brass {
+    background-color: var(--accent) !important;
+    color: #ffffff !important;
+}
+
+main > section.bg-brass h2 {
+    color: #ffffff !important;
+}
+
+main > section.bg-brass button {
+    border-color: #ffffff !important;
+    color: #ffffff !important;
+    border-radius: 30px !important;
+}
+
+main > section.bg-brass button:hover {
+    background-color: #ffffff !important;
+    color: var(--accent) !important;
+}

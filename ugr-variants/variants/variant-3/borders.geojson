@@ -1,0 +1,467 @@
+﻿{
+    "features":  [
+                     {
+                         "type":  "Feature",
+                         "properties":  {
+                                            "scalerank":  1,
+                                            "featurecla":  "Admin-0 country",
+                                            "LABELRANK":  6,
+                                            "SOVEREIGNT":  "Moldova",
+                                            "SOV_A3":  "MDA",
+                                            "ADM0_DIF":  0,
+                                            "LEVEL":  2,
+                                            "TYPE":  "Sovereign country",
+                                            "ADMIN":  "Moldova",
+                                            "ADM0_A3":  "MDA",
+                                            "GEOU_DIF":  0,
+                                            "GEOUNIT":  "Moldova",
+                                            "GU_A3":  "MDA",
+                                            "SU_DIF":  0,
+                                            "SUBUNIT":  "Moldova",
+                                            "SU_A3":  "MDA",
+                                            "BRK_DIFF":  0,
+                                            "NAME":  "Moldova",
+                                            "NAME_LONG":  "Moldova",
+                                            "BRK_A3":  "MDA",
+                                            "BRK_NAME":  "Moldova",
+                                            "BRK_GROUP":  null,
+                                            "ABBREV":  "Mda.",
+                                            "POSTAL":  "MD",
+                                            "FORMAL_EN":  "Republic of Moldova",
+                                            "FORMAL_FR":  null,
+                                            "NAME_CIAWF":  "Moldova",
+                                            "NOTE_ADM0":  null,
+                                            "NOTE_BRK":  null,
+                                            "NAME_SORT":  "Moldova",
+                                            "NAME_ALT":  null,
+                                            "MAPCOLOR7":  3,
+                                            "MAPCOLOR8":  5,
+                                            "MAPCOLOR9":  4,
+                                            "MAPCOLOR13":  12,
+                                            "POP_EST":  3474121,
+                                            "POP_RANK":  12,
+                                            "GDP_MD_EST":  18540,
+                                            "POP_YEAR":  2017,
+                                            "LASTCENSUS":  2004,
+                                            "GDP_YEAR":  2016,
+                                            "ECONOMY":  "6. Developing region",
+                                            "INCOME_GRP":  "4. Lower middle income",
+                                            "WIKIPEDIA":  -99,
+                                            "FIPS_10_":  "MD",
+                                            "ISO_A2":  "MD",
+                                            "ISO_A3":  "MDA",
+                                            "ISO_A3_EH":  "MDA",
+                                            "ISO_N3":  "498",
+                                            "UN_A3":  "498",
+                                            "WB_A2":  "MD",
+                                            "WB_A3":  "MDA",
+                                            "WOE_ID":  23424885,
+                                            "WOE_ID_EH":  23424885,
+                                            "WOE_NOTE":  "Exact WOE match as country",
+                                            "ADM0_A3_IS":  "MDA",
+                                            "ADM0_A3_US":  "MDA",
+                                            "ADM0_A3_UN":  -99,
+                                            "ADM0_A3_WB":  -99,
+                                            "CONTINENT":  "Europe",
+                                            "REGION_UN":  "Europe",
+                                            "SUBREGION":  "Eastern Europe",
+                                            "REGION_WB":  "Europe \u0026 Central Asia",
+                                            "NAME_LEN":  7,
+                                            "LONG_LEN":  7,
+                                            "ABBREV_LEN":  4,
+                                            "TINY":  -99,
+                                            "HOMEPART":  1,
+                                            "MIN_ZOOM":  0,
+                                            "MIN_LABEL":  5,
+                                            "MAX_LABEL":  10
+                                        },
+                         "bbox":  [
+                                      26.619337,
+                                      45.488283,
+                                      30.024659,
+                                      48.467119
+                                  ],
+                         "geometry":  {
+                                          "type":  "Polygon",
+                                          "coordinates":  [
+                                                              [
+                                                                  [
+                                                                      26.619337,
+                                                                      48.220726
+                                                                  ],
+                                                                  [
+                                                                      26.857824,
+                                                                      48.368211
+                                                                  ],
+                                                                  [
+                                                                      27.522537,
+                                                                      48.467119
+                                                                  ],
+                                                                  [
+                                                                      28.259547,
+                                                                      48.155562
+                                                                  ],
+                                                                  [
+                                                                      28.670891,
+                                                                      48.118149
+                                                                  ],
+                                                                  [
+                                                                      29.122698,
+                                                                      47.849095
+                                                                  ],
+                                                                  [
+                                                                      29.050868,
+                                                                      47.510227
+                                                                  ],
+                                                                  [
+                                                                      29.415135,
+                                                                      47.346645
+                                                                  ],
+                                                                  [
+                                                                      29.559674,
+                                                                      46.928583
+                                                                  ],
+                                                                  [
+                                                                      29.908852,
+                                                                      46.674361
+                                                                  ],
+                                                                  [
+                                                                      29.83821,
+                                                                      46.525326
+                                                                  ],
+                                                                  [
+                                                                      30.024659,
+                                                                      46.423937
+                                                                  ],
+                                                                  [
+                                                                      29.759972,
+                                                                      46.349988
+                                                                  ],
+                                                                  [
+                                                                      29.170654,
+                                                                      46.379262
+                                                                  ],
+                                                                  [
+                                                                      29.072107,
+                                                                      46.517678
+                                                                  ],
+                                                                  [
+                                                                      28.862972,
+                                                                      46.437889
+                                                                  ],
+                                                                  [
+                                                                      28.933717,
+                                                                      46.25883
+                                                                  ],
+                                                                  [
+                                                                      28.659987,
+                                                                      45.939987
+                                                                  ],
+                                                                  [
+                                                                      28.485269,
+                                                                      45.596907
+                                                                  ],
+                                                                  [
+                                                                      28.233554,
+                                                                      45.488283
+                                                                  ],
+                                                                  [
+                                                                      28.054443,
+                                                                      45.944586
+                                                                  ],
+                                                                  [
+                                                                      28.160018,
+                                                                      46.371563
+                                                                  ],
+                                                                  [
+                                                                      28.12803,
+                                                                      46.810476
+                                                                  ],
+                                                                  [
+                                                                      27.551166,
+                                                                      47.405117
+                                                                  ],
+                                                                  [
+                                                                      27.233873,
+                                                                      47.826771
+                                                                  ],
+                                                                  [
+                                                                      26.924176,
+                                                                      48.123264
+                                                                  ],
+                                                                  [
+                                                                      26.619337,
+                                                                      48.220726
+                                                                  ]
+                                                              ]
+                                                          ]
+                                      }
+                     },
+                     {
+                         "type":  "Feature",
+                         "properties":  {
+                                            "scalerank":  1,
+                                            "featurecla":  "Admin-0 country",
+                                            "LABELRANK":  3,
+                                            "SOVEREIGNT":  "Romania",
+                                            "SOV_A3":  "ROU",
+                                            "ADM0_DIF":  0,
+                                            "LEVEL":  2,
+                                            "TYPE":  "Sovereign country",
+                                            "ADMIN":  "Romania",
+                                            "ADM0_A3":  "ROU",
+                                            "GEOU_DIF":  0,
+                                            "GEOUNIT":  "Romania",
+                                            "GU_A3":  "ROU",
+                                            "SU_DIF":  0,
+                                            "SUBUNIT":  "Romania",
+                                            "SU_A3":  "ROU",
+                                            "BRK_DIFF":  0,
+                                            "NAME":  "Romania",
+                                            "NAME_LONG":  "Romania",
+                                            "BRK_A3":  "ROU",
+                                            "BRK_NAME":  "Romania",
+                                            "BRK_GROUP":  null,
+                                            "ABBREV":  "Rom.",
+                                            "POSTAL":  "RO",
+                                            "FORMAL_EN":  "Romania",
+                                            "FORMAL_FR":  null,
+                                            "NAME_CIAWF":  "Romania",
+                                            "NOTE_ADM0":  null,
+                                            "NOTE_BRK":  null,
+                                            "NAME_SORT":  "Romania",
+                                            "NAME_ALT":  null,
+                                            "MAPCOLOR7":  1,
+                                            "MAPCOLOR8":  4,
+                                            "MAPCOLOR9":  3,
+                                            "MAPCOLOR13":  13,
+                                            "POP_EST":  21529967,
+                                            "POP_RANK":  15,
+                                            "GDP_MD_EST":  441000,
+                                            "POP_YEAR":  2017,
+                                            "LASTCENSUS":  2011,
+                                            "GDP_YEAR":  2016,
+                                            "ECONOMY":  "2. Developed region: nonG7",
+                                            "INCOME_GRP":  "3. Upper middle income",
+                                            "WIKIPEDIA":  -99,
+                                            "FIPS_10_":  "RO",
+                                            "ISO_A2":  "RO",
+                                            "ISO_A3":  "ROU",
+                                            "ISO_A3_EH":  "ROU",
+                                            "ISO_N3":  "642",
+                                            "UN_A3":  "642",
+                                            "WB_A2":  "RO",
+                                            "WB_A3":  "ROM",
+                                            "WOE_ID":  23424933,
+                                            "WOE_ID_EH":  23424933,
+                                            "WOE_NOTE":  "Exact WOE match as country",
+                                            "ADM0_A3_IS":  "ROU",
+                                            "ADM0_A3_US":  "ROU",
+                                            "ADM0_A3_UN":  -99,
+                                            "ADM0_A3_WB":  -99,
+                                            "CONTINENT":  "Europe",
+                                            "REGION_UN":  "Europe",
+                                            "SUBREGION":  "Eastern Europe",
+                                            "REGION_WB":  "Europe \u0026 Central Asia",
+                                            "NAME_LEN":  7,
+                                            "LONG_LEN":  7,
+                                            "ABBREV_LEN":  4,
+                                            "TINY":  -99,
+                                            "HOMEPART":  1,
+                                            "MIN_ZOOM":  0,
+                                            "MIN_LABEL":  3,
+                                            "MAX_LABEL":  8
+                                        },
+                         "bbox":  [
+                                      20.220192,
+                                      43.688445,
+                                      29.626543,
+                                      48.220881
+                                  ],
+                         "geometry":  {
+                                          "type":  "Polygon",
+                                          "coordinates":  [
+                                                              [
+                                                                  [
+                                                                      28.558081,
+                                                                      43.707462
+                                                                  ],
+                                                                  [
+                                                                      27.970107,
+                                                                      43.812468
+                                                                  ],
+                                                                  [
+                                                                      27.2424,
+                                                                      44.175986
+                                                                  ],
+                                                                  [
+                                                                      26.065159,
+                                                                      43.943494
+                                                                  ],
+                                                                  [
+                                                                      25.569272,
+                                                                      43.688445
+                                                                  ],
+                                                                  [
+                                                                      24.100679,
+                                                                      43.741051
+                                                                  ],
+                                                                  [
+                                                                      23.332302,
+                                                                      43.897011
+                                                                  ],
+                                                                  [
+                                                                      22.944832,
+                                                                      43.823785
+                                                                  ],
+                                                                  [
+                                                                      22.65715,
+                                                                      44.234923
+                                                                  ],
+                                                                  [
+                                                                      22.474008,
+                                                                      44.409228
+                                                                  ],
+                                                                  [
+                                                                      22.705726,
+                                                                      44.578003
+                                                                  ],
+                                                                  [
+                                                                      22.459022,
+                                                                      44.702517
+                                                                  ],
+                                                                  [
+                                                                      22.145088,
+                                                                      44.478422
+                                                                  ],
+                                                                  [
+                                                                      21.562023,
+                                                                      44.768947
+                                                                  ],
+                                                                  [
+                                                                      21.483526,
+                                                                      45.18117
+                                                                  ],
+                                                                  [
+                                                                      20.874313,
+                                                                      45.416375
+                                                                  ],
+                                                                  [
+                                                                      20.762175,
+                                                                      45.734573
+                                                                  ],
+                                                                  [
+                                                                      20.220192,
+                                                                      46.127469
+                                                                  ],
+                                                                  [
+                                                                      21.021952,
+                                                                      46.316088
+                                                                  ],
+                                                                  [
+                                                                      21.626515,
+                                                                      46.994238
+                                                                  ],
+                                                                  [
+                                                                      22.099768,
+                                                                      47.672439
+                                                                  ],
+                                                                  [
+                                                                      22.710531,
+                                                                      47.882194
+                                                                  ],
+                                                                  [
+                                                                      23.142236,
+                                                                      48.096341
+                                                                  ],
+                                                                  [
+                                                                      23.760958,
+                                                                      47.985598
+                                                                  ],
+                                                                  [
+                                                                      24.402056,
+                                                                      47.981878
+                                                                  ],
+                                                                  [
+                                                                      24.866317,
+                                                                      47.737526
+                                                                  ],
+                                                                  [
+                                                                      25.207743,
+                                                                      47.891056
+                                                                  ],
+                                                                  [
+                                                                      25.945941,
+                                                                      47.987149
+                                                                  ],
+                                                                  [
+                                                                      26.19745,
+                                                                      48.220881
+                                                                  ],
+                                                                  [
+                                                                      26.619337,
+                                                                      48.220726
+                                                                  ],
+                                                                  [
+                                                                      26.924176,
+                                                                      48.123264
+                                                                  ],
+                                                                  [
+                                                                      27.233873,
+                                                                      47.826771
+                                                                  ],
+                                                                  [
+                                                                      27.551166,
+                                                                      47.405117
+                                                                  ],
+                                                                  [
+                                                                      28.12803,
+                                                                      46.810476
+                                                                  ],
+                                                                  [
+                                                                      28.160018,
+                                                                      46.371563
+                                                                  ],
+                                                                  [
+                                                                      28.054443,
+                                                                      45.944586
+                                                                  ],
+                                                                  [
+                                                                      28.233554,
+                                                                      45.488283
+                                                                  ],
+                                                                  [
+                                                                      28.679779,
+                                                                      45.304031
+                                                                  ],
+                                                                  [
+                                                                      29.149725,
+                                                                      45.464925
+                                                                  ],
+                                                                  [
+                                                                      29.603289,
+                                                                      45.293308
+                                                                  ],
+                                                                  [
+                                                                      29.626543,
+                                                                      45.035391
+                                                                  ],
+                                                                  [
+                                                                      29.141612,
+                                                                      44.82021
+                                                                  ],
+                                                                  [
+                                                                      28.837858,
+                                                                      44.913874
+                                                                  ],
+                                                                  [
+                                                                      28.558081,
+                                                                      43.707462
+                                                                  ]
+                                                              ]
+                                                          ]
+                                      }
+                     }
+                 ],
+    "type":  "FeatureCollection"
+}
