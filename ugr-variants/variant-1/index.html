@@ -1,0 +1,742 @@
+﻿<!DOCTYPE html>
+<html lang="ro" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Filiala Sector 1 UGR — Uniunea Geodezilor din România</title>
+    <meta name="description" content="Uniunea Geodezilor din România (UGR) — asociație profesională ce reunește ingineri geodezi, topografi și cartografi, membră CLGE și FIG.">
+    
+    <!-- Integrare Fonturi Premium -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/globe.gl"></script>
+    
+    <!-- Tailwind CSS compilat static -->
+    
+
+    
+
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="editorial-v1.css">
+</head>
+<body class="bg-paper text-ink antialiased">
+
+    <!-- Skip Link pentru Accesibilitate -->
+    <a href="#main-content" class="skip-link font-mono text-xs">Sari direct la conținut</a>
+
+    <!-- HEADER INSTITUȚIONAL -->
+    <header class="sticky top-0 z-50 border-b border-white/[0.08] bg-ink/[0.94] backdrop-blur-md">
+        <div class="mx-auto flex h-[76px] max-w-[1180px] items-center justify-between px-6 sm:px-8">
+            <button onclick="navigateTo('home')" class="flex items-center gap-3 text-chalk text-left" aria-label="Filiala Sector 1 UGR — acasă">
+                <img src="logo_geodez.png" alt="UGR" class="ugr-logo" style="height: 32px; width: 32px; object-fit: contain;" />
+                <span class="font-serif text-[19px] font-semibold leading-tight tracking-[-0.01em]">
+                    Filiala Sector 1 UGR
+                </span>
+            </button>
+
+            <!-- Meniu Navigare Desktop -->
+            <nav class="hidden items-center gap-8 md:flex">
+                <button onclick="navigateTo('home')" class="nav-link text-[14px] font-medium transition-colors text-brass-light" data-view="home">Acasă</button>
+                <button onclick="navigateTo('despre')" class="nav-link text-[14px] font-medium transition-colors text-chalk/75 hover:text-chalk" data-view="despre">Despre noi</button>
+                <button onclick="navigateTo('membri')" class="nav-link text-[14px] font-medium transition-colors text-chalk/75 hover:text-chalk" data-view="membri">Membri</button>
+                <button onclick="navigateTo('noutati')" class="nav-link text-[14px] font-medium transition-colors text-chalk/75 hover:text-chalk" data-view="noutati">Noutăți</button>
+                <button onclick="navigateTo('contact')" class="nav-link text-[14px] font-medium transition-colors text-chalk/75 hover:text-chalk" data-view="contact">Contact</button>
+            </nav>
+
+            <button onclick="openRegistrationModal()" class="hidden md:inline-flex items-center gap-2 rounded-md bg-brass px-[22px] py-[11px] text-xs font-mono font-semibold uppercase tracking-wider text-ink hover:bg-brass-light active:scale-[0.97]">
+                Devino membru
+            </button>
+
+            <!-- Buton Burger Mobil -->
+            <button class="relative h-9 w-9 text-chalk md:hidden flex items-center justify-center focus:outline-none" aria-label="Comută meniul" onclick="toggleMobileMenu()">
+                <div class="w-6 flex flex-col gap-1.5 transition-all">
+                    <span class="h-[1.5px] w-full bg-current transition-transform duration-300 origin-center" id="mobile-bar-1"></span>
+                    <span class="h-[1.5px] w-full bg-current transition-opacity duration-300" id="mobile-bar-2"></span>
+                    <span class="h-[1.5px] w-full bg-current transition-transform duration-300 origin-center" id="mobile-bar-3"></span>
+                </div>
+            </button>
+        </div>
+
+        <!-- Meniu Mobil Dropdown -->
+        <div id="mobile-dropdown" class="overflow-hidden border-b border-white/5 bg-ink-soft transition-all duration-300 max-h-0 md:hidden">
+            <div class="flex flex-col gap-1 px-6 pb-6 pt-2">
+                <button onclick="navigateTo('home'); toggleMobileMenu();" class="border-b border-chalk/[0.08] py-3 text-left text-[14px] font-medium text-chalk/80">Acasă</button>
+                <button onclick="navigateTo('despre'); toggleMobileMenu();" class="border-b border-chalk/[0.08] py-3 text-left text-[14px] font-medium text-chalk/80">Despre noi</button>
+                <button onclick="navigateTo('membri'); toggleMobileMenu();" class="border-b border-chalk/[0.08] py-3 text-left text-[14px] font-medium text-chalk/80">Membri</button>
+                <button onclick="navigateTo('noutati'); toggleMobileMenu();" class="border-b border-chalk/[0.08] py-3 text-left text-[14px] font-medium text-chalk/80">Noutăți</button>
+                <button onclick="navigateTo('contact'); toggleMobileMenu();" class="border-b border-chalk/[0.08] py-3 text-left text-[14px] font-medium text-chalk/80">Contact</button>
+                <button onclick="openRegistrationModal(); toggleMobileMenu();" class="mt-4 self-start rounded-md bg-brass px-[22px] py-[11px] text-xs font-mono font-semibold uppercase tracking-wider text-ink hover:bg-brass-light">
+                    Devino membru
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- CONTAINER CONȚINUT DINAMIC (SPA) -->
+    <main id="main-content" class="flex-grow">
+        
+        <!-- ================= ACASĂ VIEW ================= -->
+        <div id="view-home" class="view-section">
+            <section class="relative overflow-hidden bg-ink pt-[70px] pb-[70px] text-chalk">
+                <div class="grid-fade pointer-events-none absolute inset-0"></div>
+                <div class="relative z-[2] mx-auto grid max-w-[1180px] grid-cols-1 items-center gap-12 px-6 sm:px-8 md:grid-cols-[1.1fr_0.9fr]">
+                    
+                    <!-- Text Hero cu animație de glisare laterală din stânga -->
+                    <div class="space-y-6">
+                        <div class="animate-slide-left delay-100 flex items-center gap-2.5 font-mono text-[11px] uppercase tracking-[0.16em] before:block before:h-px before:w-[24px] text-brass-light before:bg-brass-light">
+                            Membru Oficial FIG și CLGE
+                        </div>
+                        <h1 class="animate-slide-left delay-200 font-serif text-[clamp(32px,4vw,52px)] font-bold leading-[1.1] tracking-tight text-chalk">
+                            Rețeaua profesioniștilor care <em class="not-italic text-brass-light border-b border-brass-light/30">măsoară</em> România.
+                        </h1>
+                        <p class="animate-slide-left delay-300 text-[16px] leading-relaxed text-chalk/75 max-w-[500px]">
+                            UGR reunește ingineri geodezi, topografi și cartografi într-o structură națională unitară dedicată preciziei matematice, integrității profesionale și dialogului legislativ permanent.
+                        </p>
+                        <div class="animate-slide-left delay-300 flex flex-wrap gap-4 pt-2">
+                            <button onclick="openRegistrationModal()" class="inline-flex items-center gap-2 rounded-md bg-brass px-[22px] py-[11px] text-xs font-mono font-semibold uppercase tracking-wider text-ink hover:bg-brass-light active:scale-[0.97]">Înscriere rapidă →</button>
+                            <button onclick="navigateTo('despre')" class="inline-flex items-center gap-2 rounded-md border border-chalk/30 text-chalk hover:border-chalk hover:bg-chalk/5 px-[22px] py-[11px] text-xs font-mono font-semibold uppercase tracking-wider">Istoricul UGR</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Harta Interactivă cu Căutare proceduri și skill-uri -->
+                    <div class="relative flex flex-col items-center justify-center p-5 bg-white/[0.02] rounded-xl border border-white/[0.05] space-y-4">
+                        
+                        <!-- Panou Căutare Proceduri/Skill-uri -->
+                        <div class="w-full">
+                            <label class="block text-[10px] font-mono uppercase tracking-widest text-brass-light/60 mb-2">Filtrează filiale după expertiză/procedură:</label>
+                            <select id="skill-selector" onchange="filterMapBySkill()" class="w-full px-3 py-2 text-xs bg-ink-soft border border-brass/30 rounded text-chalk focus:outline-none focus:border-brass-light cursor-pointer">
+                                <option value="toate">-- Toate procedurile / competențele active --</option>
+                                <option value="lidar">Scanare laser 3D și Sisteme LiDAR</option>
+                                <option value="gnss">Satelit și Rețele Naționale GNSS</option>
+                                <option value="cadastru">Cadastru General și Publicitate Imobiliară</option>
+                                <option value="gis">Baze de date și Sisteme Informatice GIS</option>
+                                <option value="nivelment">Nivelment Geometric de Înaltă Precizie</option>
+                            </select>
+                        </div>
+                        
+                        <div id="3d-globe-container" class="h-[280px] w-full max-w-[380px] flex items-center justify-center overflow-hidden rounded-lg bg-black/10"></div>
+
+                        <!-- Panou Detalii Nod -->
+                        <div id="node-details-panel" class="mt-4 p-4 bg-ink-soft border border-brass/30 rounded text-left text-xs max-w-sm w-full space-y-1 hidden">
+                            <div class="flex justify-between font-serif font-bold text-brass-light">
+                                <span id="node-name">Nume Filială</span>
+                                <span id="node-coords" class="font-mono text-[9px] opacity-70">Coordonate</span>
+                            </div>
+                            <p id="node-desc" class="text-chalk/80 leading-snug text-[11px]">Detalii tehnice despre această filială și importanța ei.</p>
+                        </div>
+                        <p id="node-prompt" class="text-[10px] text-chalk/40 mt-3 font-mono">Apasă pe un punct de pe hartă pentru detalii.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Ticker Tehnic Glisant, Infinit și Interactiv -->
+            <div class="border-y border-white/[0.08] bg-ink-soft py-4 overflow-hidden ticker-container cursor-grab">
+                <div class="ticker-wrapper">
+                    <div class="flex gap-16 text-[11px] font-mono tracking-widest text-chalk/55 uppercase items-center">
+                        <span><b class="text-brass-light">SISTEM:</b> Stereo 70</span>
+                        <span class="text-brass">·</span>
+                        <span><b class="text-brass-light">DATUM:</b> Krasovski 1940</span>
+                        <span class="text-brass">·</span>
+                        <span><b class="text-brass-light">ELIPSOID:</b> Krasovski</span>
+                        <span class="text-brass">·</span>
+                        <span><b class="text-brass-light">ÎNFIINȚATĂ:</b> 1990 (București)</span>
+                        <span class="text-brass">·</span>
+                        <span><b class="text-brass-light">AFILIERE:</b> FIG (Membru Titular) & CLGE</span>
+                        <span class="text-brass">·</span>
+                        <span><b class="text-brass-light">SGR 2025:</b> Timișoara, România</span>
+                    </div>
+                    <!-- Duplicat pentru alunecare infinită fluidă -->
+                    <div class="flex gap-16 text-[11px] font-mono tracking-widest text-chalk/55 uppercase items-center pl-16" aria-hidden="true">
+                        <span><b class="text-brass-light">SISTEM:</b> Stereo 70</span>
+                        <span class="text-brass">·</span>
+                        <span><b class="text-brass-light">DATUM:</b> Krasovski 1940</span>
+                        <span class="text-brass">·</span>
+                        <span><b class="text-brass-light">ELIPSOID:</b> Krasovski</span>
+                        <span class="text-brass">·</span>
+                        <span><b class="text-brass-light">ÎNFIINȚATĂ:</b> 1990 (București)</span>
+                        <span class="text-brass">·</span>
+                        <span><b class="text-brass-light">AFILIERE:</b> FIG (Membru Titular) & CLGE</span>
+                        <span class="text-brass">·</span>
+                        <span><b class="text-brass-light">SGR 2025:</b> Timișoara, România</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Misiune și Date Statice -->
+            <section class="bg-paper py-20">
+                <div class="mx-auto max-w-[1180px] px-6 sm:px-8">
+                    <div class="mb-12 max-w-xl">
+                        <div class="scroll-reveal reveal-left flex items-center gap-2.5 font-mono text-[11px] uppercase tracking-[0.16em] before:block before:h-px before:w-[24px] text-brass before:bg-brass">
+                            Misiunea Noastră
+                        </div>
+                        <h2 class="scroll-reveal reveal-left mt-3 font-serif text-[clamp(28px,3.2vw,38px)] font-semibold leading-[1.15] tracking-[-0.01em] text-ink" style="animation-delay:160ms">
+                            Integritate terestră, viziune spațială.
+                        </h2>
+                    </div>
+                    <div class="grid grid-cols-1 gap-12 md:grid-cols-2">
+                        <p class="text-[15.5px] leading-relaxed text-ink/75">
+                            Uniunea Geodezilor din România (UGR) reprezintă autoritatea profesională independentă a inginerilor măsurătorilor terestre. Ne asigurăm că normele profesionale, etica de lucru și reglementările administrative încadrează corect profesia de geodez autorizat, garantând rigurozitate tehnică în toate lucrările de infrastructură națională și cadastru general.
+                        </p>
+                        <div id="mission-stats-grid" class="grid grid-cols-2 gap-6">
+                            <div class="stat-block reveal-right border-t border-ink/15 pt-4">
+                                <span class="block font-serif text-3xl font-bold text-ink">1990</span>
+                                <span class="stat-label block font-mono text-[10px] uppercase tracking-wider text-ink/50 mt-1" data-text="Înființare oficială"></span>
+                            </div>
+                            <div class="stat-block reveal-right border-t border-ink/15 pt-4">
+                                <span class="block font-serif text-3xl font-bold text-ink">Județene</span>
+                                <span class="stat-label block font-mono text-[10px] uppercase tracking-wider text-ink/50 mt-1" data-text="Filiale la nivel național"></span>
+                            </div>
+                            <div class="stat-block reveal-right border-t border-ink/15 pt-4">
+                                <span class="block font-serif text-3xl font-bold text-ink">FIG & CLGE</span>
+                                <span class="stat-label block font-mono text-[10px] uppercase tracking-wider text-ink/50 mt-1" data-text="Reprezentare Europeană"></span>
+                            </div>
+                            <div class="stat-block reveal-right border-t border-ink/15 pt-4">
+                                <span class="block font-serif text-3xl font-bold text-ink">ANCPI</span>
+                                <span class="stat-label block font-mono text-[10px] uppercase tracking-wider text-ink/50 mt-1" data-text="Colaborare unificată"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- ================= DESPRE NOI (ISTORIC) VIEW ================= -->
+        <div id="view-despre" class="view-section hidden">
+            <section class="bg-ink py-16 text-chalk">
+                <div class="mx-auto max-w-[1180px] px-6 sm:px-8">
+                    <div class="scroll-reveal reveal-left flex items-center gap-2.5 font-mono text-[11px] uppercase tracking-[0.16em] before:block before:h-px before:w-[24px] text-brass-light before:bg-brass-light">
+                        Despre noi și Repere
+                    </div>
+                    <h1 class="scroll-reveal reveal-left mt-4 font-serif text-[clamp(32px,4vw,50px)] font-bold leading-tight" style="animation-delay:200ms">O istorie marcată de excelență</h1>
+                    <p class="scroll-reveal reveal-left mt-2 text-chalk/70 max-w-xl text-sm" style="animation-delay:340ms">Organismele și evoluția completă a Uniunii Geodezilor de la evenimentele fondatoare din 1990 încoace.</p>
+                </div>
+            </section>
+
+            <!-- Cronologie Istorică Completă -->
+            <section class="bg-paper py-20">
+                <div class="mx-auto max-w-[1180px] px-6 sm:px-8">
+                    <div class="mb-12 max-w-xl">
+                        <div class="scroll-reveal reveal-left flex items-center gap-2.5 font-mono text-[11px] uppercase tracking-[0.16em] before:block before:h-px before:w-[24px] text-brass before:bg-brass">
+                            Cronologie istorică
+                        </div>
+                        <h2 class="scroll-reveal reveal-left mt-3 font-serif text-[clamp(28px,3.2vw,38px)] font-semibold leading-[1.15] tracking-[-0.01em] text-ink" style="animation-delay:160ms">
+                            Parcursul evolutiv complet
+                        </h2>
+                    </div>
+                    
+                    <div class="relative max-w-3xl border-l border-ink/15 ml-4 pl-6 sm:pl-10 space-y-12">
+                        <div class="relative scroll-reveal reveal-left">
+                            <div class="absolute -left-[31px] sm:-left-[47px] top-1.5 h-4 w-4 rounded-full border-2 border-paper bg-brass"></div>
+                            <div class="space-y-1">
+                                <span class="font-mono text-xs font-semibold text-brass">1990</span>
+                                <h3 class="font-serif text-lg font-bold text-ink">Fondarea Uniunii la București</h3>
+                                <p class="text-sm text-ink/75 leading-relaxed">În primăvara anului 1990, un grup entuziast de specialiști reuniți la Facultatea de Geodezie din București decide înființarea unei uniuni profesionale a geodezilor, stabilind bazele organizatorice ale asociației.</p>
+                            </div>
+                        </div>
+
+                        <div class="relative scroll-reveal reveal-left">
+                            <div class="absolute -left-[31px] sm:-left-[47px] top-1.5 h-4 w-4 rounded-full border-2 border-paper bg-brass"></div>
+                            <div class="space-y-1">
+                                <span class="font-mono text-xs font-semibold text-brass">până în 2004</span>
+                                <h3 class="font-serif text-lg font-bold text-ink">Perioada de consolidare și extindere</h3>
+                                <p class="text-sm text-ink/75 leading-relaxed">Sub președinția lui Săvulescu și conducerea activă, numărul membrilor crește semnificativ, ajungând de la 400 la peste 2.500 de specialiști. Această etapă este marcată de apariția și publicarea regulată a Revistei de Geodezie, Cartografie și Cadastru.</p>
+                            </div>
+                        </div>
+
+                        <div class="relative scroll-reveal reveal-left">
+                            <div class="absolute -left-[31px] sm:-left-[47px] top-1.5 h-4 w-4 rounded-full border-2 border-paper bg-brass"></div>
+                            <div class="space-y-1">
+                                <span class="font-mono text-xs font-semibold text-brass">2014</span>
+                                <h3 class="font-serif text-lg font-bold text-ink">Aderarea internațională oficială</h3>
+                                <p class="text-sm text-ink/75 leading-relaxed">UGR devine un reprezentant de referință la nivel internațional, fiind afiliată activ la Federația Internațională a Geodezilor (FIG) și la Consiliul European al Geodezilor (CLGE), preluând bunele practici tehnice și etice europene.</p>
+                            </div>
+                        </div>
+
+                        <div class="relative scroll-reveal reveal-left">
+                            <div class="absolute -left-[31px] sm:-left-[47px] top-1.5 h-4 w-4 rounded-full border-2 border-paper bg-brass"></div>
+                            <div class="space-y-1">
+                                <span class="font-mono text-xs font-semibold text-brass">2015</span>
+                                <h3 class="font-serif text-lg font-bold text-ink">Protocolul istoric cu ANCPI</h3>
+                                <p class="text-sm text-ink/75 leading-relaxed">Uniunea semnează un protocol de colaborare strânsă cu Agenția Națională de Cadastru și Publicitate Imobiliară. Revista de profil este relansată în limba engleză pentru a oferi vizibilitate cercetării din România.</p>
+                            </div>
+                        </div>
+
+                        <div class="relative scroll-reveal reveal-left">
+                            <div class="absolute -left-[31px] sm:-left-[47px] top-1.5 h-4 w-4 rounded-full border-2 border-paper bg-brass"></div>
+                            <div class="space-y-1">
+                                <span class="font-mono text-xs font-semibold text-brass">2017 - 2018</span>
+                                <h3 class="font-serif text-lg font-bold text-ink">Proiectul Legii Geodezului</h3>
+                                <p class="text-sm text-ink/75 leading-relaxed">Se elaborează și se depune la comisiile de specialitate ale Camerei Deputaților proiectul legislativ istoric privind organizarea și exercitarea profesiei de geodez autorizat în România.</p>
+                            </div>
+                        </div>
+
+                        <div class="relative scroll-reveal reveal-left">
+                            <div class="absolute -left-[31px] sm:-left-[47px] top-1.5 h-4 w-4 rounded-full border-2 border-paper bg-brass"></div>
+                            <div class="space-y-1">
+                                <span class="font-mono text-xs font-semibold text-brass">2022</span>
+                                <h3 class="font-serif text-lg font-bold text-ink">Alegerea noii conduceri și relansarea SGR</h3>
+                                <p class="text-sm text-ink/75 leading-relaxed">Pe 10 iunie 2022 se alege o nouă structură a Biroului Executiv. În același an, evenimentul fanion Săptămâna Geodeziei Românești este relansat cu un succes de răsunet la Brașov.</p>
+                            </div>
+                        </div>
+
+                        <div class="relative scroll-reveal reveal-left">
+                            <div class="absolute -left-[31px] sm:-left-[47px] top-1.5 h-4 w-4 rounded-full border-2 border-paper bg-brass"></div>
+                            <div class="space-y-1">
+                                <span class="font-mono text-xs font-semibold text-brass">2025</span>
+                                <h3 class="font-serif text-lg font-bold text-ink">Săptămâna Geodeziei Timișoara & Filiala UTM</h3>
+                                <p class="text-sm text-ink/75 leading-relaxed">UGR organizează cea de-a VI-a ediție a Săptămânii Geodeziei la Timișoara în parteneriat cu universitățile de profil și marchează înființarea istorică a filialei transfrontaliere la Chișinău (UTM), extinzând comunitatea geodezică.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Conducerea Executivă -->
+            <section class="bg-chalk py-20 border-t border-ink/10">
+                <div class="mx-auto max-w-[1180px] px-6 sm:px-8">
+                    <div class="mb-12 max-w-xl">
+                        <div class="flex items-center gap-2.5 font-mono text-[11px] uppercase tracking-[0.16em] before:block before:h-px before:w-[24px] text-brass before:bg-brass">
+                            Structură administrativă
+                        </div>
+                        <h2 class="mt-3 font-serif text-[clamp(28px,3.2vw,38px)] font-semibold leading-[1.15] tracking-[-0.01em] text-ink">
+                            Consiliul și Biroul Executiv
+                        </h2>
+                    </div>
+
+                    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-4">
+                        <div class="border-t border-brass pt-4 space-y-1.5">
+                            <span class="font-mono text-[9px] uppercase tracking-wider text-contour font-bold">Președinte</span>
+                            <h3 class="font-serif text-[17px] font-bold text-ink">Ing. Mircea Afrăsinei</h3>
+                            <p class="text-xs text-ink/65 leading-relaxed">Coordonator general și reprezentant legal al Uniunii.</p>
+                        </div>
+                        <div class="border-t border-brass pt-4 space-y-1.5">
+                            <span class="font-mono text-[9px] uppercase tracking-wider text-contour font-bold">Vicepreședinte</span>
+                            <h3 class="font-serif text-[17px] font-bold text-ink">Prof. univ. dr. ing. Ana Cornelia Badea</h3>
+                            <p class="text-xs text-ink/65 leading-relaxed">Responsabil de parteneriate academice și publicații științifice.</p>
+                        </div>
+                        <div class="border-t border-brass pt-4 space-y-1.5">
+                            <span class="font-mono text-[9px] uppercase tracking-wider text-contour font-bold">Vicepreședinte</span>
+                            <h3 class="font-serif text-[17px] font-bold text-ink">Prof. univ. dr. ing. Petre Iuliu Dragomir</h3>
+                            <p class="text-xs text-ink/65 leading-relaxed">Responsabil de dialog legislativ și relația cu ANCPI.</p>
+                        </div>
+                        <div class="border-t border-brass pt-4 space-y-1.5">
+                            <span class="font-mono text-[9px] uppercase tracking-wider text-contour font-bold">Secretar Executiv</span>
+                            <h3 class="font-serif text-[17px] font-bold text-ink">Ing. Vlad Păunescu</h3>
+                            <p class="text-xs text-ink/65 leading-relaxed">secretar@ugr.ro · 0723 587 081</p>
+                        </div>
+                        <div class="border-t border-brass pt-4 space-y-1.5">
+                            <span class="font-mono text-[9px] uppercase tracking-wider text-contour font-bold">Trezorier</span>
+                            <h3 class="font-serif text-[17px] font-bold text-ink">Ing. Costin Sebastian Manu</h3>
+                            <p class="text-xs text-ink/65 leading-relaxed">Gestiunea financiară a Uniunii.</p>
+                        </div>
+                    </div>
+
+                    <!-- Vicepreședinți regionali -->
+                    <div class="mt-14">
+                        <h3 class="font-mono text-[11px] uppercase tracking-[0.16em] text-contour font-bold mb-6">Vicepreședinți regionali (mandat 2022–2026)</h3>
+                        <div class="grid grid-cols-1 gap-x-8 gap-y-3 sm:grid-cols-2 md:grid-cols-3 text-sm">
+                            <div class="flex justify-between border-b border-ink/10 pb-2"><span class="text-ink/50">N-E</span><span class="text-ink font-medium">Ing. Eusebiu Laurențiu Cilibiu</span></div>
+                            <div class="flex justify-between border-b border-ink/10 pb-2"><span class="text-ink/50">N-V</span><span class="text-ink font-medium">Prof. univ. dr. ing. Tudor Sălăgean</span></div>
+                            <div class="flex justify-between border-b border-ink/10 pb-2"><span class="text-ink/50">Centru</span><span class="text-ink font-medium">Ing. Istvan Orosz</span></div>
+                            <div class="flex justify-between border-b border-ink/10 pb-2"><span class="text-ink/50">Vest</span><span class="text-ink font-medium">Asist. univ. Anca-Maria Moscovici</span></div>
+                            <div class="flex justify-between border-b border-ink/10 pb-2"><span class="text-ink/50">S-V</span><span class="text-ink font-medium">Ing. Mihnea Mitrache</span></div>
+                            <div class="flex justify-between border-b border-ink/10 pb-2"><span class="text-ink/50">Sud</span><span class="text-ink font-medium">Ing. Dan Popescu</span></div>
+                            <div class="flex justify-between border-b border-ink/10 pb-2"><span class="text-ink/50">S-E</span><span class="text-ink font-medium">Ing. Aliona Grădinaru</span></div>
+                            <div class="flex justify-between border-b border-ink/10 pb-2"><span class="text-ink/50">București-Ilfov</span><span class="text-ink font-medium">Ing. Cosmin Dragomir</span></div>
+                        </div>
+                        <p class="mt-4 text-xs text-ink/50">Sursă: Conferința Națională UGR, 10 iunie 2022.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Obiective -->
+            <section id="obiective" class="bg-paper py-20 border-t border-ink/10">
+                <div class="mx-auto max-w-[1180px] px-6 sm:px-8">
+                    <div class="mb-10 max-w-xl">
+                        <div class="flex items-center gap-2.5 font-mono text-[11px] uppercase tracking-[0.16em] before:block before:h-px before:w-[24px] text-brass before:bg-brass">
+                            Statut și misiune
+                        </div>
+                        <h2 class="mt-3 font-serif text-[clamp(28px,3.2vw,38px)] font-semibold leading-[1.15] tracking-[-0.01em] text-ink">
+                            Obiectivele Uniunii
+                        </h2>
+                        <p class="mt-3 text-sm text-ink/70 leading-relaxed">U.G.R. este o organizație profesională independentă, neguvernamentală și apolitică, cu caracter nelucrativ, persoană juridică pe perioadă nelimitată, cu sediul în Bd. Lacul Tei nr. 124, sector 2, București.</p>
+                    </div>
+                    <ul class="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-4 text-sm text-ink/75 leading-relaxed list-disc list-inside max-w-4xl">
+                        <li>Creșterea prestigiului geodeziei și a autorității profesionale a celor ce activează în acest domeniu</li>
+                        <li>Susținerea și apărarea intereselor profesionale și economice ale membrilor săi</li>
+                        <li>Sensibilizarea organelor de decizie și a opiniei publice față de importanța economico-socială a activităților geodezice</li>
+                        <li>Promovarea progresului tehnic și a tehnologiilor moderne, precum și încurajarea cercetării științifice în domeniul geodeziei</li>
+                        <li>Inițierea, propunerea și avizarea de acte legislative și normative privind activitățile geodezice</li>
+                        <li>Propagarea rezultatelor practicii profesionale și a studiilor membrilor Uniunii</li>
+                        <li>Crearea cadrului organizatoric pentru o mai bună cunoaștere reciprocă a membrilor Uniunii</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Statut -->
+            <section class="bg-chalk py-16 border-t border-ink/10">
+                <div class="mx-auto max-w-[1180px] px-6 sm:px-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+                    <div>
+                        <div class="flex items-center gap-2.5 font-mono text-[11px] uppercase tracking-[0.16em] before:block before:h-px before:w-[24px] text-brass before:bg-brass">
+                            Document oficial
+                        </div>
+                        <h2 class="mt-3 font-serif text-[22px] font-semibold text-ink">Statutul Uniunii Geodezilor din România</h2>
+                        <p class="mt-1 text-xs text-ink/60">Aprobat în data de 24 noiembrie 2017</p>
+                    </div>
+                    <a href="https://www.ugr.ro/assets/upload/statut_UGR_aprobat_2017.pdf" target="_blank" rel="noopener" class="whitespace-nowrap inline-flex items-center gap-2 rounded-md bg-ink px-6 py-3 text-xs font-mono font-semibold uppercase tracking-wider text-chalk hover:bg-ink-soft">Descarcă statutul (PDF) →</a>
+                </div>
+            </section>
+        </div>
+
+        <!-- ================= MEMBRI VIEW ================= -->
+        <div id="view-membri" class="view-section hidden">
+            <section class="bg-ink py-16 text-chalk">
+                <div class="mx-auto max-w-[1180px] px-6 sm:px-8">
+                    <div class="flex items-center gap-2.5 font-mono text-[11px] uppercase tracking-[0.16em] before:block before:h-px before:w-[24px] text-brass-light before:bg-brass-light">
+                        Pentru Profesioniști
+                    </div>
+                    <h1 class="mt-4 font-serif text-[clamp(32px,4vw,50px)] font-bold leading-tight">Tabloul Național al Membrilor</h1>
+                    <p class="mt-2 text-chalk/70 max-w-xl text-sm">Găsește specialiști autorizați din cadrul UGR sau verifică statutul de membru în siguranță.</p>
+                </div>
+            </section>
+
+            <section class="bg-paper py-20">
+                <div class="mx-auto max-w-[1180px] px-6 sm:px-8 space-y-8">
+                    
+                    <!-- Filtre Căutare -->
+                    <div class="flex flex-col md:flex-row gap-4 justify-between items-center bg-chalk p-6 rounded-lg border border-ink/5 shadow-sm">
+                        <div class="w-full md:w-1/2">
+                            <input type="text" id="member-search" oninput="filterMembersTable()" placeholder="Caută după nume sau serie autorizație..." class="w-full px-4 py-2.5 text-sm bg-paper border border-ink/10 rounded focus:outline-none focus:border-brass text-ink" />
+                        </div>
+                        <div class="flex gap-2 w-full md:w-auto">
+                            <select id="member-county-filter" onchange="filterMembersTable()" class="px-3 py-2 text-sm bg-paper border border-ink/10 rounded focus:outline-none text-ink">
+                                <option value="Toate">Toate Județele</option>
+                                <option value="București">București</option>
+                                <option value="Cluj">Cluj</option>
+                                <option value="Iași">Iași</option>
+                                <option value="Timiș">Timiș</option>
+                                <option value="Constanța">Constanța</option>
+                            </select>
+                            <button onclick="openRegistrationModal()" class="whitespace-nowrap rounded bg-brass text-ink text-xs font-mono font-semibold uppercase tracking-wider px-4 py-2 hover:bg-brass-light">Înregistrare nouă</button>
+                        </div>
+                    </div>
+
+                    <!-- Tabel Tablou -->
+                    <div class="overflow-x-auto bg-chalk rounded-lg border border-ink/5 shadow-sm">
+                        <table class="w-full text-left border-collapse" id="members-table">
+                            <thead>
+                                <tr class="bg-ink text-chalk text-[11px] font-mono uppercase tracking-wider">
+                                    <th class="p-4">ID MEMBRU</th>
+                                    <th class="p-4">NUME COMPLET</th>
+                                    <th class="p-4">FILIALĂ/JUDEȚ</th>
+                                    <th class="p-4">AUTORIZAȚIE ANCPI</th>
+                                    <th class="p-4">STATUS</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-ink/5 text-sm">
+                                <tr class="hover:bg-paper/30 transition-colors member-row" data-judet="București">
+                                    <td class="p-4 font-mono text-xs font-semibold text-brass">UGR-0012</td>
+                                    <td class="p-4 font-semibold text-ink member-name">Andrei Popescu</td>
+                                    <td class="p-4 text-ink/75">București</td>
+                                    <td class="p-4 font-mono text-xs text-ink/60 member-auth">Seria RO-B-F Nr. 0244</td>
+                                    <td class="p-4">
+                                        <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-contour/15 text-contour">● Activ</span>
+                                    </td>
+                                </tr>
+                                <tr class="hover:bg-paper/30 transition-colors member-row" data-judet="Cluj">
+                                    <td class="p-4 font-mono text-xs font-semibold text-brass">UGR-0145</td>
+                                    <td class="p-4 font-semibold text-ink member-name">Elena Munteanu</td>
+                                    <td class="p-4 text-ink/75">Cluj</td>
+                                    <td class="p-4 font-mono text-xs text-ink/60 member-auth">Seria RO-CJ-F Nr. 1102</td>
+                                    <td class="p-4">
+                                        <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-contour/15 text-contour">● Activ</span>
+                                    </td>
+                                </tr>
+                                <tr class="hover:bg-paper/30 transition-colors member-row" data-judet="Iași">
+                                    <td class="p-4 font-mono text-xs font-semibold text-brass">UGR-0312</td>
+                                    <td class="p-4 font-semibold text-ink member-name">Vasile Lupu</td>
+                                    <td class="p-4 text-ink/75">Iași</td>
+                                    <td class="p-4 font-mono text-xs text-ink/60 member-auth">Seria RO-IS-F Nr. 0984</td>
+                                    <td class="p-4">
+                                        <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-contour/15 text-contour">● Activ</span>
+                                    </td>
+                                </tr>
+                                <tr class="hover:bg-paper/30 transition-colors member-row" data-judet="Timiș">
+                                    <td class="p-4 font-mono text-xs font-semibold text-brass">UGR-0402</td>
+                                    <td class="p-4 font-semibold text-ink member-name">Dumitru Crișan</td>
+                                    <td class="p-4 text-ink/75">Timiș</td>
+                                    <td class="p-4 font-mono text-xs text-ink/60 member-auth">Seria RO-TM-F Nr. 1290</td>
+                                    <td class="p-4">
+                                        <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-contour/15 text-contour">● Activ</span>
+                                    </td>
+                                </tr>
+                                <tr class="hover:bg-paper/30 transition-colors member-row" data-judet="Constanța">
+                                    <td class="p-4 font-mono text-xs font-semibold text-brass">UGR-0589</td>
+                                    <td class="p-4 font-semibold text-ink member-name">Mariana Marin</td>
+                                    <td class="p-4 text-ink/75">Constanța</td>
+                                    <td class="p-4 font-mono text-xs text-ink/60 member-auth">Seria RO-CT-F Nr. 0451</td>
+                                    <td class="p-4">
+                                        <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-contour/15 text-contour">● Activ</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div id="no-members-msg" class="p-8 text-center text-xs text-ink/40 font-mono hidden">
+                            Niciun membru găsit conform filtrelor setate.
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+        </div>
+
+        <!-- ================= NOUTĂȚI VIEW ================= -->
+        <div id="view-noutati" class="view-section hidden">
+            <section class="bg-ink py-16 text-chalk">
+                <div class="mx-auto max-w-[1180px] px-6 sm:px-8">
+                    <div class="flex items-center gap-2.5 font-mono text-[11px] uppercase tracking-[0.16em] before:block before:h-px before:w-[24px] text-brass-light before:bg-brass-light">
+                        Comunicare Oficială
+                    </div>
+                    <h1 class="mt-4 font-serif text-[clamp(32px,4vw,50px)] font-bold leading-tight">Articole și Evenimente Tehnice</h1>
+                    <p class="mt-2 text-chalk/70 max-w-xl text-sm">Păstrează legătura cu modificările legislative din geodezie și evenimentele strategice organizate la nivel național.</p>
+                </div>
+            </section>
+
+            <section class="bg-paper py-20">
+                <div class="mx-auto max-w-[1180px] px-6 sm:px-8">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <article class="bg-chalk p-8 rounded-lg border border-ink/5 flex flex-col justify-between shadow-sm space-y-4">
+                            <div class="space-y-2">
+                                <span class="text-[10px] font-mono uppercase tracking-wider text-contour font-bold">Eveniment</span>
+                                <h3 class="font-serif text-lg font-bold text-ink hover:text-brass transition-colors">Săptămâna Geodeziei Românești 2025</h3>
+                                <p class="text-xs text-ink/70 leading-relaxed">Conferința de anvergură reunește elita specialiștilor, universităților tehnice de prestigiu și partenerilor privați pentru a discuta tehnologii LIDAR și sisteme avansate cadastrale în sprijinul localităților din România.</p>
+                            </div>
+                            <div class="pt-4 border-t border-ink/5 flex justify-between items-center text-[10px] font-mono text-ink/40">
+                                <span>TIMIȘOARA, TIMIȘ</span>
+                                <span>IULIE 2025</span>
+                            </div>
+                        </article>
+
+                        <article class="bg-chalk p-8 rounded-lg border border-ink/5 flex flex-col justify-between shadow-sm space-y-4">
+                            <div class="space-y-2">
+                                <span class="text-[10px] font-mono uppercase tracking-wider text-contour font-bold">Legislativ</span>
+                                <h3 class="font-serif text-lg font-bold text-ink hover:text-brass transition-colors">Grupul de Dialog Legislativ: Legea Geodezului</h3>
+                                <p class="text-xs text-ink/70 leading-relaxed">Grupul de lucru parlamentar continuă întâlnirile metodice pentru clarificarea normativelor de exercitare liberă și securizată a drepturilor de semnătură profesională pentru topografi.</p>
+                            </div>
+                            <div class="pt-4 border-t border-ink/5 flex justify-between items-center text-[10px] font-mono text-ink/40">
+                                <span>CAMERA DEPUTAȚILOR</span>
+                                <span>MAI 2025</span>
+                            </div>
+                        </article>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- ================= CONTACT VIEW ================= -->
+        <div id="view-contact" class="view-section hidden">
+            <section class="bg-ink py-16 text-chalk">
+                <div class="mx-auto max-w-[1180px] px-6 sm:px-8">
+                    <div class="flex items-center gap-2.5 font-mono text-[11px] uppercase tracking-[0.16em] before:block before:h-px before:w-[24px] text-brass-light before:bg-brass-light">
+                        Asistență și Secretariat
+                    </div>
+                    <h1 class="mt-4 font-serif text-[clamp(32px,4vw,50px)] font-bold leading-tight">Contactează UGR direct</h1>
+                    <p class="mt-2 text-chalk/70 max-w-xl text-sm">Adresează o întrebare legată de statut, înscriere, depuneri tehnice sau propuneri metodologice.</p>
+                </div>
+            </section>
+
+            <section class="bg-paper py-20">
+                <div class="mx-auto max-w-[1180px] px-6 sm:px-8">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+                        
+                        <div class="space-y-6">
+                            <!-- Convertor Stereo 70 Coordonate -->
+                            <div class="bg-chalk p-6 rounded-lg border border-ink/10 shadow-sm space-y-4">
+                                <h3 class="font-serif text-base font-semibold text-ink">Convertor Coordonate Proiectat (Stereo 70)</h3>
+                                <p class="text-xs text-ink/60">Introduceți coordonatele Stereo 70 aproximative pentru a simula transformarea locală în coordonate geografice WGS84.</p>
+                                <form onsubmit="handleCoordinateConversion(event)" class="grid grid-cols-2 gap-3">
+                                    <div>
+                                        <label class="block text-[10px] font-mono uppercase tracking-wider text-ink/40 mb-1">X (Nord)</label>
+                                        <input type="number" id="coord-x" value="500000" class="w-full px-3 py-1.5 border border-ink/10 rounded bg-paper text-sm" />
+                                    </div>
+                                    <div>
+                                        <label class="block text-[10px] font-mono uppercase tracking-wider text-ink/40 mb-1">Y (Est)</label>
+                                        <input type="number" id="coord-y" value="300000" class="w-full px-3 py-1.5 border border-ink/10 rounded bg-paper text-sm" />
+                                    </div>
+                                    <button type="submit" class="col-span-2 py-2 bg-ink text-chalk text-xs font-mono font-semibold uppercase tracking-wider rounded hover:bg-ink-soft">Calculează Transformarea</button>
+                                </form>
+                                <div id="coord-result-panel" class="p-3 bg-contour/10 rounded border border-contour/20 text-xs font-mono text-ink hidden">
+                                    <b>WGS84 Rezultat aproximat:</b> Latitude: <span id="res-lat">0</span>°N, Longitude: <span id="res-lon">0</span>°E
+                                </div>
+                            </div>
+
+                            <div class="bg-chalk p-6 rounded-lg border border-ink/10 shadow-sm space-y-4">
+                                <h3 class="font-serif text-base font-semibold text-ink">Informații Administrative Sediul Central</h3>
+                                <div class="space-y-2 text-xs font-mono text-ink/85">
+                                    <p><b>ADRESĂ:</b> Bulevardul Lacul Tei nr. 124, Sector 2, București</p>
+                                    <p><b>EMAIL:</b> office@ugr.ro</p>
+                                    <p><b>PREȘEDINTE:</b> Ing. Mircea Afrăsinei — 0744 534 022 — presedinte@ugr.ro</p>
+                                    <p><b>SECRETAR EXECUTIV:</b> Ing. Vlad Păunescu — 0723 587 081 — secretar@ugr.ro</p>
+                                    <p><b>COTIZAȚII / TAXE:</b> Camelia Matei — 0722 684 104</p>
+                                </div>
+                                <iframe class="w-full h-48 rounded border border-ink/10" loading="lazy" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2847.52205748069!2d26.122531815818295!3d44.463470707674745!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x40b1f8958a865b9d%3A0x1bff7cc2b83245c8!2sBulevardul+Lacul+Tei+124%2C+Bucure%C8%99ti!5e0!3m2!1sro!2sro" title="Sediul UGR"></iframe>
+                            </div>
+                        </div>
+
+                        <!-- Formular Contact -->
+                        <div class="bg-chalk p-8 border border-ink/10 rounded-lg shadow-sm space-y-6">
+                            <h3 class="font-serif text-lg font-bold text-ink">Formular de Contact</h3>
+                            <form onsubmit="handleContactSubmission(event)" class="space-y-4">
+                                <div>
+                                    <label class="block text-[10px] font-mono uppercase tracking-wider text-ink/40 mb-1">Nume Complet</label>
+                                    <input required type="text" id="contact-nume" class="w-full px-3.5 py-2.5 border border-ink/10 rounded bg-paper text-sm" placeholder="Ex: Popescu Ioan" />
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-mono uppercase tracking-wider text-ink/40 mb-1">Adresă Email</label>
+                                    <input required type="email" id="contact-email" class="w-full px-3.5 py-2.5 border border-ink/10 rounded bg-paper text-sm" placeholder="email@exemplu.ro" />
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-mono uppercase tracking-wider text-ink/40 mb-1">Mesaj Tehnic / Solicitare</label>
+                                    <textarea required rows="4" id="contact-mesaj" class="w-full px-3.5 py-2.5 border border-ink/10 rounded bg-paper text-sm" placeholder="Scrie mesajul tău aici..."></textarea>
+                                </div>
+                                <button type="submit" class="w-full py-2.5 bg-ink text-chalk text-xs font-mono font-semibold uppercase tracking-wider rounded hover:bg-ink-soft">Trimite către secretariat</button>
+                            </form>
+                            <div id="contact-success-msg" class="p-3 bg-contour/10 rounded text-xs font-mono text-ink text-center hidden">
+                                ✓ Solicitarea dumneavoastră a fost înregistrată!
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- Secțiune CTA constantă pe toate paginile -->
+        <section class="bg-brass py-16 text-ink">
+            <div class="mx-auto flex max-w-[1180px] flex-wrap items-center justify-between gap-10 px-6 sm:px-8">
+                <div class="scroll-reveal reveal-left">
+                    <h2 class="max-w-[500px] font-serif text-2xl sm:text-3xl font-bold leading-tight">Alătură-te breslei profesionale a geodezilor</h2>
+                    <p class="mt-2 max-w-[440px] text-xs">Completează formularul digital în doar 2 minute pentru înregistrare ca membru.</p>
+                </div>
+                <button onclick="openRegistrationModal()" class="scroll-reveal reveal-right rounded border border-ink text-ink hover:bg-ink hover:text-chalk px-6 py-3.5 text-xs font-mono font-semibold uppercase tracking-wider transition-all duration-300" style="animation-delay:240ms">
+                    Formular Aderare UGR →
+                </button>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER INSTITUȚIONAL -->
+    <footer class="bg-ink-soft py-[64px] text-chalk/70 border-t border-white/5">
+        <div class="mx-auto max-w-[1180px] px-6 sm:px-8 space-y-10">
+            <div id="footer-reveal-grid" class="grid grid-cols-1 gap-10 border-b border-chalk/10 pb-10 sm:grid-cols-2 md:grid-cols-4">
+                <div class="footer-block reveal-up">
+                    <span class="font-serif text-xl font-bold text-chalk">Filiala Sector 1 UGR</span>
+                    <p class="mt-3 text-xs leading-relaxed text-chalk/50 max-w-[240px]">Uniunea Geodezilor din România susține constant standardele de precizie și integritatea profesională.</p>
+                </div>
+                <div class="footer-block reveal-up space-y-3">
+                    <h4 class="font-mono text-[10px] uppercase tracking-wider text-brass-light font-bold">Sediul central</h4>
+                    <p class="text-xs text-chalk/50 leading-relaxed">Bd. Lacul Tei nr. 124, Sector 2, București</p>
+                </div>
+                <div class="footer-block reveal-up space-y-2">
+                    <h4 class="font-mono text-[10px] uppercase tracking-wider text-brass-light font-bold">Contact administrativ</h4>
+                    <p class="text-xs font-mono text-chalk/60">office@ugr.ro</p>
+                    <p class="text-xs font-mono text-chalk/60">Facebook: @ugr.ro</p>
+                </div>
+                <div class="footer-block reveal-up space-y-2">
+                    <h4 class="font-mono text-[10px] uppercase tracking-wider text-brass-light font-bold">Afiliere internațională</h4>
+                    <p class="text-xs font-mono text-chalk/50">FIG · CLGE · UPLR</p>
+                </div>
+            </div>
+            <div class="flex flex-wrap justify-between gap-4 font-mono text-[10px] text-chalk/45">
+                <span>© 2026 Uniunea Geodezilor din România (UGR) — Filiala Sector 1</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- MODAL DE ÎNSCRIERE MULTI-STEP -->
+    <div id="registration-modal" class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-ink/80 backdrop-blur-sm hidden" role="dialog" aria-modal="true">
+        <div class="bg-chalk w-full max-w-lg rounded-xl shadow-2xl border border-ink/10 overflow-hidden text-ink flex flex-col transform scale-100 transition-all">
+            
+            <!-- Antet Modal -->
+            <div class="bg-ink p-6 text-chalk flex justify-between items-center border-b border-brass/20">
+                <div>
+                    <h3 class="font-serif text-lg font-semibold">Alătură-te Comunității UGR</h3>
+                    <p id="modal-step-indicator" class="text-[10px] text-brass-light font-mono mt-1 uppercase">Pasul 1 din 3</p>
+                </div>
+                <button onclick="closeRegistrationModal()" class="text-chalk/60 hover:text-chalk text-2xl font-mono focus:outline-none">&times;</button>
+            </div>
+
+            <!-- Corp Pași Modal -->
+            <div class="p-6 flex-grow space-y-4">
+                <div id="modal-success-screen" class="hidden text-center py-8 space-y-3">
+                    <div class="inline-flex items-center justify-center h-12 w-12 rounded-full bg-contour/20 text-contour text-xl">✓</div>
+                    <h4 class="font-serif text-lg font-semibold text-contour">Cerere expediată cu succes!</h4>
+                    <p class="text-xs text-ink/70 max-w-sm mx-auto leading-relaxed">Vă mulțumim! Cererea dumneavoastră a fost trimisă către secretariatul UGR. Veți primi detalii de confirmare în cel mai scurt timp pe email.</p>
+                </div>
+
+                <div id="modal-fields-container" class="space-y-4">
+                    <div id="modal-error-banner" class="p-3 bg-red-100 border border-red-200 text-red-800 rounded text-xs font-mono hidden"></div>
+
+                    <!-- Pasul 1 -->
+                    <div id="modal-step-1-panel" class="space-y-4">
+                        <label class="block text-xs font-mono uppercase tracking-wider text-ink/50">Selectează Tipul de Aderare:</label>
+                        <div class="grid grid-cols-1 gap-3">
+                            <div id="opt-profesionist" onclick="selectMemberType('profesionist')" class="p-4 rounded-lg border-2 border-brass bg-brass/5 cursor-pointer transition-all">
+                                <b class="block font-serif text-sm">Persoană fizică / juridică</b>
+                                <span class="text-xs text-ink/60 mt-1 block">Taxă înscriere 50 lei + cotizație anuală 100 lei. Necesită copii ale actelor de studii.</span>
+                            </div>
+                            <div id="opt-student" onclick="selectMemberType('student')" class="p-4 rounded-lg border-2 border-ink/10 hover:border-brass/35 cursor-pointer transition-all">
+                                <b class="block font-serif text-sm">Membru Student</b>
+                                <span class="text-xs text-ink/60 mt-1 block">Taxă înscriere 10 lei + cotizație anuală 10 lei. Necesită adeverință de student.</span>
+                            </div>
+                        </div>
+                        <p class="text-[11px] text-ink/50 leading-relaxed">Conform art. 6 din statut, înscrierea se procesează prin asociația locală UGR din județul/sectorul de domiciliu.</p>
+                    </div>
+
+                    <!-- Pasul 2 -->
+                    <div id="modal-step-2-panel" class="space-y-3 hidden">
+                        <label class="block text-xs font-mono uppercase tracking-wider text-ink/50 mb-1">Date de Identificare și Contact:</label>
+                        <div>
+                            <input type="text" id="reg-nume" class="w-full px-3.5 py-2.5 border border-ink/10 rounded-md focus:outline-none focus:border-brass bg-paper text-sm" placeholder="Nume Complet" />
+                        </div>
+                        <div>
+                            <input type="email" id="reg-email" class="w-full px-3.5 py-2.5 border border-ink/10 rounded-md focus:outline-none focus:border-brass bg-paper text-sm" placeholder="Adresă Email" />
+                        </div>
+                        <div>
+                            <input type="tel" id="reg-tel" class="w-full px-3.5 py-2.5 border border-ink/10 rounded-md focus:outline-none focus:border-brass bg-paper text-sm" placeholder="Număr Telefon" />
+                        </div>
+                    </div>
+
+                    <!-- Pasul 3 -->
+                    <div id="modal-step-3-panel" class="text-center py-4 space-y-3 hidden">
+                        <h4 class="font-serif text-lg font-semibold">Plata taxei și a cotizației</h4>
+                        <div class="text-left bg-paper border border-ink/10 rounded-lg p-4 text-xs text-ink/75 leading-relaxed space-y-2 font-mono">
+                            <p>Cont UGR (BRD, ag. Tei, sector 2):</p>
+                            <p class="text-sm font-bold text-ink tracking-wide">RO57 BRDE 426S V810 0757 4450</p>
+                            <p class="pt-1">Pe ordinul de plată menționați obligatoriu: <b>nume, CNP și domiciliu/sector</b>.</p>
+                        </div>
+                        <p class="text-xs text-ink/70 max-w-sm mx-auto leading-relaxed">
+                            După plată, documentele (cerere de adeziune, copii acte de studii) se depun la asociația locală. Cererile: <a class="underline" href="https://www.ugr.ro/assets/upload/cerere_inscriere_UGR_persoane_fizice.docx" target="_blank" rel="noopener">persoane fizice</a> · <a class="underline" href="https://www.ugr.ro/assets/upload/cerere_inscriere_UGR_persoane_juridice.docx" target="_blank" rel="noopener">persoane juridice</a>.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer Modal -->
+            <div id="modal-footer" class="p-6 bg-paper border-t border-ink/5 flex justify-between">
+                <button id="btn-modal-prev" onclick="prevModalStep()" class="px-4 py-2 border border-ink/15 rounded-md text-xs font-mono font-semibold uppercase hover:bg-ink/5 disabled:opacity-30 disabled:pointer-events-none" disabled>Înapoi</button>
+                <button id="btn-modal-next" onclick="nextModalStep()" class="px-5 py-2.5 bg-ink text-chalk rounded-md text-xs font-mono font-semibold uppercase hover:bg-ink-soft">Înainte</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- LOGICĂ INTERACTIVĂ PURE VANILLA JAVASCRIPT -->
+    
+
+    <script src="https://cdn.jsdelivr.net/npm/proj4@2.9.0/dist/proj4.js"></script>
+    <script src="borders.js" charset="UTF-8"></script>
+    <script src="script.js" charset="UTF-8"></script>
+</body>
+</html>
