@@ -369,7 +369,6 @@
             }, 3000);
         }
 
-
         // Modal înscriere multi-step
         function openRegistrationModal() {
             document.getElementById('registration-modal').classList.remove('hidden');
