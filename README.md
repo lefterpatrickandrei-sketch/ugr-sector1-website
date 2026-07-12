@@ -24,20 +24,32 @@ Pentru a vizualiza propunerile de design și a le compara cu versiunea inițial�
 
 ---
 
-## 💡 Casetă de Sugestii și Idei (Website orientat spre Clienți)
+## 🗳️ Sondaj de Vot & Casetă de Sugestii (Live Poll & Customer Feedback)
 
-Pentru a transforma website-ul dintr-o pagină instituțională rigidă într-un **portal prietenos, orientat către clienții** serviciilor geodezice și topografice, poți analiza următoarele propuneri tehnice și de structură. Alege ideile care se potrivesc cel mai bine obiectivelor filialei:
+> [!TIP]
+> **Votare unică securizată:** Pentru a strânge feedback-ul tuturor vizitatorilor într-un mod centralizat, am creat un sondaj nativ pe GitHub.
+> 
+> * **Pasul 1:** Accesează link-ul de mai jos.
+> * **Pasul 2:** Votează varianta de design preferată în widget-ul din partea de sus a discuției.
+> * **Pasul 3:** Scrie direct în comentarii sugestiile tale pentru a adăuga idei noi pentru clienți.
+> 
+> 👉 **[APASĂ AICI PENTRU A VOTA ȘI A SCRIE SUGESTII](https://github.com/lefterpatrickandrei-sketch/ugr-sector1-website/discussions/1)** 👈
+
+---
+
+## 💡 Idei de Îmbunătățiri pentru Clienți (De discutat în comentarii)
+Pentru a transforma website-ul într-un **portal prietenos pentru clienți**, poți analiza aceste propuneri și scrie în comentariile sondajului care ți se par potrivite:
 
 1. **Convertor Coordonate (Stereo 70 -> WGS84) integrat:**
-   * *Utilitate:* Clienții tehnici (proiectanți, arhitecți, constructori) folosesc des Stereo 70. Permiterea unei transformări rapide direct pe site le oferă o unealtă practică și îi aduce pe site în mod repetat.
+   * *Utilitate:* Clienții tehnici (proiectanți, arhitecți) fac transformări des. O unealtă utilă îi va aduce pe site repetat.
 2. **Calculator de Deviz / Estimator de Costuri Online:**
-   * *Utilitate:* Clienții persoane fizice vor să afle rapid "cât costă o intabulare/cadastru". Un formular interactiv unde selectează tipul terenului (intravilan/extravilan), suprafața și tipul lucrării le poate returna o cotație estimativă instant.
+   * *Utilitate:* Un formular interactiv unde clienții introduc datele terenului și obțin instant un preț estimativ pentru cadastru/intabulare.
 3. **Sistem de Programări Online pentru Măsurători (Scheduler):**
-   * *Utilitate:* Integrarea unui calendar online (tip Calendly sau similar) unde clienții își pot alege o zi și o oră liberă pentru vizita geodezului pe teren, reducând timpul pierdut cu telefoanele.
+   * *Utilitate:* Un calendar online (tip Calendly) unde clienții își rezervă ziua și ora pentru măsurătorile de teren ale geodezului.
 4. **Ghid de Informare Cadastru & Legislație (FAQ):**
-   * *Utilitate:* Documentarea pe înțelesul tuturor a pașilor pentru obținerea cărții funciare sau intabularea unei case (cu termene, acte necesare și avize), sporind încrederea clienților în expertiza filialei.
+   * *Utilitate:* Explicații simple cu pașii obținerii actelor, sporind încrederea și oferind ajutor direct.
 5. **Widget de Contact Rapid WhatsApp:**
-   * *Utilitate:* Un buton plutitor de WhatsApp care permite clienților să trimită o poză cu un act sau un plan de amplasament direct de pe telefon pentru a primi o ofertă personalizată în câteva minute.
+   * *Utilitate:* Buton plutitor de WhatsApp pentru comunicare rapidă și oferte trimise pe loc.
 
 ---
 
