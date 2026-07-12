@@ -24,21 +24,20 @@ Pentru a vizualiza propunerile de design și a le compara cu versiunea inițial�
 
 ---
 
-## 💡 Idei și Sugestii pentru un Website orientat către Clienți
+## 💡 Casetă de Sugestii și Idei (Website orientat spre Clienți)
 
-Pentru a transforma acest website dintr-o pagină instituțională de prezentare într-un **portal valoros și atractiv pentru clienții** serviciilor topografice/geodezice, iată câteva idei de funcționalități propuse (unele dintre acestea sunt simulate în noile variante):
+Pentru a transforma website-ul dintr-o pagină instituțională rigidă într-un **portal prietenos, orientat către clienții** serviciilor geodezice și topografice, poți analiza următoarele propuneri tehnice și de structură. Alege ideile care se potrivesc cel mai bine obiectivelor filialei:
 
-1. **Caseta Interactivă de Sugestii Client (Implementată local pe variante):**
-   * Am adăugat pe pagină o secțiune de feedback în timp real. Clienții pot trimite sugestii legate de site sau servicii, care sunt stocate securizat în `localStorage`-ul browserului.
-   * **Cum o citești:** Administratorul site-ului (tu) poate vedea o listă cu toate feedback-urile trimise apăsând pe butonul "Afișează" din panoul de administrare local aflat sub formular.
-2. **Calculator Automat de Prețuri / Estimator de Deviz:**
-   * Un widget interactiv unde clienții introduc detaliile terenului lor (suprafață în mp, tipul lucrării: cadastru, intabulare, trasare limite, ridicare topo) și primesc o estimare de cost și durată instant.
-3. **Sistem de Programări Online (Appointment Scheduler):**
-   * Integrare cu Calendly sau un formular de programare directă pentru consultanță gratuită la sediu sau pe teren.
-4. **Secțiune de Întrebări Frecvente (FAQ) pentru Clienți:**
-   * Explicații pe înțelesul tuturor despre diferențele dintre intabulare, cadastru și carte funciară, ghidând clienții pas cu pas în procesele lor administrative.
-5. **Widget de Chat Rapid (WhatsApp Integration):**
-   * Un buton plutitor de WhatsApp care permite clienților să inițieze o conversație directă cu un inginer geodez autorizat de gardă pentru oferte rapide.
+1. **Convertor Coordonate (Stereo 70 -> WGS84) integrat:**
+   * *Utilitate:* Clienții tehnici (proiectanți, arhitecți, constructori) folosesc des Stereo 70. Permiterea unei transformări rapide direct pe site le oferă o unealtă practică și îi aduce pe site în mod repetat.
+2. **Calculator de Deviz / Estimator de Costuri Online:**
+   * *Utilitate:* Clienții persoane fizice vor să afle rapid "cât costă o intabulare/cadastru". Un formular interactiv unde selectează tipul terenului (intravilan/extravilan), suprafața și tipul lucrării le poate returna o cotație estimativă instant.
+3. **Sistem de Programări Online pentru Măsurători (Scheduler):**
+   * *Utilitate:* Integrarea unui calendar online (tip Calendly sau similar) unde clienții își pot alege o zi și o oră liberă pentru vizita geodezului pe teren, reducând timpul pierdut cu telefoanele.
+4. **Ghid de Informare Cadastru & Legislație (FAQ):**
+   * *Utilitate:* Documentarea pe înțelesul tuturor a pașilor pentru obținerea cărții funciare sau intabularea unei case (cu termene, acte necesare și avize), sporind încrederea clienților în expertiza filialei.
+5. **Widget de Contact Rapid WhatsApp:**
+   * *Utilitate:* Un buton plutitor de WhatsApp care permite clienților să trimită o poză cu un act sau un plan de amplasament direct de pe telefon pentru a primi o ofertă personalizată în câteva minute.
 
 ---
 
