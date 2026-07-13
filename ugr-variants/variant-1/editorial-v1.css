@@ -1,21 +1,21 @@
 /* 
    VARIANT 1: SATELIT & TOPOGRAFIE MODERNĂ (TECH-PRECISION GRID)
-   Modern Dark Geodetic & Space-Tech Style
+   Modern Dark Geodetic & Space-Tech Style — Emerald Edition
 */
 
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
 
 :root {
-    --bg-paper: #0A0F1D;      /* Deep Midnight Blue */
-    --bg-card: #131A30;       /* Tech Card Dark Blue */
-    --text-ink: #F3F4F6;      /* Off-White / Light Gray */
-    --text-muted: #9CA3AF;    /* Muted Slate Gray */
-    --accent: #00F5D4;        /* Electric Neon Cyan */
-    --accent-blue: #00B4D8;   /* Sat-Blue */
-    --border-color: rgba(0, 245, 212, 0.15); /* Translucent Cyan Border */
+    --bg-paper: #070B12;      /* Deep Space Obsidian */
+    --bg-card: #0E1624;       /* Gunmetal Card Dark Blue */
+    --text-ink: #F1F5F9;      /* Off-White / Light Slate */
+    --text-muted: #94A3B8;    /* Muted Slate Gray */
+    --accent: #10B981;        /* Vibrant Laser Emerald Green */
+    --accent-blue: #34D399;   /* Mint Secondary */
+    --border-color: rgba(16, 185, 129, 0.18); /* Translucent Emerald Border */
     
     --font-display: 'Space Grotesk', sans-serif;
-    --font-body: 'Inter', sans-serif;
+    --font-body: 'Plus Jakarta Sans', sans-serif;
     --font-mono: 'IBM Plex Mono', monospace;
 }
 
@@ -49,8 +49,8 @@ p {
 
 /* Grid overlay background */
 .grid-fade {
-    background-image: linear-gradient(rgba(0, 245, 212, 0.04) 1px, transparent 1px), 
-                      linear-gradient(90deg, rgba(0, 245, 212, 0.04) 1px, transparent 1px) !important;
+    background-image: linear-gradient(rgba(16, 185, 129, 0.04) 1px, transparent 1px), 
+                      linear-gradient(90deg, rgba(16, 185, 129, 0.04) 1px, transparent 1px) !important;
     background-size: 40px 40px !important;
     mask-image: radial-gradient(80% 80% at 50% 50%, #000 40%, transparent 100%) !important;
     opacity: 0.9 !important;
@@ -58,7 +58,7 @@ p {
 
 /* Institutional Header */
 header {
-    background-color: rgba(10, 15, 29, 0.9) !important;
+    background-color: rgba(7, 11, 18, 0.9) !important;
     border-bottom: 1px solid var(--border-color) !important;
     backdrop-filter: blur(12px) !important;
 }
@@ -81,17 +81,17 @@ header {
 /* Buttons and Interactions */
 button.bg-brass {
     background-color: var(--accent) !important;
-    color: #0A0F1D !important;
+    color: #070B12 !important;
     border-radius: 6px !important;
     font-family: var(--font-mono) !important;
     font-weight: 600 !important;
-    box-shadow: 0 0 15px rgba(0, 245, 212, 0.3) !important;
+    box-shadow: 0 0 15px rgba(16, 185, 129, 0.3) !important;
     transition: all 0.3s ease !important;
 }
 
 button.bg-brass:hover {
     background-color: #ffffff !important;
-    box-shadow: 0 0 25px rgba(0, 245, 212, 0.6) !important;
+    box-shadow: 0 0 25px rgba(16, 185, 129, 0.6) !important;
     transform: translateY(-1px);
 }
 
@@ -106,7 +106,7 @@ button.bg-brass:hover {
 }
 
 .bg-ink-soft {
-    background-color: #0E1424 !important; /* Slightly lighter midnight blue */
+    background-color: #0E1624 !important; /* Gunmetal Slate Card Background */
 }
 
 .bg-chalk {
@@ -115,24 +115,43 @@ button.bg-brass:hover {
 }
 
 .bg-white\/\[0\.02\] {
-    background-color: rgba(0, 245, 212, 0.02) !important;
-    border: 1px solid rgba(0, 245, 212, 0.08) !important;
+    background-color: rgba(16, 185, 129, 0.02) !important;
+    border: 1px solid rgba(16, 185, 129, 0.08) !important;
 }
 
 .bg-brass {
     background-color: var(--accent) !important;
-    color: #0A0F1D !important;
+    color: #070B12 !important;
 }
 
 .bg-brass\/5 {
-    background-color: rgba(0, 245, 212, 0.05) !important;
+    background-color: rgba(16, 185, 129, 0.05) !important;
 }
 
-/* Text Overrides */
+/* 
+   CRITICAL TEXT CONTRAST OVERRIDES
+   Standard tailwind color mappings (.text-ink/50, etc.) originally point to a navy blue color in style.css.
+   In this dark theme, we force them to white/slate variants with high contrast.
+*/
 .text-ink { color: var(--text-ink) !important; }
+.text-ink\/40 { color: rgba(255, 255, 255, 0.45) !important; }
+.text-ink\/50 { color: rgba(255, 255, 255, 0.55) !important; }
+.text-ink\/60 { color: rgba(255, 255, 255, 0.65) !important; }
+.text-ink\/65 { color: rgba(255, 255, 255, 0.70) !important; }
+.text-ink\/70 { color: rgba(255, 255, 255, 0.75) !important; }
 .text-ink\/75 { color: var(--text-muted) !important; }
-.text-ink\/85 { color: rgba(255, 255, 255, 0.9) !important; }
+.text-ink\/85 { color: rgba(255, 255, 255, 0.90) !important; }
+
 .text-chalk { color: #ffffff !important; }
+.text-chalk\/40 { color: rgba(255, 255, 255, 0.40) !important; }
+.text-chalk\/45 { color: rgba(255, 255, 255, 0.45) !important; }
+.text-chalk\/50 { color: rgba(255, 255, 255, 0.50) !important; }
+.text-chalk\/55 { color: rgba(255, 255, 255, 0.55) !important; }
+.text-chalk\/60 { color: rgba(255, 255, 255, 0.60) !important; }
+.text-chalk\/70 { color: rgba(255, 255, 255, 0.70) !important; }
+.text-chalk\/75 { color: rgba(255, 255, 255, 0.75) !important; }
+.text-chalk\/80 { color: rgba(255, 255, 255, 0.80) !important; }
+
 .text-brass-light { color: var(--accent) !important; }
 .text-brass { color: var(--accent-blue) !important; }
 
@@ -146,11 +165,11 @@ button.bg-brass:hover {
 }
 
 .border-brass\/20 {
-    border-color: rgba(0, 245, 212, 0.2) !important;
+    border-color: rgba(16, 185, 129, 0.2) !important;
 }
 
 .border-brass\/30 {
-    border-color: rgba(0, 245, 212, 0.3) !important;
+    border-color: rgba(16, 185, 129, 0.3) !important;
 }
 
 /* Interactive Map Overrides */
@@ -169,9 +188,9 @@ button.bg-brass:hover {
 }
 
 #node-details-panel {
-    background-color: #0E1424 !important;
+    background-color: #0E1624 !important;
     border: 1px solid var(--accent) !important;
-    box-shadow: 0 0 10px rgba(0, 245, 212, 0.2) !important;
+    box-shadow: 0 0 10px rgba(16, 185, 129, 0.2) !important;
 }
 
 #node-details-panel span {
@@ -180,7 +199,7 @@ button.bg-brass:hover {
 
 /* Technical Ticker */
 .ticker-container {
-    background-color: #0E1424 !important;
+    background-color: #0E1624 !important;
     border-top: 1px solid var(--border-color) !important;
     border-bottom: 1px solid var(--border-color) !important;
 }
@@ -195,7 +214,7 @@ button.bg-brass:hover {
 
 /* Timeline of UGR */
 .border-l.border-ink\/15 {
-    border-left: 1px solid rgba(0, 245, 212, 0.2) !important;
+    border-left: 1px solid rgba(16, 185, 129, 0.2) !important;
 }
 
 .absolute.-left-\[31px\].sm\:-left-\[47px\] {
@@ -210,7 +229,7 @@ table {
 }
 
 table thead tr {
-    background-color: #0E1424 !important;
+    background-color: #0E1624 !important;
     border-bottom: 1px solid var(--border-color) !important;
 }
 
@@ -224,31 +243,31 @@ table thead th {
 }
 
 .member-row:hover {
-    background-color: rgba(0, 245, 212, 0.03) !important;
+    background-color: rgba(16, 185, 129, 0.03) !important;
 }
 
 /* Form Inputs and Modals */
 input, select, textarea {
-    background-color: #0A0F1D !important;
+    background-color: #070B12 !important;
     color: #ffffff !important;
-    border: 1px solid rgba(0, 245, 212, 0.2) !important;
+    border: 1px solid rgba(16, 185, 129, 0.2) !important;
     border-radius: 6px !important;
 }
 
 input:focus, select:focus, textarea:focus {
     border-color: var(--accent) !important;
-    box-shadow: 0 0 8px rgba(0, 245, 212, 0.2) !important;
+    box-shadow: 0 0 8px rgba(16, 185, 129, 0.2) !important;
     outline: none !important;
 }
 
 #registration-modal {
-    background-color: rgba(10, 15, 29, 0.85) !important;
+    background-color: rgba(7, 11, 18, 0.85) !important;
 }
 
 #registration-modal .bg-chalk {
     background-color: var(--bg-card) !important;
     border: 1px solid var(--border-color) !important;
-    box-shadow: 0 0 30px rgba(0, 245, 212, 0.15) !important;
+    box-shadow: 0 0 30px rgba(16, 185, 129, 0.15) !important;
 }
 
 #opt-profesionist, #opt-student {
@@ -258,12 +277,12 @@ input:focus, select:focus, textarea:focus {
 
 #opt-profesionist.border-brass, #opt-student.border-brass {
     border-color: var(--accent) !important;
-    background-color: rgba(0, 245, 212, 0.04) !important;
+    background-color: rgba(16, 185, 129, 0.04) !important;
 }
 
 /* Bottom CTA section */
 main > section.bg-brass {
-    background-color: #0E1424 !important;
+    background-color: #0E1624 !important;
     border-top: 1px solid var(--border-color) !important;
     border-bottom: 1px solid var(--border-color) !important;
     color: #ffffff !important;
@@ -276,7 +295,7 @@ main > section.bg-brass button {
 
 main > section.bg-brass button:hover {
     background-color: var(--accent) !important;
-    color: #0A0F1D !important;
+    color: #070B12 !important;
 }
 
 /* Scroll reveal overrides to ensure clear text presentation */

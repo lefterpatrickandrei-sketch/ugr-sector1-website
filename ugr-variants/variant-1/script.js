@@ -7,7 +7,7 @@
 
         // ══════════════════════════════════════════════════════════════════
         // Map nodes — Real geographical lat/lon coordinates
-        // Colors: cyan/blue (#00f5d4 / #40b0f0) for branches, orange (#ff9f1c) for active HQ
+        // Colors: cyan/blue (#10b981 / #40b0f0) for branches, orange (#ff9f1c) for active HQ
         // ══════════════════════════════════════════════════════════════════
         const mapNodes = {
             bucuresti:  { name: "București",      lat: 44.4323, lon: 26.1063, latStr: "44°26'08\"", lonStr: "26°06'12\"", desc: "Sediul Central administrativ și principalul nod legislativ în parteneriat cu ANCPI." },
@@ -89,7 +89,7 @@
                 .bumpImageUrl('https://unpkg.com/three-globe/example/img/earth-topology.png')
                 .backgroundColor('rgba(0,0,0,0)')
                 .showAtmosphere(true)
-                .atmosphereColor('#00f5d4')
+                .atmosphereColor('#10b981')
                 .atmosphereAltitude(0.15)
                 .showGraticules(true)
                 .width(w)
@@ -102,7 +102,7 @@
                 lat: mapNodes[key].lat,
                 lng: mapNodes[key].lon,
                 size: key === 'bucuresti' ? 0.25 : 0.12,
-                color: key === 'bucuresti' ? '#ff9f1c' : '#00f5d4'
+                color: key === 'bucuresti' ? '#ff9f1c' : '#10b981'
             }));
 
             myGlobe
@@ -126,7 +126,7 @@
                     startLng: mapNodes.bucuresti.lon,
                     endLat: mapNodes[key].lat,
                     endLng: mapNodes[key].lon,
-                    color: '#00f5d4'
+                    color: '#10b981'
                 }));
             myGlobe
                 .arcsData(initialArcs)
@@ -142,21 +142,21 @@
                 .polygonCapColor(d => {
                     const admin = d.properties.ADMIN;
                     if (admin === 'Romania' || admin === 'Moldova') {
-                        return 'rgba(0, 245, 212, 0.20)';
+                        return 'rgba(16, 185, 129, 0.20)';
                     }
                     return 'rgba(255, 255, 255, 0.015)';
                 })
                 .polygonSideColor(d => {
                     const admin = d.properties.ADMIN;
                     if (admin === 'Romania' || admin === 'Moldova') {
-                        return 'rgba(0, 245, 212, 0.35)';
+                        return 'rgba(16, 185, 129, 0.35)';
                     }
                     return 'rgba(255, 255, 255, 0.02)';
                 })
                 .polygonStrokeColor(d => {
                     const admin = d.properties.ADMIN;
                     if (admin === 'Romania' || admin === 'Moldova') {
-                        return 'rgba(0, 245, 212, 0.85)';
+                        return 'rgba(16, 185, 129, 0.85)';
                     }
                     return 'rgba(255, 255, 255, 0.08)';
                 })
@@ -191,6 +191,151 @@
             controls.minDistance = 115;
             controls.maxDistance = 500;
 
+            // Access underlying Three.js scene of Globe.gl
+            const scene = myGlobe.scene();
+            const satellites = [];
+            const orbitRadius = 142; // Earth radius on globe is approx 100
+
+            // Custom Three.js satellite model geometry builder
+            function createSatelliteMesh() {
+                const group = new THREE.Group();
+                
+                // Body
+                const bodyGeom = new THREE.CylinderGeometry(1.2, 1.2, 3.5, 8);
+                const bodyMat = new THREE.MeshStandardMaterial({
+                    color: 0x94A3B8,
+                    metalness: 0.9,
+                    roughness: 0.1
+                });
+                const bodyMesh = new THREE.Mesh(bodyGeom, bodyMat);
+                bodyMesh.rotation.x = Math.PI / 2;
+                group.add(bodyMesh);
+                
+                // Solar panels
+                const panelGeom = new THREE.BoxGeometry(0.2, 1.5, 4.5);
+                const panelMat = new THREE.MeshBasicMaterial({ color: 0x10B981 });
+                const leftPanel = new THREE.Mesh(panelGeom, panelMat);
+                leftPanel.position.x = -2.2;
+                const rightPanel = new THREE.Mesh(panelGeom, panelMat);
+                rightPanel.position.x = 2.2;
+                
+                group.add(leftPanel);
+                group.add(rightPanel);
+                
+                return group;
+            }
+
+            // Define 3 satellites with individual parameters (inclination, speed, orbit height)
+            const orbits = [
+                { inclination: 0.25, speed: 0.003, height: 8, startAngle: 0 },
+                { inclination: -0.15, speed: 0.002, height: -12, startAngle: 2.2 },
+                { inclination: 0.45, speed: 0.0025, height: 20, startAngle: 4.4 }
+            ];
+
+            orbits.forEach((orb) => {
+                const satMesh = createSatelliteMesh();
+                scene.add(satMesh);
+                
+                // Fine, low-opacity orbit line
+                const orbitPoints = [];
+                for (let a = 0; a <= 2 * Math.PI + 0.1; a += 0.1) {
+                    const x = orbitRadius * Math.cos(a);
+                    const z = orbitRadius * Math.sin(a);
+                    const y = orb.height * Math.sin(a) + Math.cos(a) * orb.inclination * 10;
+                    orbitPoints.push(new THREE.Vector3(x, y, z));
+                }
+                const orbitGeom = new THREE.BufferGeometry().setFromPoints(orbitPoints);
+                const orbitMat = new THREE.LineBasicMaterial({
+                    color: 0x10B981,
+                    transparent: true,
+                    opacity: 0.05
+                });
+                const orbitLine = new THREE.Line(orbitGeom, orbitMat);
+                scene.add(orbitLine);
+                
+                satellites.push({
+                    mesh: satMesh,
+                    angle: orb.startAngle,
+                    speed: orb.speed,
+                    height: orb.height,
+                    inclination: orb.inclination
+                });
+            });
+
+            // Single active laser beam definition
+            let laserBeam;
+            const laserMat = new THREE.LineBasicMaterial({
+                color: 0x10B981,
+                transparent: true,
+                opacity: 0.7
+            });
+
+            function updateLaserBeam() {
+                const selectedSkill = document.getElementById('skill-selector').value;
+                const activeNodes = skillMapping[selectedSkill] || [];
+                
+                if (activeNodes.length > 0 && satellites.length > 0) {
+                    let targetNodeId = activeNodes[0];
+                    
+                    const panel = document.getElementById('node-details-panel');
+                    if (panel && !panel.classList.contains('hidden')) {
+                        const nodeName = document.getElementById('node-name').innerText;
+                        const matchedId = Object.keys(mapNodes).find(k => mapNodes[k].name === nodeName);
+                        if (matchedId) targetNodeId = matchedId;
+                    }
+                    
+                    const node = mapNodes[targetNodeId];
+                    if (node) {
+                        const targetCoords = myGlobe.getCoords(node.lat, node.lon, 0.06);
+                        
+                        let nearestSat = satellites[0];
+                        let minDist = Infinity;
+                        satellites.forEach(sat => {
+                            const dist = sat.mesh.position.distanceTo(new THREE.Vector3(targetCoords.x, targetCoords.y, targetCoords.z));
+                            if (dist < minDist) {
+                                minDist = dist;
+                                nearestSat = sat;
+                            }
+                        });
+                        
+                        const points = [
+                            nearestSat.mesh.position,
+                            new THREE.Vector3(targetCoords.x, targetCoords.y, targetCoords.z)
+                        ];
+                        
+                        if (!laserBeam) {
+                            const geom = new THREE.BufferGeometry().setFromPoints(points);
+                            laserBeam = new THREE.Line(geom, laserMat);
+                            scene.add(laserBeam);
+                        } else {
+                            laserBeam.geometry.setFromPoints(points);
+                            laserBeam.geometry.attributes.position.needsUpdate = true;
+                            laserBeam.visible = true;
+                        }
+                        return;
+                    }
+                }
+                
+                if (laserBeam) {
+                    laserBeam.visible = false;
+                }
+            }
+
+            // Satellites animation loop
+            function animateSatellites() {
+                requestAnimationFrame(animateSatellites);
+                satellites.forEach(sat => {
+                    sat.angle += sat.speed;
+                    const x = orbitRadius * Math.cos(sat.angle);
+                    const z = orbitRadius * Math.sin(sat.angle);
+                    const y = sat.height * Math.sin(sat.angle) + Math.cos(sat.angle) * sat.inclination * 10;
+                    sat.mesh.position.set(x, y, z);
+                    sat.mesh.rotation.y += 0.01;
+                });
+                updateLaserBeam();
+            }
+            animateSatellites();
+
             // Responsive resize
             window.addEventListener('resize', () => {
                 myGlobe.width(container.clientWidth || 380);
@@ -217,7 +362,7 @@
                     size: isHQ ? (isActive ? 0.25 : 0.15) : (isActive ? 0.15 : 0.05),
                     color: isHQ 
                         ? (isActive ? '#ff9f1c' : 'rgba(255, 159, 28, 0.4)') 
-                        : (isActive ? '#00f5d4' : 'rgba(0, 245, 212, 0.25)')
+                        : (isActive ? '#10b981' : 'rgba(16, 185, 129, 0.25)')
                 };
             });
             myGlobe.pointsData(updatedPoints);
@@ -231,7 +376,7 @@
                         startLng: mapNodes.bucuresti.lon,
                         endLat: mapNodes[nodeId].lat,
                         endLng: mapNodes[nodeId].lon,
-                        color: '#00f5d4'
+                        color: '#10b981'
                     });
                 }
             });
@@ -277,7 +422,7 @@
                         startLng: mapNodes.bucuresti.lon,
                         endLat: node.lat,
                         endLng: node.lon,
-                        color: '#00f5d4'
+                        color: '#10b981'
                     }])
                     .arcColor('color')
                     .arcDashLength(0.4)
