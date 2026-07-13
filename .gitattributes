@@ -1,0 +1,9 @@
+# Normalizare encoding UTF-8 fără BOM
+*.html text eol=lf charset=UTF-8
+*.css text eol=lf charset=UTF-8
+*.js text eol=lf charset=UTF-8
+*.json text eol=lf charset=UTF-8
+*.md text eol=lf charset=UTF-8
+
+# Prevenire BOM
+* text=auto
