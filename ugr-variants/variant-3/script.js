@@ -30,7 +30,7 @@
         };
 
         // ==================================================================
-        // GLOBE.GL â€” Swiss Corporate Theme (Blue/Crimson Theme)
+        // GLOBE.GL — Swiss Corporate Theme (Blue/Crimson Theme)
         // ==================================================================
         let myGlobe;
 
