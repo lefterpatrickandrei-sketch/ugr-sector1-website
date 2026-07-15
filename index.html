@@ -77,11 +77,21 @@
         <!-- ================= ACASĂ VIEW ================= -->
         <div id="view-home" class="view-section">
             <section class="relative overflow-hidden bg-ink pt-[70px] pb-[70px] text-chalk">
-                <div class="grid-fade pointer-events-none absolute inset-0"></div>
-                <div class="relative z-[2] mx-auto grid max-w-[1180px] grid-cols-1 items-center gap-12 px-6 sm:px-8 md:grid-cols-[1.1fr_0.9fr]">
+                <!-- Collage Background din poze ugr.ro -->
+                <div class="absolute inset-0 grid grid-cols-2 md:grid-cols-4 gap-1.5 opacity-25 pointer-events-none select-none overflow-hidden z-[1]">
+                    <img src="ugr-images/united_1384.png" class="w-full h-full object-cover" alt="" />
+                    <img src="ugr-images/ISP7469.png" class="w-full h-full object-cover" alt="" />
+                    <img src="ugr-images/_ISP7765.png" class="w-full h-full object-cover" alt="" />
+                    <img src="ugr-images/sgr-3.png" class="w-full h-full object-cover" alt="" />
+                </div>
+                <!-- Dark Gradient Overlay for optimal text readability -->
+                <div class="absolute inset-0 bg-gradient-to-r from-ink/95 via-ink/80 to-ink/95 pointer-events-none z-[2]"></div>
+                <div class="grid-fade pointer-events-none absolute inset-0 z-[3]"></div>
+                
+                <div class="relative z-[4] mx-auto grid max-w-[1180px] grid-cols-1 items-center gap-12 px-6 sm:px-8 md:grid-cols-[1.1fr_0.9fr]">
                     
-                    <!-- Text Hero cu animație de glisare laterală din stânga -->
-                    <div class="space-y-6">
+                    <!-- Text Hero cu panou Glassmorphism pentru a se distinge perfect -->
+                    <div class="space-y-6 bg-ink-soft/40 backdrop-blur-md p-6 sm:p-8 rounded-xl border border-white/10 shadow-2xl">
                         <div class="animate-slide-left delay-100 flex items-center gap-2.5 font-mono text-[11px] uppercase tracking-[0.16em] before:block before:h-px before:w-[24px] text-brass-light before:bg-brass-light">
                             Membru Oficial FIG și CLGE
                         </div>
@@ -97,8 +107,8 @@
                         </div>
                     </div>
                     
-                    <!-- Harta Interactivă cu Căutare proceduri și skill-uri -->
-                    <div class="relative flex flex-col items-center justify-center p-5 bg-white/[0.02] rounded-xl border border-white/[0.05] space-y-4">
+                    <!-- Harta Interactivă cu panou Glassmorphism pentru a se distinge perfect -->
+                    <div class="relative flex flex-col items-center justify-center p-6 bg-ink-soft/40 backdrop-blur-md rounded-xl border border-white/10 shadow-2xl space-y-4">
                         
                         <!-- Panou Căutare Proceduri/Skill-uri -->
                         <div class="w-full">
