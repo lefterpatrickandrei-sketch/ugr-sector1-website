@@ -9,7 +9,7 @@
     <!-- Integrare Fonturi Premium -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     
     <!-- Tailwind CSS compilat static -->
     
@@ -77,16 +77,18 @@
         <!-- ================= ACASĂ VIEW ================= -->
         <div id="view-home" class="view-section">
             <section class="relative overflow-hidden bg-ink pt-[70px] pb-[70px] text-chalk">
-                <!-- Collage Background din poze ugr.ro -->
-                <div class="absolute inset-0 grid grid-cols-2 md:grid-cols-4 gap-1.5 opacity-25 pointer-events-none select-none overflow-hidden z-[1]">
-                    <img src="ugr-images/united_1384.png" class="w-full h-full object-cover" alt="" />
+                <!-- Collage Background (5 images from ugr.ro) -->
+                <div class="absolute inset-0 grid grid-cols-2 md:grid-cols-5 gap-1.5 opacity-30 pointer-events-none select-none overflow-hidden z-[1]">
                     <img src="ugr-images/ISP7469.png" class="w-full h-full object-cover" alt="" />
-                    <img src="ugr-images/_ISP7765.png" class="w-full h-full object-cover" alt="" />
                     <img src="ugr-images/sgr-3.png" class="w-full h-full object-cover" alt="" />
+                    <img src="ugr-images/ISP8061.png" class="w-full h-full object-cover" alt="" />
+                    <img src="ugr-images/ISP8267.png" class="w-full h-full object-cover" alt="" />
+                    <img src="ugr-images/united_1384.png" class="w-full h-full object-cover" alt="" />
                 </div>
-                <!-- Dark Gradient Overlay for optimal text readability -->
-                <div class="absolute inset-0 bg-gradient-to-r from-ink/95 via-ink/80 to-ink/95 pointer-events-none z-[2]"></div>
-                <div class="grid-fade pointer-events-none absolute inset-0 z-[3]"></div>
+                <!-- Linear Gradient Overlay from --ugr-navy (55% bottom) to transparent (top) -->
+                <div class="absolute inset-0 pointer-events-none z-[2]" style="background: linear-gradient(to top, color-mix(in srgb, var(--ugr-navy) 55%, transparent), transparent);"></div>
+                <!-- Topographical Coordinate Grid (8-10% opacity) -->
+                <div class="topographical-grid absolute inset-0 pointer-events-none z-[3]"></div>
                 
                 <div class="relative z-[4] mx-auto grid max-w-[1180px] grid-cols-1 items-center gap-12 px-6 sm:px-8 md:grid-cols-[1.1fr_0.9fr]">
                     

@@ -127,3 +127,74 @@
         .ticker-container:active .ticker-wrapper {
             animation-play-state: paused;
         }
+
+/* =========================================================================
+   IDENTITATE VIZUALĂ UGR - COD REUTILIZABIL & TOKENI CULOARE
+   ========================================================================= */
+:root {
+    --ugr-navy: #0B2E4E;
+    --ugr-accent: #127DC2;
+    --ugr-white: #FAFBFC;
+}
+
+/* Aplicare Tipografie */
+html, body, button, input, select, textarea {
+    font-family: 'Inter', sans-serif !important;
+}
+
+h1, h2, h3, h4, h5, h6, .font-serif {
+    font-family: 'Archivo', sans-serif !important;
+    font-weight: 700;
+}
+
+/* Înlocuire culori în elementele existente fără a strica clasa Tailwind */
+.bg-ink {
+    background-color: var(--ugr-navy) !important;
+}
+.bg-ink-soft {
+    background-color: color-mix(in srgb, var(--ugr-navy) 90%, white) !important; /* Navy-soft derivat */
+}
+.bg-brass {
+    background-color: var(--ugr-accent) !important;
+}
+.text-brass {
+    color: var(--ugr-accent) !important;
+}
+.text-brass-light {
+    color: color-mix(in srgb, var(--ugr-accent) 80%, white) !important; /* Lighter accent */
+}
+.border-brass {
+    border-color: var(--ugr-accent) !important;
+}
+.border-brass-light\/30 {
+    border-color: color-mix(in srgb, var(--ugr-accent) 30%, transparent) !important;
+}
+.border-brass\/20 {
+    border-color: color-mix(in srgb, var(--ugr-accent) 20%, transparent) !important;
+}
+.border-brass\/30 {
+    border-color: color-mix(in srgb, var(--ugr-accent) 30%, transparent) !important;
+}
+.bg-paper {
+    background-color: var(--ugr-white) !important;
+}
+.text-ink {
+    color: var(--ugr-navy) !important;
+}
+.text-ink\/40 { color: color-mix(in srgb, var(--ugr-navy) 40%, transparent) !important; }
+.text-ink\/50 { color: color-mix(in srgb, var(--ugr-navy) 50%, transparent) !important; }
+.text-ink\/60 { color: color-mix(in srgb, var(--ugr-navy) 60%, transparent) !important; }
+.text-ink\/65 { color: color-mix(in srgb, var(--ugr-navy) 65%, transparent) !important; }
+.text-ink\/70 { color: color-mix(in srgb, var(--ugr-navy) 70%, transparent) !important; }
+.text-ink\/75 { color: color-mix(in srgb, var(--ugr-navy) 75%, transparent) !important; }
+.text-ink\/85 { color: color-mix(in srgb, var(--ugr-navy) 85%, transparent) !important; }
+
+/* Element Semnătură: Topographical coordinate grid (8% opacitate) */
+.topographical-grid {
+    background-image: 
+        linear-gradient(color-mix(in srgb, var(--ugr-navy) 8%, transparent) 1px, transparent 1px),
+        linear-gradient(90deg, color-mix(in srgb, var(--ugr-navy) 8%, transparent) 1px, transparent 1px);
+    background-size: 50px 50px;
+    mask-image: radial-gradient(80% 80% at 50% 50%, #000 45%, transparent 100%);
+    -webkit-mask-image: radial-gradient(80% 80% at 50% 50%, #000 45%, transparent 100%);
+}
