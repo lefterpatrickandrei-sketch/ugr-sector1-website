@@ -39,7 +39,7 @@
                 <button onclick="navigateTo('home')" class="nav-link text-[14px] font-medium transition-colors text-brass-light" data-view="home">Acasă</button>
                 <button onclick="navigateTo('despre')" class="nav-link text-[14px] font-medium transition-colors text-chalk/75 hover:text-chalk" data-view="despre">Despre noi</button>
                 <button onclick="navigateTo('membri')" class="nav-link text-[14px] font-medium transition-colors text-chalk/75 hover:text-chalk" data-view="membri">Membri</button>
-                <button onclick="navigateTo('noutati')" class="nav-link text-[14px] font-medium transition-colors text-chalk/75 hover:text-chalk" data-view="noutati">Noutăți</button>
+                <button onclick="navigateTo('noutati')" class="nav-link text-[14px] font-medium transition-colors text-chalk/75 hover:text-chalk" data-view="noutati">Știri & Noutăți</button>
                 <button onclick="navigateTo('contact')" class="nav-link text-[14px] font-medium transition-colors text-chalk/75 hover:text-chalk" data-view="contact">Contact</button>
             </nav>
 
@@ -63,7 +63,7 @@
                 <button onclick="navigateTo('home'); toggleMobileMenu();" class="border-b border-chalk/[0.08] py-3 text-left text-[14px] font-medium text-chalk/80">Acasă</button>
                 <button onclick="navigateTo('despre'); toggleMobileMenu();" class="border-b border-chalk/[0.08] py-3 text-left text-[14px] font-medium text-chalk/80">Despre noi</button>
                 <button onclick="navigateTo('membri'); toggleMobileMenu();" class="border-b border-chalk/[0.08] py-3 text-left text-[14px] font-medium text-chalk/80">Membri</button>
-                <button onclick="navigateTo('noutati'); toggleMobileMenu();" class="border-b border-chalk/[0.08] py-3 text-left text-[14px] font-medium text-chalk/80">Noutăți</button>
+                <button onclick="navigateTo('noutati'); toggleMobileMenu();" class="border-b border-chalk/[0.08] py-3 text-left text-[14px] font-medium text-chalk/80">Știri & Noutăți</button>
                 <button onclick="navigateTo('contact'); toggleMobileMenu();" class="border-b border-chalk/[0.08] py-3 text-left text-[14px] font-medium text-chalk/80">Contact</button>
                 <button onclick="openRegistrationModal(); toggleMobileMenu();" class="mt-4 self-start rounded-md bg-brass px-[22px] py-[11px] text-xs font-mono font-semibold uppercase tracking-wider text-ink hover:bg-brass-light">
                     Devino membru
@@ -303,32 +303,8 @@
                         </h2>
                     </div>
 
-                    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-4">
-                        <div class="border-t border-brass pt-4 space-y-1.5">
-                            <span class="font-mono text-[9px] uppercase tracking-wider text-contour font-bold">Președinte</span>
-                            <h3 class="font-serif text-[17px] font-bold text-ink">Ing. Mircea Afrăsinei</h3>
-                            <p class="text-xs text-ink/65 leading-relaxed">Coordonator general și reprezentant legal al Uniunii.</p>
-                        </div>
-                        <div class="border-t border-brass pt-4 space-y-1.5">
-                            <span class="font-mono text-[9px] uppercase tracking-wider text-contour font-bold">Vicepreședinte</span>
-                            <h3 class="font-serif text-[17px] font-bold text-ink">Prof. univ. dr. ing. Ana Cornelia Badea</h3>
-                            <p class="text-xs text-ink/65 leading-relaxed">Responsabil de parteneriate academice și publicații științifice.</p>
-                        </div>
-                        <div class="border-t border-brass pt-4 space-y-1.5">
-                            <span class="font-mono text-[9px] uppercase tracking-wider text-contour font-bold">Vicepreședinte</span>
-                            <h3 class="font-serif text-[17px] font-bold text-ink">Prof. univ. dr. ing. Petre Iuliu Dragomir</h3>
-                            <p class="text-xs text-ink/65 leading-relaxed">Responsabil de dialog legislativ și relația cu ANCPI.</p>
-                        </div>
-                        <div class="border-t border-brass pt-4 space-y-1.5">
-                            <span class="font-mono text-[9px] uppercase tracking-wider text-contour font-bold">Secretar Executiv</span>
-                            <h3 class="font-serif text-[17px] font-bold text-ink">Ing. Vlad Păunescu</h3>
-                            <p class="text-xs text-ink/65 leading-relaxed">secretar@ugr.ro · 0723 587 081</p>
-                        </div>
-                        <div class="border-t border-brass pt-4 space-y-1.5">
-                            <span class="font-mono text-[9px] uppercase tracking-wider text-contour font-bold">Trezorier</span>
-                            <h3 class="font-serif text-[17px] font-bold text-ink">Ing. Costin Sebastian Manu</h3>
-                            <p class="text-xs text-ink/65 leading-relaxed">Gestiunea financiară a Uniunii.</p>
-                        </div>
+                    <div id="leadership-grid" class="grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-3">
+                        <!-- Generat dinamic din data.js -->
                     </div>
 
                     <!-- Vicepreședinți regionali -->
@@ -433,56 +409,51 @@
                                     <th class="p-4">STATUS</th>
                                 </tr>
                             </thead>
-                            <tbody class="divide-y divide-ink/5 text-sm">
-                                <tr class="hover:bg-paper/30 transition-colors member-row" data-judet="București">
-                                    <td class="p-4 font-mono text-xs font-semibold text-brass">UGR-0012</td>
-                                    <td class="p-4 font-semibold text-ink member-name">Andrei Popescu</td>
-                                    <td class="p-4 text-ink/75">București</td>
-                                    <td class="p-4 font-mono text-xs text-ink/60 member-auth">Seria RO-B-F Nr. 0244</td>
-                                    <td class="p-4">
-                                        <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-contour/15 text-contour">● Activ</span>
-                                    </td>
-                                </tr>
-                                <tr class="hover:bg-paper/30 transition-colors member-row" data-judet="Cluj">
-                                    <td class="p-4 font-mono text-xs font-semibold text-brass">UGR-0145</td>
-                                    <td class="p-4 font-semibold text-ink member-name">Elena Munteanu</td>
-                                    <td class="p-4 text-ink/75">Cluj</td>
-                                    <td class="p-4 font-mono text-xs text-ink/60 member-auth">Seria RO-CJ-F Nr. 1102</td>
-                                    <td class="p-4">
-                                        <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-contour/15 text-contour">● Activ</span>
-                                    </td>
-                                </tr>
-                                <tr class="hover:bg-paper/30 transition-colors member-row" data-judet="Iași">
-                                    <td class="p-4 font-mono text-xs font-semibold text-brass">UGR-0312</td>
-                                    <td class="p-4 font-semibold text-ink member-name">Vasile Lupu</td>
-                                    <td class="p-4 text-ink/75">Iași</td>
-                                    <td class="p-4 font-mono text-xs text-ink/60 member-auth">Seria RO-IS-F Nr. 0984</td>
-                                    <td class="p-4">
-                                        <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-contour/15 text-contour">● Activ</span>
-                                    </td>
-                                </tr>
-                                <tr class="hover:bg-paper/30 transition-colors member-row" data-judet="Timiș">
-                                    <td class="p-4 font-mono text-xs font-semibold text-brass">UGR-0402</td>
-                                    <td class="p-4 font-semibold text-ink member-name">Dumitru Crișan</td>
-                                    <td class="p-4 text-ink/75">Timiș</td>
-                                    <td class="p-4 font-mono text-xs text-ink/60 member-auth">Seria RO-TM-F Nr. 1290</td>
-                                    <td class="p-4">
-                                        <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-contour/15 text-contour">● Activ</span>
-                                    </td>
-                                </tr>
-                                <tr class="hover:bg-paper/30 transition-colors member-row" data-judet="Constanța">
-                                    <td class="p-4 font-mono text-xs font-semibold text-brass">UGR-0589</td>
-                                    <td class="p-4 font-semibold text-ink member-name">Mariana Marin</td>
-                                    <td class="p-4 text-ink/75">Constanța</td>
-                                    <td class="p-4 font-mono text-xs text-ink/60 member-auth">Seria RO-CT-F Nr. 0451</td>
-                                    <td class="p-4">
-                                        <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-contour/15 text-contour">● Activ</span>
-                                    </td>
-                                </tr>
+                            <tbody class="divide-y divide-ink/5 text-sm" id="members-table-body">
+                                <!-- Generat dinamic din data.js -->
                             </tbody>
                         </table>
                         <div id="no-members-msg" class="p-8 text-center text-xs text-ink/40 font-mono hidden">
                             Niciun membru găsit conform filtrelor setate.
+                        </div>
+                    </div>
+
+                    <!-- SECȚIUNE NOUĂ: DOCUMENTE, FORMULARE & ACORD GDPR -->
+                    <div class="mt-16 space-y-6 scroll-reveal">
+                        <div class="flex items-center gap-2.5 font-mono text-[10px] uppercase tracking-[0.16em] text-brass before:block before:h-px before:w-[24px] before:bg-brass">
+                            Formulare Oficiale UGR
+                        </div>
+                        <h3 class="font-serif text-2xl font-bold text-ink">Cereri de Înscriere & Documente Utile</h3>
+                        <p class="text-xs text-ink/70 max-w-xl">
+                            Descărcați formularele oficiale necesare pentru admiterea în Uniunea Geodezilor din România. Documentele completate și semnate trebuie depuse la secretariatul filialei locale împreună cu dosarul de studii.
+                        </p>
+
+                        <!-- Grid Documente -->
+                        <div id="documents-grid" class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-2">
+                            <!-- Generat dinamic din data.js pentru a fi ușor de administrat -->
+                        </div>
+
+                        <!-- BANER SPECIAL: LINK VERIFICARE AUTORIZAȚIE ANCPI -->
+                        <div class="mt-8 p-6 bg-brass/5 border border-brass/20 rounded-lg flex flex-col sm:flex-row items-center justify-between gap-6 shadow-sm">
+                            <div class="flex items-center gap-4 text-left">
+                                <div class="h-12 w-12 rounded-full bg-brass/10 flex items-center justify-center text-brass flex-shrink-0">
+                                    <!-- Iconiță SVG Glob Terestru Premium -->
+                                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M3.6 9h16.8M3.6 15h16.8" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 3a15.3 15.3 0 014.5 9c0 3.3-1.8 6.3-4.5 9m0-18a15.3 15.3 0 00-4.5 9c0 3.3 1.8 6.3 4.5 9" />
+                                    </svg>
+                                </div>
+                                <div class="space-y-1">
+                                    <h4 class="text-sm font-bold text-ink">Verificare Registru Oficial ANCPI</h4>
+                                    <p class="text-xs text-ink/75 leading-relaxed max-w-lg">
+                                        Fiecare membru al filialei trebuie să fie autorizat ANCPI. Puteți verifica starea și valabilitatea oricărei autorizații direct în Registrul Național al Persoanelor Fizice Autorizate de pe Geoportorul ANCPI.
+                                    </p>
+                                </div>
+                            </div>
+                            <a id="ancpi-verification-btn" href="#" target="_blank" rel="noopener" class="whitespace-nowrap px-5 py-3 bg-brass text-ink hover:bg-brass-light font-mono text-[11px] font-bold uppercase rounded shadow-sm transition-colors text-center w-full sm:w-auto">
+                                Verifică Autorizație ANCPI →
+                            </a>
                         </div>
                     </div>
 
@@ -504,30 +475,8 @@
 
             <section class="bg-paper py-20">
                 <div class="mx-auto max-w-[1180px] px-6 sm:px-8">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        <article class="bg-chalk p-8 rounded-lg border border-ink/5 flex flex-col justify-between shadow-sm space-y-4">
-                            <div class="space-y-2">
-                                <span class="text-[10px] font-mono uppercase tracking-wider text-contour font-bold">Eveniment</span>
-                                <h3 class="font-serif text-lg font-bold text-ink hover:text-brass transition-colors">Săptămâna Geodeziei Românești 2025</h3>
-                                <p class="text-xs text-ink/70 leading-relaxed">Conferința de anvergură reunește elita specialiștilor, universităților tehnice de prestigiu și partenerilor privați pentru a discuta tehnologii LIDAR și sisteme avansate cadastrale în sprijinul localităților din România.</p>
-                            </div>
-                            <div class="pt-4 border-t border-ink/5 flex justify-between items-center text-[10px] font-mono text-ink/40">
-                                <span>TIMIȘOARA, TIMIȘ</span>
-                                <span>IULIE 2025</span>
-                            </div>
-                        </article>
-
-                        <article class="bg-chalk p-8 rounded-lg border border-ink/5 flex flex-col justify-between shadow-sm space-y-4">
-                            <div class="space-y-2">
-                                <span class="text-[10px] font-mono uppercase tracking-wider text-contour font-bold">Legislativ</span>
-                                <h3 class="font-serif text-lg font-bold text-ink hover:text-brass transition-colors">Grupul de Dialog Legislativ: Legea Geodezului</h3>
-                                <p class="text-xs text-ink/70 leading-relaxed">Grupul de lucru parlamentar continuă întâlnirile metodice pentru clarificarea normativelor de exercitare liberă și securizată a drepturilor de semnătură profesională pentru topografi.</p>
-                            </div>
-                            <div class="pt-4 border-t border-ink/5 flex justify-between items-center text-[10px] font-mono text-ink/40">
-                                <span>CAMERA DEPUTAȚILOR</span>
-                                <span>MAI 2025</span>
-                            </div>
-                        </article>
+                    <div id="news-grid" class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <!-- Generat dinamic din data.js -->
                     </div>
                 </div>
             </section>
@@ -736,6 +685,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/proj4@2.9.0/dist/proj4.js"></script>
     <script src="borders.js" charset="UTF-8"></script>
+    <script src="data.js" charset="UTF-8"></script>
     <script src="script.js"></script>
 </body>
 </html>

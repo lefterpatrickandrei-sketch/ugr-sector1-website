@@ -5,23 +5,8 @@
             selectedMemberType: 'profesionist'
         };
 
-        const mapNodes = {
-            bucuresti:  { name: "București",      lat: 44.4323, lon: 26.1063, latStr: "44°26'08\"", lonStr: "26°06'12\"", desc: "Sediul Central administrativ și principalul nod legislativ în parteneriat cu ANCPI." },
-            cluj:       { name: "Cluj-Napoca",     lat: 46.7712, lon: 23.6236, latStr: "46°46'18\"", lonStr: "23°35'47\"", desc: "Nod academic intens în Transilvania și organizator regional." },
-            iasi:       { name: "Iași",            lat: 47.1585, lon: 27.6014, latStr: "47°09'44\"", lonStr: "27°35'20\"", desc: "Filială regională importantă conectată cu zona geodezică din Est." },
-            constanta:  { name: "Constanța",       lat: 44.1792, lon: 28.6498, latStr: "44°10'42\"", lonStr: "28°38'30\"", desc: "Specializată pe proiecții costiere, marină și lucrări de infrastructură portuară." },
-            timisoara:  { name: "Timișoara",       lat: 45.7537, lon: 21.2257, latStr: "45°45'13\"", lonStr: "21°13'43\"", desc: "Gazdă periodică a simpozioanelor și centru universitar geodezic de prestigiu." },
-            chisinau:   { name: "Chișinău (UTM)",  lat: 47.0012, lon: 28.8514, latStr: "47°01'12\"", lonStr: "28°51'14\"", desc: "Filială internațională recent înființată la Universitatea Tehnică a Moldovei." }
-        };
-
-        const skillMapping = {
-            toate: ["bucuresti", "cluj", "iasi", "constanta", "timisoara", "chisinau"],
-            lidar: ["bucuresti", "cluj", "timisoara"],
-            gnss: ["bucuresti", "cluj", "iasi", "timisoara"],
-            cadastru: ["bucuresti", "cluj", "iasi", "constanta", "timisoara", "chisinau"],
-            gis: ["bucuresti", "cluj", "iasi", "chisinau"],
-            nivelment: ["bucuresti", "constanta", "timisoara"]
-        };
+        const mapNodes = ugrData.mapNodes || {};
+        const skillMapping = ugrData.skillMapping || {};
 
         // Activare vizualizare (Routing)
         function navigateTo(sectionId) {
@@ -608,9 +593,149 @@
             })();
         }
 
+        // -------------------------------------------------------------------------
+        // RENDERE DINAMICĂ ȘI APĂRARE CONSOLĂ (PENTRU NON-CODERS)
+        // -------------------------------------------------------------------------
+
+        function renderMembersTable() {
+            const tbody = document.getElementById('members-table-body');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+            
+            const list = ugrData.membersList || [];
+            list.forEach(member => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-paper/30 transition-colors member-row";
+                tr.setAttribute('data-judet', member.judet || '');
+                
+                const statusColor = (member.status === 'Activ') ? 'bg-contour/15 text-contour' : 'bg-red-100 text-red-800';
+                
+                tr.innerHTML = `
+                    <td class="p-4 font-mono text-xs font-semibold text-brass">${member.id || ''}</td>
+                    <td class="p-4 font-semibold text-ink member-name">${member.name || ''}</td>
+                    <td class="p-4 text-ink/75">${member.judet || ''}</td>
+                    <td class="p-4 font-mono text-xs text-ink/60 member-auth">${member.auth || ''}</td>
+                    <td class="p-4">
+                        <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-mono font-bold ${statusColor}">● ${member.status || 'Inactiv'}</span>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function renderLeadershipGrid() {
+            const grid = document.getElementById('leadership-grid');
+            if (!grid) return;
+            grid.innerHTML = '';
+            
+            const list = ugrData.leadership || [];
+            list.forEach(member => {
+                const card = document.createElement('div');
+                card.className = "border-t border-brass pt-6 space-y-4 flex flex-col md:flex-row items-center md:items-start gap-4";
+                
+                // Photo wrapper with strict sizing and cover fit to prevent distortion
+                const imgPath = member.image || 'logo_geodez.png';
+                const isPlaceholder = imgPath.includes('logo_geodez.png');
+                const imgClass = isPlaceholder 
+                    ? "w-16 h-16 object-contain opacity-50" 
+                    : "w-20 h-20 object-cover rounded-full border border-brass/30 shadow-sm";
+                
+                card.innerHTML = `
+                    <div class="flex-shrink-0 flex items-center justify-center ${isPlaceholder ? 'w-20 h-20 bg-ink/5 rounded-lg border border-ink/5' : ''}">
+                        <img src="${imgPath}" alt="${member.name}" class="${imgClass}" onerror="this.src='logo_geodez.png'; this.className='w-16 h-16 object-contain opacity-50';" />
+                    </div>
+                    <div class="space-y-1 text-center md:text-left flex-grow">
+                        <span class="font-mono text-[9px] uppercase tracking-wider text-contour font-bold block">${member.role || ''}</span>
+                        <h3 class="font-serif text-[17px] font-bold text-ink leading-snug">${member.name || ''}</h3>
+                        <p class="text-xs text-ink/65 leading-relaxed mt-1">${member.desc || ''}</p>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function renderNewsGrid() {
+            const grid = document.getElementById('news-grid');
+            if (!grid) return;
+            grid.innerHTML = '';
+            
+            const list = ugrData.newsList || [];
+            list.forEach(article => {
+                const card = document.createElement('article');
+                card.className = "bg-chalk p-6 rounded-lg border border-ink/5 flex flex-col justify-between shadow-sm space-y-4 hover:border-brass/30 transition-all duration-300";
+                
+                const imgPath = article.image || 'logo_geodez.png';
+                const isPlaceholder = imgPath.includes('logo_geodez.png');
+                const imgClass = isPlaceholder 
+                    ? "h-20 w-auto object-contain mx-auto opacity-30" 
+                    : "w-full h-40 object-cover rounded-md mb-2";
+
+                card.innerHTML = `
+                    <div class="space-y-3">
+                        <div class="overflow-hidden rounded-md bg-ink/5 flex items-center justify-center ${isPlaceholder ? 'py-4' : ''}">
+                            <img src="${imgPath}" alt="${article.title}" class="${imgClass}" onerror="this.src='logo_geodez.png'; this.className='h-20 w-auto object-contain mx-auto opacity-30';" />
+                        </div>
+                        <span class="text-[10px] font-mono uppercase tracking-wider text-contour font-bold">${article.category || ''}</span>
+                        <h3 class="font-serif text-lg font-bold text-ink hover:text-brass transition-colors leading-snug">${article.title || ''}</h3>
+                        <p class="text-xs text-ink/70 leading-relaxed">${article.desc || ''}</p>
+                    </div>
+                    <div class="pt-4 border-t border-ink/5 flex justify-between items-center text-[10px] font-mono text-ink/40 mt-4">
+                        <span>${article.location || ''}</span>
+                        <span>${article.date || ''}</span>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function renderDocumentsGrid() {
+            const grid = document.getElementById('documents-grid');
+            if (!grid) return;
+            grid.innerHTML = '';
+            
+            const list = ugrData.documentsList || [];
+            list.forEach(doc => {
+                const card = document.createElement('div');
+                card.className = "bg-chalk p-6 rounded-lg border border-ink/5 flex flex-col justify-between shadow-sm space-y-4 hover:border-brass/30 transition-all duration-300";
+                
+                card.innerHTML = `
+                    <div class="space-y-2">
+                        <div class="h-10 w-10 rounded-md bg-brass/10 flex items-center justify-center text-brass">
+                            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
+                        </div>
+                        <h4 class="font-serif text-sm font-bold text-ink leading-tight">${doc.title || ''}</h4>
+                        <p class="text-xs text-ink/65 leading-relaxed">${doc.desc || ''}</p>
+                    </div>
+                    <div class="pt-2">
+                        <a href="${doc.fileUrl || '#'}" target="_blank" rel="noopener" class="w-full py-2 bg-brass/10 hover:bg-brass text-ink font-mono text-[11px] font-bold uppercase rounded transition-colors text-center block">
+                            Descarcă ${doc.format || ''} ↓
+                        </a>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function setupVerificationLink() {
+            const btn = document.getElementById('ancpi-verification-btn');
+            if (btn) {
+                btn.href = ugrData.ancpiVerificationLink || '#';
+            }
+        }
+
         /* ---- Reveal la scroll ---- */
         document.addEventListener('DOMContentLoaded', () => {
             initGlobeMap();
+            
+            // Apelare randări dinamice la încărcare
+            renderMembersTable();
+            renderLeadershipGrid();
+            renderNewsGrid();
+            renderDocumentsGrid();
+            setupVerificationLink();
+
             const singleEls = document.querySelectorAll('.scroll-reveal');
             if (singleEls.length) {
                 const singleObserver = new IntersectionObserver((entries) => {
