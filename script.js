@@ -6,12 +6,12 @@
         };
 
         const mapNodes = {
-            bucuresti: { name: "București", lat: "44°26'08\"", lon: "26°06'12\"", desc: "Sediul Central administrativ și principalul nod legislativ în parteneriat cu ANCPI." },
-            cluj: { name: "Cluj-Napoca", lat: "46°46'18\"", lon: "23°35'47\"", desc: "Nod academic intens în Transilvania și organizator regional." },
-            iasi: { name: "Iași", lat: "47°09'44\"", lon: "27°35'20\"", desc: "Filială regională importantă conectată cu zona geodezică din Est." },
-            constanta: { name: "Constanța", lat: "44°10'42\"", lon: "28°38'30\"", desc: "Specializată pe proiecții costiere, marină și lucrări de infrastructură portuară." },
-            timisoara: { name: "Timișoara", lat: "45°45'13\"", lon: "21°13'43\"", desc: "Gazdă periodică a simpozioanelor și centru universitar geodezic de prestigiu." },
-            chisinau: { name: "Chișinău (UTM)", lat: "47°01'12\"", lon: "28°51'14\"", desc: "Filială internațională recent înființată la Universitatea Tehnică a Moldovei." }
+            bucuresti:  { name: "București",      lat: 44.4323, lon: 26.1063, latStr: "44°26'08\"", lonStr: "26°06'12\"", desc: "Sediul Central administrativ și principalul nod legislativ în parteneriat cu ANCPI." },
+            cluj:       { name: "Cluj-Napoca",     lat: 46.7712, lon: 23.6236, latStr: "46°46'18\"", lonStr: "23°35'47\"", desc: "Nod academic intens în Transilvania și organizator regional." },
+            iasi:       { name: "Iași",            lat: 47.1585, lon: 27.6014, latStr: "47°09'44\"", lonStr: "27°35'20\"", desc: "Filială regională importantă conectată cu zona geodezică din Est." },
+            constanta:  { name: "Constanța",       lat: 44.1792, lon: 28.6498, latStr: "44°10'42\"", lonStr: "28°38'30\"", desc: "Specializată pe proiecții costiere, marină și lucrări de infrastructură portuară." },
+            timisoara:  { name: "Timișoara",       lat: 45.7537, lon: 21.2257, latStr: "45°45'13\"", lonStr: "21°13'43\"", desc: "Gazdă periodică a simpozioanelor și centru universitar geodezic de prestigiu." },
+            chisinau:   { name: "Chișinău (UTM)",  lat: 47.0012, lon: 28.8514, latStr: "47°01'12\"", lonStr: "28°51'14\"", desc: "Filială internațională recent înființată la Universitatea Tehnică a Moldovei." }
         };
 
         const skillMapping = {
@@ -70,48 +70,329 @@
             }
         }
 
+        let myGlobe;
+
+        function initGlobeMap() {
+            const container = document.getElementById('3d-globe-container');
+            if (!container) return;
+
+            const w = container.clientWidth || 380;
+            const h = container.clientHeight || 280;
+
+            // Initialize Globe
+            myGlobe = Globe()(container)
+                .globeImageUrl('https://unpkg.com/three-globe/example/img/earth-dark.jpg')
+                .bumpImageUrl('https://unpkg.com/three-globe/example/img/earth-topology.png')
+                .backgroundColor('rgba(0,0,0,0)')
+                .showAtmosphere(true)
+                .atmosphereColor('#40b0f0') // Sky Blue
+                .atmosphereAltitude(0.15)
+                .showGraticules(true)
+                .width(w)
+                .height(h);
+
+            // Style the globe shell to look like dark translucent blue-tinted glass
+            myGlobe.globeMaterial().color.set('#040d1a');
+
+            // Set points data - HQ in orange, branches in sky blue
+            const gData = Object.keys(mapNodes).map(key => ({
+                id: key,
+                name: key === 'bucuresti' ? '★ SEDIU CENTRAL (HQ) — București' : mapNodes[key].name,
+                lat: mapNodes[key].lat,
+                lng: mapNodes[key].lon,
+                size: key === 'bucuresti' ? 0.25 : 0.12,
+                color: key === 'bucuresti' ? '#ff9f1c' : '#40b0f0'
+            }));
+
+            myGlobe
+                .pointsData(gData)
+                .pointColor('color')
+                .pointAltitude(0.06)
+                .pointRadius('size')
+                .pointsMerge(false)
+                .pointLabel('name')
+                .onPointClick(point => {
+                    showNodeDetails(point.id);
+                    const sel = document.getElementById('skill-selector');
+                    if (sel) sel.value = 'toate';
+                });
+
+            // Set initial arcs from HQ to all branches
+            const initialArcs = Object.keys(mapNodes)
+                .filter(key => key !== 'bucuresti')
+                .map(key => ({
+                    startLat: mapNodes.bucuresti.lat,
+                    startLng: mapNodes.bucuresti.lon,
+                    endLat: mapNodes[key].lat,
+                    endLng: mapNodes[key].lon,
+                    color: '#40b0f0'
+                }));
+            myGlobe
+                .arcsData(initialArcs)
+                .arcColor('color')
+                .arcDashLength(0.4)
+                .arcDashGap(0.2)
+                .arcDashAnimateTime(1500)
+                .arcStroke(1.2);
+
+            // Load Romania & Moldova GeoJSON borders
+            myGlobe
+                .polygonsData(bordersGeoJson.features)
+                .polygonCapColor(d => {
+                    const admin = d.properties.ADMIN;
+                    if (admin === 'Romania' || admin === 'Moldova') {
+                        return 'rgba(64, 176, 240, 0.20)';
+                    }
+                    return 'rgba(255, 255, 255, 0.015)';
+                })
+                .polygonSideColor(d => {
+                    const admin = d.properties.ADMIN;
+                    if (admin === 'Romania' || admin === 'Moldova') {
+                        return 'rgba(64, 176, 240, 0.35)';
+                    }
+                    return 'rgba(255, 255, 255, 0.02)';
+                })
+                .polygonStrokeColor(d => {
+                    const admin = d.properties.ADMIN;
+                    if (admin === 'Romania' || admin === 'Moldova') {
+                        return 'rgba(64, 176, 240, 0.85)';
+                    }
+                    return 'rgba(255, 255, 255, 0.08)';
+                })
+                .polygonAltitude(d => {
+                    const admin = d.properties.ADMIN;
+                    if (admin === 'Romania' || admin === 'Moldova') {
+                        return 0.012;
+                    }
+                    return 0.002;
+                })
+                .polygonLabel(d => {
+                    const admin = d.properties.ADMIN;
+                    if (admin === 'Romania' || admin === 'Moldova') {
+                        return `<b>${admin}</b>`;
+                    }
+                    return admin;
+                });
+
+            // Start far away, then zoom in after globe is ready
+            myGlobe.pointOfView({ lat: 46.0, lng: 25.0, altitude: 3.5 }, 0);
+
+            // Wait for globe to fully render, then do cinematic zoom (closer zoom focused on Romania + Moldova)
+            setTimeout(() => {
+                myGlobe.pointOfView({ lat: 46.0, lng: 25.5, altitude: 0.24 }, 2500);
+            }, 1500);
+
+            // Controls - NO autoRotate (keeps Romania centered)
+            const controls = myGlobe.controls();
+            controls.autoRotate = false;
+            controls.enableZoom = true;
+            controls.enablePan = false;
+            controls.minDistance = 115;
+            controls.maxDistance = 500;
+
+            // Access underlying Three.js scene of Globe.gl
+            const scene = myGlobe.scene();
+            const satellites = [];
+            const orbitRadius = 142; // Earth radius on globe is approx 100
+
+            // Custom Three.js satellite model geometry builder
+            function createSatelliteMesh() {
+                const group = new THREE.Group();
+                
+                // Body
+                const bodyGeom = new THREE.CylinderGeometry(1.2, 1.2, 3.5, 8);
+                const bodyMat = new THREE.MeshStandardMaterial({
+                    color: 0x94A3B8,
+                    metalness: 0.9,
+                    roughness: 0.1
+                });
+                const bodyMesh = new THREE.Mesh(bodyGeom, bodyMat);
+                bodyMesh.rotation.x = Math.PI / 2;
+                group.add(bodyMesh);
+                
+                // Solar panels
+                const panelGeom = new THREE.BoxGeometry(0.2, 1.5, 4.5);
+                const panelMat = new THREE.MeshBasicMaterial({ color: 0x40b0f0 });
+                const leftPanel = new THREE.Mesh(panelGeom, panelMat);
+                leftPanel.position.x = -2.2;
+                const rightPanel = new THREE.Mesh(panelGeom, panelMat);
+                rightPanel.position.x = 2.2;
+                
+                group.add(leftPanel);
+                group.add(rightPanel);
+                
+                return group;
+            }
+
+            // Define 3 satellites with individual parameters (inclination, speed, orbit height)
+            const orbits = [
+                { inclination: 0.25, speed: 0.003, height: 8, startAngle: 0 },
+                { inclination: -0.15, speed: 0.002, height: -12, startAngle: 2.2 },
+                { inclination: 0.45, speed: 0.0025, height: 20, startAngle: 4.4 }
+            ];
+
+            orbits.forEach((orb) => {
+                const satMesh = createSatelliteMesh();
+                scene.add(satMesh);
+                
+                // Fine, low-opacity orbit line
+                const orbitPoints = [];
+                for (let a = 0; a <= 2 * Math.PI + 0.1; a += 0.1) {
+                    const x = orbitRadius * Math.cos(a);
+                    const z = orbitRadius * Math.sin(a);
+                    const y = orb.height * Math.sin(a) + Math.cos(a) * orb.inclination * 10;
+                    orbitPoints.push(new THREE.Vector3(x, y, z));
+                }
+                const orbitGeom = new THREE.BufferGeometry().setFromPoints(orbitPoints);
+                const orbitMat = new THREE.LineBasicMaterial({
+                    color: 0x40b0f0,
+                    transparent: true,
+                    opacity: 0.05
+                });
+                const orbitLine = new THREE.Line(orbitGeom, orbitMat);
+                scene.add(orbitLine);
+                
+                satellites.push({
+                    mesh: satMesh,
+                    angle: orb.startAngle,
+                    speed: orb.speed,
+                    height: orb.height,
+                    inclination: orb.inclination
+                });
+            });
+
+            // Single active laser beam definition
+            let laserBeam;
+            const laserMat = new THREE.LineBasicMaterial({
+                color: 0x40b0f0,
+                transparent: true,
+                opacity: 0.7
+            });
+
+            function updateLaserBeam() {
+                const selectedSkill = document.getElementById('skill-selector').value;
+                const activeNodes = skillMapping[selectedSkill] || [];
+                
+                if (activeNodes.length > 0 && satellites.length > 0) {
+                    let targetNodeId = activeNodes[0];
+                    
+                    const panel = document.getElementById('node-details-panel');
+                    if (panel && !panel.classList.contains('hidden')) {
+                        const nodeName = document.getElementById('node-name').innerText;
+                        const matchedId = Object.keys(mapNodes).find(k => mapNodes[k].name === nodeName);
+                        if (matchedId) targetNodeId = matchedId;
+                    }
+                    
+                    const node = mapNodes[targetNodeId];
+                    if (node) {
+                        const targetCoords = myGlobe.getCoords(node.lat, node.lon, 0.06);
+                        
+                        let nearestSat = satellites[0];
+                        let minDist = Infinity;
+                        satellites.forEach(sat => {
+                            const dist = sat.mesh.position.distanceTo(new THREE.Vector3(targetCoords.x, targetCoords.y, targetCoords.z));
+                            if (dist < minDist) {
+                                minDist = dist;
+                                nearestSat = sat;
+                            }
+                        });
+                        
+                        const points = [
+                            nearestSat.mesh.position,
+                            new THREE.Vector3(targetCoords.x, targetCoords.y, targetCoords.z)
+                        ];
+                        
+                        if (!laserBeam) {
+                            const geom = new THREE.BufferGeometry().setFromPoints(points);
+                            laserBeam = new THREE.Line(geom, laserMat);
+                            scene.add(laserBeam);
+                        } else {
+                            laserBeam.geometry.setFromPoints(points);
+                            laserBeam.geometry.attributes.position.needsUpdate = true;
+                            laserBeam.visible = true;
+                        }
+                        return;
+                    }
+                }
+                
+                if (laserBeam) {
+                    laserBeam.visible = false;
+                }
+            }
+
+            // Satellites animation loop
+            function animateSatellites() {
+                requestAnimationFrame(animateSatellites);
+                satellites.forEach(sat => {
+                    sat.angle += sat.speed;
+                    const x = orbitRadius * Math.cos(sat.angle);
+                    const z = orbitRadius * Math.sin(sat.angle);
+                    const y = sat.height * Math.sin(sat.angle) + Math.cos(sat.angle) * sat.inclination * 10;
+                    sat.mesh.position.set(x, y, z);
+                    sat.mesh.rotation.y += 0.01;
+                });
+                updateLaserBeam();
+            }
+            animateSatellites();
+
+            // Responsive resize
+            window.addEventListener('resize', () => {
+                myGlobe.width(container.clientWidth || 380);
+                myGlobe.height(container.clientHeight || 280);
+            });
+        }
+
         // Filtrarea dinamică a hărții în funcție de skill-ul selectat
         function filterMapBySkill() {
             const selectedSkill = document.getElementById('skill-selector').value;
             const activeNodes = skillMapping[selectedSkill];
 
-            Object.keys(mapNodes).forEach(nodeId => {
-                const nodeElement = document.getElementById('node-' + nodeId);
-                const lineElement = document.getElementById('line-' + nodeId);
-                
-                if (nodeElement) {
-                    const innerCircle = nodeElement.querySelector('circle:first-child');
-                    const pulseCircle = nodeElement.querySelector('.node-pulse');
+            if (!myGlobe) return;
 
-                    if (activeNodes.includes(nodeId)) {
-                        innerCircle.setAttribute('fill', '#40b0f0');
-                        innerCircle.setAttribute('r', '5.5');
-                        if (pulseCircle) {
-                            pulseCircle.classList.remove('hidden');
-                        }
-                        if (lineElement) {
-                            lineElement.style.opacity = '1.0';
-                            lineElement.style.stroke = 'rgba(28, 163, 236, 0.6)';
-                        }
-                    } else {
-                        innerCircle.setAttribute('fill', 'rgba(28, 163, 236, 0.25)');
-                        innerCircle.setAttribute('r', '4');
-                        if (pulseCircle) {
-                            pulseCircle.classList.add('hidden');
-                        }
-                        if (lineElement) {
-                            lineElement.style.opacity = '0.15';
-                            lineElement.style.stroke = 'rgba(251, 248, 242, 0.1)';
-                        }
-                    }
+            // Highlight active nodes on the globe by updating color/size (specifically HQ)
+            const updatedPoints = Object.keys(mapNodes).map(key => {
+                const isActive = activeNodes.includes(key);
+                const isHQ = key === 'bucuresti';
+                return {
+                    id: key,
+                    name: isHQ ? '★ SEDIU CENTRAL (HQ) — București' : mapNodes[key].name,
+                    lat: mapNodes[key].lat,
+                    lng: mapNodes[key].lon,
+                    size: isHQ ? (isActive ? 0.25 : 0.15) : (isActive ? 0.15 : 0.05),
+                    color: isHQ 
+                        ? (isActive ? '#ff9f1c' : 'rgba(255, 159, 28, 0.4)') 
+                        : (isActive ? '#40b0f0' : 'rgba(64, 176, 240, 0.25)')
+                };
+            });
+            myGlobe.pointsData(updatedPoints);
+
+            // Draw geodetic connection arcs from Bucharest to other active nodes
+            const arcs = [];
+            activeNodes.forEach(nodeId => {
+                if (nodeId !== 'bucuresti') {
+                    arcs.push({
+                        startLat: mapNodes.bucuresti.lat,
+                        startLng: mapNodes.bucuresti.lon,
+                        endLat: mapNodes[nodeId].lat,
+                        endLng: mapNodes[nodeId].lon,
+                        color: '#40b0f0'
+                    });
                 }
             });
+            myGlobe.arcsData(arcs)
+                .arcColor('color')
+                .arcDashLength(0.4)
+                .arcDashGap(0.2)
+                .arcDashAnimateTime(1500)
+                .arcStroke(1.2);
 
+            // Update details panel
             if (activeNodes.length > 0 && selectedSkill !== 'toate') {
                 showNodeDetails(activeNodes[0]);
             } else {
                 document.getElementById('node-details-panel').classList.add('hidden');
                 document.getElementById('node-prompt').classList.remove('hidden');
+                myGlobe.pointOfView({ lat: 46.0, lng: 25.5, altitude: 0.24 }, 800);
             }
         }
 
@@ -126,8 +407,31 @@
             panel.classList.remove('hidden');
             
             document.getElementById('node-name').innerText = node.name;
-            document.getElementById('node-coords').innerText = node.lat + " / " + node.lon;
+            document.getElementById('node-coords').innerText = node.latStr + " / " + node.lonStr;
             document.getElementById('node-desc').innerText = node.desc;
+
+            // Fly to point on the globe (closer zoom for selected node)
+            if (myGlobe) {
+                myGlobe.pointOfView({ lat: node.lat, lng: node.lon, altitude: 0.18 }, 1000);
+                
+                // Draw connection arc
+                if (nodeId !== 'bucuresti') {
+                    myGlobe.arcsData([{
+                        startLat: mapNodes.bucuresti.lat,
+                        startLng: mapNodes.bucuresti.lon,
+                        endLat: node.lat,
+                        endLng: node.lon,
+                        color: '#40b0f0'
+                    }])
+                    .arcColor('color')
+                    .arcDashLength(0.4)
+                    .arcDashGap(0.2)
+                    .arcDashAnimateTime(1500)
+                    .arcStroke(1.2);
+                } else {
+                    myGlobe.arcsData([]);
+                }
+            }
         }
 
         // Filtru dynamic tabel membri
@@ -306,6 +610,7 @@
 
         /* ---- Reveal la scroll ---- */
         document.addEventListener('DOMContentLoaded', () => {
+            initGlobeMap();
             const singleEls = document.querySelectorAll('.scroll-reveal');
             if (singleEls.length) {
                 const singleObserver = new IntersectionObserver((entries) => {
