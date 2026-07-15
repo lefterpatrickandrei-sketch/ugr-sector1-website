@@ -530,12 +530,22 @@
         <!-- ================= NOUTĂȚI VIEW ================= -->
         <div id="view-noutati" class="view-section hidden">
             <section class="bg-ink py-16 text-chalk">
-                <div class="mx-auto max-w-[1180px] px-6 sm:px-8">
-                    <div class="flex items-center gap-2.5 font-mono text-[11px] uppercase tracking-[0.16em] before:block before:h-px before:w-[24px] text-brass-light before:bg-brass-light">
-                        Comunicare Oficială
+                <div class="mx-auto max-w-[1180px] px-6 sm:px-8 flex flex-col md:flex-row items-center justify-between gap-8">
+                    <div class="space-y-4 max-w-2xl">
+                        <div class="flex items-center gap-2.5 font-mono text-[11px] uppercase tracking-[0.16em] before:block before:h-px before:w-[24px] text-brass-light before:bg-brass-light">
+                            Comunicare Oficială
+                        </div>
+                        <h1 class="font-serif text-[clamp(32px,4vw,50px)] font-bold leading-tight">Articole și Evenimente Tehnice</h1>
+                        <p class="text-chalk/70 text-sm">Păstrează legătura cu modificările legislative din geodezie și evenimentele strategice organizate la nivel național.</p>
                     </div>
-                    <h1 class="mt-4 font-serif text-[clamp(32px,4vw,50px)] font-bold leading-tight">Articole și Evenimente Tehnice</h1>
-                    <p class="mt-2 text-chalk/70 max-w-xl text-sm">Păstrează legătura cu modificările legislative din geodezie și evenimentele strategice organizate la nivel național.</p>
+                    <div class="w-full md:w-1/3 flex-shrink-0 pr-4 pb-4">
+                        <div class="relative group">
+                            <!-- Offset Frame Decorativ (Branding Brass) -->
+                            <div class="absolute inset-0 border-2 border-brass-light rounded-lg translate-x-3 translate-y-3 transition-transform group-hover:translate-x-1.5 group-hover:translate-y-1.5 duration-300"></div>
+                            <!-- Imaginea Principală SGR cu Umbră 2XL -->
+                            <img src="ugr-images/sgr-3.png" alt="Eveniment UGR" class="relative w-full h-48 object-cover rounded-lg border border-chalk/10 shadow-2xl transition-transform group-hover:-translate-x-1 group-hover:-translate-y-1 duration-300" onerror="this.style.display='none';" />
+                        </div>
+                    </div>
                 </div>
             </section>
 
