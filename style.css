@@ -201,8 +201,8 @@ h1, h2, h3, h4, h5, h6, .font-serif {
 
 /* Photo Marquee / Ticker Styles (huashu-design compliant) */
 @keyframes photo-ticker-slide {
-    0% { transform: translate3d(0, 0, 0); }
-    100% { transform: translate3d(-50%, 0, 0); }
+    0% { transform: translate3d(-50%, 0, 0); }
+    100% { transform: translate3d(0, 0, 0); }
 }
 
 .photo-ticker-container {
@@ -225,15 +225,15 @@ h1, h2, h3, h4, h5, h6, .font-serif {
 }
 
 .animate-photo-ticker {
-    animation: photo-ticker-slide 40s linear infinite;
+    animation: photo-ticker-slide 28s linear infinite;
 }
 
 .photo-ticker-speed-calm {
-    animation-duration: 45s !important;
+    animation-duration: 28s !important;
 }
 
 .photo-ticker-speed-dynamic {
-    animation-duration: 15s !important;
+    animation-duration: 14s !important;
 }
 
 .photo-ticker-container:hover .photo-ticker-wrapper {
@@ -268,7 +268,7 @@ h1, h2, h3, h4, h5, h6, .font-serif {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    filter: brightness(0.5); /* Dim slightly for better contrast overlay */
+    filter: brightness(0.68); /* Brighter photos as requested */
     mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
     -webkit-mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
 }
