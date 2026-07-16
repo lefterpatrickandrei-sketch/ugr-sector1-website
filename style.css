@@ -198,3 +198,31 @@ h1, h2, h3, h4, h5, h6, .font-serif {
     mask-image: radial-gradient(80% 80% at 50% 50%, #000 45%, transparent 100%);
     -webkit-mask-image: radial-gradient(80% 80% at 50% 50%, #000 45%, transparent 100%);
 }
+
+/* Photo Marquee / Ticker Styles (huashu-design compliant) */
+@keyframes photo-ticker-slide {
+    0% { transform: translate3d(0, 0, 0); }
+    100% { transform: translate3d(-50%, 0, 0); }
+}
+
+.photo-ticker-wrapper {
+    display: flex;
+    width: max-content;
+    height: 100%;
+}
+
+.animate-photo-ticker {
+    animation: photo-ticker-slide 40s linear infinite;
+}
+
+.photo-ticker-speed-calm {
+    animation-duration: 45s !important;
+}
+
+.photo-ticker-speed-dynamic {
+    animation-duration: 15s !important;
+}
+
+.photo-ticker-container:hover .photo-ticker-wrapper {
+    animation-play-state: paused;
+}

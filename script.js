@@ -350,3 +350,23 @@
             initStaggerGroup('mission-stats-grid', '.stat-block', { gap: 550, typewriter: '.stat-label' });
             initStaggerGroup('footer-reveal-grid', '.footer-block', { gap: 220 });
         });
+
+        // Funcție globală pentru controlul vitezei benzii foto (marquee)
+        window.setTickerSpeed = function(mode) {
+            const wrapper = document.getElementById('photo-ticker-wrapper');
+            const btnCalm = document.getElementById('btn-speed-calm');
+            const btnDynamic = document.getElementById('btn-speed-dynamic');
+            if (!wrapper || !btnCalm || !btnDynamic) return;
+            
+            if (mode === 'calm') {
+                wrapper.classList.remove('photo-ticker-speed-dynamic');
+                wrapper.classList.add('photo-ticker-speed-calm');
+                btnCalm.className = "text-brass font-bold hover:text-chalk transition-colors px-1 bg-white/5 rounded";
+                btnDynamic.className = "text-chalk/60 hover:text-chalk transition-colors px-1";
+            } else {
+                wrapper.classList.remove('photo-ticker-speed-calm');
+                wrapper.classList.add('photo-ticker-speed-dynamic');
+                btnCalm.className = "text-chalk/60 hover:text-chalk transition-colors px-1";
+                btnDynamic.className = "text-brass font-bold hover:text-chalk transition-colors px-1 bg-white/5 rounded";
+            }
+        };

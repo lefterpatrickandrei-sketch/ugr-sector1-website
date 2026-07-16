@@ -77,23 +77,135 @@
         <!-- ================= ACASĂ VIEW ================= -->
         <div id="view-home" class="view-section">
             <section class="relative overflow-hidden bg-ink pt-[70px] pb-[70px] text-chalk">
-                <!-- Collage Background (5 images from ugr.ro) -->
-                <div class="absolute inset-0 grid grid-cols-2 md:grid-cols-5 gap-1.5 opacity-30 pointer-events-none select-none overflow-hidden z-[1]">
-                    <img src="ugr-images/ISP7469.png" class="w-full h-full object-cover" alt="" />
-                    <img src="ugr-images/sgr-3.png" class="w-full h-full object-cover" alt="" />
-                    <img src="ugr-images/ISP8061.png" class="w-full h-full object-cover" alt="" />
-                    <img src="ugr-images/ISP8267.png" class="w-full h-full object-cover" alt="" />
-                    <img src="ugr-images/united_1384.png" class="w-full h-full object-cover" alt="" />
+                <!-- Topographical Coordinate Grid (8-10% opacity) as base background -->
+                <div class="topographical-grid absolute inset-0 pointer-events-none z-[1]"></div>
+                
+                <!-- Photo News Bar (Marquee/Ticker) centered vertically in background -->
+                <div class="absolute left-0 right-0 top-1/2 -translate-y-1/2 h-[160px] overflow-hidden border-y border-white/[0.08] bg-ink-soft/20 z-[2] photo-ticker-container">
+                    <!-- Overlay Gradients stânga/dreapta for smooth fading -->
+                    <div class="absolute left-0 top-0 bottom-0 w-24 bg-gradient-to-r from-[var(--ugr-navy)] to-transparent pointer-events-none z-[3]"></div>
+                    <div class="absolute right-0 top-0 bottom-0 w-24 bg-gradient-to-l from-[var(--ugr-navy)] to-transparent pointer-events-none z-[3]"></div>
+                    
+                    <!-- Speed Toggle Controller -->
+                    <div class="absolute top-2 right-4 z-[4] bg-ink/90 border border-white/10 rounded px-2.5 py-1 text-[9px] font-mono tracking-widest text-chalk/80 select-none flex items-center gap-2">
+                        <span class="text-brass-light uppercase">VITEZĂ:</span>
+                        <button onclick="setTickerSpeed('calm')" id="btn-speed-calm" class="text-brass font-bold hover:text-chalk transition-colors px-1 bg-white/5 rounded">LINIȘTITĂ</button>
+                        <span class="text-chalk/20">|</span>
+                        <button onclick="setTickerSpeed('dynamic')" id="btn-speed-dynamic" class="text-chalk/60 hover:text-chalk transition-colors px-1">DINAMICĂ</button>
+                    </div>
+
+                    <!-- Continuous Infinite Marquee Wrapper -->
+                    <div class="photo-ticker-wrapper photo-ticker-speed-calm animate-photo-ticker" id="photo-ticker-wrapper">
+                        <!-- Group 1 -->
+                        <div class="flex items-center h-full">
+                            <div class="relative w-[300px] h-[160px] flex-shrink-0 border-r border-[var(--ugr-accent)]/20 overflow-hidden group/photo">
+                                <img src="ugr-images/ISP8061.png" class="w-full h-full object-cover transition-transform duration-500 group-hover/photo:scale-105" alt="" />
+                                <div class="absolute bottom-2 left-3 bg-ink/75 px-2 py-0.5 rounded text-[9px] font-mono tracking-wider text-[var(--ugr-accent)] uppercase">SGR 2025 · TIMIȘOARA</div>
+                            </div>
+                            <div class="relative w-[300px] h-[160px] flex-shrink-0 border-r border-[var(--ugr-accent)]/20 overflow-hidden group/photo">
+                                <img src="ugr-images/6a0c33b42cd7bAG-CLGE-TARTU-Group-pic.png" class="w-full h-full object-cover transition-transform duration-500 group-hover/photo:scale-105" alt="" />
+                                <div class="absolute bottom-2 left-3 bg-ink/75 px-2 py-0.5 rounded text-[9px] font-mono tracking-wider text-[var(--ugr-accent)] uppercase">CLGE TARTU · 2026</div>
+                            </div>
+                            <div class="relative w-[300px] h-[160px] flex-shrink-0 border-r border-[var(--ugr-accent)]/20 overflow-hidden group/photo">
+                                <img src="ugr-images/ISP8267.png" class="w-full h-full object-cover transition-transform duration-500 group-hover/photo:scale-105" alt="" />
+                                <div class="absolute bottom-2 left-3 bg-ink/75 px-2 py-0.5 rounded text-[9px] font-mono tracking-wider text-[var(--ugr-accent)] uppercase">CONFERINȚĂ UGR · 2025</div>
+                            </div>
+                            <div class="relative w-[300px] h-[160px] flex-shrink-0 border-r border-[var(--ugr-accent)]/20 overflow-hidden group/photo">
+                                <img src="ugr-images/6a0c30e4559d8Board-CLGE-Tartu-mai-2026.png" class="w-full h-full object-cover transition-transform duration-500 group-hover/photo:scale-105" alt="" />
+                                <div class="absolute bottom-2 left-3 bg-ink/75 px-2 py-0.5 rounded text-[9px] font-mono tracking-wider text-[var(--ugr-accent)] uppercase">BOARD CLGE · TARTU</div>
+                            </div>
+                            <div class="relative w-[300px] h-[160px] flex-shrink-0 border-r border-[var(--ugr-accent)]/20 overflow-hidden group/photo">
+                                <img src="ugr-images/ISP7469.png" class="w-full h-full object-cover transition-transform duration-500 group-hover/photo:scale-105" alt="" />
+                                <div class="absolute bottom-2 left-3 bg-ink/75 px-2 py-0.5 rounded text-[9px] font-mono tracking-wider text-[var(--ugr-accent)] uppercase">ADUNARE GENERALĂ</div>
+                            </div>
+                            <div class="relative w-[300px] h-[160px] flex-shrink-0 border-r border-[var(--ugr-accent)]/20 overflow-hidden group/photo">
+                                <img src="ugr-images/6a196478983e1Noii-Vicepreedini-FIG.jpeg" class="w-full h-full object-cover transition-transform duration-500 group-hover/photo:scale-105" alt="" />
+                                <div class="absolute bottom-2 left-3 bg-ink/75 px-2 py-0.5 rounded text-[9px] font-mono tracking-wider text-[var(--ugr-accent)] uppercase">REPREZENTANȚI FIG</div>
+                            </div>
+                            <div class="relative w-[300px] h-[160px] flex-shrink-0 border-r border-[var(--ugr-accent)]/20 overflow-hidden group/photo">
+                                <img src="ugr-images/sgr-3.png" class="w-full h-full object-cover transition-transform duration-500 group-hover/photo:scale-105" alt="" />
+                                <div class="absolute bottom-2 left-3 bg-ink/75 px-2 py-0.5 rounded text-[9px] font-mono tracking-wider text-[var(--ugr-accent)] uppercase">COMUNITATEA UGR</div>
+                            </div>
+                            <div class="relative w-[300px] h-[160px] flex-shrink-0 border-r border-[var(--ugr-accent)]/20 overflow-hidden group/photo">
+                                <img src="ugr-images/6a0c357c5c8faCAG-CLGE-Tartu-1.png" class="w-full h-full object-cover transition-transform duration-500 group-hover/photo:scale-105" alt="" />
+                                <div class="absolute bottom-2 left-3 bg-ink/75 px-2 py-0.5 rounded text-[9px] font-mono tracking-wider text-[var(--ugr-accent)] uppercase">SESIUNE TEHNICĂ</div>
+                            </div>
+                            <div class="relative w-[300px] h-[160px] flex-shrink-0 border-r border-[var(--ugr-accent)]/20 overflow-hidden group/photo">
+                                <img src="ugr-images/united_1384.png" class="w-full h-full object-cover transition-transform duration-500 group-hover/photo:scale-105" alt="" />
+                                <div class="absolute bottom-2 left-3 bg-ink/75 px-2 py-0.5 rounded text-[9px] font-mono tracking-wider text-[var(--ugr-accent)] uppercase">MTC ROMÂNIA</div>
+                            </div>
+                            <div class="relative w-[300px] h-[160px] flex-shrink-0 border-r border-[var(--ugr-accent)]/20 overflow-hidden group/photo">
+                                <img src="ugr-images/6a19645d0cbc2Iaroslav-i-Diane.jpeg" class="w-full h-full object-cover transition-transform duration-500 group-hover/photo:scale-105" alt="" />
+                                <div class="absolute bottom-2 left-3 bg-ink/75 px-2 py-0.5 rounded text-[9px] font-mono tracking-wider text-[var(--ugr-accent)] uppercase">DELEGAȚI CLGE</div>
+                            </div>
+                            <div class="relative w-[300px] h-[160px] flex-shrink-0 border-r border-[var(--ugr-accent)]/20 overflow-hidden group/photo">
+                                <img src="ugr-images/fig2020.png" class="w-full h-full object-cover transition-transform duration-500 group-hover/photo:scale-105" alt="" />
+                                <div class="absolute bottom-2 left-3 bg-ink/75 px-2 py-0.5 rounded text-[9px] font-mono tracking-wider text-[var(--ugr-accent)] uppercase">CONGRES FIG</div>
+                            </div>
+                            <div class="relative w-[300px] h-[160px] flex-shrink-0 border-r border-[var(--ugr-accent)]/20 overflow-hidden group/photo">
+                                <img src="ugr-images/_ISP7765.png" class="w-full h-full object-cover transition-transform duration-500 group-hover/photo:scale-105" alt="" />
+                                <div class="absolute bottom-2 left-3 bg-ink/75 px-2 py-0.5 rounded text-[9px] font-mono tracking-wider text-[var(--ugr-accent)] uppercase">PREZENTARE PROIECTE</div>
+                            </div>
+                        </div>
+                        
+                        <!-- Group 2 (Duplicate for seamless loop) -->
+                        <div class="flex items-center h-full" aria-hidden="true">
+                            <div class="relative w-[300px] h-[160px] flex-shrink-0 border-r border-[var(--ugr-accent)]/20 overflow-hidden group/photo">
+                                <img src="ugr-images/ISP8061.png" class="w-full h-full object-cover" alt="" />
+                                <div class="absolute bottom-2 left-3 bg-ink/75 px-2 py-0.5 rounded text-[9px] font-mono tracking-wider text-[var(--ugr-accent)] uppercase">SGR 2025 · TIMIȘOARA</div>
+                            </div>
+                            <div class="relative w-[300px] h-[160px] flex-shrink-0 border-r border-[var(--ugr-accent)]/20 overflow-hidden group/photo">
+                                <img src="ugr-images/6a0c33b42cd7bAG-CLGE-TARTU-Group-pic.png" class="w-full h-full object-cover" alt="" />
+                                <div class="absolute bottom-2 left-3 bg-ink/75 px-2 py-0.5 rounded text-[9px] font-mono tracking-wider text-[var(--ugr-accent)] uppercase">CLGE TARTU · 2026</div>
+                            </div>
+                            <div class="relative w-[300px] h-[160px] flex-shrink-0 border-r border-[var(--ugr-accent)]/20 overflow-hidden group/photo">
+                                <img src="ugr-images/ISP8267.png" class="w-full h-full object-cover" alt="" />
+                                <div class="absolute bottom-2 left-3 bg-ink/75 px-2 py-0.5 rounded text-[9px] font-mono tracking-wider text-[var(--ugr-accent)] uppercase">CONFERINȚĂ UGR · 2025</div>
+                            </div>
+                            <div class="relative w-[300px] h-[160px] flex-shrink-0 border-r border-[var(--ugr-accent)]/20 overflow-hidden group/photo">
+                                <img src="ugr-images/6a0c30e4559d8Board-CLGE-Tartu-mai-2026.png" class="w-full h-full object-cover" alt="" />
+                                <div class="absolute bottom-2 left-3 bg-ink/75 px-2 py-0.5 rounded text-[9px] font-mono tracking-wider text-[var(--ugr-accent)] uppercase">BOARD CLGE · TARTU</div>
+                            </div>
+                            <div class="relative w-[300px] h-[160px] flex-shrink-0 border-r border-[var(--ugr-accent)]/20 overflow-hidden group/photo">
+                                <img src="ugr-images/ISP7469.png" class="w-full h-full object-cover" alt="" />
+                                <div class="absolute bottom-2 left-3 bg-ink/75 px-2 py-0.5 rounded text-[9px] font-mono tracking-wider text-[var(--ugr-accent)] uppercase">ADUNARE GENERALĂ</div>
+                            </div>
+                            <div class="relative w-[300px] h-[160px] flex-shrink-0 border-r border-[var(--ugr-accent)]/20 overflow-hidden group/photo">
+                                <img src="ugr-images/6a196478983e1Noii-Vicepreedini-FIG.jpeg" class="w-full h-full object-cover" alt="" />
+                                <div class="absolute bottom-2 left-3 bg-ink/75 px-2 py-0.5 rounded text-[9px] font-mono tracking-wider text-[var(--ugr-accent)] uppercase">REPREZENTANȚI FIG</div>
+                            </div>
+                            <div class="relative w-[300px] h-[160px] flex-shrink-0 border-r border-[var(--ugr-accent)]/20 overflow-hidden group/photo">
+                                <img src="ugr-images/sgr-3.png" class="w-full h-full object-cover" alt="" />
+                                <div class="absolute bottom-2 left-3 bg-ink/75 px-2 py-0.5 rounded text-[9px] font-mono tracking-wider text-[var(--ugr-accent)] uppercase">COMUNITATEA UGR</div>
+                            </div>
+                            <div class="relative w-[300px] h-[160px] flex-shrink-0 border-r border-[var(--ugr-accent)]/20 overflow-hidden group/photo">
+                                <img src="ugr-images/6a0c357c5c8faCAG-CLGE-Tartu-1.png" class="w-full h-full object-cover" alt="" />
+                                <div class="absolute bottom-2 left-3 bg-ink/75 px-2 py-0.5 rounded text-[9px] font-mono tracking-wider text-[var(--ugr-accent)] uppercase">SESIUNE TEHNICĂ</div>
+                            </div>
+                            <div class="relative w-[300px] h-[160px] flex-shrink-0 border-r border-[var(--ugr-accent)]/20 overflow-hidden group/photo">
+                                <img src="ugr-images/united_1384.png" class="w-full h-full object-cover" alt="" />
+                                <div class="absolute bottom-2 left-3 bg-ink/75 px-2 py-0.5 rounded text-[9px] font-mono tracking-wider text-[var(--ugr-accent)] uppercase">MTC ROMÂNIA</div>
+                            </div>
+                            <div class="relative w-[300px] h-[160px] flex-shrink-0 border-r border-[var(--ugr-accent)]/20 overflow-hidden group/photo">
+                                <img src="ugr-images/6a19645d0cbc2Iaroslav-i-Diane.jpeg" class="w-full h-full object-cover" alt="" />
+                                <div class="absolute bottom-2 left-3 bg-ink/75 px-2 py-0.5 rounded text-[9px] font-mono tracking-wider text-[var(--ugr-accent)] uppercase">DELEGAȚI CLGE</div>
+                            </div>
+                            <div class="relative w-[300px] h-[160px] flex-shrink-0 border-r border-[var(--ugr-accent)]/20 overflow-hidden group/photo">
+                                <img src="ugr-images/fig2020.png" class="w-full h-full object-cover" alt="" />
+                                <div class="absolute bottom-2 left-3 bg-ink/75 px-2 py-0.5 rounded text-[9px] font-mono tracking-wider text-[var(--ugr-accent)] uppercase">CONGRES FIG</div>
+                            </div>
+                            <div class="relative w-[300px] h-[160px] flex-shrink-0 border-r border-[var(--ugr-accent)]/20 overflow-hidden group/photo">
+                                <img src="ugr-images/_ISP7765.png" class="w-full h-full object-cover" alt="" />
+                                <div class="absolute bottom-2 left-3 bg-ink/75 px-2 py-0.5 rounded text-[9px] font-mono tracking-wider text-[var(--ugr-accent)] uppercase">PREZENTARE PROIECTE</div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <!-- Linear Gradient Overlay from --ugr-navy (55% bottom) to transparent (top) -->
-                <div class="absolute inset-0 pointer-events-none z-[2]" style="background: linear-gradient(to top, color-mix(in srgb, var(--ugr-navy) 55%, transparent), transparent);"></div>
-                <!-- Topographical Coordinate Grid (8-10% opacity) -->
-                <div class="topographical-grid absolute inset-0 pointer-events-none z-[3]"></div>
                 
                 <div class="relative z-[4] mx-auto grid max-w-[1180px] grid-cols-1 items-center gap-12 px-6 sm:px-8 md:grid-cols-[1.1fr_0.9fr]">
                     
-                    <!-- Text Hero cu panou Glassmorphism pentru a se distinge perfect -->
-                    <div class="space-y-6 bg-ink-soft/40 backdrop-blur-md p-6 sm:p-8 rounded-xl border border-white/10 shadow-2xl">
+                    <!-- Text Hero cu panou Glassmorphism cu opacitate 58% din --ugr-navy -->
+                    <div class="space-y-6 backdrop-blur-md p-6 sm:p-8 rounded-xl border border-white/10 shadow-2xl" style="background-color: color-mix(in srgb, var(--ugr-navy) 58%, transparent);">
                         <div class="animate-slide-left delay-100 flex items-center gap-2.5 font-mono text-[11px] uppercase tracking-[0.16em] before:block before:h-px before:w-[24px] text-brass-light before:bg-brass-light">
                             Membru Oficial FIG și CLGE
                         </div>
@@ -178,8 +290,8 @@
                 </div>
             </section>
 
-            <!-- Ticker Tehnic Glisant, Infinit și Interactiv -->
-            <div class="border-y border-white/[0.08] bg-ink-soft py-4 overflow-hidden ticker-container cursor-grab">
+            <!-- Ticker Tehnic Glisant, Infinit și Interactiv (sincronizat vizual la h-[160px]) -->
+            <div class="border-y border-white/[0.08] bg-ink-soft h-[160px] flex items-center overflow-hidden ticker-container cursor-grab">
                 <div class="ticker-wrapper">
                     <div class="flex gap-16 text-[11px] font-mono tracking-widest text-chalk/55 uppercase items-center">
                         <span><b class="text-brass-light">SISTEM:</b> Stereo 70</span>
