@@ -226,3 +226,8 @@ h1, h2, h3, h4, h5, h6, .font-serif {
 .photo-ticker-container:hover .photo-ticker-wrapper {
     animation-play-state: paused;
 }
+
+/* Pause marquee when hovering anywhere in the parent hero section */
+section:hover .photo-ticker-wrapper {
+    animation-play-state: paused;
+}
