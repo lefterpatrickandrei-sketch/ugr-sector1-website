@@ -78,10 +78,10 @@
         <div id="view-home" class="view-section">
             <section id="hero" class="relative overflow-hidden bg-ink pt-[70px] pb-[70px] text-chalk">
                 <!-- Topographical Coordinate Grid (8-10% opacity) as base background -->
-                <div class="topographical-grid absolute inset-0 pointer-events-none z-[1]"></div>
+                <div class="topographical-grid absolute inset-0 pointer-events-none" style="z-index: 1;"></div>
                 
                 <!-- Photo News Bar (Marquee/Ticker) strict in fundal, position absolute layout on entire hero background -->
-                <div class="absolute inset-0 w-full h-full overflow-hidden pointer-events-none z-[2] photo-ticker-container">
+                <div class="absolute inset-0 w-full h-full overflow-hidden pointer-events-none photo-ticker-container" style="z-index: 2;">
                     <!-- Continuous Infinite Marquee Wrapper at 100% height, full background -->
                     <div class="photo-ticker-wrapper photo-ticker-speed-calm animate-photo-ticker flex items-center" id="photo-ticker-wrapper">
                         <!-- Group 1 -->
@@ -207,16 +207,16 @@
                 </div>
 
                 <!-- Dark Translucent Overlay using pure CSS color-mix (z-index: 5, between background photos and text content) -->
-                <div class="absolute inset-0 pointer-events-none z-[5]" style="background-color: color-mix(in srgb, var(--ugr-navy) 65%, transparent);"></div>
+                <div class="absolute inset-0 pointer-events-none" style="z-index: 5; background-color: color-mix(in srgb, var(--ugr-navy) 65%, transparent);"></div>
                 
                 <!-- Main Grid Content (z-index: 10, completely on top of background and clickable) -->
-                <div class="relative z-[10] mx-auto grid max-w-[1180px] grid-cols-1 items-center gap-12 px-6 sm:px-8 md:grid-cols-[1.1fr_0.9fr]">
+                <div class="relative mx-auto grid max-w-[1180px] grid-cols-1 items-center gap-12 px-6 sm:px-8 md:grid-cols-[1.1fr_0.9fr]" style="z-index: 10;">
                     
                     <!-- Text Hero cu panou Glassmorphism cu opacitate 58% din --ugr-navy -->
                     <div class="relative space-y-6 backdrop-blur-md p-6 sm:p-8 rounded-xl border border-white/10 shadow-2xl" style="background-color: color-mix(in srgb, var(--ugr-navy) 58%, transparent); backdrop-filter: blur(2px); -webkit-backdrop-filter: blur(2px);">
                         
                         <!-- Speed Toggle Controller (positioned absolute inside text panel for precise layout alignment) -->
-                        <div class="absolute top-3 right-4 z-[15] bg-ink/95 border border-white/10 rounded px-2.5 py-1 text-[9px] font-mono tracking-widest text-chalk/80 select-none flex items-center gap-2">
+                        <div class="absolute top-3 right-4 bg-ink/95 border border-white/10 rounded px-2.5 py-1 text-[9px] font-mono tracking-widest text-chalk/80 select-none flex items-center gap-2" style="z-index: 15;">
                             <span class="text-brass-light uppercase">VITEZĂ:</span>
                             <button onclick="setTickerSpeed('calm')" id="btn-speed-calm" class="text-brass font-bold hover:text-chalk transition-colors px-1 bg-white/5 rounded">LINIȘTITĂ</button>
                             <span class="text-chalk/20">|</span>
