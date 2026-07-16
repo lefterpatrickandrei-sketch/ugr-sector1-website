@@ -205,10 +205,23 @@ h1, h2, h3, h4, h5, h6, .font-serif {
     100% { transform: translate3d(-50%, 0, 0); }
 }
 
+.photo-ticker-container {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 2;
+}
+
 .photo-ticker-wrapper {
+    position: absolute;
+    top: 0;
+    bottom: 0;
     display: flex;
     width: max-content;
-    height: 100%;
 }
 
 .animate-photo-ticker {
@@ -233,11 +246,18 @@ h1, h2, h3, h4, h5, h6, .font-serif {
 }
 
 /* Individual Marquee Photo Items (huashu-design style) */
+.photo-band-group {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    flex-shrink: 0;
+}
+
 .photo-band-item {
     position: relative;
     width: 290px;
-    height: 90%;
-    margin: auto 6px;
+    height: 85%; /* Keep clear margins at top and bottom */
+    margin: 0 6px;
     flex-shrink: 0;
     overflow: hidden;
     border-radius: 8px;
@@ -248,7 +268,7 @@ h1, h2, h3, h4, h5, h6, .font-serif {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    filter: brightness(0.55);
+    filter: brightness(0.5); /* Dim slightly for better contrast overlay */
     mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
     -webkit-mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
 }

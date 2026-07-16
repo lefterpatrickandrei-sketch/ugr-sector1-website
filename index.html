@@ -85,7 +85,7 @@
                     <!-- Continuous Infinite Marquee Wrapper at 100% height, full background -->
                     <div class="photo-ticker-wrapper photo-ticker-speed-calm animate-photo-ticker flex items-center" id="photo-ticker-wrapper">
                         <!-- Group 1 -->
-                        <div class="flex items-center h-full">
+                        <div class="photo-band-group">
                             <div class="photo-band-item">
                                 <img src="ugr-images/ISP8061.png" alt="" />
                                 <div class="photo-badge">SGR 2025 · TIMIȘOARA</div>
@@ -145,7 +145,7 @@
                         </div>
                         
                         <!-- Group 2 (Duplicate for seamless loop) -->
-                        <div class="flex items-center h-full" aria-hidden="true">
+                        <div class="photo-band-group" aria-hidden="true">
                             <div class="photo-band-item">
                                 <img src="ugr-images/ISP8061.png" alt="" />
                                 <div class="photo-badge">SGR 2025 · TIMIȘOARA</div>
@@ -206,22 +206,23 @@
                     </div>
                 </div>
 
-                <!-- Dark Solid Overlay (z-index: 5, between background photos and text content) -->
-                <div class="absolute inset-0 bg-[var(--ugr-navy)]/65 pointer-events-none z-[5]"></div>
-
-                <!-- Speed Toggle Controller (positioned absolute, clickable z-index: 15) -->
-                <div class="absolute top-2 right-4 z-[15] bg-ink/95 border border-white/10 rounded px-2.5 py-1 text-[9px] font-mono tracking-widest text-chalk/80 select-none flex items-center gap-2">
-                    <span class="text-brass-light uppercase">VITEZĂ:</span>
-                    <button onclick="setTickerSpeed('calm')" id="btn-speed-calm" class="text-brass font-bold hover:text-chalk transition-colors px-1 bg-white/5 rounded">LINIȘTITĂ</button>
-                    <span class="text-chalk/20">|</span>
-                    <button onclick="setTickerSpeed('dynamic')" id="btn-speed-dynamic" class="text-chalk/60 hover:text-chalk transition-colors px-1">DINAMICĂ</button>
-                </div>
+                <!-- Dark Translucent Overlay using pure CSS color-mix (z-index: 5, between background photos and text content) -->
+                <div class="absolute inset-0 pointer-events-none z-[5]" style="background-color: color-mix(in srgb, var(--ugr-navy) 65%, transparent);"></div>
                 
                 <!-- Main Grid Content (z-index: 10, completely on top of background and clickable) -->
                 <div class="relative z-[10] mx-auto grid max-w-[1180px] grid-cols-1 items-center gap-12 px-6 sm:px-8 md:grid-cols-[1.1fr_0.9fr]">
                     
                     <!-- Text Hero cu panou Glassmorphism cu opacitate 58% din --ugr-navy -->
-                    <div class="space-y-6 backdrop-blur-md p-6 sm:p-8 rounded-xl border border-white/10 shadow-2xl animate-slide-left" style="background-color: color-mix(in srgb, var(--ugr-navy) 58%, transparent); backdrop-filter: blur(2px); -webkit-backdrop-filter: blur(2px);">
+                    <div class="relative space-y-6 backdrop-blur-md p-6 sm:p-8 rounded-xl border border-white/10 shadow-2xl animate-slide-left" style="background-color: color-mix(in srgb, var(--ugr-navy) 58%, transparent); backdrop-filter: blur(2px); -webkit-backdrop-filter: blur(2px);">
+                        
+                        <!-- Speed Toggle Controller (positioned absolute inside text panel for precise layout alignment) -->
+                        <div class="absolute top-3 right-4 z-[15] bg-ink/95 border border-white/10 rounded px-2.5 py-1 text-[9px] font-mono tracking-widest text-chalk/80 select-none flex items-center gap-2">
+                            <span class="text-brass-light uppercase">VITEZĂ:</span>
+                            <button onclick="setTickerSpeed('calm')" id="btn-speed-calm" class="text-brass font-bold hover:text-chalk transition-colors px-1 bg-white/5 rounded">LINIȘTITĂ</button>
+                            <span class="text-chalk/20">|</span>
+                            <button onclick="setTickerSpeed('dynamic')" id="btn-speed-dynamic" class="text-chalk/60 hover:text-chalk transition-colors px-1">DINAMICĂ</button>
+                        </div>
+
                         <div class="flex items-center gap-2.5 font-mono text-[11px] uppercase tracking-[0.16em] before:block before:h-px before:w-[24px] text-brass-light before:bg-brass-light">
                             Membru Oficial FIG și CLGE
                         </div>
