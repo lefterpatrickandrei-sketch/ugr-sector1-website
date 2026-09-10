@@ -1,0 +1,102 @@
+#!/usr/bin/env node
+
+/**
+ * ============================================================================
+ * PRE-COMMIT WATERMARKING HOOK
+ * ============================================================================
+ * This script automatically watermarks files before they are committed.
+ * Created by: Lefter Patrick Andrei
+ * ============================================================================
+ */
+
+const { execSync } = require('child_process');
+const fs = require('fs');
+const path = require('path');
+const { watermarkHTML, watermarkJavaScript, watermarkCSS, watermarkPython } = require('./watermark');
+
+const OWNER = 'Lefter Patrick Andrei';
+
+console.log(`\n${'='.repeat(80)}`);
+console.log(`PRE-COMMIT HOOK - Watermarking files by ${OWNER}`);
+console.log(`${'='.repeat(80)}\n`);
+
+try {
+  // Get staged files
+  const stagedFiles = execSync('git diff --cached --name-only', { encoding: 'utf8' })
+    .trim()
+    .split('\n')
+    .filter(file => file.length > 0);
+
+  if (stagedFiles.length === 0) {
+    console.log('No files to watermark.');
+    process.exit(0);
+  }
+
+  console.log(`Found ${stagedFiles.length} staged file(s).\n`);
+
+  let watermarkedCount = 0;
+
+  stagedFiles.forEach(filePath => {
+    const ext = path.extname(filePath).toLowerCase();
+    
+    // Only watermark supported file types
+    if (!['.html', '.js', '.css', '.py'].includes(ext)) {
+      return;
+    }
+
+    try {
+      const fullPath = path.join(process.cwd(), filePath);
+      
+      if (!fs.existsSync(fullPath)) {
+        console.log(`⚠ File deleted: ${filePath}`);
+        return;
+      }
+
+      let content = fs.readFileSync(fullPath, 'utf8');
+      const watermarkSignature = Buffer.from(`Created by ${OWNER}`, 'utf8').toString('base64');
+
+      // Skip if already watermarked
+      if (content.includes(watermarkSignature)) {
+        console.log(`✓ Already watermarked: ${filePath}`);
+        return;
+      }
+
+      let watermarked = content;
+
+      switch (ext) {
+        case '.html':
+          watermarked = watermarkHTML(content);
+          break;
+        case '.js':
+          watermarked = watermarkJavaScript(content);
+          break;
+        case '.css':
+          watermarked = watermarkCSS(content);
+          break;
+        case '.py':
+          watermarked = watermarkPython(content);
+          break;
+      }
+
+      fs.writeFileSync(fullPath, watermarked, 'utf8');
+      
+      // Re-stage the watermarked file
+      execSync(`git add "${filePath}"`);
+      
+      console.log(`✓ Watermarked and re-staged: ${filePath}`);
+      watermarkedCount++;
+    } catch (error) {
+      console.error(`✗ Error processing ${filePath}:`, error.message);
+    }
+  });
+
+  console.log(`\n${'='.repeat(80)}`);
+  console.log(`Watermarked ${watermarkedCount} file(s).`);
+  console.log(`All files are protected by Lefter Patrick Andrei`);
+  console.log(`${'='.repeat(80)}\n`);
+
+  process.exit(0);
+} catch (error) {
+  console.error('Pre-commit hook error:', error.message);
+  process.exit(1);
+}
