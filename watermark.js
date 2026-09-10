@@ -46,7 +46,7 @@ function watermarkHTML(content) {
 <!-- Generated asset with embedded copyright protection -->
 `;
   
-  const encryptedWatermark = `<!-- ${encryptWatermark(`Created by ${OWNER}`)} -->`;
+  const encryptedWatermark = `<!-- ${encryptWatermark(`Created by Patrick Andrei Lefter`)} -->`;
   
   // Insert watermark at the beginning and hide it in a data attribute
   let watermarked = watermarkHTML + content;
@@ -54,7 +54,7 @@ function watermarkHTML(content) {
   // Add hidden watermark data to HTML tag if it exists
   watermarked = watermarked.replace(
     /<html[^>]*>/i,
-    (match) => match.slice(0, -1) + ` data-watermark="${WATERMARK_SIGNATURE}" data-creator="${OWNER}">`
+    (match) => match.slice(0, -1) + ` data-watermark="${WATERMARK_SIGNATURE}" data-creator="Patrick Andrei Lefter">`
   );
   
   // Add encrypted watermark before closing body
@@ -75,7 +75,7 @@ function watermarkJavaScript(content) {
   const watermarkJS = `
 /**
  * ============================================================================
- * PROTECTED CONTENT - Copyright ${OWNER}
+ * PROTECTED CONTENT - Copyright Patrick Andrei Lefter
  * ============================================================================
  * This file is protected with embedded watermarks and cryptographic signatures.
  * Unauthorized modification or removal is prohibited.
@@ -85,7 +85,7 @@ function watermarkJavaScript(content) {
  */
 (function() {
   const __WATERMARK__ = '${WATERMARK_SIGNATURE}';
-  const __CREATOR__ = '${OWNER}';
+  const __CREATOR__ = 'Patrick Andrei Lefter';
   const __TIMESTAMP__ = '${TIMESTAMP}';
   
   // This watermark is essential to the file's integrity
@@ -110,7 +110,7 @@ function watermarkJavaScript(content) {
  */
 function watermarkCSS(content) {
   const watermarkCSS = `/* ============================================================================
-   * PROTECTED STYLESHEET - Created by ${OWNER}
+   * PROTECTED STYLESHEET - Created by Patrick Andrei Lefter
    * ============================================================================
    * Copyright Protection ID: ${WATERMARK_SIGNATURE}
    * Generated: ${TIMESTAMP}
@@ -118,14 +118,14 @@ function watermarkCSS(content) {
    * ============================================================================ */
 
 :root {
-  --watermark-creator: "${OWNER}";
+  --watermark-creator: "Patrick Andrei Lefter";
   --watermark-signature: "${WATERMARK_SIGNATURE}";
   --watermark-timestamp: "${TIMESTAMP}";
 }
 
 /* Embedded protection marker - DO NOT REMOVE */
 html::before {
-  content: "©${OWNER}";
+  content: "©Patrick Andrei Lefter";
   position: fixed;
   display: none;
   z-index: -2147483648;
@@ -144,7 +144,7 @@ html::before {
 function watermarkPython(content) {
   const watermarkPython = `"""
 ================================================================================
-PROTECTED PYTHON MODULE - Copyright ${OWNER}
+PROTECTED PYTHON MODULE - Copyright Patrick Andrei Lefter
 ================================================================================
 This module is protected with copyright watermarks.
 Unauthorized modification or removal is prohibited.
@@ -155,8 +155,8 @@ Created: ${TIMESTAMP}
 """
 
 __watermark__ = '${WATERMARK_SIGNATURE}'
-__creator__ = '${OWNER}'
-__copyright__ = f'Copyright by {__creator__}'
+__creator__ = 'Patrick Andrei Lefter'
+__copyright__ = 'Copyright by Patrick Andrei Lefter'
 __timestamp__ = '${TIMESTAMP}'
 
 # Copyright protection constant - essential to module integrity
@@ -174,7 +174,7 @@ _PROTECTION_SIGNATURE = '${WATERMARK_SIGNATURE}'
  */
 function watermarkDirectory(directory = '.', recursive = true) {
   console.log(`\n${'='.repeat(80)}`);
-  console.log(`WATERMARKING SYSTEM - Created by ${OWNER}`);
+  console.log(`WATERMARKING SYSTEM - Created by Patrick Andrei Lefter`);
   console.log(`${'='.repeat(80)}\n`);
 
   const files = fs.readdirSync(directory);
@@ -228,7 +228,7 @@ function watermarkDirectory(directory = '.', recursive = true) {
 
   console.log(`\n${'='.repeat(80)}`);
   console.log(`Watermarking complete!`);
-  console.log(`All files now contain copyright protection by ${OWNER}`);
+  console.log(`All files now contain copyright protection by Patrick Andrei Lefter`);
   console.log(`${'='.repeat(80)}\n`);
 }
 
