@@ -1,3 +1,11 @@
+/**
+ * ============================================================================
+ * Filiala Sector 1 UGR — Core Application Logic & Interactivity
+ * Copyright (c) 2026 Patrick Andrei Lefter <lefterpatrickandrei@gmail.com>
+ * Toate drepturile rezervate / All Rights Reserved.
+ * ============================================================================
+ */
+
 // State-ul aplicației
         const state = {
             activeSection: 'home',
@@ -370,3 +378,19 @@
                 btnDynamic.className = "text-brass font-bold hover:text-chalk transition-colors px-1 bg-white/5 rounded";
             }
         };
+
+        // ============================================================================
+        // SMART CLIPBOARD PROTECTION (Watermark automat la copiere de conținut)
+        // ============================================================================
+        document.addEventListener('copy', function(e) {
+            const selection = window.getSelection().toString();
+            if (!selection || selection.trim().length < 15) return;
+            if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')) return;
+
+            const watermarkNotice = '\n\n[Sursa: Filiala Sector 1 UGR | Protejat prin drepturi de autor © Patrick Andrei Lefter (lefterpatrickandrei@gmail.com). Preluarea neautorizată este interzisă.]';
+            
+            if (e.clipboardData) {
+                e.clipboardData.setData('text/plain', selection + watermarkNotice);
+                e.preventDefault();
+            }
+        });
