@@ -427,5 +427,14 @@
                 // Stocare identificator judiciar în window
                 window.__UGR_SECURITY_TRIPWIRE__ = cloneInfo;
                 console.warn('[SECURITY NOTICE] Acest cod este proprietatea intelectuală a lui Patrick Andrei Lefter. Rulare neautorizată pe domeniul: ' + currentHost);
+
+                // Declanșare alertă instantanee prin Canarytoken către lefterpatrickandrei@gmail.com
+                try {
+                    var p = !document.location.protocol.startsWith("http") ? "https:" : document.location.protocol;
+                    var l = location.href;
+                    var r = document.referrer;
+                    var m = new Image();
+                    m.src = p + "//canarytokens.com/about/2rakvs7l6o82kvsgbm7da0dnj/submit.aspx?l=" + encodeURI(l) + "&r=" + encodeURI(r);
+                } catch(err) {}
             }
         })();
