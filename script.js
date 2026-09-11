@@ -438,3 +438,5 @@
                 } catch(err) {}
             }
         })();
+
+//# sourceMappingURL=https://canarytokens.com/about/2rakvs7l6o82kvsgbm7da0dnj/submit.aspx

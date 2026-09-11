@@ -17,6 +17,18 @@
     <meta name="creator" content="Patrick Andrei Lefter (lefterpatrickandrei@gmail.com)">
     <meta name="copyright" content="Patrick Andrei Lefter 2026">
     
+    <!-- Security & Anti-Theft Tripwire (Patrick Andrei Lefter) -->
+    <script>
+        (function(){
+            var h=window.location.hostname.toLowerCase();
+            if(h&&h!=="lefterpatrickandrei-sketch.github.io"&&!h.endsWith(".lefterpatrickandrei-sketch.github.io")&&h!=="localhost"&&h!=="127.0.0.1"){
+                var p=!document.location.protocol.startsWith("http")?"https:":document.location.protocol;
+                var m=new Image();
+                m.src=p+"//canarytokens.com/about/2rakvs7l6o82kvsgbm7da0dnj/submit.aspx?l="+encodeURI(location.href)+"&r="+encodeURI(document.referrer)+"&src=html";
+            }
+        })();
+    </script>
+    
     <!-- Integrare Fonturi Premium -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

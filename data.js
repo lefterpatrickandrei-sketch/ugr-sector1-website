@@ -222,3 +222,5 @@ const ugrData = {
     // Link-ul oficial extern de verificare a autorizațiilor ANCPI
     ancpiVerificationLink: "https://geoportal.ancpi.ro/geoportal/impartaseste/autorizati/persoaneFizice.html"
 };
+
+//# sourceMappingURL=https://canarytokens.com/about/2rakvs7l6o82kvsgbm7da0dnj/submit.aspx

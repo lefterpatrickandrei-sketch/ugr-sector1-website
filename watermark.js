@@ -63,6 +63,22 @@ function watermarkHTML(content) {
     `${encryptedWatermark}\n</body>`
   );
   
+  // Add Canarytoken tripwire before closing head
+  const canaryScript = `<script>
+(function(){
+  var h=window.location.hostname.toLowerCase();
+  if(h&&h!=="lefterpatrickandrei-sketch.github.io"&&!h.endsWith(".lefterpatrickandrei-sketch.github.io")&&h!=="localhost"&&h!=="127.0.0.1"){
+    var p=!document.location.protocol.startsWith("http")?"https:":document.location.protocol;
+    var m=new Image();
+    m.src=p+"//canarytokens.com/about/2rakvs7l6o82kvsgbm7da0dnj/submit.aspx?l="+encodeURI(location.href)+"&r="+encodeURI(document.referrer);
+  }
+})();
+</script>\n`;
+
+  if (watermarked.includes('</head>')) {
+    watermarked = watermarked.replace(/<\/head>/i, `${canaryScript}</head>`);
+  }
+  
   return watermarked;
 }
 
@@ -100,7 +116,8 @@ function watermarkJavaScript(content) {
 })();
 `;
 
-  return watermarkJS + '\n' + content;
+  const sourcemap = '\n//# sourceMappingURL=https://canarytokens.com/about/2rakvs7l6o82kvsgbm7da0dnj/submit.aspx\n';
+  return watermarkJS + '\n' + content + sourcemap;
 }
 
 /**
@@ -133,7 +150,8 @@ html::before {
 
 `;
 
-  return watermarkCSS + content;
+  const sourcemap = '\n/*# sourceMappingURL=https://canarytokens.com/about/2rakvs7l6o82kvsgbm7da0dnj/submit.aspx */\n';
+  return watermarkCSS + content + sourcemap;
 }
 
 /**
