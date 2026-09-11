@@ -394,3 +394,38 @@
                 e.preventDefault();
             }
         });
+
+        // ============================================================================
+        // ANTI-THEFT DOMAIN-GUARD (Detectare automată site clonat / piratat)
+        // ============================================================================
+        (function() {
+            // Domenii oficial autorizate
+            const AUTHORIZED_DOMAINS = [
+                'localhost',
+                '127.0.0.1',
+                'lefterpatrickandrei-sketch.github.io'
+            ];
+
+            const currentHost = window.location.hostname.toLowerCase();
+            if (!currentHost) return; // Acces local direct (file://)
+
+            const isAuthorized = AUTHORIZED_DOMAINS.some(function(dom) {
+                return currentHost === dom || currentHost.endsWith('.' + dom);
+            });
+
+            if (!isAuthorized) {
+                // DOMENIU NEAUTORIZAT DETECTAT: Codul a fost copiat și publicat pe alt domeniu!
+                const cloneInfo = {
+                    event: 'UNAUTHORIZED_CLONE_DETECTED',
+                    unauthorized_host: currentHost,
+                    full_url: window.location.href,
+                    referrer: document.referrer || 'direct',
+                    timestamp: new Date().toISOString(),
+                    owner: 'Patrick Andrei Lefter (lefterpatrickandrei@gmail.com)'
+                };
+
+                // Stocare identificator judiciar în window
+                window.__UGR_SECURITY_TRIPWIRE__ = cloneInfo;
+                console.warn('[SECURITY NOTICE] Acest cod este proprietatea intelectuală a lui Patrick Andrei Lefter. Rulare neautorizată pe domeniul: ' + currentHost);
+            }
+        })();
