@@ -938,26 +938,123 @@ button {
 .map-card-body {
     height: 290px;
     position: relative;
-    border: 1px solid rgba(0, 229, 255, 0.35);
+    border: 1px solid rgba(0, 229, 255, 0.45);
     border-radius: 8px;
-    background: rgba(2, 10, 20, 0.12);
-    backdrop-filter: blur(2px);
-    -webkit-backdrop-filter: blur(2px);
+    background-color: #030d1a;
+    background-image: 
+        linear-gradient(rgba(0, 229, 255, 0.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 229, 255, 0.06) 1px, transparent 1px),
+        radial-gradient(circle at 50% 50%, rgba(18, 125, 194, 0.16) 0%, rgba(2, 9, 18, 0.98) 100%);
+    background-size: 20px 20px, 20px 20px, 100% 100%;
     display: flex;
     align-items: center;
     justify-content: center;
     overflow: hidden;
+    box-shadow: inset 0 0 28px rgba(0, 0, 0, 0.85), 0 8px 24px rgba(0, 0, 0, 0.5);
+}
+
+/* CAD HUD Reticles & Corner Brackets */
+.map-card-body::before,
+.map-card-body::after {
+    content: '';
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    pointer-events: none;
+    z-index: 5;
+}
+.map-card-body::before {
+    top: 6px;
+    left: 6px;
+    border-top: 2px solid var(--ugr-cyan);
+    border-left: 2px solid var(--ugr-cyan);
+}
+.map-card-body::after {
+    bottom: 6px;
+    right: 6px;
+    border-bottom: 2px solid var(--ugr-cyan);
+    border-right: 2px solid var(--ugr-cyan);
+}
+
+.map-hud-tag-tr {
+    position: absolute;
+    top: 8px;
+    right: 12px;
+    font-family: var(--font-mono);
+    font-size: 8.5px;
+    color: rgba(0, 229, 255, 0.75);
+    letter-spacing: 0.12em;
+    pointer-events: none;
+    z-index: 4;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+.map-hud-tag-bl {
+    position: absolute;
+    bottom: 8px;
+    left: 12px;
+    font-family: var(--font-mono);
+    font-size: 8.5px;
+    color: rgba(250, 251, 252, 0.5);
+    letter-spacing: 0.08em;
+    pointer-events: none;
+    z-index: 4;
+}
+
+/* Quick-Tap City Chips (Mobile & Desktop) */
+.map-quick-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 10px;
+    margin-bottom: 8px;
+}
+.map-chip {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    padding: 5px 9px;
+    border-radius: 4px;
+    background: rgba(6, 26, 45, 0.75);
+    border: 1px solid rgba(0, 229, 255, 0.25);
+    color: rgba(250, 251, 252, 0.82);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-height: 28px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    user-select: none;
+}
+.map-chip:hover {
+    border-color: var(--ugr-cyan);
+    color: #FFFFFF;
+    background: rgba(0, 229, 255, 0.12);
+}
+.map-chip.active {
+    background: linear-gradient(135deg, rgba(0, 229, 255, 0.22), rgba(18, 125, 194, 0.35));
+    border-color: var(--ugr-cyan);
+    color: #FFFFFF;
+    box-shadow: 0 0 10px rgba(0, 229, 255, 0.3);
+}
+.map-chip[data-node="chisinau"].active {
+    background: linear-gradient(135deg, rgba(255, 159, 28, 0.22), rgba(217, 119, 6, 0.35));
+    border-color: #FF9F1C;
+    box-shadow: 0 0 10px rgba(255, 159, 28, 0.3);
 }
 
 .node-info-box {
-    margin-top: 12px;
-    background: rgba(4, 14, 26, 0.35);
-    border: 1px solid rgba(0, 229, 255, 0.25);
+    margin-top: 10px;
+    background: rgba(4, 14, 26, 0.90);
+    border: 1px solid rgba(0, 229, 255, 0.30);
     border-radius: 6px;
     padding: 12px 14px;
     font-size: 12px;
-    backdrop-filter: blur(2px);
-    -webkit-backdrop-filter: blur(2px);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
 }
 .node-info-header {
     display: flex;
@@ -1941,6 +2038,84 @@ button {
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
+    }
+
+    /* Soluție Zgomot Vizual Mobil: Pe ecrane mici, o singură bandă foto lină oferă claritate maximă textului */
+    .photo-ticker-row:nth-child(2) {
+        display: none !important;
+    }
+    .photo-ticker-container {
+        opacity: 0.20;
+    }
+
+    /* Modul Switcher Hartă pe Mobil: Evită tăierea textului pe 390px */
+    .map-view-switcher {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 8px !important;
+        margin-bottom: 10px !important;
+    }
+    .map-view-switcher .switcher-label {
+        text-align: center;
+        font-size: 10px;
+        letter-spacing: 0.12em;
+        width: 100%;
+    }
+    .map-view-switcher .mode-toggle-group {
+        display: grid !important;
+        grid-template-columns: 1fr 1fr !important;
+        width: 100% !important;
+    }
+    .map-view-switcher .mode-btn {
+        width: 100% !important;
+        text-align: center !important;
+        padding: 8px 4px !important;
+        font-size: 10.5px !important;
+        justify-content: center;
+    }
+
+    /* Formatare Telemetrie Nod pe Mobil: Previne spargerea stângace pe coloane */
+    .node-info-box {
+        padding: 10px 12px;
+    }
+    .node-info-header {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 5px !important;
+        margin-bottom: 8px !important;
+    }
+    #node-info-title {
+        font-size: 12.5px !important;
+        font-weight: 700;
+        color: #FFFFFF !important;
+        line-height: 1.35;
+    }
+    .node-info-coords {
+        display: inline-block !important;
+        background: rgba(0, 229, 255, 0.08);
+        border: 1px solid rgba(0, 229, 255, 0.25);
+        border-radius: 4px;
+        padding: 3px 6px;
+        font-size: 9px !important;
+        word-break: break-all;
+        line-height: 1.3;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    /* Butoane Tactile Rapide (Chips) pe Mobil */
+    .map-quick-chips {
+        display: grid !important;
+        grid-template-columns: 1fr 1fr !important;
+        gap: 6px !important;
+        width: 100%;
+    }
+    .map-chip {
+        width: 100% !important;
+        font-size: 9.5px !important;
+        padding: 6px 4px !important;
+        text-align: center;
+        justify-content: center;
     }
 }
 

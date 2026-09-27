@@ -164,7 +164,7 @@ const ugrData = {
             location: "UTM, CHIȘINĂU, REPUBLICA MOLDOVA",
             date: "11–14 NOIEMBRIE",
             source: { org: "Portal SGR", url: "https://sgr.ugr.ro/indexr.php" },
-            image: "ugr-images/united_1384.png",
+            image: "ugr-images/united_1384.webp",
             actionText: "Vezi detalii & înscriere SGR ↗"
         },
         {
@@ -177,7 +177,7 @@ const ugrData = {
             location: "SEDIUL OCPI BUCUREȘTI / BCPI SECTOR 1",
             date: "PROGRAM LUNAR FILIALĂ",
             source: { org: "Filiala Sector 1", url: "#contact" },
-            image: "ugr-images/ISP8061.png",
+            image: "ugr-images/ISP8061.webp",
             actionText: "Transmite propuneri & spețe locale →"
         },
         {
@@ -190,7 +190,7 @@ const ugrData = {
             location: "SEDIUL CENTRAL UGR, BUCUREȘTI",
             date: "ACTUALIZARE 2026",
             source: { org: "UGR Stiri", url: "https://www.ugr.ro/stiri/comunicat-privind-bex-ugr-din-21-mai-2026" },
-            image: "ugr-images/ISP8267.png",
+            image: "ugr-images/ISP8267.webp",
             actionText: "Citește comunicatul oficial ↗"
         },
         {
@@ -203,7 +203,7 @@ const ugrData = {
             location: "FACULTATEA DE GEODEZIE UTCB, BD. LACUL TEI 124",
             date: "CONVOCARE TERITORIALĂ",
             source: { org: "Filiala Sector 1", url: "#contact" },
-            image: "ugr-images/ISP7469.png",
+            image: "ugr-images/ISP7469.webp",
             actionText: "Confirmă participarea la filială →"
         },
         {
@@ -216,7 +216,7 @@ const ugrData = {
             location: "SALA DE CONSILIU FIFIM – USAMV (BD. MĂRĂȘTI NR. 59, SECTOR 1)",
             date: "8 IULIE 2026",
             source: { org: "Instagram @filiala.sector1.ugr", url: "https://www.instagram.com/filiala.sector1.ugr" },
-            image: "ugr-images/ig_post_1.jpg",
+            image: "ugr-images/ig_post_1.webp",
             actionText: "Vezi postarea pe Instagram ↗"
         },
         {
@@ -229,7 +229,7 @@ const ugrData = {
             location: "FIFIM USAMV & COMPANII PARTENERE SECTOR 1",
             date: "IULIE 2026",
             source: { org: "Instagram @filiala.sector1.ugr", url: "https://www.instagram.com/filiala.sector1.ugr" },
-            image: "ugr-images/ig_post_3.jpg",
+            image: "ugr-images/ig_post_3.webp",
             actionText: "Vezi parteneriatele pe Instagram ↗"
         },
         {
@@ -242,7 +242,7 @@ const ugrData = {
             location: "CANALE OFICIALE FILIALA SECTOR 1",
             date: "14 IULIE 2026",
             source: { org: "Facebook Filiala Sector 1 UGR", url: "https://www.facebook.com/share/14xwxtFChmC/" },
-            image: "ugr-images/ig_post_2.jpg",
+            image: "ugr-images/ig_post_2.webp",
             actionText: "Citește anunțul pe Facebook ↗"
         },
         {
@@ -255,7 +255,7 @@ const ugrData = {
             location: "FIFIM USAMV / CHIȘINĂU UTM",
             date: "15 IUNIE – 15 SEPTEMBRIE 2026",
             source: { org: "Instagram @filiala.sector1.ugr", url: "https://www.instagram.com/filiala.sector1.ugr" },
-            image: "ugr-images/ig_post_4.jpg",
+            image: "ugr-images/ig_post_4.webp",
             actionText: "Detalii burse pe Instagram ↗"
         },
         {
@@ -268,7 +268,7 @@ const ugrData = {
             location: "TARTU, ESTONIA",
             date: "EVENIMENT EUROPEAN",
             source: { org: "CLGE", url: "https://www.clge.eu" },
-            image: "ugr-images/6a0c33b42cd7bAG-CLGE-TARTU-Group-pic.png",
+            image: "ugr-images/6a0c33b42cd7bAG-CLGE-TARTU-Group-pic.webp",
             actionText: "Detalii for european ↗"
         }
     ],
@@ -280,31 +280,31 @@ const ugrData = {
         {
             name: "Ing. Mircea Afrăsinei",
             role: "Președinte UGR",
-            image: "ugr-images/Mircea-Afrsinei.jpg",
+            image: "ugr-images/Mircea-Afrsinei.webp",
             desc: "Coordonator general și reprezentant legal al Uniunii în parteneriatele strategice cu ANCPI, Guvernul României, FIG și CLGE."
         },
         {
             name: "Prof. univ. dr. ing. Ana Cornelia Badea",
             role: "Vicepreședinte Parteneriate Academice",
-            image: "logo_geodez.png",
+            image: "logo_geodez.webp",
             desc: "Cadru didactic universitar la Facultatea de Geodezie UTCB. Responsabilă de cercetarea științifică, conferințe academice și relația cu universitățile tehnice."
         },
         {
             name: "Prof. univ. dr. ing. Petre Iuliu Dragomir",
             role: "Vicepreședinte Relații Instituționale",
-            image: "logo_geodez.png",
+            image: "ugr-images/6214a5fa49f15Dragomir-Petre-Iuliu.webp",
             desc: "Coordonator al dialogului tehnic-legislativ cu ANCPI, responsabil de propunerile de îmbunătățire a legislației cadastrului și publicității imobiliare."
         },
         {
             name: "Ing. Vlad Păunescu",
             role: "Secretar Executiv UGR",
-            image: "logo_geodez.png",
+            image: "logo_geodez.webp",
             desc: "Gestiunea operațională a asociației, relația directă cu filialele din țară și evidența membrilor activi (secretar@ugr.ro)."
         },
         {
             name: "Ing. Costin Sebastian Manu",
             role: "Trezorier Național",
-            image: "logo_geodez.png",
+            image: "logo_geodez.webp",
             desc: "Managementul financiar, transparența bugetară, gestiunea cotizațiilor și auditul operațiunilor asociației."
         }
     ],

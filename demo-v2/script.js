@@ -253,6 +253,11 @@ function selectNode(nodeKey) {
     if (myGlobe && typeof myGlobe.pointOfView === 'function') {
         myGlobe.pointOfView({ lat: node.lat, lng: node.lon, altitude: nodeKey === 'bucuresti' ? 0.32 : 0.36 }, 1200);
     }
+
+    // Actualizează clasa activă pe butoanele rapide (chips)
+    document.querySelectorAll('.map-chip').forEach(chip => {
+        chip.classList.toggle('active', chip.getAttribute('data-node') === nodeKey);
+    });
 }
 
 function handleSkillFilterChange() {
