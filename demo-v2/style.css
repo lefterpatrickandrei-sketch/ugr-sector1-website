@@ -486,14 +486,15 @@ button {
 .photo-band-group {
     display: flex;
     align-items: center;
-    gap: 16px;
-    padding-right: 16px;
+    height: 100%;
+    flex-shrink: 0;
 }
 .photo-band-item {
     position: relative;
-    width: 320px;
-    height: 210px;
-    border-radius: 10px;
+    width: 290px;
+    height: 85%;
+    margin: 0 6px;
+    border-radius: 8px;
     overflow: hidden;
     border: 1px solid rgba(0, 229, 255, 0.35);
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
@@ -938,267 +939,26 @@ button {
 .map-card-body {
     height: 290px;
     position: relative;
-    border: 1px solid rgba(0, 229, 255, 0.45);
+    border: 1px solid rgba(0, 229, 255, 0.35);
     border-radius: 8px;
-    background-color: #030d1a;
-    background-image: 
-        linear-gradient(rgba(0, 229, 255, 0.06) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0, 229, 255, 0.06) 1px, transparent 1px),
-        radial-gradient(circle at 50% 50%, rgba(18, 125, 194, 0.16) 0%, rgba(2, 9, 18, 0.98) 100%);
-    background-size: 20px 20px, 20px 20px, 100% 100%;
+    background: rgba(2, 10, 20, 0.12);
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
     display: flex;
     align-items: center;
     justify-content: center;
     overflow: hidden;
-    box-shadow: inset 0 0 28px rgba(0, 0, 0, 0.85), 0 8px 24px rgba(0, 0, 0, 0.5);
-}
-
-/* CAD HUD Reticles & Corner Brackets */
-.map-card-body::before,
-.map-card-body::after {
-    content: '';
-    position: absolute;
-    width: 14px;
-    height: 14px;
-    pointer-events: none;
-    z-index: 5;
-}
-.map-card-body::before {
-    top: 6px;
-    left: 6px;
-    border-top: 2px solid var(--ugr-cyan);
-    border-left: 2px solid var(--ugr-cyan);
-}
-.map-card-body::after {
-    bottom: 6px;
-    right: 6px;
-    border-bottom: 2px solid var(--ugr-cyan);
-    border-right: 2px solid var(--ugr-cyan);
-}
-
-.map-hud-tag-tr {
-    position: absolute;
-    top: 8px;
-    right: 12px;
-    font-family: var(--font-mono);
-    font-size: 8.5px;
-    color: rgba(0, 229, 255, 0.75);
-    letter-spacing: 0.12em;
-    pointer-events: none;
-    z-index: 4;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-}
-.map-hud-tag-bl {
-    position: absolute;
-    bottom: 8px;
-    left: 12px;
-    font-family: var(--font-mono);
-    font-size: 8.5px;
-    color: rgba(250, 251, 252, 0.5);
-    letter-spacing: 0.08em;
-    pointer-events: none;
-    z-index: 4;
-}
-
-/* CAD HUD Instruments: Bousolă & Scală Topografică */
-.map-hud-compass {
-    position: absolute;
-    top: 10px;
-    left: 12px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    font-family: var(--font-mono);
-    color: var(--ugr-cyan);
-    pointer-events: none;
-    z-index: 6;
-    background: rgba(4, 14, 26, 0.75);
-    padding: 3px 6px;
-    border-radius: 4px;
-    border: 1px solid rgba(0, 229, 255, 0.35);
-    backdrop-filter: blur(4px);
-}
-.compass-arrow {
-    font-size: 10px;
-    line-height: 1;
-    color: var(--ugr-cyan);
-    animation: compass-pulse 2.5s infinite ease-in-out;
-}
-.compass-n {
-    font-size: 8.5px;
-    font-weight: 800;
-    letter-spacing: 0.05em;
-}
-@keyframes compass-pulse {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-2px); }
-}
-
-.map-hud-scale {
-    position: absolute;
-    bottom: 8px;
-    right: 12px;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    font-family: var(--font-mono);
-    pointer-events: none;
-    z-index: 6;
-    background: rgba(4, 14, 26, 0.75);
-    padding: 3px 6px;
-    border-radius: 4px;
-    border: 1px solid rgba(0, 229, 255, 0.3);
-    backdrop-filter: blur(4px);
-}
-.scale-ticks {
-    display: flex;
-    justify-content: space-between;
-    width: 68px;
-    font-size: 7.5px;
-    color: rgba(250, 251, 252, 0.7);
-    margin-bottom: 2px;
-}
-.scale-bar {
-    display: flex;
-    width: 68px;
-    height: 3px;
-    border: 1px solid var(--ugr-cyan);
-}
-.scale-seg {
-    flex: 1;
-    height: 100%;
-}
-.scale-seg.seg-dark {
-    background: var(--ugr-cyan);
-}
-.scale-seg.seg-light {
-    background: rgba(255, 255, 255, 0.85);
-}
-
-/* Quick-Tap City Chips (Mobile & Desktop) */
-.map-quick-chips {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    margin-top: 10px;
-    margin-bottom: 8px;
-}
-.map-chip {
-    font-family: var(--font-mono);
-    font-size: 10px;
-    font-weight: 600;
-    letter-spacing: 0.02em;
-    padding: 5px 9px;
-    border-radius: 4px;
-    background: rgba(6, 26, 45, 0.75);
-    border: 1px solid rgba(0, 229, 255, 0.25);
-    color: rgba(250, 251, 252, 0.82);
-    cursor: pointer;
-    transition: all 0.2s ease;
-    min-height: 28px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    user-select: none;
-}
-.map-chip:hover {
-    border-color: var(--ugr-cyan);
-    color: #FFFFFF;
-    background: rgba(0, 229, 255, 0.12);
-}
-.map-chip.active {
-    background: linear-gradient(135deg, rgba(0, 229, 255, 0.22), rgba(18, 125, 194, 0.35));
-    border-color: var(--ugr-cyan);
-    color: #FFFFFF;
-    box-shadow: 0 0 10px rgba(0, 229, 255, 0.3);
-}
-.map-chip[data-node="chisinau"].active {
-    background: linear-gradient(135deg, rgba(255, 159, 28, 0.22), rgba(217, 119, 6, 0.35));
-    border-color: #FF9F1C;
-    box-shadow: 0 0 10px rgba(255, 159, 28, 0.3);
-}
-.chip-sub {
-    font-size: 8.5px;
-    padding: 1px 4px;
-    margin-left: 4px;
-    border-radius: 3px;
-    background: rgba(255, 255, 255, 0.1);
-    color: rgba(250, 251, 252, 0.7);
-}
-.map-chip.active .chip-sub {
-    background: rgba(0, 229, 255, 0.25);
-    color: #FFFFFF;
-}
-.map-chip[data-node="chisinau"].active .chip-sub {
-    background: rgba(255, 159, 28, 0.3);
-    color: #FFFFFF;
-}
-
-/* Acțiuni Directe Telemetrie */
-.telemetry-actions {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-    margin-top: 10px;
-}
-.btn-calc-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 6px 12px;
-    font-family: var(--font-mono);
-    font-size: 10.5px;
-    font-weight: 700;
-    color: #FFFFFF;
-    background: linear-gradient(135deg, rgba(0, 229, 255, 0.25), rgba(18, 125, 194, 0.45));
-    border: 1px solid rgba(0, 229, 255, 0.5);
-    border-radius: 5px;
-    cursor: pointer;
-    transition: all 0.25s ease;
-    text-decoration: none;
-}
-.btn-calc-link:hover {
-    background: linear-gradient(135deg, rgba(0, 229, 255, 0.4), rgba(18, 125, 194, 0.65));
-    border-color: #00E5FF;
-    box-shadow: 0 0 12px rgba(0, 229, 255, 0.4);
-    transform: translateY(-1px);
-}
-.btn-calc-link .btn-arrow {
-    display: inline-block;
-    transition: transform 0.2s ease;
-}
-.btn-calc-link:hover .btn-arrow {
-    transform: translateX(3px);
-}
-.btn-tour-link {
-    background: rgba(255, 255, 255, 0.06);
-    border-color: rgba(255, 255, 255, 0.2);
-    color: rgba(250, 251, 252, 0.85);
-}
-.btn-tour-link:hover {
-    background: rgba(255, 255, 255, 0.12);
-    border-color: rgba(255, 255, 255, 0.4);
-    box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
-}
-.btn-tour-link.tour-active {
-    background: rgba(255, 159, 28, 0.2);
-    border-color: #FF9F1C;
-    color: #FF9F1C;
-    box-shadow: 0 0 12px rgba(255, 159, 28, 0.35);
 }
 
 .node-info-box {
-    margin-top: 10px;
-    background: rgba(4, 14, 26, 0.90);
-    border: 1px solid rgba(0, 229, 255, 0.30);
+    margin-top: 12px;
+    background: rgba(4, 14, 26, 0.35);
+    border: 1px solid rgba(0, 229, 255, 0.25);
     border-radius: 6px;
     padding: 12px 14px;
     font-size: 12px;
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
 }
 .node-info-header {
     display: flex;
@@ -2183,126 +1943,6 @@ button {
         overflow: hidden;
         text-overflow: ellipsis;
     }
-
-    /* Soluție Zgomot Vizual Mobil: Pe ecrane mici, o singură bandă foto lină oferă claritate maximă textului */
-    .photo-ticker-row:nth-child(2) {
-        display: none !important;
-    }
-    .photo-ticker-container {
-        opacity: 0.20;
-    }
-
-    /* Modul Switcher Hartă pe Mobil: Evită tăierea textului pe 390px */
-    .map-view-switcher {
-        flex-direction: column !important;
-        align-items: stretch !important;
-        gap: 8px !important;
-        margin-bottom: 10px !important;
-    }
-    .map-view-switcher .switcher-label {
-        text-align: center;
-        font-size: 10px;
-        letter-spacing: 0.12em;
-        width: 100%;
-    }
-    .map-view-switcher .mode-toggle-group {
-        display: grid !important;
-        grid-template-columns: 1fr 1fr !important;
-        width: 100% !important;
-    }
-    .map-view-switcher .mode-btn {
-        width: 100% !important;
-        text-align: center !important;
-        padding: 8px 4px !important;
-        font-size: 10.5px !important;
-        justify-content: center;
-    }
-
-    /* Formatare Telemetrie Nod pe Mobil: Previne spargerea stângace pe coloane */
-    .node-info-box {
-        padding: 10px 12px;
-    }
-    .node-info-header {
-        flex-direction: column !important;
-        align-items: flex-start !important;
-        gap: 5px !important;
-        margin-bottom: 8px !important;
-    }
-    #node-info-title {
-        font-size: 12.5px !important;
-        font-weight: 700;
-        color: #FFFFFF !important;
-        line-height: 1.35;
-    }
-    .node-info-coords {
-        display: inline-block !important;
-        background: rgba(0, 229, 255, 0.08);
-        border: 1px solid rgba(0, 229, 255, 0.25);
-        border-radius: 4px;
-        padding: 3px 6px;
-        font-size: 9px !important;
-        word-break: break-all;
-        line-height: 1.3;
-        width: 100%;
-        box-sizing: border-box;
-    }
-
-    /* Butoane Tactile Rapide (Chips) pe Mobil */
-    .map-quick-chips {
-        display: grid !important;
-        grid-template-columns: 1fr 1fr !important;
-        gap: 6px !important;
-        width: 100%;
-    }
-    .map-chip {
-        width: 100% !important;
-        font-size: 9.5px !important;
-        padding: 6px 4px !important;
-        text-align: center;
-        justify-content: center;
-    }
-
-    /* Înălțime Compactă & Ergonomie Mobil pentru Hartă */
-    .map-card-body {
-        height: 235px !important;
-    }
-    #globe-canvas-container,
-    #globe-3d-wrapper {
-        height: 235px !important;
-    }
-    #globe-canvas-container canvas {
-        touch-action: pan-y !important;
-    }
-
-    /* Padding mai suplu pe mobil pentru a preveni derularea excesivă */
-    .hero-container > .glass-panel {
-        padding: 14px 12px !important;
-    }
-
-    /* Grilă Telemetrie Compactă pe Mobil */
-    #node-telemetry-container {
-        grid-template-columns: 1fr 1fr !important;
-        gap: 6px !important;
-    }
-    .telemetry-card {
-        padding: 5px 6px !important;
-    }
-
-    /* Butoane Acțiuni Telemetrie pe Mobil (Grilă 2 Coloane Simetrică) */
-    .telemetry-actions {
-        display: grid !important;
-        grid-template-columns: 1fr 1fr !important;
-        gap: 6px !important;
-        width: 100% !important;
-        margin-top: 8px !important;
-    }
-    .btn-calc-link {
-        width: 100% !important;
-        justify-content: center !important;
-        font-size: 9.5px !important;
-        padding: 7px 4px !important;
-        text-align: center !important;
-    }
 }
 
 /* Afilieri Internaționale - Micro-carduri Interactive */
@@ -2482,80 +2122,3 @@ button {
         font-size: 15px;
     }
 }
-
-/* ══════════════════════════════════════════════════════════════════
-   STILURI PENTRU CELE 5 VARIANTE EXPLICITE (V1 .. V5)
-   ══════════════════════════════════════════════════════════════════ */
-
-/* Varianta 1: Clean & 1 Bandă (Implicit Recomandat) */
-.variant-1-mode .photo-ticker-row:nth-child(2) {
-    display: none !important;
-}
-
-/* Varianta 2: Glisare Text Original & 2 Benzi Foto Active */
-.variant-2-mode .photo-ticker-row:nth-child(2) {
-    display: flex !important;
-}
-.variant-2-mode .photo-ticker-container {
-    opacity: 0.28 !important;
-}
-.title-slide-original {
-    animation: slideInOriginal 0.85s cubic-bezier(0.16, 1.35, 0.3, 1) forwards !important;
-}
-@keyframes slideInOriginal {
-    0% {
-        opacity: 0;
-        transform: translateX(-55px) skewX(-3deg);
-        filter: blur(4px);
-    }
-    70% {
-        transform: translateX(6px) skewX(1deg);
-    }
-    100% {
-        opacity: 1;
-        transform: translateX(0) skewX(0);
-        filter: blur(0);
-    }
-}
-
-/* Varianta 3: Decodare Geodezică Scramble & Blueprint */
-.variant-3-mode .photo-ticker-container {
-    filter: grayscale(100%) brightness(0.65) sepia(100%) hue-rotate(145deg) saturate(350%);
-    opacity: 0.25 !important;
-}
-.variant-3-mode .map-card-body {
-    border-color: #00E5FF !important;
-    box-shadow: inset 0 0 35px rgba(0, 229, 255, 0.2), 0 8px 30px rgba(0, 0, 0, 0.8) !important;
-}
-
-/* Varianta 4: Cinema Mode, Text Gradient Shimmer & 3D Glob Implicit */
-.variant-4-mode .photo-ticker-row:nth-child(2) {
-    display: flex !important;
-}
-.variant-4-mode .photo-ticker-container {
-    opacity: 0.38 !important;
-}
-.title-gradient-shimmer {
-    background: linear-gradient(100deg, #FFFFFF 0%, #00E5FF 30%, #FFE082 58%, #FFFFFF 88%);
-    background-size: 250% auto;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    animation: textGradientSweep 4.5s linear infinite;
-}
-@keyframes textGradientSweep {
-    0% { background-position: 250% 0; }
-    100% { background-position: -50% 0; }
-}
-
-/* Varianta 5: Hartă Fixă (Sticky GIS HUD) & Fără Benzi Foto */
-.variant-5-mode .glass-panel:has(.map-card-body),
-.variant-5-mode .hero-container > .glass-panel:nth-child(2) {
-    position: sticky !important;
-    top: 75px !important;
-    z-index: 30 !important;
-    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.9) !important;
-}
-.variant-5-mode .photo-ticker-container {
-    display: none !important;
-}
-

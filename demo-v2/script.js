@@ -147,35 +147,6 @@ window.setTickerSpeed = setTickerSpeed;
 // 3. INTERACȚIUNE HARTĂ 2D & FILTRU COMPETENȚE
 // ═══════════════════════════════════════════════════════════════════════════
 
-function scrambleCoordsText(targetEl, targetText) {
-    if (!targetEl) return;
-    const chars = '0123456789°\'"•XYZ:. ';
-    let iteration = 0;
-    const originalText = targetText;
-    if (targetEl._scrambleTimer) {
-        clearInterval(targetEl._scrambleTimer);
-    }
-    targetEl._scrambleTimer = setInterval(() => {
-        targetEl.innerText = originalText
-            .split('')
-            .map((char, index) => {
-                if (index < iteration) {
-                    return originalText[index];
-                }
-                if (char === ' ' || char === '/' || char === '•' || char === '|') return char;
-                return chars[Math.floor(Math.random() * chars.length)];
-            })
-            .join('');
-
-        if (iteration >= originalText.length) {
-            clearInterval(targetEl._scrambleTimer);
-            targetEl._scrambleTimer = null;
-            targetEl.innerText = originalText;
-        }
-        iteration += 4;
-    }, 20);
-}
-
 function selectNode(nodeKey) {
     const node = ugrData.mapNodes[nodeKey];
     if (!node) return;
@@ -188,8 +159,7 @@ function selectNode(nodeKey) {
 
     if (titleEl) titleEl.innerText = node.name;
     if (coordsEl) {
-        const fullCoords = `${node.latStr} / ${node.lonStr}${node.stereo70Str ? ' • ' + node.stereo70Str : ''}`;
-        scrambleCoordsText(coordsEl, fullCoords);
+        coordsEl.innerText = `${node.latStr} / ${node.lonStr}${node.stereo70Str ? ' • ' + node.stereo70Str : ''}`;
     }
     if (textEl) textEl.innerText = node.desc;
 
@@ -283,90 +253,6 @@ function selectNode(nodeKey) {
     if (myGlobe && typeof myGlobe.pointOfView === 'function') {
         myGlobe.pointOfView({ lat: node.lat, lng: node.lon, altitude: nodeKey === 'bucuresti' ? 0.32 : 0.36 }, 1200);
     }
-
-    // Actualizează clasa activă pe butoanele rapide (chips)
-    document.querySelectorAll('.map-chip').forEach(chip => {
-        chip.classList.toggle('active', chip.getAttribute('data-node') === nodeKey);
-    });
-}
-
-// ═══════════════════════════════════════════════════════════════════════════
-// ACȚIUNI DIRECTE TELEMETRIE: CALCULATOR STEREO 70 & TUR VIRTUAL NODURI
-// ═══════════════════════════════════════════════════════════════════════════
-
-function calculateFromSelectedNode() {
-    const activeNodeKey = appState.selectedNode || 'bucuresti';
-    const node = ugrData.mapNodes[activeNodeKey];
-    if (!node) return;
-
-    let xVal = '328733.315';
-    let yVal = '586483.430';
-
-    if (node.stereo70Str && node.stereo70Str.includes('X:')) {
-        const matchX = node.stereo70Str.match(/X:\s*([0-9.]+)/);
-        const matchY = node.stereo70Str.match(/Y:\s*([0-9.]+)/);
-        if (matchX && matchY) {
-            xVal = matchX[1];
-            yVal = matchY[1];
-        }
-    } else if (activeNodeKey === 'chisinau') {
-        // Chișinău UTM / echivalent demonstrativ Stereo 70
-        xVal = '642100.000';
-        yVal = '785300.000';
-    }
-
-    // Navighează către vederea Calculator Stereo 70
-    navigateTo('calculator');
-
-    // Populează câmpurile de introducere
-    const inputX = document.getElementById('coord-x');
-    const inputY = document.getElementById('coord-y');
-    if (inputX && inputY) {
-        inputX.value = xVal;
-        inputY.value = yVal;
-        calculateCoordinates();
-    }
-
-    // Salt fluid la cardul calculatorului
-    setTimeout(() => {
-        const calcCard = document.getElementById('view-calculator') || document.querySelector('.calculator-card') || document.getElementById('coord-x');
-        if (calcCard) {
-            calcCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
-    }, 120);
-}
-window.calculateFromSelectedNode = calculateFromSelectedNode;
-
-let autoTourInterval = null;
-const tourNodes = ['bucuresti', 'chisinau', 'cluj', 'iasi', 'timisoara', 'constanta'];
-let currentTourIndex = 0;
-
-function toggleAutoTour() {
-    const btn = document.getElementById('btn-auto-tour');
-    const icon = document.getElementById('tour-icon');
-    const text = document.getElementById('tour-text');
-
-    if (autoTourInterval) {
-        clearInterval(autoTourInterval);
-        autoTourInterval = null;
-        if (btn) btn.classList.remove('tour-active');
-        if (icon) icon.innerText = '▶';
-        if (text) text.innerText = 'Tur Virtual Noduri';
-    } else {
-        if (btn) btn.classList.add('tour-active');
-        if (icon) icon.innerText = '⏸';
-        if (text) text.innerText = 'Oprește Turul';
-
-        advanceTour();
-        autoTourInterval = setInterval(advanceTour, 3500);
-    }
-}
-window.toggleAutoTour = toggleAutoTour;
-
-function advanceTour() {
-    currentTourIndex = (currentTourIndex + 1) % tourNodes.length;
-    const nextNode = tourNodes[currentTourIndex];
-    selectNode(nextNode);
 }
 
 function handleSkillFilterChange() {
@@ -543,14 +429,6 @@ function init3DGlobe() {
         controls.enablePan = false;
         controls.minDistance = 115;
         controls.maxDistance = 500;
-        if (window.innerWidth <= 768) {
-            controls.enableZoom = false;
-        }
-    }
-
-    const globeCanvas = container.querySelector('canvas');
-    if (globeCanvas) {
-        globeCanvas.style.touchAction = 'pan-y';
     }
 
     setupSatellitesAndLasers();
@@ -1190,120 +1068,7 @@ function playBrandTypewriter() {
 window.playBrandTypewriter = playBrandTypewriter;
 
 // ═══════════════════════════════════════════════════════════════════════════
-// 10. GESTIUNE CELE 5 VARIANTE EXPLICITE DE DESIGN, ANIMAȚII & MOBIL
-// ═══════════════════════════════════════════════════════════════════════════
-
-let scrambleInterval = null;
-
-function scrambleText(elementId, targetText, durationMs = 700) {
-    const el = document.getElementById(elementId);
-    if (!el) return;
-    const chars = '0123456789ABCDEF!@#$%^&*<>[]/{}+=-~';
-    const startTime = Date.now();
-    if (scrambleInterval) clearInterval(scrambleInterval);
-
-    scrambleInterval = setInterval(() => {
-        const elapsed = Date.now() - startTime;
-        const progress = Math.min(elapsed / durationMs, 1);
-        const resolvedLength = Math.floor(progress * targetText.length);
-
-        let result = targetText.slice(0, resolvedLength);
-        for (let i = resolvedLength; i < targetText.length; i++) {
-            if (targetText[i] === ' ') {
-                result += ' ';
-            } else {
-                result += chars[Math.floor(Math.random() * chars.length)];
-            }
-        }
-        el.innerText = result;
-
-        if (progress >= 1) {
-            clearInterval(scrambleInterval);
-            scrambleInterval = null;
-            el.innerHTML = 'Rețeaua profesioniștilor care <em>măsoară</em> România.';
-        }
-    }, 35);
-}
-
-function applySiteVariant(variantNum, updateUrl = true) {
-    const v = parseInt(variantNum, 10) || 1;
-    appState.currentVariant = v;
-
-    // Actualizează clasa pe document.body
-    document.body.classList.remove('variant-1-mode', 'variant-2-mode', 'variant-3-mode', 'variant-4-mode', 'variant-5-mode');
-    document.body.classList.add(`variant-${v}-mode`);
-
-    // Sincronizează butoanele pill din bara de previzualizare
-    for (let i = 1; i <= 5; i++) {
-        const pill = document.getElementById(`pill-v${i}`);
-        if (pill) {
-            pill.classList.toggle('active', i === v);
-            pill.setAttribute('aria-selected', i === v ? 'true' : 'false');
-        }
-    }
-
-    // Actualizează parametrul URL (?v=X) fără refresh de pagină
-    if (updateUrl) {
-        try {
-            const url = new URL(window.location);
-            url.searchParams.set('v', v);
-            window.history.replaceState({}, '', url);
-        } catch (e) {}
-    }
-
-    const titleEl = document.getElementById('hero-main-title');
-
-    // Execuție comportament specific fiecărei variante
-    switch (v) {
-        case 1:
-            // V1: Clean & 1 Bandă (Implicit Recomandat)
-            switchMapView('2d');
-            if (titleEl) {
-                titleEl.innerHTML = 'Rețeaua profesioniștilor care <em>măsoară</em> România.';
-                titleEl.className = 'hero-title animate-slide-left delay-200';
-            }
-            break;
-
-        case 2:
-            // V2: Glisare accentuată din Original & 2 benzi foto active pe mobil
-            switchMapView('2d');
-            if (titleEl) {
-                titleEl.innerHTML = 'Rețeaua profesioniștilor care <em>măsoară</em> România.';
-                titleEl.className = 'hero-title title-slide-original';
-            }
-            break;
-
-        case 3:
-            // V3: Decodare digitală geodezică (Scramble Cypher)
-            switchMapView('2d');
-            scrambleText('hero-main-title', 'Rețeaua profesioniștilor care măsoară România.', 750);
-            break;
-
-        case 4:
-            // V4: Cinema Mode, Text Gradient Shimmer & 3D Glob implicit
-            if (titleEl) {
-                titleEl.innerHTML = 'Rețeaua profesioniștilor care <em>măsoară</em> România.';
-                titleEl.className = 'hero-title title-gradient-shimmer';
-            }
-            setTimeout(() => {
-                switchMapView('3d');
-            }, 300);
-            break;
-
-        case 5:
-            // V5: Hartă Fixă (Sticky GIS HUD) & Fără Benzi Foto
-            switchMapView('2d');
-            if (titleEl) {
-                titleEl.innerHTML = 'Rețeaua profesioniștilor care <em>măsoară</em> România.';
-                titleEl.className = 'hero-title';
-            }
-            break;
-    }
-}
-window.applySiteVariant = applySiteVariant;
-
-// ═══════════════════════════════════════════════════════════════════════════
-// 11. INIȚIALIZARE LA ÎNCĂRCAREA PAGINII
+// 10. INIȚIALIZARE LA ÎNCĂRCAREA PAGINII
 // ═══════════════════════════════════════════════════════════════════════════
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -1329,17 +1094,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             setBtnAnimationVariant('a');
         }
-
-        // Verifică parametrul de variantă (?v=1..5)
-        const vParam = urlParams.get('v');
-        if (vParam && ['1', '2', '3', '4', '5'].includes(vParam)) {
-            applySiteVariant(parseInt(vParam, 10), false);
-        } else {
-            applySiteVariant(1, false);
-        }
-    } catch (e) {
-        applySiteVariant(1, false);
-    }
+    } catch (e) {}
 
     // Declanșare inițială la pornire / refresh (rămâne permanent la final)
     setTimeout(() => {
