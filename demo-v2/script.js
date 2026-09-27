@@ -1018,6 +1018,8 @@ const BRAND_NAME_TEXT = "UGR Filiala Sector 1";
 let currentBrandAnimVariant = 1;
 let brandAnimTimer = null;
 let brandAnimInterval = null;
+let brandAnimLoopTimeout = null;
+let isBrandLoopEnabled = true;
 
 function setBrandAnimationVariant(variantNumber) {
     currentBrandAnimVariant = variantNumber;
@@ -1055,6 +1057,7 @@ function playBrandAnimation(variantNumber) {
 
     if (brandAnimTimer) clearTimeout(brandAnimTimer);
     if (brandAnimInterval) clearInterval(brandAnimInterval);
+    if (brandAnimLoopTimeout) clearTimeout(brandAnimLoopTimeout);
 
     // VARIANTA 1: Tipărire (Typewriter cu cursor cyan intermitent)
     if (variantNumber === 1) {
@@ -1070,6 +1073,12 @@ function playBrandAnimation(variantNumber) {
             } else {
                 clearInterval(brandAnimInterval);
                 brandAnimInterval = null;
+                // Auto-loop după 3.5 secunde pentru previzualizare live pe mobil
+                if (isBrandLoopEnabled && currentBrandAnimVariant === 1) {
+                    brandAnimLoopTimeout = setTimeout(() => {
+                        playBrandAnimation(1);
+                    }, 3500);
+                }
             }
         }, 45);
     }
@@ -1078,6 +1087,12 @@ function playBrandAnimation(variantNumber) {
     else if (variantNumber === 2) {
         titleEl.className = 'brand-title';
         titleEl.innerHTML = `<span class="anim-slide-shimmer">${BRAND_NAME_TEXT}</span>`;
+        // Auto-retrigger slide la 5.5 secunde pentru previzualizare
+        if (isBrandLoopEnabled && currentBrandAnimVariant === 2) {
+            brandAnimLoopTimeout = setTimeout(() => {
+                playBrandAnimation(2);
+            }, 5500);
+        }
     }
     
     // VARIANTA 3: Decodare Geodezică (Efect Matrix / Cypher cu simboluri topografice)
@@ -1109,6 +1124,12 @@ function playBrandAnimation(variantNumber) {
                 clearInterval(brandAnimInterval);
                 brandAnimInterval = null;
                 titleEl.textContent = BRAND_NAME_TEXT;
+                // Auto-loop după 3.5 secunde pentru previzualizare live pe mobil
+                if (isBrandLoopEnabled && currentBrandAnimVariant === 3) {
+                    brandAnimLoopTimeout = setTimeout(() => {
+                        playBrandAnimation(3);
+                    }, 3500);
+                }
             }
         }, 38);
     }
@@ -1133,10 +1154,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     selectNode('bucuresti');
 
-    // Pornire automată previzualizare animație brand (Varianta 1)
+    // Detectare variantă de animație din URL (?anim=1/2/3 sau variabilă globală)
+    const urlParams = new URLSearchParams(window.location.search);
+    const paramVariant = parseInt(urlParams.get('anim') || urlParams.get('v'), 10);
+    const initialVariant = (paramVariant >= 1 && paramVariant <= 3) ? paramVariant : (window.DEFAULT_ANIM_VARIANT || 1);
+
     setTimeout(() => {
-        setBrandAnimationVariant(1);
-    }, 200);
+        setBrandAnimationVariant(initialVariant);
+    }, 250);
 
     // Închidere drawer mobil la tasta Escape sau la click în afara lui
     document.addEventListener('keydown', (e) => {
