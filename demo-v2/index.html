@@ -73,6 +73,23 @@
         </div>
     </header>
 
+    <!-- Selector Interactiv 5 Variante de Prezentare & Animații -->
+    <aside class="brand-anim-preview-bar" id="variant-preview-bar" aria-label="Comutator 5 variante de design">
+        <div class="preview-bar-inner">
+            <div class="preview-bar-title">
+                <span class="preview-dot" aria-hidden="true"></span>
+                <span>5 VARIANTE PREVIZUALIZARE:</span>
+            </div>
+            <div class="preview-bar-pills" role="tablist">
+                <button type="button" class="preview-pill active" id="pill-v1" onclick="applySiteVariant(1)" role="tab" aria-selected="true">V1: Clean &amp; 1 Bandă (Recomandat)</button>
+                <button type="button" class="preview-pill" id="pill-v2" onclick="applySiteVariant(2)" role="tab" aria-selected="false">V2: Glisare Original &amp; 2 Benzi</button>
+                <button type="button" class="preview-pill" id="pill-v3" onclick="applySiteVariant(3)" role="tab" aria-selected="false">V3: Decodare Geodezică</button>
+                <button type="button" class="preview-pill" id="pill-v4" onclick="applySiteVariant(4)" role="tab" aria-selected="false">V4: Cinema &amp; 3D Implicit</button>
+                <button type="button" class="preview-pill" id="pill-v5" onclick="applySiteVariant(5)" role="tab" aria-selected="false">V5: Hartă Fixă (Sticky)</button>
+            </div>
+        </div>
+    </aside>
+
     <!-- ══════════════════════════════════════════════════════════════════
          CONȚINUT PRINCIPAL (SPA)
          ══════════════════════════════════════════════════════════════════ -->
@@ -120,18 +137,8 @@
                     
                     <!-- Panou Text Hero -->
                     <div class="glass-panel" id="hero-text-panel">
-                        <!-- Structură Regională direct ca antet al cardului (fără viteză și fără sediu central) -->
-                        <div class="hero-badge-container animate-slide-left delay-100" style="margin-bottom: 16px;">
-                            <div class="hierarchy-badge badge-regional">
-                                <span class="badge-dot-cyan" aria-hidden="true"></span>
-                                <span class="badge-type">STRUCTURĂ REGIONALĂ:</span>
-                                <span class="badge-org">FILIALA SECTOR 1 BUCUREȘTI</span>
-                                <span class="badge-meta">· DIALOG OCPI SECTOR 1 &amp; CAPITALĂ</span>
-                            </div>
-                        </div>
-
                         <!-- Titlu H1 cu Glisare Fluidă din Original -->
-                        <h1 class="hero-title animate-slide-left delay-200">
+                        <h1 class="hero-title animate-slide-left delay-200" id="hero-main-title">
                             Rețeaua profesioniștilor care <em>măsoară</em> România.
                         </h1>
 

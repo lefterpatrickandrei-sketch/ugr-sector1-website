@@ -1073,7 +1073,120 @@ function playBrandTypewriter() {
 window.playBrandTypewriter = playBrandTypewriter;
 
 // ═══════════════════════════════════════════════════════════════════════════
-// 10. INIȚIALIZARE LA ÎNCĂRCAREA PAGINII
+// 10. GESTIUNE CELE 5 VARIANTE EXPLICITE DE DESIGN, ANIMAȚII & MOBIL
+// ═══════════════════════════════════════════════════════════════════════════
+
+let scrambleInterval = null;
+
+function scrambleText(elementId, targetText, durationMs = 700) {
+    const el = document.getElementById(elementId);
+    if (!el) return;
+    const chars = '0123456789ABCDEF!@#$%^&*<>[]/{}+=-~';
+    const startTime = Date.now();
+    if (scrambleInterval) clearInterval(scrambleInterval);
+
+    scrambleInterval = setInterval(() => {
+        const elapsed = Date.now() - startTime;
+        const progress = Math.min(elapsed / durationMs, 1);
+        const resolvedLength = Math.floor(progress * targetText.length);
+
+        let result = targetText.slice(0, resolvedLength);
+        for (let i = resolvedLength; i < targetText.length; i++) {
+            if (targetText[i] === ' ') {
+                result += ' ';
+            } else {
+                result += chars[Math.floor(Math.random() * chars.length)];
+            }
+        }
+        el.innerText = result;
+
+        if (progress >= 1) {
+            clearInterval(scrambleInterval);
+            scrambleInterval = null;
+            el.innerHTML = 'Rețeaua profesioniștilor care <em>măsoară</em> România.';
+        }
+    }, 35);
+}
+
+function applySiteVariant(variantNum, updateUrl = true) {
+    const v = parseInt(variantNum, 10) || 1;
+    appState.currentVariant = v;
+
+    // Actualizează clasa pe document.body
+    document.body.classList.remove('variant-1-mode', 'variant-2-mode', 'variant-3-mode', 'variant-4-mode', 'variant-5-mode');
+    document.body.classList.add(`variant-${v}-mode`);
+
+    // Sincronizează butoanele pill din bara de previzualizare
+    for (let i = 1; i <= 5; i++) {
+        const pill = document.getElementById(`pill-v${i}`);
+        if (pill) {
+            pill.classList.toggle('active', i === v);
+            pill.setAttribute('aria-selected', i === v ? 'true' : 'false');
+        }
+    }
+
+    // Actualizează parametrul URL (?v=X) fără refresh de pagină
+    if (updateUrl) {
+        try {
+            const url = new URL(window.location);
+            url.searchParams.set('v', v);
+            window.history.replaceState({}, '', url);
+        } catch (e) {}
+    }
+
+    const titleEl = document.getElementById('hero-main-title');
+
+    // Execuție comportament specific fiecărei variante
+    switch (v) {
+        case 1:
+            // V1: Clean & 1 Bandă (Implicit Recomandat)
+            switchMapView('2d');
+            if (titleEl) {
+                titleEl.innerHTML = 'Rețeaua profesioniștilor care <em>măsoară</em> România.';
+                titleEl.className = 'hero-title animate-slide-left delay-200';
+            }
+            break;
+
+        case 2:
+            // V2: Glisare accentuată din Original & 2 benzi foto active pe mobil
+            switchMapView('2d');
+            if (titleEl) {
+                titleEl.innerHTML = 'Rețeaua profesioniștilor care <em>măsoară</em> România.';
+                titleEl.className = 'hero-title title-slide-original';
+            }
+            break;
+
+        case 3:
+            // V3: Decodare digitală geodezică (Scramble Cypher)
+            switchMapView('2d');
+            scrambleText('hero-main-title', 'Rețeaua profesioniștilor care măsoară România.', 750);
+            break;
+
+        case 4:
+            // V4: Cinema Mode, Text Gradient Shimmer & 3D Glob implicit
+            if (titleEl) {
+                titleEl.innerHTML = 'Rețeaua profesioniștilor care <em>măsoară</em> România.';
+                titleEl.className = 'hero-title title-gradient-shimmer';
+            }
+            setTimeout(() => {
+                switchMapView('3d');
+            }, 300);
+            break;
+
+        case 5:
+            // V5: Hartă Fixă (Sticky GIS HUD) & Fără Benzi Foto
+            switchMapView('2d');
+            if (titleEl) {
+                titleEl.innerHTML = 'Rețeaua profesioniștilor care <em>măsoară</em> România.';
+                titleEl.className = 'hero-title';
+            }
+            break;
+    }
+}
+window.applySiteVariant = applySiteVariant;
+
+// ═══════════════════════════════════════════════════════════════════════════
+// 11. INIȚIALIZARE LA ÎNCĂRCAREA PAGINII
 // ═══════════════════════════════════════════════════════════════════════════
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -1099,7 +1212,17 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             setBtnAnimationVariant('a');
         }
-    } catch (e) {}
+
+        // Verifică parametrul de variantă (?v=1..5)
+        const vParam = urlParams.get('v');
+        if (vParam && ['1', '2', '3', '4', '5'].includes(vParam)) {
+            applySiteVariant(parseInt(vParam, 10), false);
+        } else {
+            applySiteVariant(1, false);
+        }
+    } catch (e) {
+        applySiteVariant(1, false);
+    }
 
     // Declanșare inițială la pornire / refresh (rămâne permanent la final)
     setTimeout(() => {

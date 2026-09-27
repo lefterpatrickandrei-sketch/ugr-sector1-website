@@ -2296,3 +2296,80 @@ button {
         font-size: 15px;
     }
 }
+
+/* ══════════════════════════════════════════════════════════════════
+   STILURI PENTRU CELE 5 VARIANTE EXPLICITE (V1 .. V5)
+   ══════════════════════════════════════════════════════════════════ */
+
+/* Varianta 1: Clean & 1 Bandă (Implicit Recomandat) */
+.variant-1-mode .photo-ticker-row:nth-child(2) {
+    display: none !important;
+}
+
+/* Varianta 2: Glisare Text Original & 2 Benzi Foto Active */
+.variant-2-mode .photo-ticker-row:nth-child(2) {
+    display: flex !important;
+}
+.variant-2-mode .photo-ticker-container {
+    opacity: 0.28 !important;
+}
+.title-slide-original {
+    animation: slideInOriginal 0.85s cubic-bezier(0.16, 1.35, 0.3, 1) forwards !important;
+}
+@keyframes slideInOriginal {
+    0% {
+        opacity: 0;
+        transform: translateX(-55px) skewX(-3deg);
+        filter: blur(4px);
+    }
+    70% {
+        transform: translateX(6px) skewX(1deg);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(0) skewX(0);
+        filter: blur(0);
+    }
+}
+
+/* Varianta 3: Decodare Geodezică Scramble & Blueprint */
+.variant-3-mode .photo-ticker-container {
+    filter: grayscale(100%) brightness(0.65) sepia(100%) hue-rotate(145deg) saturate(350%);
+    opacity: 0.25 !important;
+}
+.variant-3-mode .map-card-body {
+    border-color: #00E5FF !important;
+    box-shadow: inset 0 0 35px rgba(0, 229, 255, 0.2), 0 8px 30px rgba(0, 0, 0, 0.8) !important;
+}
+
+/* Varianta 4: Cinema Mode, Text Gradient Shimmer & 3D Glob Implicit */
+.variant-4-mode .photo-ticker-row:nth-child(2) {
+    display: flex !important;
+}
+.variant-4-mode .photo-ticker-container {
+    opacity: 0.38 !important;
+}
+.title-gradient-shimmer {
+    background: linear-gradient(100deg, #FFFFFF 0%, #00E5FF 30%, #FFE082 58%, #FFFFFF 88%);
+    background-size: 250% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: textGradientSweep 4.5s linear infinite;
+}
+@keyframes textGradientSweep {
+    0% { background-position: 250% 0; }
+    100% { background-position: -50% 0; }
+}
+
+/* Varianta 5: Hartă Fixă (Sticky GIS HUD) & Fără Benzi Foto */
+.variant-5-mode .glass-panel:has(.map-card-body),
+.variant-5-mode .hero-container > .glass-panel:nth-child(2) {
+    position: sticky !important;
+    top: 75px !important;
+    z-index: 30 !important;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.9) !important;
+}
+.variant-5-mode .photo-ticker-container {
+    display: none !important;
+}
+
