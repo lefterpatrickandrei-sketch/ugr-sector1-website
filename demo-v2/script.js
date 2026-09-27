@@ -33,6 +33,8 @@ function navigateTo(viewId) {
         viewId = 'acasa';
     }
 
+    const isPageChange = (appState.currentView !== viewId);
+
     // Ascunde toate secțiunile
     document.querySelectorAll('.view-section').forEach(section => {
         section.classList.add('hidden');
@@ -64,6 +66,11 @@ function navigateTo(viewId) {
 
     appState.currentView = viewId;
     window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    // Declanșează animația de tipărire la schimbarea paginii
+    if (isPageChange) {
+        playBrandTypewriter();
+    }
 }
 
 function handleHashChange() {
@@ -1011,130 +1018,41 @@ function prevModalStep() {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
-// 9.5 SISTEM INTERACTIV DE PREVIZUALIZARE ANIMAȚIE NUME BRAND (3 VARIANTE)
+// 9.5 ANIMAȚIE BRAND DEFINITIVĂ: TIPĂRIRE (TYPEWRITER) LA ÎNCĂRCARE & SCHIMBARE PAGINĂ
 // ═══════════════════════════════════════════════════════════════════════════
 
 const BRAND_NAME_TEXT = "UGR Filiala Sector 1";
-let currentBrandAnimVariant = 1;
 let brandAnimTimer = null;
 let brandAnimInterval = null;
-let brandAnimLoopTimeout = null;
-let isBrandLoopEnabled = true;
 
-function setBrandAnimationVariant(variantNumber) {
-    currentBrandAnimVariant = variantNumber;
-    
-    [1, 2, 3].forEach(num => {
-        const btn = document.getElementById(`btn-anim-${num}`);
-        if (btn) {
-            if (num === variantNumber) {
-                btn.classList.add('active');
-            } else {
-                btn.classList.remove('active');
-            }
-        }
-    });
-
-    playBrandAnimation(variantNumber);
-}
-window.setBrandAnimationVariant = setBrandAnimationVariant;
-
-function replayCurrentAnimation() {
-    const replayBtn = document.getElementById('btn-anim-replay');
-    if (replayBtn) {
-        replayBtn.style.transform = 'scale(0.92)';
-        setTimeout(() => {
-            replayBtn.style.transform = 'none';
-        }, 150);
-    }
-    playBrandAnimation(currentBrandAnimVariant);
-}
-window.replayCurrentAnimation = replayCurrentAnimation;
-
-function playBrandAnimation(variantNumber) {
+function playBrandTypewriter() {
     const titleEl = document.getElementById('header-brand-title');
     if (!titleEl) return;
 
-    if (brandAnimTimer) clearTimeout(brandAnimTimer);
     if (brandAnimInterval) clearInterval(brandAnimInterval);
-    if (brandAnimLoopTimeout) clearTimeout(brandAnimLoopTimeout);
+    if (brandAnimTimer) clearTimeout(brandAnimTimer);
 
-    // VARIANTA 1: Tipărire (Typewriter cu cursor cyan intermitent)
-    if (variantNumber === 1) {
-        titleEl.className = 'brand-title';
-        titleEl.innerHTML = '<span class="brand-cursor">▋</span>';
-        let charIndex = 0;
-        
-        brandAnimInterval = setInterval(() => {
-            if (charIndex < BRAND_NAME_TEXT.length) {
-                charIndex++;
-                const currentSubstr = BRAND_NAME_TEXT.substring(0, charIndex);
-                titleEl.innerHTML = currentSubstr + '<span class="brand-cursor">▋</span>';
-            } else {
-                clearInterval(brandAnimInterval);
-                brandAnimInterval = null;
-                // Auto-loop după 3.5 secunde pentru previzualizare live pe mobil
-                if (isBrandLoopEnabled && currentBrandAnimVariant === 1) {
-                    brandAnimLoopTimeout = setTimeout(() => {
-                        playBrandAnimation(1);
-                    }, 3500);
-                }
-            }
-        }, 45);
-    }
-    
-    // VARIANTA 2: Glisare & Shimmer (Slide-in lin cu luciu cyan continuu)
-    else if (variantNumber === 2) {
-        titleEl.className = 'brand-title';
-        titleEl.innerHTML = `<span class="anim-slide-shimmer">${BRAND_NAME_TEXT}</span>`;
-        // Auto-retrigger slide la 5.5 secunde pentru previzualizare
-        if (isBrandLoopEnabled && currentBrandAnimVariant === 2) {
-            brandAnimLoopTimeout = setTimeout(() => {
-                playBrandAnimation(2);
-            }, 5500);
+    titleEl.className = 'brand-title';
+    titleEl.innerHTML = '<span class="brand-cursor">▋</span>';
+    let charIndex = 0;
+
+    brandAnimInterval = setInterval(() => {
+        if (charIndex < BRAND_NAME_TEXT.length) {
+            charIndex++;
+            const currentSubstr = BRAND_NAME_TEXT.substring(0, charIndex);
+            titleEl.innerHTML = currentSubstr + '<span class="brand-cursor">▋</span>';
+        } else {
+            clearInterval(brandAnimInterval);
+            brandAnimInterval = null;
+            // Rămâne permanent complet! Cursorul clipește discret apoi rămâne textul curat
+            brandAnimTimer = setTimeout(() => {
+                const cursor = titleEl.querySelector('.brand-cursor');
+                if (cursor) cursor.remove();
+            }, 2500);
         }
-    }
-    
-    // VARIANTA 3: Decodare Geodezică (Efect Matrix / Cypher cu simboluri topografice)
-    else if (variantNumber === 3) {
-        titleEl.className = 'brand-title';
-        const glyphs = ['Δ', 'λ', 'φ', 'Σ', 'X', 'Y', 'Z', '0', '1', '7', '8', '°', 'N', 'E', '±'];
-        const totalFrames = 22;
-        let currentFrame = 0;
-
-        brandAnimInterval = setInterval(() => {
-            currentFrame++;
-            const progress = currentFrame / totalFrames;
-            const resolvedCount = Math.floor(progress * BRAND_NAME_TEXT.length);
-
-            let renderedHtml = '';
-            for (let i = 0; i < BRAND_NAME_TEXT.length; i++) {
-                if (i < resolvedCount) {
-                    renderedHtml += BRAND_NAME_TEXT[i];
-                } else if (BRAND_NAME_TEXT[i] === ' ') {
-                    renderedHtml += ' ';
-                } else {
-                    const randomGlyph = glyphs[Math.floor(Math.random() * glyphs.length)];
-                    renderedHtml += `<span class="brand-scramble-char">${randomGlyph}</span>`;
-                }
-            }
-            titleEl.innerHTML = renderedHtml;
-
-            if (currentFrame >= totalFrames) {
-                clearInterval(brandAnimInterval);
-                brandAnimInterval = null;
-                titleEl.textContent = BRAND_NAME_TEXT;
-                // Auto-loop după 3.5 secunde pentru previzualizare live pe mobil
-                if (isBrandLoopEnabled && currentBrandAnimVariant === 3) {
-                    brandAnimLoopTimeout = setTimeout(() => {
-                        playBrandAnimation(3);
-                    }, 3500);
-                }
-            }
-        }, 38);
-    }
+    }, 38);
 }
-window.playBrandAnimation = playBrandAnimation;
+window.playBrandTypewriter = playBrandTypewriter;
 
 // ═══════════════════════════════════════════════════════════════════════════
 // 10. INIȚIALIZARE LA ÎNCĂRCAREA PAGINII
@@ -1154,14 +1072,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     selectNode('bucuresti');
 
-    // Detectare variantă de animație din URL (?anim=1/2/3 sau variabilă globală)
-    const urlParams = new URLSearchParams(window.location.search);
-    const paramVariant = parseInt(urlParams.get('anim') || urlParams.get('v'), 10);
-    const initialVariant = (paramVariant >= 1 && paramVariant <= 3) ? paramVariant : (window.DEFAULT_ANIM_VARIANT || 1);
-
+    // Declanșare inițială la pornire / refresh (rămâne permanent la final)
     setTimeout(() => {
-        setBrandAnimationVariant(initialVariant);
-    }, 250);
+        playBrandTypewriter();
+    }, 200);
 
     // Închidere drawer mobil la tasta Escape sau la click în afara lui
     document.addEventListener('keydown', (e) => {
