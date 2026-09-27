@@ -189,6 +189,8 @@ button {
     display: flex;
     align-items: center;
     gap: 12px;
+    flex-shrink: 0;
+    min-width: 240px; /* Garantează stabilitate absolută pentru bara de meniu */
 }
 .brand-logo {
     width: 38px;
@@ -244,19 +246,24 @@ button {
     white-space: nowrap;
     display: inline-flex;
     align-items: center;
+    min-width: 190px; /* Previne orice vibrație sau deplasare a meniului de navigare */
+    flex-shrink: 0;
 }
 .brand-cursor {
     display: inline-block;
-    margin-left: 2px;
-    color: var(--ugr-cyan);
-    font-family: var(--font-mono);
-    font-size: 15px;
-    font-weight: 400;
-    animation: brand-cursor-blink 0.75s step-end infinite;
+    width: 2px;
+    height: 17px;
+    background-color: var(--ugr-cyan, #00e5ff);
+    box-shadow: 0 0 8px rgba(0, 229, 255, 0.75);
+    margin-left: 3px;
+    border-radius: 1px;
+    vertical-align: middle;
+    animation: brand-cursor-pulse 0.8s ease-in-out infinite;
+    transition: opacity 0.3s ease;
 }
-@keyframes brand-cursor-blink {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0; }
+@keyframes brand-cursor-pulse {
+    0%, 100% { opacity: 1; transform: scaleY(1); }
+    50% { opacity: 0.15; transform: scaleY(0.85); }
 }
 
 .anim-slide-shimmer {
@@ -2560,4 +2567,276 @@ button {
     padding-top: 10px !important;
     border-top-color: rgba(255, 255, 255, 0.1) !important;
 }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   VARIANTA A: CALCULATOR REZULTATE CURATE (FĂRĂ TABEL GREOI)
+   ═══════════════════════════════════════════════════════════════════════════ */
+.calc-clean-results-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 16px;
+    margin: 18px 0;
+}
+
+.calc-res-card {
+    background: rgba(3, 11, 22, 0.75);
+    border: 1px solid rgba(0, 229, 255, 0.28);
+    border-radius: 10px;
+    padding: 16px 20px;
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.35);
+    transition: border-color 0.25s ease;
+}
+
+.calc-res-card:hover {
+    border-color: rgba(0, 229, 255, 0.55);
+}
+
+.calc-res-label {
+    font-family: var(--font-mono, 'IBM Plex Mono', monospace);
+    font-size: 10.5px;
+    font-weight: 700;
+    color: var(--ugr-cyan, #00e5ff);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 8px;
+}
+
+.calc-res-val-primary {
+    font-size: 22px;
+    font-weight: 800;
+    font-family: var(--font-mono, 'IBM Plex Mono', monospace);
+    color: #ffffff;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.calc-res-val-dms {
+    font-size: 18px;
+    font-weight: 700;
+    font-family: var(--font-mono, 'IBM Plex Mono', monospace);
+    color: #38bdf8;
+    margin-bottom: 6px;
+}
+
+.calc-res-sub {
+    font-size: 11.5px;
+    color: var(--ugr-text-muted, #94a3b8);
+    display: block;
+    line-height: 1.4;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   SECȚIUNE MISIUNE & CTA (EXACT CONFORM ORIGINALULUI DIN IMAGINE)
+   ═══════════════════════════════════════════════════════════════════════════ */
+.mission-section-clean {
+    background: #ffffff;
+    color: #093454;
+    padding: 68px 0 56px 0;
+    border-top: 1px solid rgba(9, 52, 84, 0.12);
+}
+
+.mission-header-block {
+    margin-bottom: 34px;
+    max-width: 680px;
+}
+
+.mission-kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--font-mono, 'IBM Plex Mono', monospace);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #1ca3ec;
+    margin-bottom: 12px;
+}
+
+.mission-kicker::before {
+    content: '';
+    display: inline-block;
+    width: 24px;
+    height: 2px;
+    background-color: #1ca3ec;
+}
+
+.mission-title {
+    font-family: 'Cinzel', 'Playfair Display', Georgia, serif;
+    font-size: clamp(28px, 3.4vw, 42px);
+    font-weight: 700;
+    line-height: 1.18;
+    letter-spacing: -0.01em;
+    color: #093454;
+    margin: 0;
+}
+
+.mission-body-grid {
+    display: grid;
+    grid-template-columns: 1.15fr 0.85fr;
+    gap: 48px;
+    align-items: start;
+}
+
+@media (max-width: 860px) {
+    .mission-body-grid {
+        grid-template-columns: 1fr;
+        gap: 32px;
+    }
+}
+
+.mission-paragraph {
+    font-size: 15.5px;
+    line-height: 1.72;
+    color: rgba(9, 52, 84, 0.82);
+    margin: 0;
+}
+
+.mission-stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+}
+
+.stat-block {
+    border-top: 1px solid rgba(9, 52, 84, 0.18);
+    padding-top: 16px;
+    transition: border-color 0.25s ease;
+}
+
+.stat-block:hover {
+    border-top-color: #1ca3ec;
+}
+
+.stat-number {
+    display: block;
+    font-family: 'Cinzel', 'Playfair Display', Georgia, serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: #093454;
+    line-height: 1.1;
+}
+
+.stat-label {
+    display: block;
+    font-family: var(--font-mono, 'IBM Plex Mono', monospace);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgba(9, 52, 84, 0.55);
+    margin-top: 4px;
+    min-height: 16px;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   BANNER CTA ALBASTRU (EXACT CONFORM ORIGINALULUI DIN IMAGINE)
+   ═══════════════════════════════════════════════════════════════════════════ */
+.cta-banner-section {
+    background-color: #1ca3ec;
+    color: #ffffff;
+    padding: 44px 0;
+    box-shadow: 0 4px 20px rgba(28, 163, 236, 0.25);
+    margin-bottom: 40px;
+    border-radius: 8px;
+}
+
+.cta-banner-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 24px;
+    flex-wrap: wrap;
+    padding: 0 24px;
+}
+
+.cta-banner-title {
+    font-family: 'Cinzel', 'Playfair Display', Georgia, serif;
+    font-size: clamp(22px, 2.5vw, 30px);
+    font-weight: 700;
+    line-height: 1.25;
+    color: #ffffff;
+    margin: 0 0 6px 0;
+}
+
+.cta-banner-subtitle {
+    font-size: 13.5px;
+    color: rgba(255, 255, 255, 0.92);
+    margin: 0;
+}
+
+.cta-banner-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    border: 1.5px solid #ffffff;
+    color: #ffffff;
+    padding: 12px 22px;
+    font-family: var(--font-mono, 'IBM Plex Mono', monospace);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    flex-shrink: 0;
+}
+
+.cta-banner-btn:hover {
+    background: #ffffff;
+    color: #093454;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   SCROLL REVEAL & STAGGER TYPEWRITER (SINCRONIZARE FLUIDĂ LA SCROLL)
+   ═══════════════════════════════════════════════════════════════════════════ */
+.scroll-reveal {
+    opacity: 0;
+    transition: opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1), transform 0.85s cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: opacity, transform;
+}
+
+.reveal-left {
+    transform: translateX(-32px);
+}
+
+.reveal-left.is-visible {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.reveal-right {
+    opacity: 0;
+    transform: translateX(32px);
+    transition: opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1), transform 0.85s cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: opacity, transform;
+}
+
+.reveal-right.is-visible {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.typing-cursor::after {
+    content: '|';
+    display: inline-block;
+    margin-left: 3px;
+    color: #1ca3ec;
+    font-weight: 700;
+    animation: blink-cursor 0.75s steps(1) infinite;
+}
+
+@keyframes blink-cursor {
+    0%, 50% { opacity: 1; }
+    51%, 100% { opacity: 0; }
+}
+
 

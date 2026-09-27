@@ -44,6 +44,9 @@ function navigateTo(viewId) {
     const targetSection = document.getElementById('view-' + viewId);
     if (targetSection) {
         targetSection.classList.remove('hidden');
+        if (typeof initScrollReveal === 'function') {
+            setTimeout(() => initScrollReveal(), 60);
+        }
     }
 
     // Actualizează clasa activă în meniul desktop
@@ -69,7 +72,7 @@ function navigateTo(viewId) {
 
     // Declanșează animația de tipărire și glisarea textului la schimbarea paginii
     if (isPageChange) {
-        playBrandTypewriter();
+        playBrandTypewriter(false);
         if (viewId === 'acasa') {
             document.querySelectorAll('.animate-slide-left').forEach(el => {
                 el.style.animation = 'none';
@@ -1358,34 +1361,59 @@ function prevModalStep() {
 
 const BRAND_NAME_TEXT = "UGR Filiala Sector 1";
 let brandAnimTimer = null;
-let brandAnimInterval = null;
+let brandAnimTimeout = null;
+let brandHasTyped = false;
 
-function playBrandTypewriter() {
+function playBrandTypewriter(force = false) {
     const titleEl = document.getElementById('header-brand-title');
     if (!titleEl) return;
 
-    if (brandAnimInterval) clearInterval(brandAnimInterval);
+    // Dacă a fost deja tastat și utilizatorul navighează prin pagini, nu se mai repetă
+    if (brandHasTyped && !force) {
+        titleEl.textContent = BRAND_NAME_TEXT;
+        return;
+    }
+
+    if (brandAnimTimeout) clearTimeout(brandAnimTimeout);
     if (brandAnimTimer) clearTimeout(brandAnimTimer);
 
     titleEl.className = 'brand-title';
-    titleEl.innerHTML = '<span class="brand-cursor">▋</span>';
+    titleEl.innerHTML = '<span class="brand-cursor"></span>';
     let charIndex = 0;
 
-    brandAnimInterval = setInterval(() => {
+    function typeStep() {
         if (charIndex < BRAND_NAME_TEXT.length) {
             charIndex++;
             const currentSubstr = BRAND_NAME_TEXT.substring(0, charIndex);
-            titleEl.innerHTML = currentSubstr + '<span class="brand-cursor">▋</span>';
+            titleEl.innerHTML = currentSubstr + '<span class="brand-cursor"></span>';
+
+            // Cadență fluidă, organică (fără sacadare mecanică)
+            const lastChar = BRAND_NAME_TEXT[charIndex - 1];
+            let delay = 35;
+            if (lastChar === ' ') {
+                delay = 85; // Mică pauză firească între cuvinte
+            } else if (charIndex === 3) {
+                delay = 95; // Respirație subtilă după "UGR"
+            } else {
+                delay = 28 + Math.floor(Math.random() * 12);
+            }
+
+            brandAnimTimeout = setTimeout(typeStep, delay);
         } else {
-            clearInterval(brandAnimInterval);
-            brandAnimInterval = null;
-            // Rămâne permanent complet! Cursorul clipește discret apoi rămâne textul curat
+            brandHasTyped = true;
+            brandAnimTimeout = null;
+            // Cursorul pulsează discret 1.8 secunde apoi se estompează lin
             brandAnimTimer = setTimeout(() => {
                 const cursor = titleEl.querySelector('.brand-cursor');
-                if (cursor) cursor.remove();
-            }, 2500);
+                if (cursor) {
+                    cursor.style.opacity = '0';
+                    setTimeout(() => cursor.remove(), 350);
+                }
+            }, 1800);
         }
-    }, 65);
+    }
+
+    brandAnimTimeout = setTimeout(typeStep, 140);
 }
 window.playBrandTypewriter = playBrandTypewriter;
 
@@ -1447,6 +1475,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Inițializare Animație 3D Kinetică pentru Titlu & Kicker Calculator (Opțiunea 3 / 21st.dev cu Kicker Alb)
     initCalculatorKineticText();
+
+    // Inițializare Scroll Reveal & Typewriter pentru Misiune & Statistici (din Original)
+    initScrollReveal();
 });
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -1554,5 +1585,101 @@ function initCalculatorKineticText() {
         });
     }
 }
+
+// ═══════════════════════════════════════════════════════════════════════════
+// 12. SCROLL REVEAL & STAGGER TYPEWRITER PENTRU MISIUNE & STATISTICI
+//     (ADAPTAT DIN ORIGINAL: Integritate terestră, viziune spațială)
+// ═══════════════════════════════════════════════════════════════════════════
+
+function typeText(el, text, speed = 24) {
+    if (!el) return;
+    el.textContent = '';
+    el.classList.add('typing-cursor');
+    let i = 0;
+    (function step() {
+        if (i <= text.length) {
+            el.textContent = text.slice(0, i);
+            i++;
+            setTimeout(step, speed);
+        } else {
+            setTimeout(() => {
+                el.classList.remove('typing-cursor');
+            }, 1000);
+        }
+    })();
+}
+
+function initMissionScrollSync() {
+    // Sincronizare la derularea paginii: secțiunea de misiune se declanșează
+    // exact când este în câmpul vizual al utilizatorului (threshold: 0.22, rootMargin: -60px)
+    const missionSections = document.querySelectorAll('.mission-section-clean');
+    if (!missionSections.length) return;
+
+    const missionObs = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+                const sec = entry.target;
+
+                // 1. Titlul și Kicker-ul din stânga
+                const headerEls = sec.querySelectorAll('.mission-header-block .scroll-reveal');
+                headerEls.forEach((el, idx) => {
+                    setTimeout(() => el.classList.add('is-visible'), idx * 80);
+                });
+
+                // 2. Paragraful explicativ din stânga
+                const paragraph = sec.querySelector('.mission-paragraph');
+                if (paragraph) {
+                    setTimeout(() => paragraph.classList.add('is-visible'), 120);
+                }
+
+                // 3. Grila de 4 statistici din dreapta (Stagger armonios de 120ms între blocuri)
+                const statBlocks = Array.from(sec.querySelectorAll('.stat-block'));
+                statBlocks.forEach((block, idx) => {
+                    setTimeout(() => {
+                        block.classList.add('is-visible');
+                        const label = block.querySelector('.stat-label');
+                        const fullText = label ? label.getAttribute('data-text') : '';
+                        if (label && fullText && !label.textContent.trim()) {
+                            setTimeout(() => typeText(label, fullText, 24), 80);
+                        }
+                    }, 180 + idx * 120);
+                });
+
+                missionObs.unobserve(sec);
+            }
+        });
+    }, {
+        threshold: 0.22,
+        rootMargin: '0px 0px -60px 0px'
+    });
+
+    missionSections.forEach((sec) => missionObs.observe(sec));
+
+    // Observator sincronizat pentru bannerele CTA la scroll
+    const ctaSections = document.querySelectorAll('.cta-banner-section');
+    if (ctaSections.length) {
+        const ctaObs = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                    const reveals = entry.target.querySelectorAll('.scroll-reveal');
+                    reveals.forEach((el, idx) => {
+                        setTimeout(() => el.classList.add('is-visible'), idx * 120);
+                    });
+                    ctaObs.unobserve(entry.target);
+                }
+            });
+        }, {
+            threshold: 0.18,
+            rootMargin: '0px 0px -50px 0px'
+        });
+
+        ctaSections.forEach((cta) => ctaObs.observe(cta));
+    }
+}
+
+function initScrollReveal() {
+    initMissionScrollSync();
+}
+
 
 

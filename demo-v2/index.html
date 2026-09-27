@@ -242,110 +242,55 @@
                 </div>
             </div>
 
-            <!-- CALCULATOR STEREO 70 INTEGRAT DIRECT ÎN ACASĂ (FĂRĂ PAGINĂ SEPARATĂ) -->
-            <div class="section-block section-dark" style="border-top: 1px solid var(--ugr-border); padding-top: 50px;">
+            <!-- Secțiune Misiune & Principii Tehnice (Exact ca în Original conform imaginii) -->
+            <div class="mission-section-clean">
                 <div class="content-container">
-                    <div class="section-header style-21stdev" style="text-align: center; margin: 0 auto 32px auto; display: flex; flex-direction: column; align-items: center;">
-                        <!-- Kicker Alb cu Liniuță "——" (Inspirat din Imaginea 2) cu Animație 3D Kinetică -->
-                        <div class="calc-kicker-white-kinetic" id="calc-kinetic-kicker" aria-label="—— UTILITAR TEHNIC INTEGRAT">
-                            —— UTILITAR TEHNIC INTEGRAT
+                    <div class="mission-header-block">
+                        <div class="scroll-reveal reveal-left mission-kicker">
+                            MISIUNEA NOASTRĂ
                         </div>
-
-                        <!-- Titlu H2: 3D Kinetic Split & Ambient Specular Glow (Opțiunea 3 / 21st.dev) -->
-                        <h2 class="eng-h2" id="calc-kinetic-title" aria-label="Calculator Transversal Stereo 70 ⇄ WGS84">
-                            Calculator Transversal Stereo 70 ⇄ WGS84
+                        <h2 class="scroll-reveal reveal-left mission-title">
+                            Integritate terestră, viziune spațială.
                         </h2>
-
-                        <!-- Precision Spec Box Description (Opțiunea 3 / 21st.dev) -->
-                        <div class="eng-spec-box">
-                            <p class="eng-description">
-                                Algoritm matematic conform proiecției stereografice 1970 pe elipsoidul Krasovski 1940 
-                                (<span class="eng-badge-pill">EPSG:3844 ANCPI</span>). Nu necesită pagină separată.
-                            </p>
-                        </div>
                     </div>
 
-                    <div class="calc-card">
-                        <form id="stereo-calc-form" onsubmit="calculateCoordinates(event)">
-                            <div class="calc-form-grid">
-                                <div class="form-field">
-                                    <label for="coord-x" class="form-label">Coordonată X (Nord) [Metri]:</label>
-                                    <input type="number" id="coord-x" step="0.001" class="form-input" placeholder="Ex: 334250.125" required>
-                                </div>
-                                <div class="form-field">
-                                    <label for="coord-y" class="form-label">Coordonată Y (Est) [Metri]:</label>
-                                    <input type="number" id="coord-y" step="0.001" class="form-input" placeholder="Ex: 591240.850" required>
-                                </div>
-                            </div>
-                            <div style="display: flex; gap: 10px; justify-content: flex-end; flex-wrap: wrap; align-items: center;">
-                                <button type="button" onclick="fillExampleCoords('central')" class="btn-secondary" style="font-size: 10px;" id="btn-preset-central" title="Sediul Central UGR (Lacul Tei 124)">Sediul Central UGR (Lacul Tei 124)</button>
-                                <button type="button" onclick="fillExampleCoords('sector1')" class="btn-secondary" style="font-size: 10px; border-color: var(--ugr-cyan); color: var(--ugr-cyan);" id="btn-preset-sector1" title="Exemplu Sector 1 (Piața Victoriei / Arcul de Triumf)">Exemplu Sector 1 (Piața Victoriei / Arcul de Triumf)</button>
-                                <button type="submit" class="btn-membership" style="font-size: 10px;">Transformă în WGS84 (GPS) →</button>
-                            </div>
-                        </form>
+                    <div class="mission-body-grid">
+                        <p class="scroll-reveal reveal-left mission-paragraph">
+                            Uniunea Geodezilor din România (UGR) reprezintă autoritatea profesională independentă a inginerilor măsurătorilor terestre. Ne asigurăm că normele profesionale, etica de lucru și reglementările administrative încadrează corect profesia de geodez autorizat, garantând rigurozitate tehnică în toate lucrările de infrastructură națională și cadastru general.
+                        </p>
 
-                        <!-- Tabel Rezultate Transformare Geodezică Animat -->
-                        <div id="calc-result-box" class="calc-results-container" style="display: none;">
-                            <div class="calc-result-header">
-                                <div class="calc-badge-ancpi">
-                                    <span class="calc-status-indicator"></span>
-                                    <span>CONFORMITATE ANCPI ◆ EPSG:3844 (STEREO 70) ⇄ EPSG:4326 (WGS84)</span>
-                                </div>
-                                <div class="calc-accuracy-tag">Ordinul ANCPI 108/2010 ◆ Helmert 7-Params</div>
+                        <div id="home-mission-stats-grid" class="mission-stats-grid">
+                            <div class="stat-block reveal-right">
+                                <span class="stat-number">1990</span>
+                                <span class="stat-label" data-text="Înființare oficială"></span>
                             </div>
-
-                            <div class="calc-table-wrapper">
-                                <table class="calc-geodetic-table" aria-label="Tabel Rezultate Transformare Geodezică">
-                                    <thead>
-                                        <tr>
-                                            <th>Sistem Referință</th>
-                                            <th>Coordonată Nord / Lat (φ)</th>
-                                            <th>Coordonată Est / Long (λ)</th>
-                                            <th>Format Sexagesimal (DMS)</th>
-                                            <th>Elipsoid & Datum</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr class="calc-row-source">
-                                            <td><span class="crs-badge crs-stereo">Stereo 70 (EPSG:3844)</span></td>
-                                            <td class="font-mono text-cyan" id="res-source-x">334250.125 m</td>
-                                            <td class="font-mono text-cyan" id="res-source-y">591240.850 m</td>
-                                            <td class="font-mono text-muted">Proiecție Plană Conformată</td>
-                                            <td style="color: var(--ugr-text-muted); font-size: 11px;">Krasovski 1940</td>
-                                        </tr>
-                                        <tr class="calc-row-target">
-                                            <td><span class="crs-badge crs-wgs">WGS84 Global (GPS)</span></td>
-                                            <td class="font-mono text-gold font-bold" id="res-lat-val">44.502276° N</td>
-                                            <td class="font-mono text-gold font-bold" id="res-lon-val">26.145473° E</td>
-                                            <td class="font-mono text-white" id="res-dms-val">44° 30' 08" N | 26° 08' 43" E</td>
-                                            <td style="color: var(--ugr-text-muted); font-size: 11px;">Elipsoid GRS80 / WGS84</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                            <div class="stat-block reveal-right">
+                                <span class="stat-number">Județene</span>
+                                <span class="stat-label" data-text="Filiale la nivel național"></span>
                             </div>
-
-                            <div class="calc-actions-bar">
-                                <div class="calc-actions-left">
-                                    <button type="button" class="btn-calc-action" onclick="copyCalculatedCoords(this)">
-                                        <span>📋</span> Copiază Coordonate WGS84
-                                    </button>
-                                    <button type="button" class="btn-calc-action" onclick="exportCalculatedPoint('csv')">
-                                        <span>📥</span> Export .CSV
-                                    </button>
-                                    <button type="button" class="btn-calc-action" onclick="exportCalculatedPoint('txt')">
-                                        <span>📄</span> Raport .TXT
-                                    </button>
-                                </div>
-                                <div class="calc-citation">Toleranță milimetrică garantată matematic conform ANCPI</div>
+                            <div class="stat-block reveal-right">
+                                <span class="stat-number">FIG &amp; CLGE</span>
+                                <span class="stat-label" data-text="Reprezentare Europeană"></span>
                             </div>
-
-                            <!-- Câmpuri ascunse pentru retrocompatibilitate -->
-                            <div style="display: none;">
-                                <span id="res-lat">-</span>
-                                <span id="res-lon">-</span>
+                            <div class="stat-block reveal-right">
+                                <span class="stat-number">ANCPI</span>
+                                <span class="stat-label" data-text="Colaborare unificată"></span>
                             </div>
                         </div>
                     </div>
+                </div>
+            </div>
+
+            <!-- Banner CTA Constant (Exact ca în Original din Imagine) -->
+            <div class="cta-banner-section">
+                <div class="content-container cta-banner-inner">
+                    <div class="scroll-reveal reveal-left">
+                        <h3 class="cta-banner-title">Alătură-te breslei profesionale a geodezilor</h3>
+                        <p class="cta-banner-subtitle">Completează formularul digital în doar 2 minute pentru înregistrare ca membru.</p>
+                    </div>
+                    <button type="button" onclick="openRegistrationModal()" class="scroll-reveal reveal-right cta-banner-btn">
+                        FORMULAR ADERARE UGR →
+                    </button>
                 </div>
             </div>
         </section>
