@@ -765,53 +765,6 @@ button {
 .delay-200 { animation-delay: 220ms; }
 .delay-300 { animation-delay: 380ms; }
 .delay-400 { animation-delay: 500ms; }
-
-/* Mini Comutator Stil Butoane Hero */
-.btn-anim-mode-bar {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 14px;
-    background: rgba(6, 26, 45, 0.65);
-    border: 1px solid rgba(0, 229, 255, 0.22);
-    border-radius: 20px;
-    padding: 3px 10px;
-    width: fit-content;
-}
-.btn-mode-label {
-    font-family: var(--font-mono);
-    font-size: 9px;
-    font-weight: 700;
-    color: var(--ugr-accent-light);
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-}
-.btn-mode-pills {
-    display: flex;
-    gap: 4px;
-}
-.btn-mode-pill {
-    font-family: var(--font-mono);
-    font-size: 9.5px;
-    font-weight: 600;
-    color: rgba(255, 255, 255, 0.7);
-    padding: 2px 8px;
-    border-radius: 12px;
-    border: 1px solid transparent;
-    cursor: pointer;
-    transition: all 0.2s;
-}
-.btn-mode-pill:hover {
-    color: #fff;
-    background: rgba(255, 255, 255, 0.08);
-}
-.btn-mode-pill.active {
-    color: #061A2D;
-    background: var(--ugr-cyan);
-    font-weight: 700;
-    box-shadow: 0 0 8px rgba(0, 229, 255, 0.4);
-}
-
 .hero-actions {
     display: flex;
     gap: 12px;
@@ -820,9 +773,10 @@ button {
 }
 
 /* ══════════════════════════════════════════════════════════════
-   VARIANTA A: GLOW PULSE & KINETIC ARROW SLIDE
+   STIL DEFINITIV BUTOANE HERO: SHIMMER BEAM & KINETIC ARROW
    ══════════════════════════════════════════════════════════════ */
-.btn-variant-a.btn-membership {
+.btn-shimmer-beam.btn-membership,
+.btn-variant-b.btn-membership {
     position: relative;
     display: inline-flex;
     align-items: center;
@@ -837,87 +791,12 @@ button {
     letter-spacing: 0.08em;
     text-transform: uppercase;
     border-radius: 8px;
-    border: 1px solid rgba(0, 229, 255, 0.45);
-    box-shadow: 0 0 14px rgba(0, 229, 255, 0.22), 0 4px 12px rgba(6, 26, 45, 0.6);
-    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-    will-change: transform, box-shadow;
-}
-.btn-variant-a.btn-membership:hover {
-    background: linear-gradient(135deg, #1898e8 0%, var(--ugr-cyan) 100%);
-    color: var(--ugr-navy-deep);
-    border-color: #FFFFFF;
-    transform: translateY(-2px) scale(1.02);
-    box-shadow: 0 0 24px rgba(0, 229, 255, 0.7), 0 8px 20px rgba(0, 0, 0, 0.45);
-}
-.btn-variant-a.btn-membership .btn-arrow {
-    display: inline-block;
-    transition: transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-.btn-variant-a.btn-membership:hover .btn-arrow {
-    transform: translateX(5px);
-}
-.btn-variant-a.btn-membership:active {
-    transform: translateY(0) scale(0.98);
-}
-
-.btn-variant-a.btn-secondary {
-    position: relative;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    padding: 11px 20px;
-    background: rgba(6, 26, 45, 0.55);
-    backdrop-filter: blur(6px);
-    -webkit-backdrop-filter: blur(6px);
-    border: 1px solid rgba(64, 176, 240, 0.35);
-    color: var(--ugr-white);
-    font-family: var(--font-mono);
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    border-radius: 8px;
-    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-}
-.btn-variant-a.btn-secondary:hover {
-    background: rgba(0, 229, 255, 0.12);
-    border-color: var(--ugr-cyan);
-    color: var(--ugr-cyan);
-    transform: translateY(-2px) scale(1.02);
-    box-shadow: 0 0 18px rgba(0, 229, 255, 0.35);
-}
-.btn-variant-a.btn-secondary .btn-arrow {
-    display: inline-block;
-    transition: transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-.btn-variant-a.btn-secondary:hover .btn-arrow {
-    transform: translate(3px, -3px);
-}
-
-/* ══════════════════════════════════════════════════════════════
-   VARIANTA B: SHIMMER SHEEN & BORDER BEAM
-   ══════════════════════════════════════════════════════════════ */
-.btn-variant-b.btn-membership {
-    position: relative;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    padding: 11px 20px;
-    background: rgba(18, 125, 194, 0.95);
-    color: #FFFFFF;
-    font-family: var(--font-mono);
-    font-size: 11.5px;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    border-radius: 8px;
-    border: 1px solid rgba(0, 229, 255, 0.5);
+    border: 1px solid rgba(0, 229, 255, 0.6);
     overflow: hidden;
-    transition: all 0.35s ease;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 0 16px rgba(0, 229, 255, 0.25), 0 4px 14px rgba(6, 26, 45, 0.6);
 }
+.btn-shimmer-beam.btn-membership::after,
 .btn-variant-b.btn-membership::after {
     content: '';
     position: absolute;
@@ -928,11 +807,11 @@ button {
     background: linear-gradient(
         90deg,
         rgba(255, 255, 255, 0) 0%,
-        rgba(255, 255, 255, 0.5) 45%,
-        rgba(0, 229, 255, 0.7) 70%,
+        rgba(255, 255, 255, 0.6) 45%,
+        rgba(0, 229, 255, 0.85) 70%,
         rgba(255, 255, 255, 0) 100%
     );
-    transform: rotate(35deg) translateX(-120%);
+    transform: rotate(35deg) translateX(-140%);
     animation: btn-sheen-sweep 3.6s infinite ease-in-out;
     pointer-events: none;
 }
@@ -940,12 +819,27 @@ button {
     0% { transform: rotate(35deg) translateX(-140%); }
     25%, 100% { transform: rotate(35deg) translateX(480%); }
 }
+.btn-shimmer-beam.btn-membership:hover,
 .btn-variant-b.btn-membership:hover {
-    border-color: var(--ugr-cyan);
-    box-shadow: 0 0 22px rgba(0, 229, 255, 0.55), inset 0 0 12px rgba(0, 229, 255, 0.3);
-    transform: translateY(-2px);
+    border-color: #FFFFFF;
+    box-shadow: 0 0 24px rgba(0, 229, 255, 0.75), inset 0 0 12px rgba(0, 229, 255, 0.35);
+    transform: translateY(-2px) scale(1.02);
+}
+.btn-shimmer-beam.btn-membership .btn-arrow,
+.btn-variant-b.btn-membership .btn-arrow {
+    display: inline-block;
+    transition: transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.btn-shimmer-beam.btn-membership:hover .btn-arrow,
+.btn-variant-b.btn-membership:hover .btn-arrow {
+    transform: translateX(4px);
+}
+.btn-shimmer-beam.btn-membership:active,
+.btn-variant-b.btn-membership:active {
+    transform: translateY(0) scale(0.98);
 }
 
+.btn-shimmer-beam.btn-secondary,
 .btn-variant-b.btn-secondary {
     position: relative;
     display: inline-flex;
@@ -954,6 +848,8 @@ button {
     gap: 8px;
     padding: 11px 20px;
     background: rgba(6, 26, 45, 0.75);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
     color: var(--ugr-white);
     font-family: var(--font-mono);
     font-size: 11px;
@@ -961,10 +857,11 @@ button {
     letter-spacing: 0.06em;
     text-transform: uppercase;
     border-radius: 8px;
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(0, 229, 255, 0.35);
     overflow: hidden;
-    transition: all 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
+.btn-shimmer-beam.btn-secondary::after,
 .btn-variant-b.btn-secondary::after {
     content: '';
     position: absolute;
@@ -975,18 +872,33 @@ button {
     background: linear-gradient(
         90deg,
         transparent,
-        rgba(0, 229, 255, 0.4),
+        rgba(0, 229, 255, 0.45),
+        rgba(255, 255, 255, 0.3),
         transparent
     );
-    transform: rotate(35deg) translateX(-120%);
+    transform: rotate(35deg) translateX(-140%);
     animation: btn-sheen-sweep 3.6s infinite ease-in-out 1.2s;
     pointer-events: none;
 }
+.btn-shimmer-beam.btn-secondary:hover,
 .btn-variant-b.btn-secondary:hover {
     border-color: var(--ugr-cyan);
     color: var(--ugr-cyan);
-    box-shadow: 0 0 16px rgba(0, 229, 255, 0.35);
-    transform: translateY(-2px);
+    box-shadow: 0 0 18px rgba(0, 229, 255, 0.45);
+    transform: translateY(-2px) scale(1.02);
+}
+.btn-shimmer-beam.btn-secondary .btn-arrow,
+.btn-variant-b.btn-secondary .btn-arrow {
+    display: inline-block;
+    transition: transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.btn-shimmer-beam.btn-secondary:hover .btn-arrow,
+.btn-variant-b.btn-secondary:hover .btn-arrow {
+    transform: translate(3px, -3px);
+}
+.btn-shimmer-beam.btn-secondary:active,
+.btn-variant-b.btn-secondary:active {
+    transform: translateY(0) scale(0.98);
 }
 
 /* Modul Hartă 2D & Glob 3D */

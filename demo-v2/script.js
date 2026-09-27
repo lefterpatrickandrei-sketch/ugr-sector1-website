@@ -120,30 +120,14 @@ function closeMobileNav() {
 // ═══════════════════════════════════════════════════════════════════════════
 
 function setBtnAnimationVariant(variant) {
-    const isVariantB = (variant === 'b' || variant === '2');
     const btnMembership = document.getElementById('hero-btn-membership');
     const btnSecondary = document.getElementById('hero-btn-secondary');
-    const pillA = document.getElementById('pill-btn-a');
-    const pillB = document.getElementById('pill-btn-b');
-
     if (btnMembership) {
-        btnMembership.classList.toggle('btn-variant-a', !isVariantB);
-        btnMembership.classList.toggle('btn-variant-b', isVariantB);
+        btnMembership.classList.add('btn-shimmer-beam');
     }
     if (btnSecondary) {
-        btnSecondary.classList.toggle('btn-variant-a', !isVariantB);
-        btnSecondary.classList.toggle('btn-variant-b', isVariantB);
+        btnSecondary.classList.add('btn-shimmer-beam');
     }
-
-    if (pillA) pillA.classList.toggle('active', !isVariantB);
-    if (pillB) pillB.classList.toggle('active', isVariantB);
-
-    // Actualizează parametrul în URL fără reîncărcare de pagină
-    try {
-        const url = new URL(window.location.href);
-        url.searchParams.set('btn', isVariantB ? 'b' : 'a');
-        window.history.replaceState({}, '', url.toString());
-    } catch (e) {}
 }
 window.setBtnAnimationVariant = setBtnAnimationVariant;
 
