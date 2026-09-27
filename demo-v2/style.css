@@ -1002,6 +1002,81 @@ button {
     z-index: 4;
 }
 
+/* CAD HUD Instruments: Bousolă & Scală Topografică */
+.map-hud-compass {
+    position: absolute;
+    top: 10px;
+    left: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-family: var(--font-mono);
+    color: var(--ugr-cyan);
+    pointer-events: none;
+    z-index: 6;
+    background: rgba(4, 14, 26, 0.75);
+    padding: 3px 6px;
+    border-radius: 4px;
+    border: 1px solid rgba(0, 229, 255, 0.35);
+    backdrop-filter: blur(4px);
+}
+.compass-arrow {
+    font-size: 10px;
+    line-height: 1;
+    color: var(--ugr-cyan);
+    animation: compass-pulse 2.5s infinite ease-in-out;
+}
+.compass-n {
+    font-size: 8.5px;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+}
+@keyframes compass-pulse {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-2px); }
+}
+
+.map-hud-scale {
+    position: absolute;
+    bottom: 8px;
+    right: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    font-family: var(--font-mono);
+    pointer-events: none;
+    z-index: 6;
+    background: rgba(4, 14, 26, 0.75);
+    padding: 3px 6px;
+    border-radius: 4px;
+    border: 1px solid rgba(0, 229, 255, 0.3);
+    backdrop-filter: blur(4px);
+}
+.scale-ticks {
+    display: flex;
+    justify-content: space-between;
+    width: 68px;
+    font-size: 7.5px;
+    color: rgba(250, 251, 252, 0.7);
+    margin-bottom: 2px;
+}
+.scale-bar {
+    display: flex;
+    width: 68px;
+    height: 3px;
+    border: 1px solid var(--ugr-cyan);
+}
+.scale-seg {
+    flex: 1;
+    height: 100%;
+}
+.scale-seg.seg-dark {
+    background: var(--ugr-cyan);
+}
+.scale-seg.seg-light {
+    background: rgba(255, 255, 255, 0.85);
+}
+
 /* Quick-Tap City Chips (Mobile & Desktop) */
 .map-quick-chips {
     display: flex;
@@ -1043,6 +1118,75 @@ button {
     background: linear-gradient(135deg, rgba(255, 159, 28, 0.22), rgba(217, 119, 6, 0.35));
     border-color: #FF9F1C;
     box-shadow: 0 0 10px rgba(255, 159, 28, 0.3);
+}
+.chip-sub {
+    font-size: 8.5px;
+    padding: 1px 4px;
+    margin-left: 4px;
+    border-radius: 3px;
+    background: rgba(255, 255, 255, 0.1);
+    color: rgba(250, 251, 252, 0.7);
+}
+.map-chip.active .chip-sub {
+    background: rgba(0, 229, 255, 0.25);
+    color: #FFFFFF;
+}
+.map-chip[data-node="chisinau"].active .chip-sub {
+    background: rgba(255, 159, 28, 0.3);
+    color: #FFFFFF;
+}
+
+/* Acțiuni Directe Telemetrie */
+.telemetry-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+}
+.btn-calc-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    font-weight: 700;
+    color: #FFFFFF;
+    background: linear-gradient(135deg, rgba(0, 229, 255, 0.25), rgba(18, 125, 194, 0.45));
+    border: 1px solid rgba(0, 229, 255, 0.5);
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    text-decoration: none;
+}
+.btn-calc-link:hover {
+    background: linear-gradient(135deg, rgba(0, 229, 255, 0.4), rgba(18, 125, 194, 0.65));
+    border-color: #00E5FF;
+    box-shadow: 0 0 12px rgba(0, 229, 255, 0.4);
+    transform: translateY(-1px);
+}
+.btn-calc-link .btn-arrow {
+    display: inline-block;
+    transition: transform 0.2s ease;
+}
+.btn-calc-link:hover .btn-arrow {
+    transform: translateX(3px);
+}
+.btn-tour-link {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(255, 255, 255, 0.2);
+    color: rgba(250, 251, 252, 0.85);
+}
+.btn-tour-link:hover {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.4);
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+}
+.btn-tour-link.tour-active {
+    background: rgba(255, 159, 28, 0.2);
+    border-color: #FF9F1C;
+    color: #FF9F1C;
+    box-shadow: 0 0 12px rgba(255, 159, 28, 0.35);
 }
 
 .node-info-box {
@@ -2116,6 +2260,48 @@ button {
         padding: 6px 4px !important;
         text-align: center;
         justify-content: center;
+    }
+
+    /* Înălțime Compactă & Ergonomie Mobil pentru Hartă */
+    .map-card-body {
+        height: 235px !important;
+    }
+    #globe-canvas-container,
+    #globe-3d-wrapper {
+        height: 235px !important;
+    }
+    #globe-canvas-container canvas {
+        touch-action: pan-y !important;
+    }
+
+    /* Padding mai suplu pe mobil pentru a preveni derularea excesivă */
+    .hero-container > .glass-panel {
+        padding: 14px 12px !important;
+    }
+
+    /* Grilă Telemetrie Compactă pe Mobil */
+    #node-telemetry-container {
+        grid-template-columns: 1fr 1fr !important;
+        gap: 6px !important;
+    }
+    .telemetry-card {
+        padding: 5px 6px !important;
+    }
+
+    /* Butoane Acțiuni Telemetrie pe Mobil (Grilă 2 Coloane Simetrică) */
+    .telemetry-actions {
+        display: grid !important;
+        grid-template-columns: 1fr 1fr !important;
+        gap: 6px !important;
+        width: 100% !important;
+        margin-top: 8px !important;
+    }
+    .btn-calc-link {
+        width: 100% !important;
+        justify-content: center !important;
+        font-size: 9.5px !important;
+        padding: 7px 4px !important;
+        text-align: center !important;
     }
 }
 

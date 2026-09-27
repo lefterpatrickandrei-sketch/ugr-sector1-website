@@ -187,7 +187,12 @@
 
                         <div class="map-card-body">
                             <div class="map-hud-tag-tr"><span>GNSS RTK</span> <span style="color:var(--ugr-cyan);">● LOCK</span></div>
+                            <div class="map-hud-compass" aria-label="Nord Geodezic"><span class="compass-arrow">▲</span><span class="compass-n">N</span></div>
                             <div class="map-hud-tag-bl">STEREO 70 / EPSG:31700</div>
+                            <div class="map-hud-scale" aria-label="Scală metrică topografică">
+                                <div class="scale-ticks"><span>0</span><span>50</span><span>100 km</span></div>
+                                <div class="scale-bar"><div class="scale-seg seg-dark"></div><div class="scale-seg seg-light"></div></div>
+                            </div>
                             <!-- Container 2D Harta Vectorială KML -->
                             <div id="svg-map-wrapper">
                                 <svg viewBox="0 0 400 300" style="width: 100%; max-width: 360px; height: auto;" aria-label="Harta nodurilor geodezice din România">
@@ -234,12 +239,24 @@
 
                         <!-- Selectoare Rapide Tactile Noduri (Mobil & Desktop) -->
                         <div class="map-quick-chips" role="toolbar" aria-label="Selectare rapidă nod geodezic">
-                            <button type="button" class="map-chip active" data-node="bucuresti" onclick="selectNode('bucuresti')">★ Sector 1</button>
-                            <button type="button" class="map-chip" data-node="chisinau" onclick="selectNode('chisinau')">◆ Chișinău UTM</button>
-                            <button type="button" class="map-chip" data-node="cluj" onclick="selectNode('cluj')">Cluj-Napoca</button>
-                            <button type="button" class="map-chip" data-node="iasi" onclick="selectNode('iasi')">Iași</button>
-                            <button type="button" class="map-chip" data-node="timisoara" onclick="selectNode('timisoara')">Timișoara</button>
-                            <button type="button" class="map-chip" data-node="constanta" onclick="selectNode('constanta')">Constanța</button>
+                            <button type="button" class="map-chip active" data-node="bucuresti" onclick="selectNode('bucuresti')">
+                                <span class="chip-star">★</span> Sector 1 <span class="chip-sub">POL</span>
+                            </button>
+                            <button type="button" class="map-chip" data-node="chisinau" onclick="selectNode('chisinau')">
+                                <span class="chip-diamond">◆</span> Chișinău <span class="chip-sub">358km</span>
+                            </button>
+                            <button type="button" class="map-chip" data-node="cluj" onclick="selectNode('cluj')">
+                                Cluj <span class="chip-sub">325km</span>
+                            </button>
+                            <button type="button" class="map-chip" data-node="iasi" onclick="selectNode('iasi')">
+                                Iași <span class="chip-sub">318km</span>
+                            </button>
+                            <button type="button" class="map-chip" data-node="timisoara" onclick="selectNode('timisoara')">
+                                Timișoara <span class="chip-sub">410km</span>
+                            </button>
+                            <button type="button" class="map-chip" data-node="constanta" onclick="selectNode('constanta')">
+                                Constanța <span class="chip-sub">204km</span>
+                            </button>
                         </div>
 
                         <!-- Panou Afișare Detalii Nod & Telemetrie Teritorială -->
@@ -268,6 +285,16 @@
                                     <div style="color: var(--ugr-cyan); font-weight: 700; font-size: 9px; text-transform: uppercase;">PRECIZIE GEODEZICĂ</div>
                                     <div style="color: #fff; font-size: 10.5px;">GNSS RTK 1-2cm / Niv. Clasa I</div>
                                 </div>
+                            </div>
+                            <!-- Acțiuni Directe Telemetrie & Calculator Stereo 70 -->
+                            <div class="telemetry-actions" style="margin-top: 10px; display: flex; gap: 8px; flex-wrap: wrap;">
+                                <button type="button" onclick="calculateFromSelectedNode()" class="btn-calc-link" id="btn-calc-node-link">
+                                    <span>Calculează în Stereo 70</span>
+                                    <span class="btn-arrow">→</span>
+                                </button>
+                                <button type="button" onclick="toggleAutoTour()" class="btn-calc-link btn-tour-link" id="btn-auto-tour">
+                                    <span id="tour-icon">▶</span> <span id="tour-text">Tur Virtual Noduri</span>
+                                </button>
                             </div>
                         </div>
                     </div>

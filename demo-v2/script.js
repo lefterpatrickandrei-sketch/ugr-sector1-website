@@ -147,6 +147,35 @@ window.setTickerSpeed = setTickerSpeed;
 // 3. INTERACȚIUNE HARTĂ 2D & FILTRU COMPETENȚE
 // ═══════════════════════════════════════════════════════════════════════════
 
+function scrambleCoordsText(targetEl, targetText) {
+    if (!targetEl) return;
+    const chars = '0123456789°\'"•XYZ:. ';
+    let iteration = 0;
+    const originalText = targetText;
+    if (targetEl._scrambleTimer) {
+        clearInterval(targetEl._scrambleTimer);
+    }
+    targetEl._scrambleTimer = setInterval(() => {
+        targetEl.innerText = originalText
+            .split('')
+            .map((char, index) => {
+                if (index < iteration) {
+                    return originalText[index];
+                }
+                if (char === ' ' || char === '/' || char === '•' || char === '|') return char;
+                return chars[Math.floor(Math.random() * chars.length)];
+            })
+            .join('');
+
+        if (iteration >= originalText.length) {
+            clearInterval(targetEl._scrambleTimer);
+            targetEl._scrambleTimer = null;
+            targetEl.innerText = originalText;
+        }
+        iteration += 4;
+    }, 20);
+}
+
 function selectNode(nodeKey) {
     const node = ugrData.mapNodes[nodeKey];
     if (!node) return;
@@ -159,7 +188,8 @@ function selectNode(nodeKey) {
 
     if (titleEl) titleEl.innerText = node.name;
     if (coordsEl) {
-        coordsEl.innerText = `${node.latStr} / ${node.lonStr}${node.stereo70Str ? ' • ' + node.stereo70Str : ''}`;
+        const fullCoords = `${node.latStr} / ${node.lonStr}${node.stereo70Str ? ' • ' + node.stereo70Str : ''}`;
+        scrambleCoordsText(coordsEl, fullCoords);
     }
     if (textEl) textEl.innerText = node.desc;
 
@@ -258,6 +288,85 @@ function selectNode(nodeKey) {
     document.querySelectorAll('.map-chip').forEach(chip => {
         chip.classList.toggle('active', chip.getAttribute('data-node') === nodeKey);
     });
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// ACȚIUNI DIRECTE TELEMETRIE: CALCULATOR STEREO 70 & TUR VIRTUAL NODURI
+// ═══════════════════════════════════════════════════════════════════════════
+
+function calculateFromSelectedNode() {
+    const activeNodeKey = appState.selectedNode || 'bucuresti';
+    const node = ugrData.mapNodes[activeNodeKey];
+    if (!node) return;
+
+    let xVal = '328733.315';
+    let yVal = '586483.430';
+
+    if (node.stereo70Str && node.stereo70Str.includes('X:')) {
+        const matchX = node.stereo70Str.match(/X:\s*([0-9.]+)/);
+        const matchY = node.stereo70Str.match(/Y:\s*([0-9.]+)/);
+        if (matchX && matchY) {
+            xVal = matchX[1];
+            yVal = matchY[1];
+        }
+    } else if (activeNodeKey === 'chisinau') {
+        // Chișinău UTM / echivalent demonstrativ Stereo 70
+        xVal = '642100.000';
+        yVal = '785300.000';
+    }
+
+    // Navighează către vederea Calculator Stereo 70
+    navigateTo('calculator');
+
+    // Populează câmpurile de introducere
+    const inputX = document.getElementById('coord-x');
+    const inputY = document.getElementById('coord-y');
+    if (inputX && inputY) {
+        inputX.value = xVal;
+        inputY.value = yVal;
+        calculateCoordinates();
+    }
+
+    // Salt fluid la cardul calculatorului
+    setTimeout(() => {
+        const calcCard = document.getElementById('view-calculator') || document.querySelector('.calculator-card') || document.getElementById('coord-x');
+        if (calcCard) {
+            calcCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    }, 120);
+}
+window.calculateFromSelectedNode = calculateFromSelectedNode;
+
+let autoTourInterval = null;
+const tourNodes = ['bucuresti', 'chisinau', 'cluj', 'iasi', 'timisoara', 'constanta'];
+let currentTourIndex = 0;
+
+function toggleAutoTour() {
+    const btn = document.getElementById('btn-auto-tour');
+    const icon = document.getElementById('tour-icon');
+    const text = document.getElementById('tour-text');
+
+    if (autoTourInterval) {
+        clearInterval(autoTourInterval);
+        autoTourInterval = null;
+        if (btn) btn.classList.remove('tour-active');
+        if (icon) icon.innerText = '▶';
+        if (text) text.innerText = 'Tur Virtual Noduri';
+    } else {
+        if (btn) btn.classList.add('tour-active');
+        if (icon) icon.innerText = '⏸';
+        if (text) text.innerText = 'Oprește Turul';
+
+        advanceTour();
+        autoTourInterval = setInterval(advanceTour, 3500);
+    }
+}
+window.toggleAutoTour = toggleAutoTour;
+
+function advanceTour() {
+    currentTourIndex = (currentTourIndex + 1) % tourNodes.length;
+    const nextNode = tourNodes[currentTourIndex];
+    selectNode(nextNode);
 }
 
 function handleSkillFilterChange() {
@@ -434,6 +543,14 @@ function init3DGlobe() {
         controls.enablePan = false;
         controls.minDistance = 115;
         controls.maxDistance = 500;
+        if (window.innerWidth <= 768) {
+            controls.enableZoom = false;
+        }
+    }
+
+    const globeCanvas = container.querySelector('canvas');
+    if (globeCanvas) {
+        globeCanvas.style.touchAction = 'pan-y';
     }
 
     setupSatellitesAndLasers();
