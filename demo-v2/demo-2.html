@@ -26,6 +26,17 @@
 </head>
 <body>
 
+<div style="background: rgba(3, 11, 22, 0.96); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 1px solid rgba(0, 229, 255, 0.4); padding: 9px 18px; display: flex; align-items: center; justify-content: space-between; z-index: 10000; position: sticky; top: 0; box-shadow: 0 4px 20px rgba(0,0,0,0.6);">
+    <div style="display: flex; align-items: center; gap: 12px;">
+        <span style="background: rgba(0, 229, 255, 0.2); border: 1px solid #00E5FF; color: #00E5FF; padding: 3px 10px; border-radius: 4px; font-family: var(--font-mono); font-size: 11px; font-weight: 700;">DEMO 2 ACTIV</span>
+        <span style="color: #fff; font-family: var(--font-display); font-size: 13.5px; font-weight: 600;">📐 Rețea de Triangulație Geodezică (Segmente de sprijin exclusiv între vecini — fără evantai central)</span>
+    </div>
+    <div style="display: flex; gap: 12px; align-items: center;">
+        <a href="demo-1.html" style="color: #00E5FF; font-family: var(--font-mono); font-size: 11.5px; font-weight: 600; text-decoration: none; border: 1px solid rgba(0, 229, 255, 0.5); padding: 5px 12px; border-radius: 6px; background: rgba(0, 229, 255, 0.12); transition: all 0.2s;">← Deschide Demo 1: Hartă Curată</a>
+    </div>
+</div>
+
+
     <!-- Skip Link pentru Accesibilitate WCAG 2.2 AA -->
     <a href="#main-content" class="skip-link">Sari direct la conținutul principal</a>
 
@@ -133,7 +144,7 @@
                         </div>
 
                         <!-- Acțiuni Hero cu Stil Permanent Shimmer Beam & Grilă Simetrică 2 Coloane pe Mobil -->
-                        <div class="hero-actions animate-slide-left delay-400" id="hero-action-buttons">
+                        <div class="hero-actions animate-slide-left delay-300" id="hero-action-buttons">
                             <button onclick="openRegistrationModal()" class="btn-membership btn-shimmer-beam" id="hero-btn-membership">
                                 <span>Înscriere UGR</span>
                                 <span class="btn-arrow">→</span>
@@ -148,8 +159,22 @@
                     <!-- Panou Interactiv: VisionOS Spatial Glass HUD (Harta 2D / Glob 3D cu Sateliți) -->
                     <div class="glass-panel" id="spatial-hud-card" style="position: relative; overflow: hidden; padding: 0; min-height: 520px; display: flex; flex-direction: column; background: rgba(4, 14, 26, 0.40); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border: 1px solid rgba(0, 229, 255, 0.35); border-radius: 14px; box-shadow: 0 20px 50px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.15);">
                         
-                        <!-- Top Floating Controls: Glass Capsule HUD (Curățat complet conform cerinței) -->
-                        <div style="position: absolute; top: 12px; right: 12px; display: flex; align-items: center; z-index: 25; pointer-events: none;">
+                        <!-- Top Floating Controls: Glass Capsules HUD -->
+                        <div style="position: absolute; top: 12px; left: 12px; right: 12px; display: flex; justify-content: space-between; align-items: center; z-index: 25; pointer-events: none; gap: 8px;">
+                            <!-- Status Badge -->
+                            <div style="pointer-events: auto; display: flex; align-items: center; gap: 8px; padding: 5px 12px; background: rgba(3, 11, 22, 0.65); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(0, 229, 255, 0.3); border-radius: 20px; box-shadow: 0 4px 14px rgba(0,0,0,0.4);">
+                                <span style="width: 7px; height: 7px; border-radius: 50%; background: #10B981; box-shadow: 0 0 8px #10B981; animation: pulse 2s infinite;"></span>
+                                <span style="font-family: var(--font-mono); font-size: 10px; font-weight: 700; color: #00E5FF; letter-spacing: 0.05em;">LIVE GNSS RTK</span>
+                                <span style="color: rgba(255,255,255,0.3); font-size: 10px;">|</span>
+                                <span style="font-family: var(--font-mono); font-size: 10px; color: rgba(250,251,252,0.8);">STEREO 70</span>
+                            </div>
+
+                            <!-- 3D Arc Style Switcher Pill (Apare când modul 3D este activ) -->
+                            <div id="arc-style-pill" style="display: none; pointer-events: auto; align-items: center; gap: 3px; padding: 3px 6px; background: rgba(3, 11, 22, 0.75); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(0, 229, 255, 0.35); border-radius: 20px; box-shadow: 0 4px 14px rgba(0,0,0,0.4);">
+                                <button type="button" id="btn-style-clean" onclick="setArcStyle('clean')" style="background: rgba(0,229,255,0.3); border: 1px solid #00E5FF; color: #fff; font-family: var(--font-mono); font-size: 9px; font-weight: 700; padding: 3px 8px; border-radius: 12px; cursor: pointer; transition: all 0.2s ease;">🌐 Hartă Curată (Fără Linii)</button>
+                                <button type="button" id="btn-style-triangulation" onclick="setArcStyle('triangulation')" style="background: transparent; border: 1px solid transparent; color: rgba(255,255,255,0.65); font-family: var(--font-mono); font-size: 9px; font-weight: 600; padding: 3px 8px; border-radius: 12px; cursor: pointer; transition: all 0.2s ease;">📐 Triangulație</button>
+                            </div>
+
                             <!-- Mode & Filter Capsule -->
                             <div style="pointer-events: auto; display: flex; align-items: center; gap: 4px; padding: 4px 6px; background: rgba(3, 11, 22, 0.65); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(0, 229, 255, 0.3); border-radius: 20px; box-shadow: 0 4px 14px rgba(0,0,0,0.4);">
                                 <button type="button" onclick="switchMapView('2d')" id="btn-mode-2d" class="mode-btn active" style="padding: 4px 10px; font-size: 10px; border-radius: 14px;">2D</button>
@@ -245,24 +270,12 @@
             <!-- CALCULATOR STEREO 70 INTEGRAT DIRECT ÎN ACASĂ (FĂRĂ PAGINĂ SEPARATĂ) -->
             <div class="section-block section-dark" style="border-top: 1px solid var(--ugr-border); padding-top: 50px;">
                 <div class="content-container">
-                    <div class="section-header style-21stdev" style="text-align: center; margin: 0 auto 32px auto; display: flex; flex-direction: column; align-items: center;">
-                        <!-- Kicker Alb cu Liniuță "——" (Inspirat din Imaginea 2) cu Animație 3D Kinetică -->
-                        <div class="calc-kicker-white-kinetic" id="calc-kinetic-kicker" aria-label="—— UTILITAR TEHNIC INTEGRAT">
-                            —— UTILITAR TEHNIC INTEGRAT
-                        </div>
-
-                        <!-- Titlu H2: 3D Kinetic Split & Ambient Specular Glow (Opțiunea 3 / 21st.dev) -->
-                        <h2 class="eng-h2" id="calc-kinetic-title" aria-label="Calculator Transversal Stereo 70 ⇄ WGS84">
-                            Calculator Transversal Stereo 70 ⇄ WGS84
-                        </h2>
-
-                        <!-- Precision Spec Box Description (Opțiunea 3 / 21st.dev) -->
-                        <div class="eng-spec-box">
-                            <p class="eng-description">
-                                Algoritm matematic conform proiecției stereografice 1970 pe elipsoidul Krasovski 1940 
-                                (<span class="eng-badge-pill">EPSG:3844 ANCPI</span>). Nu necesită pagină separată.
-                            </p>
-                        </div>
+                    <div class="section-header" style="text-align: center; margin: 0 auto 30px auto;">
+                        <div class="section-tag" style="justify-content: center;">Utilitar Tehnic Integrat</div>
+                        <h2 class="section-title">Calculator Transversal Stereo 70 ⇄ WGS84</h2>
+                        <p style="color: var(--ugr-text-muted); font-size: 13.5px; margin-top: 8px;">
+                            Algoritm matematic conform proiecției stereografice 1970 pe elipsoidul Krasovski 1940 (EPSG:31700). Nu necesită pagină separată.
+                        </p>
                     </div>
 
                     <div class="calc-card">
@@ -284,66 +297,9 @@
                             </div>
                         </form>
 
-                        <!-- Tabel Rezultate Transformare Geodezică Animat -->
-                        <div id="calc-result-box" class="calc-results-container" style="display: none;">
-                            <div class="calc-result-header">
-                                <div class="calc-badge-ancpi">
-                                    <span class="calc-status-indicator"></span>
-                                    <span>CONFORMITATE ANCPI ◆ EPSG:3844 (STEREO 70) ⇄ EPSG:4326 (WGS84)</span>
-                                </div>
-                                <div class="calc-accuracy-tag">Ordinul ANCPI 108/2010 ◆ Helmert 7-Params</div>
-                            </div>
-
-                            <div class="calc-table-wrapper">
-                                <table class="calc-geodetic-table" aria-label="Tabel Rezultate Transformare Geodezică">
-                                    <thead>
-                                        <tr>
-                                            <th>Sistem Referință</th>
-                                            <th>Coordonată Nord / Lat (φ)</th>
-                                            <th>Coordonată Est / Long (λ)</th>
-                                            <th>Format Sexagesimal (DMS)</th>
-                                            <th>Elipsoid & Datum</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr class="calc-row-source">
-                                            <td><span class="crs-badge crs-stereo">Stereo 70 (EPSG:3844)</span></td>
-                                            <td class="font-mono text-cyan" id="res-source-x">334250.125 m</td>
-                                            <td class="font-mono text-cyan" id="res-source-y">591240.850 m</td>
-                                            <td class="font-mono text-muted">Proiecție Plană Conformată</td>
-                                            <td style="color: var(--ugr-text-muted); font-size: 11px;">Krasovski 1940</td>
-                                        </tr>
-                                        <tr class="calc-row-target">
-                                            <td><span class="crs-badge crs-wgs">WGS84 Global (GPS)</span></td>
-                                            <td class="font-mono text-gold font-bold" id="res-lat-val">44.502276° N</td>
-                                            <td class="font-mono text-gold font-bold" id="res-lon-val">26.145473° E</td>
-                                            <td class="font-mono text-white" id="res-dms-val">44° 30' 08" N | 26° 08' 43" E</td>
-                                            <td style="color: var(--ugr-text-muted); font-size: 11px;">Elipsoid GRS80 / WGS84</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-
-                            <div class="calc-actions-bar">
-                                <div class="calc-actions-left">
-                                    <button type="button" class="btn-calc-action" onclick="copyCalculatedCoords(this)">
-                                        <span>📋</span> Copiază Coordonate WGS84
-                                    </button>
-                                    <button type="button" class="btn-calc-action" onclick="exportCalculatedPoint('csv')">
-                                        <span>📥</span> Export .CSV
-                                    </button>
-                                    <button type="button" class="btn-calc-action" onclick="exportCalculatedPoint('txt')">
-                                        <span>📄</span> Raport .TXT
-                                    </button>
-                                </div>
-                                <div class="calc-citation">Toleranță milimetrică garantată matematic conform ANCPI</div>
-                            </div>
-
-                            <!-- Câmpuri ascunse pentru retrocompatibilitate -->
-                            <div style="display: none;">
-                                <span id="res-lat">-</span>
-                                <span id="res-lon">-</span>
-                            </div>
+                        <div id="calc-result-box" class="calc-results" style="display: none;">
+                            <div class="calc-res-item">Latitudine (WGS84): <b id="res-lat">-</b></div>
+                            <div class="calc-res-item">Longitudine (WGS84): <b id="res-lon">-</b></div>
                         </div>
                     </div>
                 </div>
@@ -734,77 +690,8 @@
                     </div>
                 </div>
 
-                <!-- Tabel Cotizații și Categorii Membri UGR -->
-                <div style="background: var(--ugr-paper); border: 1px solid rgba(11,46,78,0.12); border-radius: 12px; padding: 24px; margin-bottom: 35px;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 8px;">
-                        <div>
-                            <span style="font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; color: var(--ugr-accent); font-weight: 700; letter-spacing: 0.08em;">GRILĂ STATUTARĂ UGR</span>
-                            <h3 style="font-size: 18px; color: var(--ugr-text-main); margin: 4px 0 0 0;">Categorii de Membri & Grilă Cotizații Anuale</h3>
-                        </div>
-                        <span style="font-family: var(--font-mono); font-size: 11px; color: var(--ugr-text-muted); background: #fff; padding: 4px 10px; border-radius: 20px; border: 1px solid rgba(11,46,78,0.1);">Actualizat conform Hotărârii BEX UGR</span>
-                    </div>
-
-                    <div style="overflow-x: auto; border: 1px solid rgba(11,46,78,0.1); border-radius: 8px;">
-                        <table class="members-table-interactive" style="width: 100%; border-collapse: collapse; text-align: left; font-size: 13px;" aria-label="Tabel cu grila de cotizații">
-                            <thead>
-                                <tr style="background: var(--ugr-navy); color: #fff; font-family: var(--font-mono); font-size: 11px; text-transform: uppercase;">
-                                    <th style="padding: 12px 16px;">Categorie Membru</th>
-                                    <th style="padding: 12px 16px;">Taxă Înscriere</th>
-                                    <th style="padding: 12px 16px;">Cotizație Anuală</th>
-                                    <th style="padding: 12px 16px;">Drepturi Statutare & Beneficii</th>
-                                    <th style="padding: 12px 16px;">Validare Dosar</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr class="table-row-animated" style="border-bottom: 1px solid rgba(11,46,78,0.08); background: #fff;">
-                                    <td style="padding: 14px 16px; font-weight: 700; color: var(--ugr-navy);">
-                                        <div>Membru Titular</div>
-                                        <div style="font-size: 11px; color: var(--ugr-text-muted); font-weight: normal;">Inginer geodez autorizat ANCPI</div>
-                                    </td>
-                                    <td style="padding: 14px 16px; font-family: var(--font-mono); font-weight: 700; color: var(--ugr-accent);">50 LEI</td>
-                                    <td style="padding: 14px 16px; font-family: var(--font-mono); font-weight: 700; color: #047857;">100 LEI / AN</td>
-                                    <td style="padding: 14px 16px; color: var(--ugr-text-main); font-size: 12px;">
-                                        Drept de vot în Adunarea Generală, reprezentare la OCPI/ANCPI, legitimație oficială UGR, reduceri congrese FIG/CLGE.
-                                    </td>
-                                    <td style="padding: 14px 16px;">
-                                        <span style="font-size: 11px; font-family: var(--font-mono); background: rgba(16,185,129,0.12); color: #065F46; padding: 3px 8px; border-radius: 4px; border: 1px solid rgba(16,185,129,0.25);">Biroul Executiv (BEX)</span>
-                                    </td>
-                                </tr>
-                                <tr class="table-row-animated" style="border-bottom: 1px solid rgba(11,46,78,0.08); background: #fff;">
-                                    <td style="padding: 14px 16px; font-weight: 700; color: var(--ugr-navy);">
-                                        <div>Membru Junior / Student</div>
-                                        <div style="font-size: 11px; color: var(--ugr-text-muted); font-weight: normal;">Studenți și masteranzi ai facultăților de profil</div>
-                                    </td>
-                                    <td style="padding: 14px 16px; font-family: var(--font-mono); font-weight: 700; color: var(--ugr-accent);">10 LEI</td>
-                                    <td style="padding: 14px 16px; font-family: var(--font-mono); font-weight: 700; color: #047857;">10 LEI / AN</td>
-                                    <td style="padding: 14px 16px; color: var(--ugr-text-main); font-size: 12px;">
-                                        Acces liber la conferințe naționale, stagii de practică la companii membre, participare SGR Chișinău 2026.
-                                    </td>
-                                    <td style="padding: 14px 16px;">
-                                        <span style="font-size: 11px; font-family: var(--font-mono); background: rgba(2,132,199,0.12); color: #0369A1; padding: 3px 8px; border-radius: 4px; border: 1px solid rgba(2,132,199,0.25);">Secretariat Filială</span>
-                                    </td>
-                                </tr>
-                                <tr class="table-row-animated" style="background: #fff;">
-                                    <td style="padding: 14px 16px; font-weight: 700; color: var(--ugr-navy);">
-                                        <div>Membru Corespondent / Firmă</div>
-                                        <div style="font-size: 11px; color: var(--ugr-text-muted); font-weight: normal;">Societăți comerciale de geodezie și cadastru</div>
-                                    </td>
-                                    <td style="padding: 14px 16px; font-family: var(--font-mono); font-weight: 700; color: var(--ugr-accent);">100 LEI</td>
-                                    <td style="padding: 14px 16px; font-family: var(--font-mono); font-weight: 700; color: #047857;">DIFERENȚIATĂ</td>
-                                    <td style="padding: 14px 16px; color: var(--ugr-text-main); font-size: 12px;">
-                                        Promovare în Registrul Firmelor Partenere UGR, consultanță juridico-tehnică în proceduri cadastrale complexe.
-                                    </td>
-                                    <td style="padding: 14px 16px;">
-                                        <span style="font-size: 11px; font-family: var(--font-mono); background: rgba(147,51,234,0.12); color: #7E22CE; padding: 3px 8px; border-radius: 4px; border: 1px solid rgba(147,51,234,0.25);">Consiliul Național</span>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
                 <!-- Căutare și filtru registru -->
-                <div style="display: flex; gap: 16px; margin-bottom: 12px; flex-wrap: wrap; align-items: flex-end;">
+                <div style="display: flex; gap: 16px; margin-bottom: 24px; flex-wrap: wrap;">
                     <div style="flex: 1; min-width: 260px;">
                         <label for="member-search-input" class="form-label" style="color: var(--ugr-text-main);">Caută după nume sau serie autorizație:</label>
                         <input type="text" id="member-search-input" oninput="filterMembers()" onkeyup="filterMembers()" class="form-input" style="width: 100%; border-color: rgba(11,46,78,0.2); color: var(--ugr-text-main); background: #fff;" placeholder="Ex: Popescu sau RO-B-F...">
@@ -823,14 +710,9 @@
                     </div>
                 </div>
 
-                <!-- Indicator dinamic număr rezultate -->
-                <div id="members-count-badge" class="members-badge-count" style="margin-bottom: 16px; font-family: var(--font-mono); font-size: 11px; color: var(--ugr-accent);">
-                    Se afișează <b>6</b> membri autorizați
-                </div>
-
                 <!-- Tabel Membri -->
-                <div style="overflow-x: auto; border: 1px solid rgba(11,46,78,0.12); border-radius: 8px; margin-bottom: 40px; box-shadow: 0 4px 16px rgba(0,0,0,0.04);">
-                    <table class="members-table-interactive" style="width: 100%; border-collapse: collapse; text-align: left; font-size: 13.5px;" aria-label="Tabel cu membrii autorizați">
+                <div style="overflow-x: auto; border: 1px solid rgba(11,46,78,0.12); border-radius: 8px; margin-bottom: 40px;">
+                    <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 13.5px;" aria-label="Tabel cu membrii autorizați">
                         <thead>
                             <tr style="background: var(--ugr-navy); color: #fff; font-family: var(--font-mono); font-size: 11px; text-transform: uppercase;">
                                 <th style="padding: 14px 16px;">Nr. Legitimație</th>
@@ -1150,5 +1032,17 @@
     <script src="borders.js"></script>
     <script src="data.js"></script>
     <script src="script.js"></script>
+
+<script>
+window.ARCS_STYLE = 'triangulation';
+window.addEventListener('load', function() {
+    setTimeout(function() {
+        if (typeof switchMapView === 'function') {
+            switchMapView('3d');
+        }
+    }, 450);
+});
+</script>
 </body>
+
 </html>

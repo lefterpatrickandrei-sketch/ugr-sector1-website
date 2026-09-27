@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DEMO 2 — Link Satelitar GNSS Live (Space Downlink Laser) · UGR</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:#030712; font-family:'IBM Plex Mono', 'Segoe UI', monospace; overflow:hidden; height:100vh; color:#e2e8f0; }
+
+  /* HEADER BANNER */
+  .demo-banner {
+    position:fixed; top:0; left:0; right:0; z-index:100;
+    background:rgba(3,7,18,0.85); backdrop-filter:blur(16px);
+    border-bottom:1px solid rgba(6,182,212,0.25);
+    padding:10px 24px; display:flex; align-items:center; justify-content:space-between;
+  }
+  .demo-banner .badge { background:rgba(6,182,212,0.15); color:#06b6d4; border:1px solid rgba(6,182,212,0.3); padding:4px 10px; border-radius:6px; font-size:11px; font-weight:700; letter-spacing:0.1em; }
+  .demo-banner .title { font-size:12px; color:#cbd5e1; font-weight:500; }
+  .demo-banner .nav-links { display:flex; gap:12px; font-size:11px; }
+  .demo-banner .nav-links a { color:#06b6d4; text-decoration:none; opacity:0.8; transition:opacity 0.2s; }
+  .demo-banner .nav-links a:hover { opacity:1; text-decoration:underline; }
+
+  #c { display:block; position:fixed; inset:0; }
+
+  /* GLASSMORPHIC DOCK */
+  .hud-dock {
+    position:fixed; bottom:24px; left:50%; transform:translateX(-50%);
+    background:rgba(3,7,18,0.7); backdrop-filter:blur(20px) saturate(180%);
+    border:1px solid rgba(6,182,212,0.22); border-radius:14px;
+    padding:10px 16px; display:flex; align-items:center; gap:8px; z-index:50;
+    box-shadow:0 8px 32px rgba(0,0,0,0.6);
+  }
+  .dock-btn {
+    background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08);
+    color:rgba(226,232,240,0.7); padding:8px 14px; border-radius:8px;
+    font-size:11px; font-family:inherit; cursor:pointer; transition:all 0.2s;
+    display:flex; align-items:center; gap:6px;
+  }
+  .dock-btn:hover { background:rgba(6,182,212,0.12); border-color:rgba(6,182,212,0.3); color:#fff; }
+  .dock-btn.active { background:rgba(6,182,212,0.22); border-color:#06b6d4; color:#06b6d4; font-weight:600; box-shadow:0 0 12px rgba(6,182,212,0.3); }
+
+  /* INFO CARD */
+  .info-card {
+    position:fixed; top:65px; right:24px; width:280px;
+    background:rgba(3,7,18,0.75); backdrop-filter:blur(20px);
+    border:1px solid rgba(6,182,212,0.2); border-radius:12px;
+    padding:16px; z-index:50; box-shadow:0 12px 36px rgba(0,0,0,0.5);
+  }
+  .info-card .tag { font-size:9px; letter-spacing:0.18em; color:#06b6d4; text-transform:uppercase; margin-bottom:6px; }
+  .info-card .name { font-size:14px; font-weight:600; color:#fff; margin-bottom:8px; }
+  .info-card .desc { font-size:11px; color:#94a3b8; line-height:1.6; margin-bottom:12px; }
+  .info-card .stat-row { display:flex; justify-content:space-between; font-size:10.5px; border-top:1px solid rgba(255,255,255,0.06); padding-top:8px; }
+  .info-card .stat-val { color:#06b6d4; font-weight:600; }
+</style>
+</head>
+<body>
+
+<div class="demo-banner">
+  <div style="display:flex; align-items:center; gap:12px;">
+    <span class="badge">DEMO 2</span>
+    <span class="title">Link Satelitar GNSS Live — Laser din spațiu către stația selectată</span>
+  </div>
+  <div class="nav-links">
+    <a href="demo-beacons.html">← Vezi Demo 1 (Piloni)</a>
+    <a href="demo-mesh.html">Vezi Demo 3 (Mesh Plan) →</a>
+  </div>
+</div>
+
+<canvas id="c"></canvas>
+
+<div class="info-card">
+  <div class="tag">Constelație Satelitară · Tracking</div>
+  <div class="name" id="station-name">București — Sector 1</div>
+  <div class="desc" id="station-desc">Satelit GNSS în orbită sincronizată (Galileo / GPS) care trimite un fascicul laser de 1px direct pe stația activă. Zero arcuri parazite între orașe.</div>
+  <div class="stat-row">
+    <span>Satelit Activ:</span>
+    <span class="stat-val" id="sat-name">ROMPOS-SAT 01</span>
+  </div>
+  <div class="stat-row" style="margin-top:6px;">
+    <span>Lock Semnal:</span>
+    <span class="stat-val">Laser 1px Dinamic (Fix RTK)</span>
+  </div>
+</div>
+
+<div class="hud-dock" id="dock-nodes"></div>
+
+<script src="https://unpkg.com/three@0.160.0/build/three.min.js"></script>
+<script>
+const canvas = document.getElementById('c');
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.setSize(innerWidth, innerHeight);
+renderer.setClearColor(0x030712);
+
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(40, innerWidth/innerHeight, 0.01, 100);
+camera.position.set(0, 0.35, 2.8);
+
+const globeGroup = new THREE.Group();
+scene.add(globeGroup);
+
+// Texture globe
+const tex = new THREE.TextureLoader().load('https://unpkg.com/three-globe/example/img/earth-dark.jpg');
+const globeMesh = new THREE.Mesh(
+  new THREE.SphereGeometry(1, 72, 72),
+  new THREE.MeshPhongMaterial({ map: tex, shininess: 5, specular: new THREE.Color(0x112233) })
+);
+globeGroup.add(globeMesh);
+
+// Atmosphere
+globeGroup.add(new THREE.Mesh(
+  new THREE.SphereGeometry(1.032, 32, 32),
+  new THREE.ShaderMaterial({
+    vertexShader:`varying vec3 vN;void main(){vN=normalize(normalMatrix*normal);gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}`,
+    fragmentShader:`varying vec3 vN;void main(){float i=pow(.65-dot(vN,vec3(0,0,1)),3.5);gl_FragColor=vec4(.0,.7,1.,i*.15);}`,
+    side:THREE.FrontSide,blending:THREE.AdditiveBlending,transparent:true,depthWrite:false
+  })
+));
+
+scene.add(new THREE.AmbientLight(0x1a2636, 1.8));
+const dl = new THREE.DirectionalLight(0xffffff, 0.7); dl.position.set(4,3,4); scene.add(dl);
+
+function ll2v(lat, lon, r = 1) {
+  const phi = (90 - lat) * Math.PI / 180, theta = (lon + 180) * Math.PI / 180;
+  return new THREE.Vector3(-r * Math.sin(phi) * Math.cos(theta), r * Math.cos(phi), r * Math.sin(phi) * Math.sin(theta));
+}
+
+const NODES = [
+  { id:'bucuresti', name:'București (Sector 1)', lat:44.468, lon:26.083, isMain:true },
+  { id:'cluj', name:'Cluj-Napoca', lat:46.770, lon:23.590 },
+  { id:'timisoara', name:'Timișoara', lat:45.750, lon:21.230 },
+  { id:'iasi', name:'Iași', lat:47.160, lon:27.590 },
+  { id:'constanta', name:'Constanța', lat:44.180, lon:28.650 },
+  { id:'chisinau', name:'Chișinău (UTM)', lat:47.005, lon:28.860, isIntl:true },
+];
+
+let selectedId = 'bucuresti';
+
+// ─── NODURI LA SOL ───────────────────────────────────────────────────
+const nodeObjects = {};
+NODES.forEach(n => {
+  const pos = ll2v(n.lat, n.lon, 1.004);
+  const col = n.isIntl ? 0xf59e0b : (n.isMain ? 0x00f0ff : 0x06b6d4);
+
+  // Ground Dot
+  const dot = new THREE.Mesh(
+    new THREE.SphereGeometry(n.isMain ? 0.018 : 0.013, 12, 12),
+    new THREE.MeshBasicMaterial({ color:col, blending:THREE.AdditiveBlending })
+  );
+  dot.position.copy(pos);
+  globeGroup.add(dot);
+
+  // Ground Ring
+  const ringMat = new THREE.MeshBasicMaterial({ color:col, side:THREE.DoubleSide, transparent:true, opacity:0.6, blending:THREE.AdditiveBlending });
+  const ring = new THREE.Mesh(new THREE.RingGeometry(0.015, 0.024, 28), ringMat);
+  ring.position.copy(pos.clone().multiplyScalar(1.003));
+  ring.lookAt(pos.clone().multiplyScalar(3));
+  globeGroup.add(ring);
+
+  nodeObjects[n.id] = { pos, dot, ring, ringMat, node:n };
+});
+
+// ─── SATELIȚI ÎN ORBITĂ ──────────────────────────────────────────────
+const SATELLITES = [
+  { name:'ROMPOS-SAT 01', radius:1.42, inclination:0.7, speed:0.008, phase:0.2, color:0x00f0ff },
+  { name:'GALILEO-E04',   radius:1.55, inclination:-0.5, speed:0.006, phase:2.4, color:0x38bdf8 },
+  { name:'GPS-BIIR',      radius:1.48, inclination:0.9, speed:0.007, phase:4.1, color:0x818cf8 }
+];
+
+const satMeshes = SATELLITES.map(s => {
+  const group = new THREE.Group();
+
+  // Satellite Body (Gold Foil box)
+  const body = new THREE.Mesh(new THREE.BoxGeometry(0.022, 0.016, 0.022), new THREE.MeshBasicMaterial({ color:0xfbbf24 }));
+  group.add(body);
+
+  // Solar Panels (Blue wings)
+  const panelGeo = new THREE.BoxGeometry(0.05, 0.004, 0.016);
+  const panelMat = new THREE.MeshBasicMaterial({ color:0x0284c7 });
+  const leftPanel = new THREE.Mesh(panelGeo, panelMat); leftPanel.position.x = -0.038; group.add(leftPanel);
+  const rightPanel = new THREE.Mesh(panelGeo, panelMat); rightPanel.position.x = 0.038; group.add(rightPanel);
+
+  // Orbital orbit path circle
+  const orbitPts = [];
+  for (let i = 0; i <= 64; i++) {
+    const th = (i / 64) * Math.PI * 2;
+    const x = Math.cos(th) * s.radius;
+    const y = Math.sin(th) * s.radius * Math.sin(s.inclination);
+    const z = Math.sin(th) * s.radius * Math.cos(s.inclination);
+    orbitPts.push(new THREE.Vector3(x, y, z));
+  }
+  const orbitGeo = new THREE.BufferGeometry().setFromPoints(orbitPts);
+  const orbitMat = new THREE.LineBasicMaterial({ color:0x38bdf8, transparent:true, opacity:0.12, blending:THREE.AdditiveBlending });
+  globeGroup.add(new THREE.Line(orbitGeo, orbitMat));
+
+  globeGroup.add(group);
+  return { config:s, group };
+});
+
+// ─── LASER DOWNLINK (Single dynamic beam from tracking satellite) ─────
+const laserGeo = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(), new THREE.Vector3()]);
+const laserMat = new THREE.LineBasicMaterial({
+  color:0x00f0ff,
+  transparent:true,
+  opacity:0.85,
+  blending:THREE.AdditiveBlending,
+  depthWrite:false
+});
+const laserLine = new THREE.Line(laserGeo, laserMat);
+globeGroup.add(laserLine);
+
+// Outer soft glow for the laser
+const laserGlowGeo = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(), new THREE.Vector3()]);
+const laserGlowMat = new THREE.LineBasicMaterial({
+  color:0x38bdf8,
+  transparent:true,
+  opacity:0.35,
+  blending:THREE.AdditiveBlending,
+  depthWrite:false
+});
+const laserGlowLine = new THREE.Line(laserGlowGeo, laserGlowMat);
+globeGroup.add(laserGlowLine);
+
+// UI DOCK
+const dock = document.getElementById('dock-nodes');
+NODES.forEach(n => {
+  const btn = document.createElement('button');
+  btn.className = 'dock-btn' + (n.id === selectedId ? ' active' : '');
+  btn.innerHTML = `<span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:${n.isIntl?'#f59e0b':'#06b6d4'};"></span> ${n.name}`;
+  btn.onclick = () => selectNode(n.id);
+  dock.appendChild(btn);
+});
+
+function selectNode(id) {
+  selectedId = id;
+  const n = NODES.find(x => x.id === id);
+  document.getElementById('station-name').textContent = n.name;
+  document.getElementById('station-desc').textContent = `Satelitul ROMPOS transmite date de corecție diferențială RTK direct către receptorul din ${n.name}.`;
+  
+  document.querySelectorAll('.dock-btn').forEach((b, i) => {
+    b.classList.toggle('active', NODES[i].id === id);
+  });
+
+  laserMat.color.setHex(n.isIntl ? 0xf59e0b : 0x00f0ff);
+  laserGlowMat.color.setHex(n.isIntl ? 0xfbbf24 : 0x38bdf8);
+}
+
+// Drag & Zoom
+let drag = false, px = 0, py = 0;
+canvas.addEventListener('mousedown', e => { drag = true; px = e.clientX; py = e.clientY; });
+window.addEventListener('mouseup', () => drag = false);
+window.addEventListener('mousemove', e => {
+  if (!drag) return;
+  globeGroup.rotation.y += (e.clientX - px) * 0.005;
+  globeGroup.rotation.x += (e.clientY - py) * 0.004;
+  px = e.clientX; py = e.clientY;
+});
+canvas.addEventListener('wheel', e => {
+  camera.position.z = Math.max(1.6, Math.min(5, camera.position.z + e.deltaY * 0.003));
+  e.preventDefault();
+}, { passive:false });
+
+globeGroup.rotation.y = -0.42;
+
+const clock = new THREE.Clock();
+function animate() {
+  requestAnimationFrame(animate);
+  const t = clock.getElapsedTime();
+  if (!drag) globeGroup.rotation.y += 0.0008;
+
+  // Move Satellites in 3D orbit
+  satMeshes.forEach(s => {
+    const angle = t * s.config.speed * 8 + s.config.phase;
+    const x = Math.cos(angle) * s.config.radius;
+    const y = Math.sin(angle) * s.config.radius * Math.sin(s.config.inclination);
+    const z = Math.sin(angle) * s.config.radius * Math.cos(s.config.inclination);
+    s.group.position.set(x, y, z);
+    s.group.lookAt(0, 0, 0);
+  });
+
+  // Track target station with primary satellite
+  const trackerSat = satMeshes[0].group.position;
+  const targetGround = nodeObjects[selectedId].pos;
+
+  laserGeo.setFromPoints([trackerSat, targetGround]);
+  laserGlowGeo.setFromPoints([trackerSat, targetGround]);
+
+  // Pulse active node ring
+  Object.entries(nodeObjects).forEach(([id, obj]) => {
+    const isSel = id === selectedId;
+    const p = 0.5 + 0.5 * Math.sin(t * (isSel ? 4.0 : 1.5));
+    obj.ring.scale.setScalar(0.9 + p * (isSel ? 0.8 : 0.2));
+    obj.ringMat.opacity = isSel ? (0.9 - p * 0.4) : 0.3;
+  });
+
+  renderer.render(scene, camera);
+}
+animate();
+
+window.addEventListener('resize', () => {
+  camera.aspect = innerWidth / innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth, innerHeight);
+});
+</script>
+</body>
+</html>

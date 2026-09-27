@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DEMO 3 — Hologram Dot-Matrix Globe · UGR Sector 1</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #030712;
+    color: #e2e8f0;
+    font-family: 'IBM Plex Mono', 'Courier New', monospace;
+    overflow: hidden;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* DEMO BANNER */
+  .demo-banner {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    background: rgba(6, 182, 212, 0.15);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(6, 182, 212, 0.3);
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    z-index: 100;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+  .demo-banner .label { color: #06b6d4; font-weight: 700; }
+  .demo-banner .name { color: rgba(226,232,240,0.7); }
+
+  /* CANVAS */
+  #globe-canvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+  }
+
+  /* HUD OVERLAY */
+  .hud {
+    position: fixed;
+    top: 50%;
+    right: 48px;
+    transform: translateY(-50%);
+    width: 260px;
+    z-index: 50;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .hud-card {
+    background: rgba(3, 7, 18, 0.55);
+    backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid rgba(6, 182, 212, 0.2);
+    border-radius: 12px;
+    padding: 16px 18px;
+    box-shadow: 0 0 0 1px rgba(6,182,212,0.05), inset 0 1px 0 rgba(255,255,255,0.05);
+  }
+
+  .hud-card .tag {
+    font-size: 9px;
+    letter-spacing: 0.18em;
+    color: rgba(6,182,212,0.6);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .hud-card .title {
+    font-size: 13px;
+    font-weight: 600;
+    color: #e2e8f0;
+    font-family: 'IBM Plex Mono', monospace;
+    margin-bottom: 6px;
+  }
+  .hud-card .coords {
+    font-size: 11px;
+    color: rgba(6,182,212,0.9);
+    line-height: 1.7;
+  }
+
+  .node-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .node-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.2s;
+    border: 1px solid transparent;
+    font-size: 11px;
+    color: rgba(226,232,240,0.7);
+  }
+  .node-item:hover, .node-item.active {
+    background: rgba(6,182,212,0.1);
+    border-color: rgba(6,182,212,0.25);
+    color: #06b6d4;
+  }
+  .node-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: #06b6d4;
+    box-shadow: 0 0 6px #06b6d4;
+    flex-shrink: 0;
+    animation: pulse-dot 2s ease-in-out infinite;
+  }
+  @keyframes pulse-dot {
+    0%, 100% { box-shadow: 0 0 4px #06b6d4; }
+    50% { box-shadow: 0 0 12px #06b6d4, 0 0 20px rgba(6,182,212,0.4); }
+  }
+
+  .style-tag {
+    position: fixed;
+    bottom: 28px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(6,182,212,0.08);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(6,182,212,0.2);
+    border-radius: 999px;
+    padding: 8px 20px;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    color: rgba(6,182,212,0.7);
+    text-transform: uppercase;
+    z-index: 50;
+  }
+</style>
+</head>
+<body>
+
+<div class="demo-banner">
+  <span class="label">DEMO 3</span>
+  <span class="name">Hologram Dot-Matrix Particle Globe</span>
+  <span class="label">UGR · SECTOR 1</span>
+</div>
+
+<canvas id="globe-canvas"></canvas>
+
+<!-- HUD -->
+<div class="hud">
+  <div class="hud-card">
+    <div class="tag">Nod Activ · RTK Live</div>
+    <div class="title" id="active-name">București — Sector 1</div>
+    <div class="coords" id="active-coords">
+      φ 44°28'06"N<br>
+      λ 26°04'57"E<br>
+      H 85.4 m
+    </div>
+  </div>
+
+  <div class="hud-card">
+    <div class="tag">Rețea Geodezică Națională</div>
+    <div class="node-list" id="node-list"></div>
+  </div>
+</div>
+
+<div class="style-tag">Particle Hologram Globe · Three.js WebGL</div>
+
+<script src="https://unpkg.com/three@0.160.0/build/three.min.js"></script>
+<script>
+// ─── NODES ────────────────────────────────────────────────────────────
+const NODES = [
+  { name: 'București — Sector 1', lat: 44.468, lon: 26.083, h: '85.4 m', coords: 'φ 44°28\'06"N  λ 26°04\'57"E' },
+  { name: 'Cluj-Napoca', lat: 46.770, lon: 23.590, h: '317.2 m', coords: 'φ 46°46\'12"N  λ 23°35\'24"E' },
+  { name: 'Timișoara', lat: 45.750, lon: 21.230, h: '89.6 m', coords: 'φ 45°45\'01"N  λ 21°13\'48"E' },
+  { name: 'Iași', lat: 47.160, lon: 27.590, h: '102.3 m', coords: 'φ 47°09\'36"N  λ 27°35\'24"E' },
+  { name: 'Constanța', lat: 44.180, lon: 28.650, h: '13.8 m', coords: 'φ 44°10\'48"N  λ 28°39\'00"E' },
+  { name: 'Chișinău UTM', lat: 47.005, lon: 28.860, h: '96.1 m', coords: 'φ 47°00\'18"N  λ 28°51\'36"E' },
+];
+
+// ─── SCENE SETUP ──────────────────────────────────────────────────────
+const canvas = document.getElementById('globe-canvas');
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setClearColor(0x030712, 1);
+
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+camera.position.set(0, 0, 3.2);
+
+// ─── GLOBE DOTS ──────────────────────────────────────────────────────
+const R = 1.0;
+const DOT_COUNT = 12000;
+
+// We'll simulate land vs ocean using a canvas texture approach
+// But since we can't load an image, use a simple lat/lon density modulation
+function isLand(lat, lon) {
+  // Rough approximation: more dots in certain lat/lon ranges
+  // Europe
+  if (lat > 35 && lat < 72 && lon > -10 && lon < 45) return Math.random() < 0.72;
+  // North America
+  if (lat > 25 && lat < 75 && lon > -130 && lon < -60) return Math.random() < 0.65;
+  // South America
+  if (lat > -55 && lat < 12 && lon > -82 && lon < -34) return Math.random() < 0.68;
+  // Africa
+  if (lat > -35 && lat < 37 && lon > -18 && lon < 52) return Math.random() < 0.7;
+  // Asia
+  if (lat > 0 && lat < 70 && lon > 45 && lon < 145) return Math.random() < 0.68;
+  // Australia
+  if (lat > -43 && lat < -10 && lon > 113 && lon < 154) return Math.random() < 0.6;
+  return Math.random() < 0.03; // ocean sparse dots
+}
+
+const positions = [];
+const sizes = [];
+const colorsArr = [];
+const colorBase = new THREE.Color(0x06b6d4);
+const colorDim  = new THREE.Color(0x0e4a5a);
+
+let dotIdx = 0;
+let attempts = 0;
+while (dotIdx < DOT_COUNT && attempts < DOT_COUNT * 20) {
+  attempts++;
+  const phi = Math.acos(1 - 2 * Math.random());
+  const theta = 2 * Math.PI * Math.random();
+  const lat = 90 - phi * 180 / Math.PI;
+  const lon = theta * 180 / Math.PI - 180;
+
+  if (!isLand(lat, lon)) continue;
+
+  const x = R * Math.sin(phi) * Math.cos(theta);
+  const y = R * Math.cos(phi);
+  const z = R * Math.sin(phi) * Math.sin(theta);
+  positions.push(x, y, z);
+
+  const brightness = 0.4 + Math.random() * 0.6;
+  const c = colorBase.clone().lerp(colorDim, 1 - brightness);
+  colorsArr.push(c.r, c.g, c.b);
+  sizes.push(1.8 + Math.random() * 2.5);
+  dotIdx++;
+}
+
+const geo = new THREE.BufferGeometry();
+geo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+geo.setAttribute('color', new THREE.Float32BufferAttribute(colorsArr, 3));
+geo.setAttribute('size', new THREE.Float32BufferAttribute(sizes, 1));
+
+const mat = new THREE.ShaderMaterial({
+  vertexShader: `
+    attribute float size;
+    attribute vec3 color;
+    varying vec3 vColor;
+    void main() {
+      vColor = color;
+      vec4 mvPos = modelViewMatrix * vec4(position, 1.0);
+      gl_PointSize = size * (320.0 / -mvPos.z);
+      gl_Position = projectionMatrix * mvPos;
+    }
+  `,
+  fragmentShader: `
+    varying vec3 vColor;
+    void main() {
+      vec2 uv = gl_PointCoord - 0.5;
+      float dist = length(uv);
+      if (dist > 0.5) discard;
+      float alpha = 1.0 - smoothstep(0.3, 0.5, dist);
+      gl_FragColor = vec4(vColor, alpha);
+    }
+  `,
+  transparent: true,
+  depthWrite: false,
+  vertexColors: true,
+});
+
+const points = new THREE.Points(geo, mat);
+scene.add(points);
+
+// ─── GLOW SPHERE (outer atmosphere) ──────────────────────────────────
+const atmGeo = new THREE.SphereGeometry(R + 0.04, 32, 32);
+const atmMat = new THREE.ShaderMaterial({
+  vertexShader: `
+    varying vec3 vNormal;
+    void main() {
+      vNormal = normalize(normalMatrix * normal);
+      gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+    }
+  `,
+  fragmentShader: `
+    varying vec3 vNormal;
+    void main() {
+      float intensity = pow(0.65 - dot(vNormal, vec3(0,0,1)), 3.0);
+      gl_FragColor = vec4(0.02, 0.71, 0.83, intensity * 0.35);
+    }
+  `,
+  side: THREE.FrontSide,
+  blending: THREE.AdditiveBlending,
+  transparent: true,
+  depthWrite: false,
+});
+scene.add(new THREE.Mesh(atmGeo, atmMat));
+
+// ─── NODE BEACONS ─────────────────────────────────────────────────────
+function latLonToXYZ(lat, lon, r) {
+  const phi = (90 - lat) * Math.PI / 180;
+  const theta = (lon + 180) * Math.PI / 180;
+  return new THREE.Vector3(
+    -r * Math.sin(phi) * Math.cos(theta),
+    r * Math.cos(phi),
+    r * Math.sin(phi) * Math.sin(theta),
+  );
+}
+
+const beaconGroup = new THREE.Group();
+scene.add(beaconGroup);
+
+const beacons = NODES.map((node, i) => {
+  const pos = latLonToXYZ(node.lat, node.lon, R + 0.01);
+
+  // Spike outward
+  const spikeGeo = new THREE.CylinderGeometry(0, 0.005, 0.07, 6);
+  const spikeMat = new THREE.MeshBasicMaterial({ color: 0x06b6d4, transparent: true, opacity: 0.9 });
+  const spike = new THREE.Mesh(spikeGeo, spikeMat);
+  spike.position.copy(pos);
+  spike.lookAt(pos.clone().multiplyScalar(2));
+  spike.rotateX(Math.PI / 2);
+  beaconGroup.add(spike);
+
+  // Ring pulse
+  const ringGeo = new THREE.RingGeometry(0.01, 0.018, 24);
+  const ringMat = new THREE.MeshBasicMaterial({ color: 0x06b6d4, side: THREE.DoubleSide, transparent: true, opacity: 0.7 });
+  const ring = new THREE.Mesh(ringGeo, ringMat);
+  ring.position.copy(pos.clone().multiplyScalar(1.01));
+  ring.lookAt(pos.clone().multiplyScalar(3));
+  beaconGroup.add(ring);
+
+  return { pos, ring, spike, node, idx: i };
+});
+
+// ─── RENDER LOOP ──────────────────────────────────────────────────────
+let activeNode = 0;
+let isDragging = false;
+let prevMouse = { x: 0, y: 0 };
+let rotX = 0.35, rotY = 0.5;
+let autoRotate = true;
+
+// auto rotate so Romania is roughly centered
+points.rotation.y = -0.5;
+beaconGroup.rotation.y = -0.5;
+
+const clock = new THREE.Clock();
+
+function animate() {
+  requestAnimationFrame(animate);
+  const t = clock.getElapsedTime();
+
+  if (autoRotate) {
+    points.rotation.y += 0.001;
+    beaconGroup.rotation.y += 0.001;
+  }
+
+  // Pulse rings
+  beacons.forEach((b, i) => {
+    const scale = 1 + 0.5 * Math.sin(t * 2 + i * 1.2);
+    b.ring.scale.setScalar(scale);
+    b.ring.material.opacity = 0.7 * (1 - (scale - 1) * 2);
+  });
+
+  renderer.render(scene, camera);
+}
+animate();
+
+// ─── NODE LIST UI ─────────────────────────────────────────────────────
+const nodeList = document.getElementById('node-list');
+NODES.forEach((node, i) => {
+  const item = document.createElement('div');
+  item.className = 'node-item' + (i === 0 ? ' active' : '');
+  item.innerHTML = `<div class="node-dot"></div><span>${node.name}</span>`;
+  item.addEventListener('click', () => {
+    document.querySelectorAll('.node-item').forEach(el => el.classList.remove('active'));
+    item.classList.add('active');
+    document.getElementById('active-name').textContent = node.name;
+    document.getElementById('active-coords').innerHTML =
+      node.coords + '<br>H ' + node.h;
+    activeNode = i;
+  });
+  nodeList.appendChild(item);
+});
+
+// ─── MOUSE DRAG ───────────────────────────────────────────────────────
+canvas.addEventListener('mousedown', e => { isDragging = true; autoRotate = false; prevMouse = { x: e.clientX, y: e.clientY }; });
+window.addEventListener('mouseup', () => { isDragging = false; });
+window.addEventListener('mousemove', e => {
+  if (!isDragging) return;
+  const dx = e.clientX - prevMouse.x;
+  const dy = e.clientY - prevMouse.y;
+  points.rotation.y += dx * 0.005;
+  beaconGroup.rotation.y += dx * 0.005;
+  points.rotation.x += dy * 0.005;
+  beaconGroup.rotation.x += dy * 0.005;
+  prevMouse = { x: e.clientX, y: e.clientY };
+});
+
+// ─── RESIZE ───────────────────────────────────────────────────────────
+window.addEventListener('resize', () => {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+});
+</script>
+</body>
+</html>

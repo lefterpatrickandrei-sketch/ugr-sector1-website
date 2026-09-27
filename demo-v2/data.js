@@ -315,7 +315,7 @@ const ugrData = {
     sector1Telemetry: {
         meta: {
             title: "Rețeaua Geodezică și Telemetria Teritorială — Sector 1 București",
-            crs: "EPSG:31700 — Dealul Piscului 1970 / Stereo 70",
+            crs: "EPSG:3844 — Pulkovo 1942(58) / Stereo 70 (ANCPI)",
             ellipsoid: "Krassovski 1940 (a = 6378245.0 m, 1/f = 298.3)",
             projection: "Stereografică Oblică Conformă pe Plan Secant (Stereo 70)",
             centralMeridian: "25° 00' 00.000\" E",
@@ -508,7 +508,7 @@ const ugrData = {
             color: "#00E5FF",
             desc: "Nod strategic național și pol legislativ al Capitalei: Filiala Sector 1 reprezintă comunitatea geodezilor autorizați din București în parteneriat tehnic-legislativ direct cu ANCPI și OCPI București. Coordonează Rețeaua Geodezică Locală a Municipiului București (RGLMB) și infrastructura stațiilor GNSS permanente ROMPOS (BUCU, BUC1, BUC2).",
             telemetrySummary: {
-                crs: "Stereo 70 (EPSG:31700)",
+                crs: "Stereo 70 (EPSG:3844)",
                 romposRef: "BUCU (Tei) & BUC1 (Vest)",
                 rglmbRef: "Piața Victoriei (328733.315 / 586483.430)",
                 ordin: "Ordinul I RGLMB / Nivelment Clasa I"
@@ -546,7 +546,7 @@ const ugrData = {
             color: "#40B0F0",
             desc: "Nod universitar de elită (USAMV Cluj-Napoca) și centru regional de cercetare cadastrală în Transilvania. Tehnologii avansate GIS și cadastru sistematic rural și urban.",
             telemetrySummary: {
-                crs: "Stereo 70 (EPSG:31700)",
+                crs: "Stereo 70 (EPSG:3844)",
                 romposRef: "Stația CLUJ (USAMV)",
                 specializare: "Cadastru & GIS"
             }
@@ -564,7 +564,7 @@ const ugrData = {
             color: "#40B0F0",
             desc: "Filială regională strategică la Universitatea Tehnică Gheorghe Asachi din Iași, conectată cu rețeaua geodezică din Est și proiecte transfrontaliere de cartografiere.",
             telemetrySummary: {
-                crs: "Stereo 70 (EPSG:31700)",
+                crs: "Stereo 70 (EPSG:3844)",
                 romposRef: "Stația IASI (UTI)",
                 specializare: "Geodezie Satelitară & GNSS"
             }
@@ -582,7 +582,7 @@ const ugrData = {
             color: "#40B0F0",
             desc: "Gazda edițiilor anterioare ale SGR și centru de excelență la Universitatea Politehnica Timișoara în scanare laser 3D terestră și aeriană (LiDAR) și fotogrammetrie UAV.",
             telemetrySummary: {
-                crs: "Stereo 70 (EPSG:31700)",
+                crs: "Stereo 70 (EPSG:3844)",
                 romposRef: "Stația TIM1 (UPT)",
                 specializare: "Scanare Laser LiDAR & DTM"
             }

@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DEMO 4 — 3D Topographic Relief · România · UGR Sector 1</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    background: #030a14;
+    font-family: 'IBM Plex Mono', monospace;
+    overflow: hidden;
+    height: 100vh;
+  }
+
+  .demo-banner {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    background: rgba(0,20,40,0.7);
+    backdrop-filter: blur(14px);
+    border-bottom: 1px solid rgba(16,185,129,0.3);
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    z-index: 100;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+  .demo-banner .label { color: #10b981; font-weight: 700; }
+  .demo-banner .name  { color: rgba(226,232,240,0.6); }
+
+  #globe-canvas { display: block; width: 100%; height: 100%; }
+
+  /* Legend bottom-left */
+  .legend {
+    position: fixed;
+    bottom: 28px; left: 28px;
+    background: rgba(3,10,20,0.7);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(16,185,129,0.2);
+    border-radius: 12px;
+    padding: 14px 18px;
+    z-index: 50;
+    font-size: 10px;
+    color: rgba(226,232,240,0.7);
+    line-height: 2;
+  }
+  .legend .em { color: #10b981; font-weight: 700; }
+
+  /* Node HUD right */
+  .hud {
+    position: fixed;
+    top: 50%; right: 28px;
+    transform: translateY(-50%);
+    width: 240px;
+    display: flex; flex-direction: column; gap: 10px;
+    z-index: 50;
+  }
+  .hud-card {
+    background: rgba(3,10,20,0.65);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(16,185,129,0.2);
+    border-radius: 12px;
+    padding: 14px 16px;
+  }
+  .hud-card .tag {
+    font-size: 9px; letter-spacing: 0.18em;
+    color: rgba(16,185,129,0.6); text-transform: uppercase; margin-bottom: 6px;
+  }
+  .hud-card .val { font-size: 12px; color: #10b981; line-height: 1.8; }
+
+  .style-tag {
+    position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%);
+    background: rgba(16,185,129,0.08);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(16,185,129,0.2);
+    border-radius: 999px;
+    padding: 8px 22px;
+    font-size: 10px; letter-spacing: 0.15em;
+    color: rgba(16,185,129,0.7); text-transform: uppercase;
+    z-index: 50;
+  }
+</style>
+</head>
+<body>
+
+<div class="demo-banner">
+  <span class="label">DEMO 4</span>
+  <span class="name">3D Topographic Relief · România Insulă</span>
+  <span class="label">UGR · Sector 1</span>
+</div>
+
+<canvas id="globe-canvas"></canvas>
+
+<div class="hud">
+  <div class="hud-card">
+    <div class="tag">Proiecție Activă</div>
+    <div class="val">Stereo 70 / ETRS89<br>Datum: S-42 → ETRF</div>
+  </div>
+  <div class="hud-card">
+    <div class="tag">Altitudine Max</div>
+    <div class="val">Vf. Moldoveanu<br>2544 m (Carpați)</div>
+  </div>
+  <div class="hud-card">
+    <div class="tag">Noduri Rețea</div>
+    <div class="val">
+      ● București (Sector 1)<br>
+      ● Cluj-Napoca<br>
+      ● Timișoara<br>
+      ● Iași<br>
+      ● Constanța<br>
+      ◆ Chișinău UTM
+    </div>
+  </div>
+</div>
+
+<div class="legend">
+  <div><span class="em">━</span> Curbe nivel (100m)</div>
+  <div><span class="em">●</span> Noduri geodezice</div>
+  <div><span class="em">▲</span> Relief procedural</div>
+</div>
+
+<div class="style-tag">3D Topographic Island · Three.js + Simplex Noise</div>
+
+<script src="https://unpkg.com/three@0.160.0/build/three.min.js"></script>
+<script>
+// ─── SIMPLEX NOISE (inline, no deps) ───────────────────────────────
+// Minimal simplex noise implementation
+(function(global) {
+  function grad3(x,y,z){return{x,y,z};}
+  const g3=[grad3(1,1,0),grad3(-1,1,0),grad3(1,-1,0),grad3(-1,-1,0),
+    grad3(1,0,1),grad3(-1,0,1),grad3(1,0,-1),grad3(-1,0,-1),
+    grad3(0,1,1),grad3(0,-1,1),grad3(0,1,-1),grad3(0,-1,-1)];
+  const perm=new Uint8Array(512);
+  const grad=new Array(512);
+  const p=[];
+  for(let i=0;i<256;i++) p[i]=i;
+  for(let i=255;i>0;i--){const j=Math.floor(Math.random()*(i+1));[p[i],p[j]]=[p[j],p[i]];}
+  for(let i=0;i<512;i++){perm[i]=p[i&255];grad[i]=g3[perm[i]%12];}
+
+  function dot(g,x,y){return g.x*x+g.y*y;}
+  global.simplex2 = function(x,y) {
+    const F2=0.5*(Math.sqrt(3)-1);
+    const G2=(3-Math.sqrt(3))/6;
+    const s=(x+y)*F2,i=Math.floor(x+s),j=Math.floor(y+s);
+    const t=(i+j)*G2,X0=i-t,Y0=j-t,x0=x-X0,y0=y-Y0;
+    let i1,j1;
+    if(x0>y0){i1=1;j1=0;}else{i1=0;j1=1;}
+    const x1=x0-i1+G2,y1=y0-j1+G2,x2=x0-1+2*G2,y2=y0-1+2*G2;
+    const ii=i&255,jj=j&255;
+    let n0=0,n1=0,n2=0;
+    let t0=0.5-x0*x0-y0*y0;if(t0>=0){t0*=t0;n0=t0*t0*dot(g3[perm[ii+perm[jj]]%12],x0,y0);}
+    let t1=0.5-x1*x1-y1*y1;if(t1>=0){t1*=t1;n1=t1*t1*dot(g3[perm[ii+i1+perm[jj+j1]]%12],x1,y1);}
+    let t2=0.5-x2*x2-y2*y2;if(t2>=0){t2*=t2;n2=t2*t2*dot(g3[perm[ii+1+perm[jj+1]]%12],x2,y2);}
+    return 70*(n0+n1+n2);
+  };
+})(window);
+
+// ─── SCENE ────────────────────────────────────────────────────────────
+const canvas = document.getElementById('globe-canvas');
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.setSize(innerWidth, innerHeight);
+renderer.shadowMap.enabled = true;
+renderer.setClearColor(0x030a14);
+
+const scene = new THREE.Scene();
+scene.fog = new THREE.FogExp2(0x030a14, 0.18);
+
+const camera = new THREE.PerspectiveCamera(50, innerWidth/innerHeight, 0.01, 100);
+camera.position.set(0, 3.2, 4.5);
+camera.lookAt(0, 0, 0);
+
+// ─── LIGHTS ───────────────────────────────────────────────────────────
+const ambient = new THREE.AmbientLight(0x0a1a2a, 1.0);
+scene.add(ambient);
+const dirLight = new THREE.DirectionalLight(0x10b981, 2.5);
+dirLight.position.set(3, 8, 4);
+dirLight.castShadow = true;
+scene.add(dirLight);
+const fillLight = new THREE.PointLight(0x06b6d4, 0.8, 20);
+fillLight.position.set(-4, 3, 2);
+scene.add(fillLight);
+
+// ─── TERRAIN ─────────────────────────────────────────────────────────
+// Romania roughly spans 4:3 ratio, Carpathian arc
+const W = 80, H = 60, SEG = 160;
+const terrainGeo = new THREE.PlaneGeometry(5, 3.5, SEG, SEG);
+terrainGeo.rotateX(-Math.PI / 2);
+
+const posAttr = terrainGeo.attributes.position;
+const CARPATHIAN_ARC = [
+  // Simplified Carpathian arc as control points [x,z] in terrain space [-2.5..2.5, -1.75..1.75]
+  { cx: -0.8, cz: -1.2, r: 0.7, amp: 1.8 },  // Carpați Orientali Nord
+  { cx:  0.2, cz: -1.0, r: 0.6, amp: 1.6 },   // Carpați Orientali Sud
+  { cx:  0.8, cz: -0.2, r: 0.5, amp: 2.0 },   // Carpați Meridionali (Bucegi)
+  { cx:  0.4, cz:  0.4, r: 0.6, amp: 1.9 },   // Carpați Meridionali (Retezat)
+  { cx: -0.6, cz:  0.3, r: 0.55, amp: 1.5 },  // Carpații Occidentali
+];
+
+// Romania mask: rough ellipse
+function isInRomania(x, z) {
+  // Approximate shape — Romania fits roughly in an ellipse with some cutouts
+  const ex = (x + 0.1) / 2.6, ez = (z - 0.05) / 1.7;
+  const d = ex*ex + ez*ez;
+  if (d > 1.0) return false;
+  // Black Sea coast cutout: flat east
+  if (x > 1.8 && z < 0.3 && z > -0.8) return false;
+  return true;
+}
+
+const yValues = [];
+for (let i = 0; i < posAttr.count; i++) {
+  const x = posAttr.getX(i);
+  const z = posAttr.getZ(i);
+
+  if (!isInRomania(x, z)) {
+    posAttr.setY(i, -0.08); // below water
+    yValues.push(-0.08);
+    continue;
+  }
+
+  // Base noise
+  let y = simplex2(x * 1.2, z * 1.2) * 0.18
+         + simplex2(x * 2.4, z * 2.4) * 0.09
+         + simplex2(x * 4.8, z * 4.8) * 0.04;
+
+  // Carpathian ridge influence
+  for (const c of CARPATHIAN_ARC) {
+    const dist = Math.sqrt((x - c.cx)**2 + (z - c.cz)**2);
+    if (dist < c.r) {
+      const influence = Math.pow(1 - dist/c.r, 2);
+      y += influence * c.amp * 0.35;
+    }
+  }
+
+  // Plains clamp (Câmpia Română, Câmpia de Vest)
+  const isPannonian = x < -0.8 && z > 0;
+  const isWallachian = z < -0.5 && x > 0.2;
+  if (isPannonian) y = Math.min(y, 0.12);
+  if (isWallachian) y = Math.min(y, 0.1);
+
+  y = Math.max(0.02, y); // sea level
+  posAttr.setY(i, y);
+  yValues.push(y);
+}
+posAttr.needsUpdate = true;
+terrainGeo.computeVertexNormals();
+
+// Contour lines shader
+const terrainMat = new THREE.ShaderMaterial({
+  uniforms: {
+    uTime: { value: 0 },
+    uColorLow:  { value: new THREE.Color(0x0d2a1a) },
+    uColorMid:  { value: new THREE.Color(0x0f4a28) },
+    uColorHigh: { value: new THREE.Color(0x10b981) },
+    uContourStep: { value: 0.12 },
+    uScanY: { value: 0.0 },
+  },
+  vertexShader: `
+    varying float vY;
+    varying vec3 vPos;
+    varying vec3 vNormal2;
+    void main() {
+      vY = position.y;
+      vPos = position;
+      vNormal2 = normalMatrix * normal;
+      gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+    }
+  `,
+  fragmentShader: `
+    uniform float uTime;
+    uniform vec3 uColorLow, uColorMid, uColorHigh;
+    uniform float uContourStep;
+    uniform float uScanY;
+    varying float vY;
+    varying vec3 vPos;
+    varying vec3 vNormal2;
+
+    float contour(float v, float step) {
+      float w = fwidth(v) * 1.5;
+      float c = mod(v, step);
+      return 1.0 - smoothstep(0.0, w, min(c, step - c));
+    }
+
+    void main() {
+      if (vY < 0.0) {
+        // Water
+        float wv = sin(vPos.x * 8.0 + uTime) * 0.5 + 0.5;
+        gl_FragColor = vec4(0.0, 0.08, 0.16, 0.6);
+        return;
+      }
+
+      // Height-based color
+      float t1 = smoothstep(0.0, 0.25, vY);
+      float t2 = smoothstep(0.25, 0.7, vY);
+      vec3 col = mix(uColorLow, uColorMid, t1);
+      col = mix(col, uColorHigh, t2);
+
+      // Contour lines
+      float c1 = contour(vY, uContourStep);
+      float c2 = contour(vY, uContourStep * 5.0) * 0.7;
+      float cLine = max(c1, c2);
+      col = mix(col, vec3(0.1, 0.9, 0.55), cLine * 0.8);
+
+      // Scan plane
+      float scanDist = abs(vPos.z - uScanY);
+      float scanGlow = exp(-scanDist * 20.0) * 0.6;
+      col += vec3(0.0, 1.0, 0.5) * scanGlow;
+
+      // Normal lighting
+      vec3 lightDir = normalize(vec3(0.4, 1.0, 0.5));
+      float diff = max(dot(normalize(vNormal2), lightDir), 0.1);
+      col *= (0.4 + 0.6 * diff);
+
+      gl_FragColor = vec4(col, 1.0);
+    }
+  `,
+  side: THREE.DoubleSide,
+  extensions: { derivatives: true },
+});
+
+const terrain = new THREE.Mesh(terrainGeo, terrainMat);
+terrain.receiveShadow = true;
+terrain.castShadow = true;
+scene.add(terrain);
+
+// Glass slab beneath
+const slabGeo = new THREE.BoxGeometry(5.2, 0.08, 3.7);
+const slabMat = new THREE.MeshPhysicalMaterial({
+  color: 0x062020,
+  transparent: true,
+  opacity: 0.55,
+  roughness: 0.0,
+  metalness: 0.1,
+  transmission: 0.4,
+});
+const slab = new THREE.Mesh(slabGeo, slabMat);
+slab.position.y = -0.06;
+scene.add(slab);
+
+// ─── NODES ────────────────────────────────────────────────────────────
+const NODES = [
+  { name: 'BUC', lat: 44.468, lon: 26.083, color: 0x06b6d4 },
+  { name: 'CLJ', lat: 46.770, lon: 23.590, color: 0x06b6d4 },
+  { name: 'TIM', lat: 45.750, lon: 21.230, color: 0x06b6d4 },
+  { name: 'IAS', lat: 47.160, lon: 27.590, color: 0x06b6d4 },
+  { name: 'CTZ', lat: 44.180, lon: 28.650, color: 0x06b6d4 },
+  { name: 'CHI', lat: 47.005, lon: 28.860, color: 0xf59e0b },
+];
+
+// Romania bbox: lat 43.6–48.3, lon 20.2–30.0
+function nodeToTerrain(lat, lon) {
+  const xn = (lon - 20.2) / (30.0 - 20.2); // 0..1
+  const zn = (lat - 43.6) / (48.3 - 43.6); // 0..1
+  const x = xn * 5 - 2.5;
+  const z = (1 - zn) * 3.5 - 1.75;
+  return { x, z };
+}
+
+NODES.forEach(node => {
+  const { x, z } = nodeToTerrain(node.lat, node.lon);
+
+  // Find approximate y at this position
+  const xFrac = (x + 2.5) / 5;
+  const zFrac = (z + 1.75) / 3.5;
+  const col = Math.floor(xFrac * SEG);
+  const row = Math.floor(zFrac * SEG);
+  const idx = row * (SEG + 1) + col;
+  const y = Math.max(0.02, yValues[idx] || 0.12) + 0.03;
+
+  // Pillar
+  const pillarGeo = new THREE.CylinderGeometry(0.012, 0.012, y + 0.1, 8);
+  const pillarMat = new THREE.MeshBasicMaterial({ color: node.color });
+  const pillar = new THREE.Mesh(pillarGeo, pillarMat);
+  pillar.position.set(x, (y + 0.1) / 2 - 0.05, z);
+  scene.add(pillar);
+
+  // Beacon cap
+  const capGeo = new THREE.SphereGeometry(0.025, 16, 16);
+  const capMat = new THREE.MeshBasicMaterial({ color: node.color });
+  const cap = new THREE.Mesh(capGeo, capMat);
+  cap.position.set(x, y + 0.12, z);
+  scene.add(cap);
+
+  // Ring
+  const ringGeo = new THREE.RingGeometry(0.03, 0.05, 24);
+  const ringMat = new THREE.MeshBasicMaterial({ color: node.color, side: THREE.DoubleSide, transparent: true, opacity: 0.7 });
+  const ring = new THREE.Mesh(ringGeo, ringMat);
+  ring.rotation.x = -Math.PI / 2;
+  ring.position.set(x, y + 0.14, z);
+  scene.add(ring);
+});
+
+// ─── ORBIT CONTROLS (manual) ──────────────────────────────────────────
+let isDragging = false, prevX = 0, prevY = 0;
+let camTheta = 0.3, camPhi = 0.85, camR = 5.5;
+
+function updateCamera() {
+  camera.position.x = camR * Math.sin(camPhi) * Math.sin(camTheta);
+  camera.position.y = camR * Math.cos(camPhi);
+  camera.position.z = camR * Math.sin(camPhi) * Math.cos(camTheta);
+  camera.lookAt(0, 0.3, 0);
+}
+updateCamera();
+
+canvas.addEventListener('mousedown', e => { isDragging = true; prevX = e.clientX; prevY = e.clientY; });
+window.addEventListener('mouseup', () => isDragging = false);
+window.addEventListener('mousemove', e => {
+  if (!isDragging) return;
+  camTheta += (e.clientX - prevX) * 0.005;
+  camPhi   = Math.max(0.2, Math.min(1.5, camPhi + (e.clientY - prevY) * 0.005));
+  prevX = e.clientX; prevY = e.clientY;
+  updateCamera();
+});
+canvas.addEventListener('wheel', e => {
+  camR = Math.max(2, Math.min(10, camR + e.deltaY * 0.005));
+  updateCamera();
+  e.preventDefault();
+}, { passive: false });
+
+// ─── ANIMATE ──────────────────────────────────────────────────────────
+const clock = new THREE.Clock();
+let autoAngle = 0;
+
+function animate() {
+  requestAnimationFrame(animate);
+  const t = clock.getElapsedTime();
+  terrainMat.uniforms.uTime.value = t;
+  terrainMat.uniforms.uScanY.value = Math.sin(t * 0.4) * 2.0;
+
+  // Auto-rotate camera slowly if not dragging
+  if (!isDragging) {
+    autoAngle += 0.001;
+    camTheta = 0.3 + autoAngle;
+    updateCamera();
+  }
+
+  renderer.render(scene, camera);
+}
+animate();
+
+window.addEventListener('resize', () => {
+  camera.aspect = innerWidth / innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth, innerHeight);
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo 5: HTML5 UP — Calculator Stereo 70 (EPSG:3844)</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/proj4@2.9.0/dist/proj4.js"></script>
+    <style>
+        :root {
+            --bp-bg: #0b131f;
+            --bp-cyan: #00f0ff;
+            --bp-amber: #d4af37;
+            --bp-grid: rgba(0, 240, 255, 0.08);
+            --bp-surface: rgba(13, 21, 32, 0.94);
+            --font-serif: 'Cinzel', serif;
+            --font-mono: 'Courier Prime', monospace;
+            --font-sans: 'Inter', sans-serif;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background-color: var(--bp-bg);
+            background-image: 
+                linear-gradient(to right, var(--bp-grid) 1px, transparent 1px),
+                linear-gradient(to bottom, var(--bp-grid) 1px, transparent 1px);
+            background-size: 28px 28px;
+            color: #e2e8f0;
+            font-family: var(--font-sans);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 20px 80px 20px;
+        }
+
+        /* Top Demo Bar */
+        .demo-nav-bar {
+            width: 100%;
+            max-width: 900px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding: 12px 20px;
+            background: rgba(13, 21, 32, 0.85);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            border-radius: 9999px;
+            font-size: 13px;
+        }
+        .demo-nav-links {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+        .demo-nav-link {
+            color: #94a3b8;
+            text-decoration: none;
+            padding: 6px 12px;
+            border-radius: 9999px;
+            transition: all 0.2s;
+            font-weight: 500;
+        }
+        .demo-nav-link.active, .demo-nav-link:hover {
+            color: var(--bp-cyan);
+            background: rgba(0, 240, 255, 0.1);
+            border: 1px solid rgba(0, 240, 255, 0.3);
+        }
+
+        /* HTML5 UP Blueprint Console Card */
+        .blueprint-console {
+            position: relative;
+            width: 100%;
+            max-width: 860px;
+            background: var(--bp-surface);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(0, 240, 255, 0.25);
+            border-radius: 4px;
+            padding: 40px;
+            box-shadow: 0 0 50px rgba(0, 0, 0, 0.8), 0 0 30px rgba(0, 240, 255, 0.1);
+        }
+
+        /* CAD Drafting Corner Brackets */
+        .cad-corner {
+            position: absolute;
+            font-family: var(--font-mono);
+            font-size: 18px;
+            color: var(--bp-cyan);
+            line-height: 1;
+            pointer-events: none;
+            opacity: 0.8;
+        }
+        .cad-corner.top-left { top: 8px; left: 10px; }
+        .cad-corner.top-right { top: 8px; right: 10px; }
+        .cad-corner.bottom-left { bottom: 8px; left: 10px; }
+        .cad-corner.bottom-right { bottom: 8px; right: 10px; }
+
+        /* Crosshairs */
+        .cad-crosshair {
+            position: absolute;
+            font-family: var(--font-mono);
+            font-size: 14px;
+            color: var(--bp-amber);
+            opacity: 0.7;
+            pointer-events: none;
+        }
+        .cad-crosshair.ch-1 { top: 20px; right: 28px; }
+        .cad-crosshair.ch-2 { bottom: 20px; left: 28px; }
+
+        /* Header */
+        .blueprint-header {
+            text-align: center;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .blueprint-stamp {
+            display: inline-flex;
+            gap: 12px;
+            border: 1px dashed var(--bp-cyan);
+            padding: 4px 14px;
+            margin-bottom: 14px;
+            font-family: var(--font-mono);
+            font-size: 11px;
+            color: var(--bp-cyan);
+            letter-spacing: 0.1em;
+            background: rgba(0, 240, 255, 0.05);
+        }
+
+        .blueprint-title {
+            font-family: var(--font-serif);
+            font-size: 24px;
+            font-weight: 700;
+            color: #ffffff;
+            letter-spacing: 0.06em;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+
+        .blueprint-datum-note {
+            font-family: var(--font-mono);
+            font-size: 11px;
+            color: #94a3b8;
+            letter-spacing: 0.05em;
+            line-height: 1.6;
+        }
+
+        .blueprint-rule {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 14px;
+            margin: 18px 0;
+        }
+        .blueprint-rule::before, .blueprint-rule::after {
+            content: "";
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(0, 240, 255, 0.4), transparent);
+        }
+        .rule-diamond {
+            color: var(--bp-amber);
+            font-size: 10px;
+        }
+
+        /* Inputs Grid */
+        .bp-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+
+        .bp-field {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            padding: 16px;
+            border-radius: 4px;
+            position: relative;
+        }
+
+        .bp-field-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            font-family: var(--font-mono);
+        }
+
+        .bp-code {
+            font-size: 10px;
+            color: var(--bp-amber);
+            font-weight: 700;
+        }
+
+        .bp-field-header label {
+            font-size: 11px;
+            font-weight: 700;
+            color: #fff;
+            letter-spacing: 0.06em;
+        }
+
+        .bp-input-wrap {
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid var(--bp-cyan);
+            padding-bottom: 6px;
+        }
+
+        .bp-input-wrap input {
+            width: 100%;
+            background: transparent;
+            border: none;
+            color: #fff;
+            font-family: var(--font-mono);
+            font-size: 16px;
+            outline: none;
+            letter-spacing: 0.05em;
+        }
+
+        .bp-unit {
+            font-family: var(--font-mono);
+            font-size: 11px;
+            color: var(--bp-cyan);
+            font-weight: 700;
+        }
+
+        .bp-hint {
+            display: block;
+            margin-top: 8px;
+            font-size: 10px;
+            color: #64748b;
+            font-family: var(--font-mono);
+        }
+
+        /* Action bar */
+        .bp-action-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 28px;
+        }
+
+        .bp-presets {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-bp-preset {
+            background: transparent;
+            border: 1px solid rgba(0, 240, 255, 0.3);
+            color: #94a3b8;
+            padding: 8px 14px;
+            font-family: var(--font-mono);
+            font-size: 11px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-transform: uppercase;
+        }
+
+        .btn-bp-preset:hover {
+            color: var(--bp-cyan);
+            border-color: var(--bp-cyan);
+            background: rgba(0, 240, 255, 0.08);
+        }
+
+        .btn-bp-solve {
+            background: transparent;
+            border: 1px solid var(--bp-cyan);
+            color: var(--bp-cyan);
+            padding: 10px 22px;
+            font-family: var(--font-mono);
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            cursor: pointer;
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.2);
+            transition: all 0.2s;
+        }
+
+        .btn-bp-solve:hover {
+            background: var(--bp-cyan);
+            color: #0b131f;
+            box-shadow: 0 0 25px rgba(0, 240, 255, 0.5);
+        }
+
+        /* Results Ledger Table */
+        .bp-ledger {
+            border: 1px solid rgba(0, 240, 255, 0.3);
+            background: rgba(0, 0, 0, 0.5);
+            margin-bottom: 24px;
+        }
+
+        .bp-ledger-title {
+            background: rgba(0, 240, 255, 0.1);
+            border-bottom: 1px solid rgba(0, 240, 255, 0.2);
+            padding: 10px 16px;
+            display: flex;
+            justify-content: space-between;
+            font-family: var(--font-mono);
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--bp-cyan);
+            letter-spacing: 0.08em;
+        }
+
+        .bp-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+            font-family: var(--font-mono);
+        }
+
+        .bp-table th {
+            padding: 10px 14px;
+            text-align: left;
+            color: #94a3b8;
+            font-size: 10px;
+            text-transform: uppercase;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .bp-table td {
+            padding: 12px 14px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            color: #fff;
+        }
+
+        .bp-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-family: var(--font-mono);
+            font-size: 11px;
+            color: #64748b;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .btn-bp-act {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: #cbd5e1;
+            padding: 6px 12px;
+            font-size: 11px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-bp-act:hover {
+            border-color: var(--bp-cyan);
+            color: var(--bp-cyan);
+        }
+
+        @media (max-width: 640px) {
+            .bp-grid { grid-template-columns: 1fr; }
+            .blueprint-console { padding: 24px 16px; }
+            .demo-nav-bar { flex-direction: column; gap: 10px; border-radius: 16px; }
+            .demo-nav-links { flex-wrap: wrap; justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Top Navigation -->
+    <div class="demo-nav-bar">
+        <div style="font-weight: 700; color: #00f0ff;">📐 5 DEMO SHOWCASE: DESIGN SYSTEMS</div>
+        <div class="demo-nav-links">
+            <a href="demo-aceternity.html" class="demo-nav-link">1. Aceternity UI</a>
+            <a href="demo-magicui.html" class="demo-nav-link">2. Magic UI</a>
+            <a href="demo-21stdev.html" class="demo-nav-link">3. 21st.dev</a>
+            <a href="demo-shadcn.html" class="demo-nav-link">4. shadcn/ui</a>
+            <a href="demo-html5up.html" class="demo-nav-link active">5. HTML5 UP</a>
+            <a href="index.html#calculator" class="demo-nav-link" style="color: #f59e0b;">↩ Înapoi pe Site</a>
+        </div>
+    </div>
+
+    <!-- Blueprint Console -->
+    <div class="blueprint-console">
+        <!-- CAD Corner Markers -->
+        <span class="cad-corner top-left">┌</span>
+        <span class="cad-corner top-right">┐</span>
+        <span class="cad-corner bottom-left">└</span>
+        <span class="cad-corner bottom-right">┘</span>
+
+        <div class="cad-crosshair ch-1">+</div>
+        <div class="cad-crosshair ch-2">+</div>
+
+        <!-- Official Blueprint Header -->
+        <header class="blueprint-header">
+            <div class="blueprint-stamp">
+                <span>ANCPI REG: 3844</span>
+                <span>◆</span>
+                <span>STEREO 70 TRANSVERSAL CONSOLE</span>
+            </div>
+            <h1 class="blueprint-title">Fișă de Calcul Geodezic • Stereo 70</h1>
+            <p class="blueprint-datum-note">
+                ELIPSOIDUL KRASOVSKI 1940 // PLANUL OBLIC SECANT STEREO 70 // CONVERSIUNE WGS84 (HELMERT 7-PAR)
+            </p>
+            <div class="blueprint-rule">
+                <span class="rule-diamond">◆</span>
+            </div>
+        </header>
+
+        <!-- Form Inputs -->
+        <form id="bp-form" onsubmit="handleBpSolve(event)">
+            <div class="bp-grid">
+                <div class="bp-field">
+                    <div class="bp-field-header">
+                        <span class="bp-code">[SEC-01]</span>
+                        <label for="bp-x">COORDONATĂ X (NORD)</label>
+                    </div>
+                    <div class="bp-input-wrap">
+                        <input type="number" id="bp-x" step="0.001" value="328733.315" required />
+                        <span class="bp-unit">METRI</span>
+                    </div>
+                    <span class="bp-hint">Falsă Nordificare X₀ = 500.000,000 m</span>
+                </div>
+
+                <div class="bp-field">
+                    <div class="bp-field-header">
+                        <span class="bp-code">[SEC-02]</span>
+                        <label for="bp-y">COORDONATĂ Y (EST)</label>
+                    </div>
+                    <div class="bp-input-wrap">
+                        <input type="number" id="bp-y" step="0.001" value="586483.430" required />
+                        <span class="bp-unit">METRI</span>
+                    </div>
+                    <span class="bp-hint">Falsă Estificare Y₀ = 500.000,000 m</span>
+                </div>
+            </div>
+
+            <!-- Controls -->
+            <div class="bp-action-bar">
+                <div class="bp-presets">
+                    <button type="button" class="btn-bp-preset" onclick="setBpPreset('central')">Sediul Central UGR</button>
+                    <button type="button" class="btn-bp-preset" onclick="setBpPreset('sector1')">Sector 1 (P. Victoriei)</button>
+                </div>
+
+                <button type="submit" class="btn-bp-solve">
+                    [ EXECUTĂ CONVERSIUNE ] ➔
+                </button>
+            </div>
+        </form>
+
+        <!-- Ledger Table -->
+        <div class="bp-ledger">
+            <div class="bp-ledger-title">
+                <span>// REGISTRU TRANSFORMARE GEODEZICĂ ANCPI</span>
+                <span style="color: var(--bp-amber);">TOLERANȚĂ &lt; 2 CM</span>
+            </div>
+
+            <table class="bp-table">
+                <thead>
+                    <tr>
+                        <th>SISTEM REFERINȚĂ</th>
+                        <th>NORD / LATITUDINE</th>
+                        <th>EST / LONGITUDINE</th>
+                        <th>NOTATIE DMS</th>
+                        <th>NORMA TEHNICĂ</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="color: var(--bp-cyan); font-weight: 700;">STEREO 70 (EPSG:3844)</td>
+                        <td id="bp-out-x">328733.315 m</td>
+                        <td id="bp-out-y">586483.430 m</td>
+                        <td style="color: #94a3b8;">Plan Secant Krasovski</td>
+                        <td>ORDIN 108/2010</td>
+                    </tr>
+                    <tr>
+                        <td style="color: var(--bp-amber); font-weight: 700;">WGS84 GLOBAL (GPS)</td>
+                        <td id="bp-out-lat" style="color: var(--bp-amber);">44.453225° N</td>
+                        <td id="bp-out-lon" style="color: var(--bp-amber);">26.084722° E</td>
+                        <td id="bp-out-dms">44° 27' 11" N | 26° 05' 05" E</td>
+                        <td>GRS80 / WGS84</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Footer -->
+        <footer class="bp-footer">
+            <div style="display: flex; gap: 8px;">
+                <button type="button" class="btn-bp-act" onclick="copyBpResult(this)">[ COPIAZĂ WGS84 ]</button>
+                <button type="button" class="btn-bp-act" onclick="exportBpData('csv')">[ EXPORT CSV ]</button>
+                <button type="button" class="btn-bp-act" onclick="exportBpData('txt')">[ RAPORT TXT ]</button>
+            </div>
+            <span>CERTIFICARE UGR FILIALA SECTOR 1 BUCUREȘTI</span>
+        </footer>
+
+    </div>
+
+    <script>
+        // Init Proj4 EPSG:3844
+        proj4.defs(
+            "EPSG:3844",
+            "+proj=sterea +lat_0=46 +lon_0=25 +k=0.99975 +x_0=500000 +y_0=500000 +ellps=krass +towgs84=2.3287,-147.0425,-92.0802,0.3092483,0.3248218,-0.4973001,5.68906266 +units=m +no_defs"
+        );
+
+        function formatDMS(deg, type) {
+            const abs = Math.abs(deg);
+            const d = Math.floor(abs);
+            const mFull = (abs - d) * 60;
+            const m = Math.floor(mFull);
+            const s = Math.floor((mFull - m) * 60);
+            const dir = type === 'lat' ? (deg >= 0 ? 'N' : 'S') : (deg >= 0 ? 'E' : 'V');
+            return `${d}° ${m}' ${s}" ${dir}`;
+        }
+
+        function handleBpSolve(e) {
+            if (e) e.preventDefault();
+            const x = parseFloat(document.getElementById('bp-x').value);
+            const y = parseFloat(document.getElementById('bp-y').value);
+
+            if (isNaN(x) || isNaN(y)) {
+                alert("Introduceți valori numerice valide.");
+                return;
+            }
+
+            try {
+                const [lon, lat] = proj4("EPSG:3844", "WGS84", [y, x]);
+                const dmsLat = formatDMS(lat, 'lat');
+                const dmsLon = formatDMS(lon, 'lon');
+
+                document.getElementById('bp-out-x').innerText = `${x.toFixed(3)} m`;
+                document.getElementById('bp-out-y').innerText = `${y.toFixed(3)} m`;
+                document.getElementById('bp-out-lat').innerText = `${lat.toFixed(6)}° N`;
+                document.getElementById('bp-out-lon').innerText = `${lon.toFixed(6)}° E`;
+                document.getElementById('bp-out-dms').innerText = `${dmsLat} | ${dmsLon}`;
+            } catch (err) {
+                console.error(err);
+                alert("Eroare calcul proiecție.");
+            }
+        }
+
+        function setBpPreset(preset) {
+            if (preset === 'sector1') {
+                document.getElementById('bp-x').value = '328733.315';
+                document.getElementById('bp-y').value = '586483.430';
+            } else {
+                document.getElementById('bp-x').value = '334250.125';
+                document.getElementById('bp-y').value = '591240.850';
+            }
+            handleBpSolve();
+        }
+
+        function copyBpResult(btn) {
+            const lat = document.getElementById('bp-out-lat').innerText;
+            const lon = document.getElementById('bp-out-lon').innerText;
+            const txt = `WGS84: ${lat}, ${lon} — Stereo 70 ANCPI EPSG:3844`;
+            navigator.clipboard.writeText(txt).then(() => {
+                const prev = btn.innerHTML;
+                btn.innerHTML = "[ ✓ COPIAT ]";
+                btn.style.borderColor = "#10b981";
+                btn.style.color = "#10b981";
+                setTimeout(() => { btn.innerHTML = prev; btn.style.borderColor = ""; btn.style.color = ""; }, 2000);
+            });
+        }
+
+        function exportBpData(type) {
+            const x = document.getElementById('bp-x').value;
+            const y = document.getElementById('bp-y').value;
+            const lat = document.getElementById('bp-out-lat').innerText;
+            const lon = document.getElementById('bp-out-lon').innerText;
+            let content = '', filename = '', mime = 'text/plain';
+
+            if (type === 'csv') {
+                content = `Punct,Sursa,X,Y,Destinatie,Lat,Lon\r\n1,Stereo70_EPSG3844,${x},${y},WGS84,${lat},${lon}\r\n`;
+                filename = "punct_html5up.csv";
+                mime = 'text/csv;charset=utf-8;';
+            } else {
+                content = `RAPORT GEODEZIC HTML5 UP BLUEPRINT\r\nData: ${new Date().toLocaleString('ro-RO')}\r\nX: ${x}\r\nY: ${y}\r\nLat: ${lat}\r\nLon: ${lon}\r\nNorma: ANCPI Ord. 108/2010\r\n`;
+                filename = "raport_html5up.txt";
+            }
+            const blob = new Blob([content], { type: mime });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = filename;
+            a.click();
+        }
+
+        // Run once on load
+        handleBpSolve();
+    </script>
+</body>
+</html>

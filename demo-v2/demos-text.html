@@ -1,0 +1,1188 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UGR Sector 1 — 5 Text Animation Demos (Aceternity, Magic UI, 21st.dev, shadcn, HTML5 UP)</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800;900&family=IBM+Plex+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-deep: #061320;
+            --bg-surface: #0a1f33;
+            --ugr-cyan: #00e5ff;
+            --ugr-blue: #0077b6;
+            --ugr-gold: #ffb703;
+            --ugr-green: #10b981;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-subtle: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-deep);
+            color: var(--text-main);
+            font-family: 'Inter', -apple-system, sans-serif;
+            min-height: 100vh;
+            padding-bottom: 80px;
+            overflow-x: hidden;
+        }
+
+        /* Top Sticky Master Navigation Dock */
+        .showcase-header {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: rgba(6, 19, 32, 0.92);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(0, 229, 255, 0.2);
+            padding: 14px 24px;
+        }
+
+        .showcase-header-inner {
+            max-width: 1300px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .showcase-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .brand-badge {
+            background: rgba(0, 229, 255, 0.15);
+            border: 1px solid var(--ugr-cyan);
+            color: var(--ugr-cyan);
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 4px 8px;
+            border-radius: 4px;
+            text-transform: uppercase;
+        }
+
+        .brand-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .brand-sub {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        /* Dock Tabs */
+        .demo-tabs {
+            display: flex;
+            gap: 6px;
+            background: rgba(10, 31, 51, 0.8);
+            border: 1px solid var(--border-subtle);
+            border-radius: 9999px;
+            padding: 4px;
+            overflow-x: auto;
+        }
+
+        .demo-tab-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-family: 'Inter', sans-serif;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 8px 16px;
+            border-radius: 9999px;
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .demo-tab-btn:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .demo-tab-btn.active {
+            background: var(--ugr-cyan);
+            color: #061320;
+            box-shadow: 0 0 16px rgba(0, 229, 255, 0.4);
+            font-weight: 700;
+        }
+
+        .main-container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .demo-card {
+            background: rgba(10, 31, 51, 0.6);
+            border: 1px solid rgba(0, 229, 255, 0.2);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 40px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(12px);
+        }
+
+        .demo-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            padding-bottom: 16px;
+            margin-bottom: 36px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .demo-badge-meta {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .demo-num {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 12px;
+            font-weight: 700;
+            background: rgba(0, 229, 255, 0.15);
+            color: var(--ugr-cyan);
+            border: 1px solid var(--ugr-cyan);
+            border-radius: 6px;
+            padding: 3px 8px;
+        }
+
+        .demo-name {
+            font-size: 16px;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .demo-features {
+            font-size: 12px;
+            color: var(--text-muted);
+            font-family: 'IBM Plex Mono', monospace;
+        }
+
+        .btn-replay {
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: #fff;
+            font-size: 12px;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            padding: 6px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-replay:hover {
+            background: rgba(0, 229, 255, 0.15);
+            border-color: var(--ugr-cyan);
+            color: var(--ugr-cyan);
+            transform: translateY(-1px);
+        }
+
+        /* Mock Form Preview to give context */
+        .mock-form-preview {
+            margin-top: 36px;
+            background: rgba(6, 19, 32, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 12px;
+            padding: 20px;
+            opacity: 0.85;
+            display: grid;
+            grid-template-columns: 1fr 1fr auto;
+            gap: 16px;
+            align-items: center;
+        }
+
+        @media (max-width: 768px) {
+            .mock-form-preview {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .mock-input {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 10px 14px;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 13px;
+            color: #cbd5e1;
+        }
+
+        .mock-btn {
+            background: var(--ugr-cyan);
+            color: #061320;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 20px;
+            font-weight: 700;
+            font-size: 13px;
+            cursor: default;
+            white-space: nowrap;
+        }
+
+        /* ============================================================ */
+        /* 1. ACETERNITY UI — Blur Stagger + Conic Shimmer Border       */
+        /* ============================================================ */
+        .style-aceternity {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .aceternity-kicker-wrapper {
+            position: relative;
+            display: inline-flex;
+            overflow: hidden;
+            border-radius: 9999px;
+            padding: 1px;
+            margin-bottom: 16px;
+        }
+
+        .aceternity-shimmer-border {
+            position: absolute;
+            inset: -1000%;
+            background: conic-gradient(from 90deg at 50% 50%, #061320 0%, #00e5ff 50%, #061320 100%);
+            animation: aceternity-spin 3.5s linear infinite;
+        }
+
+        .aceternity-kicker-content {
+            position: relative;
+            z-index: 1;
+            display: inline-flex;
+            align-items: center;
+            background: #091a2b;
+            color: #38bdf8;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.15em;
+            padding: 6px 16px;
+            border-radius: 9999px;
+            text-transform: uppercase;
+        }
+
+        @keyframes aceternity-spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .aceternity-h2 {
+            font-size: 2.25rem;
+            font-weight: 800;
+            line-height: 1.25;
+            letter-spacing: -0.025em;
+            color: #ffffff;
+            margin-bottom: 14px;
+            max-width: 800px;
+        }
+
+        .aceternity-word {
+            display: inline-block;
+            opacity: 0;
+            filter: blur(12px);
+            transform: translateY(10px);
+            transition: opacity 0.65s cubic-bezier(0.2, 0.65, 0.3, 0.9),
+                        filter 0.65s cubic-bezier(0.2, 0.65, 0.3, 0.9),
+                        transform 0.65s cubic-bezier(0.2, 0.65, 0.3, 0.9);
+            margin: 0 0.15em;
+        }
+
+        .aceternity-word.revealed {
+            opacity: 1;
+            filter: blur(0px);
+            transform: translateY(0);
+        }
+
+        .aceternity-word.highlight {
+            background: linear-gradient(135deg, #00e5ff 0%, #38bdf8 50%, #818cf8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 30px rgba(0, 229, 255, 0.3);
+        }
+
+        .aceternity-description {
+            max-width: 680px;
+            font-size: 0.95rem;
+            line-height: 1.65;
+            color: #94a3b8;
+            margin: 0 auto;
+            opacity: 0;
+            animation: aceternity-fade 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.5s forwards;
+        }
+
+        @keyframes aceternity-fade {
+            to { opacity: 1; }
+        }
+
+        /* ============================================================ */
+        /* 2. MAGIC UI — HyperText Cypher Scramble + Animated Shiny Text*/
+        /* ============================================================ */
+        .style-magicui {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .magic-kicker-badge {
+            display: inline-flex;
+            align-items: center;
+            border: 1px solid rgba(0, 229, 255, 0.25);
+            background: rgba(0, 229, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 9999px;
+            padding: 5px 16px;
+            margin-bottom: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .magic-kicker-badge:hover {
+            border-color: var(--ugr-cyan);
+            background: rgba(0, 229, 255, 0.12);
+        }
+
+        .magic-shiny-text {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            background: linear-gradient(
+                110deg,
+                #64748b 0%,
+                #94a3b8 35%,
+                #ffffff 50%,
+                #94a3b8 65%,
+                #64748b 100%
+            );
+            background-size: 200% 100%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: magic-shimmer 4s linear infinite;
+        }
+
+        @keyframes magic-shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        .magic-h2 {
+            font-size: 2.3rem;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            color: #f8fafc;
+            margin-bottom: 14px;
+            font-variant-numeric: tabular-nums;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+
+        .magic-h2:hover {
+            color: #ffffff;
+        }
+
+        .magic-char-scramble {
+            color: var(--ugr-cyan);
+            font-family: 'IBM Plex Mono', monospace;
+            font-weight: 700;
+            text-shadow: 0 0 12px rgba(0, 229, 255, 0.6);
+        }
+
+        .magic-description {
+            max-width: 680px;
+            font-size: 0.95rem;
+            line-height: 1.65;
+            color: #94a3b8;
+            margin: 0 auto;
+        }
+
+        .magic-desc-word {
+            display: inline-block;
+            opacity: 0;
+            transform: translateY(12px);
+            filter: blur(5px);
+            animation: magic-word-pull 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            margin: 0 0.15em;
+        }
+
+        @keyframes magic-word-pull {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+                filter: blur(0px);
+            }
+        }
+
+        /* ============================================================ */
+        /* 3. 21ST.DEV — Design Engineer Specular Glow & 3D Kinetic     */
+        /* ============================================================ */
+        .style-21stdev {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .calc-kicker-white-kinetic {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.78rem;
+            font-weight: 700;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            color: #ffffff; /* pure white per user request */
+            margin-bottom: 14px;
+            display: inline-block;
+            perspective: 1000px;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.25);
+        }
+
+        .eng-kicker {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 5px 14px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 18px;
+        }
+
+        .eng-beacon {
+            position: relative;
+            display: inline-block;
+            width: 7px;
+            height: 7px;
+            background-color: var(--ugr-green);
+            border-radius: 50%;
+        }
+
+        .eng-beacon-pulse {
+            position: absolute;
+            inset: -3px;
+            border-radius: 50%;
+            background-color: var(--ugr-green);
+            opacity: 0.5;
+            animation: eng-ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+        }
+
+        @keyframes eng-ping {
+            75%, 100% {
+                transform: scale(2.4);
+                opacity: 0;
+            }
+        }
+
+        .eng-kicker-label {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.72rem;
+            font-weight: 600;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            color: #94a3b8;
+        }
+
+        .eng-h2 {
+            font-size: 2.35rem;
+            font-weight: 800;
+            letter-spacing: -0.035em;
+            line-height: 1.2;
+            margin-bottom: 14px;
+            perspective: 1000px;
+            color: #ffffff;
+            text-shadow: 0 0 35px rgba(0, 229, 255, 0.2), 0 2px 4px rgba(0, 0, 0, 0.8);
+        }
+
+        .eng-char {
+            display: inline-block;
+            opacity: 0;
+            transform: rotateX(40deg) translateY(16px) translateZ(-15px);
+            filter: blur(4px);
+            animation: eng-kinetic-entry 0.7s cubic-bezier(0.19, 1, 0.22, 1) forwards;
+            will-change: transform, opacity, filter;
+        }
+
+        @keyframes eng-kinetic-entry {
+            to {
+                opacity: 1;
+                transform: rotateX(0deg) translateY(0) translateZ(0);
+                filter: blur(0);
+            }
+        }
+
+        .eng-spec-box {
+            background: rgba(14, 42, 71, 0.5);
+            border-left: 2px solid var(--ugr-cyan);
+            border-radius: 0 8px 8px 0;
+            padding: 10px 18px;
+            max-width: 680px;
+            margin: 0 auto;
+        }
+
+        .eng-description {
+            font-size: 0.925rem;
+            line-height: 1.65;
+            color: #cbd5e1;
+        }
+
+        .eng-badge-pill {
+            display: inline-block;
+            background: rgba(0, 229, 255, 0.15);
+            color: var(--ugr-cyan);
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 1px 6px;
+            border-radius: 4px;
+        }
+
+        /* ============================================================ */
+        /* 4. SHADCN/UI — Minimalist Precision Heading & Zinc Subtitle   */
+        /* ============================================================ */
+        .style-shadcn {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .shadcn-badge {
+            display: inline-flex;
+            align-items: center;
+            border-radius: 9999px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            background-color: rgba(255, 255, 255, 0.05);
+            color: #f8fafc;
+            font-size: 0.72rem;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            padding: 5px 14px;
+            margin-bottom: 14px;
+            animation: shadcn-enter 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        .shadcn-h2 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            letter-spacing: -0.03em;
+            line-height: 1.25;
+            color: #f8fafc;
+            margin-bottom: 12px;
+            opacity: 0;
+            animation: shadcn-enter 0.45s cubic-bezier(0.16, 1, 0.3, 1) 0.08s forwards;
+        }
+
+        .shadcn-p {
+            font-size: 0.95rem;
+            line-height: 1.65;
+            color: #94a3b8;
+            max-width: 680px;
+            margin: 0 auto;
+            opacity: 0;
+            animation: shadcn-enter 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.16s forwards;
+        }
+
+        @keyframes shadcn-enter {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ============================================================ */
+        /* 5. HTML5 UP — Editorial CAD Blueprint & Crosshairs          */
+        /* ============================================================ */
+        .style-html5up {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            padding: 20px;
+            border: 1px dashed rgba(0, 229, 255, 0.25);
+            border-radius: 12px;
+            background: rgba(6, 19, 32, 0.4);
+        }
+
+        .cad-crosshair {
+            position: absolute;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 14px;
+            font-weight: 300;
+            color: var(--ugr-cyan);
+            opacity: 0.7;
+        }
+        .cad-crosshair.top-left { top: 6px; left: 8px; }
+        .cad-crosshair.top-right { top: 6px; right: 8px; }
+        .cad-crosshair.bottom-left { bottom: 6px; left: 8px; }
+        .cad-crosshair.bottom-right { bottom: 6px; right: 8px; }
+
+        .cad-kicker {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.76rem;
+            font-weight: 700;
+            letter-spacing: 0.32em;
+            text-transform: uppercase;
+            color: var(--ugr-cyan);
+            margin-bottom: 12px;
+            animation: cad-bracket-snap 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        .cad-bracket {
+            color: #ffffff;
+            font-weight: 400;
+        }
+
+        @keyframes cad-bracket-snap {
+            0% {
+                letter-spacing: 0.55em;
+                opacity: 0;
+            }
+            100% {
+                letter-spacing: 0.32em;
+                opacity: 1;
+            }
+        }
+
+        .cad-h2 {
+            font-size: 2.2rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: #ffffff;
+            margin-bottom: 12px;
+        }
+
+        .cad-ruler-track {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            width: 100%;
+            max-width: 580px;
+            margin-bottom: 14px;
+        }
+
+        .cad-ruler-draw {
+            height: 1px;
+            flex: 1;
+            background: linear-gradient(90deg, transparent 0%, var(--ugr-cyan) 50%, transparent 100%);
+            width: 0%;
+            animation: cad-draw 1.2s cubic-bezier(0.25, 1, 0.5, 1) 0.2s forwards;
+        }
+
+        @keyframes cad-draw {
+            to { width: 100%; }
+        }
+
+        .cad-spec-code {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.65rem;
+            color: #64748b;
+            letter-spacing: 0.2em;
+            white-space: nowrap;
+        }
+
+        .cad-description {
+            max-width: 680px;
+            font-size: 0.88rem;
+            line-height: 1.65;
+            color: #94a3b8;
+            margin: 0 auto;
+            border-left: 2px solid var(--ugr-cyan);
+            padding-left: 12px;
+            text-align: left;
+        }
+
+        /* Responsive View switching */
+        .demo-view {
+            display: none;
+        }
+        .demo-view.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sticky Master Header Navigation -->
+    <header class="showcase-header">
+        <div class="showcase-header-inner">
+            <div class="showcase-brand">
+                <span class="brand-badge">TEXT MOTION LAB</span>
+                <div>
+                    <h1 class="brand-title">UGR Sector 1 — 5 Text Animation Demos</h1>
+                    <p class="brand-sub">Kicker · Titlu H2 · Subtitlu Calculator Stereo 70 (EPSG:3844)</p>
+                </div>
+            </div>
+
+            <!-- 5 Switcher Tabs -->
+            <nav class="demo-tabs" role="tablist">
+                <button class="demo-tab-btn active" onclick="switchView('all', this)" role="tab">
+                    <span>🔲</span> Toate cele 5 (Comparație)
+                </button>
+                <button class="demo-tab-btn" onclick="switchView('aceternity', this)" role="tab">
+                    <span>1.</span> Aceternity UI
+                </button>
+                <button class="demo-tab-btn" onclick="switchView('magicui', this)" role="tab">
+                    <span>2.</span> Magic UI
+                </button>
+                <button class="demo-tab-btn" onclick="switchView('21stdev', this)" role="tab">
+                    <span>3.</span> 21st.dev
+                </button>
+                <button class="demo-tab-btn" onclick="switchView('shadcn', this)" role="tab">
+                    <span>4.</span> shadcn/ui
+                </button>
+                <button class="demo-tab-btn" onclick="switchView('html5up', this)" role="tab">
+                    <span>5.</span> HTML5 UP
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main-container">
+
+        <!-- ======================================================== -->
+        <!-- DEMO 1: ACETERNITY UI -->
+        <!-- ======================================================== -->
+        <article class="demo-card demo-view view-aceternity active" id="card-aceternity">
+            <div class="demo-card-header">
+                <div class="demo-badge-meta">
+                    <span class="demo-num">DEMO 1</span>
+                    <h2 class="demo-name">Aceternity UI</h2>
+                    <span class="demo-features">• Word Blur-Stagger + Conic Shimmer Border</span>
+                </div>
+                <button class="btn-replay" onclick="replayAceternity()">
+                    <span>↻</span> Re-play Animație
+                </button>
+            </div>
+
+            <div class="style-aceternity">
+                <!-- Aceternity Conic Shimmer Kicker Badge -->
+                <div class="aceternity-kicker-wrapper">
+                    <span class="aceternity-shimmer-border"></span>
+                    <span class="aceternity-kicker-content">UTILITAR TEHNIC INTEGRAT</span>
+                </div>
+
+                <!-- Aceternity Blur-Stagger Word Heading -->
+                <h2 class="aceternity-h2" id="aceternity-title" aria-label="Calculator Transversal Stereo 70 ⇄ WGS84">
+                    <!-- Populated by JavaScript -->
+                </h2>
+
+                <!-- Subtitle with Smooth Fade -->
+                <p class="aceternity-description" id="aceternity-desc">
+                    Algoritm matematic conform proiecției stereografice 1970 pe elipsoidul Krasovski 1940 (EPSG:3844 conform normelor ANCPI). Nu necesită pagină separată.
+                </p>
+            </div>
+
+            <!-- Form Context Preview -->
+            <div class="mock-form-preview">
+                <div class="mock-input">X (Nord): 328733.315 m</div>
+                <div class="mock-input">Y (Est): 586483.430 m</div>
+                <div class="mock-btn">Transformă în WGS84 →</div>
+            </div>
+        </article>
+
+        <!-- ======================================================== -->
+        <!-- DEMO 2: MAGIC UI -->
+        <!-- ======================================================== -->
+        <article class="demo-card demo-view view-magicui active" id="card-magicui">
+            <div class="demo-card-header">
+                <div class="demo-badge-meta">
+                    <span class="demo-num">DEMO 2</span>
+                    <h2 class="demo-name">Magic UI</h2>
+                    <span class="demo-features">• HyperText Cypher Scramble + Animated Shiny Text</span>
+                </div>
+                <button class="btn-replay" onclick="replayMagicUI()">
+                    <span>↻</span> Re-play Scramble
+                </button>
+            </div>
+
+            <div class="style-magicui">
+                <!-- Animated Shiny Text Kicker -->
+                <div class="magic-kicker-badge" onclick="replayMagicUI()" title="Apasă pentru re-scramble">
+                    <span class="magic-shiny-text">UTILITAR TEHNIC INTEGRAT</span>
+                </div>
+
+                <!-- HyperText Cypher Scramble H2 -->
+                <h2 class="magic-h2" id="magic-hyper-text" data-text="Calculator Transversal Stereo 70 ⇄ WGS84" title="Plimbă mouse-ul sau apasă pentru efect cypher">
+                    Calculator Transversal Stereo 70 ⇄ WGS84
+                </h2>
+
+                <!-- Word Pull Up Description -->
+                <p class="magic-description" id="magic-desc">
+                    Algoritm matematic conform proiecției stereografice 1970 pe elipsoidul Krasovski 1940 (EPSG:3844 conform normelor ANCPI). Nu necesită pagină separată.
+                </p>
+            </div>
+
+            <!-- Form Context Preview -->
+            <div class="mock-form-preview">
+                <div class="mock-input">X (Nord): 328733.315 m</div>
+                <div class="mock-input">Y (Est): 586483.430 m</div>
+                <div class="mock-btn">Transformă în WGS84 →</div>
+            </div>
+        </article>
+
+        <!-- ======================================================== -->
+        <!-- DEMO 3: 21ST.DEV (CUSTOMIZED PER USER REQUEST) -->
+        <!-- ======================================================== -->
+        <article class="demo-card demo-view view-21stdev active" id="card-21stdev">
+            <div class="demo-card-header">
+                <div class="demo-badge-meta">
+                    <span class="demo-num">DEMO 3</span>
+                    <h2 class="demo-name">21st.dev — Selectată &amp; Personalizată</h2>
+                    <span class="demo-features">• Kicker Alb cu Liniuță "——" + 3D Kinetic Flip sincron</span>
+                </div>
+                <button class="btn-replay" onclick="replay21stDev()">
+                    <span>↻</span> Re-play 3D Flip
+                </button>
+            </div>
+
+            <div class="style-21stdev">
+                <!-- Kicker Alb cu Liniuță "——" (Inspirat din Imaginea 2) cu Animație 3D Kinetică -->
+                <div class="calc-kicker-white-kinetic" id="eng-kinetic-kicker" aria-label="—— UTILITAR TEHNIC INTEGRAT">
+                    <!-- Populated by JavaScript with 3D Kinetic characters -->
+                </div>
+
+                <!-- 3D Kinetic Split H2 -->
+                <h2 class="eng-h2" id="eng-kinetic-title" aria-label="Calculator Transversal Stereo 70 ⇄ WGS84">
+                    <!-- Populated by JavaScript with 3D Kinetic characters -->
+                </h2>
+
+                <!-- Precision Spec Box Description -->
+                <div class="eng-spec-box">
+                    <p class="eng-description">
+                        Algoritm matematic conform proiecției stereografice 1970 pe elipsoidul Krasovski 1940 
+                        (<span class="eng-badge-pill">EPSG:3844 ANCPI</span>). Nu necesită pagină separată.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Form Context Preview -->
+            <div class="mock-form-preview">
+                <div class="mock-input">X (Nord): 328733.315 m</div>
+                <div class="mock-input">Y (Est): 586483.430 m</div>
+                <div class="mock-btn">Transformă în WGS84 →</div>
+            </div>
+        </article>
+
+        <!-- ======================================================== -->
+        <!-- DEMO 4: SHADCN/UI -->
+        <!-- ======================================================== -->
+        <article class="demo-card demo-view view-shadcn active" id="card-shadcn">
+            <div class="demo-card-header">
+                <div class="demo-badge-meta">
+                    <span class="demo-num">DEMO 4</span>
+                    <h2 class="demo-name">shadcn/ui</h2>
+                    <span class="demo-features">• Minimalist Precision Heading & Tight Tracking</span>
+                </div>
+                <button class="btn-replay" onclick="replayShadcn()">
+                    <span>↻</span> Re-play Fade-Up
+                </button>
+            </div>
+
+            <div class="style-shadcn">
+                <!-- Clean Secondary Badge -->
+                <div class="shadcn-badge" id="shadcn-badge">
+                    UTILITAR TEHNIC INTEGRAT
+                </div>
+
+                <!-- Precision Heading -->
+                <h2 class="shadcn-h2" id="shadcn-h2">
+                    Calculator Transversal Stereo 70 ⇄ WGS84
+                </h2>
+
+                <!-- Subtitle Zinc -->
+                <p class="shadcn-p" id="shadcn-p">
+                    Algoritm matematic conform proiecției stereografice 1970 pe elipsoidul Krasovski 1940 (EPSG:3844 conform normelor ANCPI). Nu necesită pagină separată.
+                </p>
+            </div>
+
+            <!-- Form Context Preview -->
+            <div class="mock-form-preview">
+                <div class="mock-input">X (Nord): 328733.315 m</div>
+                <div class="mock-input">Y (Est): 586483.430 m</div>
+                <div class="mock-btn">Transformă în WGS84 →</div>
+            </div>
+        </article>
+
+        <!-- ======================================================== -->
+        <!-- DEMO 5: HTML5 UP -->
+        <!-- ======================================================== -->
+        <article class="demo-card demo-view view-html5up active" id="card-html5up">
+            <div class="demo-card-header">
+                <div class="demo-badge-meta">
+                    <span class="demo-num">DEMO 5</span>
+                    <h2 class="demo-name">HTML5 UP (CAD Blueprint)</h2>
+                    <span class="demo-features">• Architectural Crosshairs & Animated Drafting Ruler</span>
+                </div>
+                <button class="btn-replay" onclick="replayHtml5Up()">
+                    <span>↻</span> Re-play Ruler Draw
+                </button>
+            </div>
+
+            <div class="style-html5up">
+                <!-- Corner Crosshairs -->
+                <span class="cad-crosshair top-left">+</span>
+                <span class="cad-crosshair top-right">+</span>
+                <span class="cad-crosshair bottom-left">+</span>
+                <span class="cad-crosshair bottom-right">+</span>
+
+                <!-- Bracketed Blueprint Kicker -->
+                <div class="cad-kicker" id="cad-kicker">
+                    <span class="cad-bracket">[</span>
+                    UTILITAR TEHNIC INTEGRAT
+                    <span class="cad-bracket">]</span>
+                </div>
+
+                <!-- CAD Uppercase Title -->
+                <h2 class="cad-h2">
+                    Calculator Transversal Stereo 70 ⇄ WGS84
+                </h2>
+
+                <!-- Drawing Ruler Track -->
+                <div class="cad-ruler-track">
+                    <div class="cad-ruler-draw" id="cad-ruler"></div>
+                    <span class="cad-spec-code">EPSG:3844 // KRASOVSKI-1940</span>
+                </div>
+
+                <!-- Field Note Description -->
+                <p class="cad-description">
+                    Algoritm matematic conform proiecției stereografice 1970 pe elipsoidul Krasovski 1940 (EPSG:3844 conform normelor ANCPI). Nu necesită pagină separată.
+                </p>
+            </div>
+
+            <!-- Form Context Preview -->
+            <div class="mock-form-preview">
+                <div class="mock-input">X (Nord): 328733.315 m</div>
+                <div class="mock-input">Y (Est): 586483.430 m</div>
+                <div class="mock-btn">Transformă în WGS84 →</div>
+            </div>
+        </article>
+
+    </main>
+
+    <!-- JavaScript Controllers for Text Animations -->
+    <script>
+        // -------------------------------------------------------------
+        // View Switcher (All vs Single)
+        // -------------------------------------------------------------
+        function switchView(viewName, btnEl) {
+            document.querySelectorAll('.demo-tab-btn').forEach(b => b.classList.remove('active'));
+            if (btnEl) btnEl.classList.add('active');
+
+            const allViews = document.querySelectorAll('.demo-view');
+            if (viewName === 'all') {
+                allViews.forEach(v => v.classList.add('active'));
+            } else {
+                allViews.forEach(v => v.classList.remove('active'));
+                const target = document.querySelector('.view-' + viewName);
+                if (target) target.classList.add('active');
+            }
+        }
+
+        // -------------------------------------------------------------
+        // 1. Aceternity UI: Blur-Stagger Word Reveal
+        // -------------------------------------------------------------
+        function replayAceternity() {
+            const container = document.getElementById("aceternity-title");
+            const words = ["Calculator", "Transversal", "Stereo", "70", "⇄", "WGS84"];
+            
+            container.innerHTML = "";
+            words.forEach((w, idx) => {
+                const span = document.createElement("span");
+                const isHighlight = (w === "⇄" || w === "Stereo" || w === "70" || w === "WGS84");
+                span.className = "aceternity-word" + (isHighlight ? " highlight" : "");
+                span.textContent = w;
+                container.appendChild(span);
+                
+                setTimeout(() => {
+                    span.classList.add("revealed");
+                }, 100 + idx * 90);
+            });
+
+            const desc = document.getElementById("aceternity-desc");
+            desc.style.animation = 'none';
+            desc.offsetHeight; // trigger reflow
+            desc.style.animation = 'aceternity-fade 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.5s forwards';
+        }
+
+        // -------------------------------------------------------------
+        // 2. Magic UI: HyperText Cypher Decode Scramble
+        // -------------------------------------------------------------
+        class HyperTextScramble {
+            constructor(element, duration = 850) {
+                this.element = element;
+                this.targetText = element.getAttribute("data-text") || element.innerText.trim();
+                this.duration = duration;
+                this.glyphs = "01ΔλφΣΩξηπΨθΞABCDEF!@#$%&*+=-";
+                this.play();
+            }
+
+            play() {
+                const startTime = performance.now();
+                const len = this.targetText.length;
+
+                const frame = (now) => {
+                    const elapsed = now - startTime;
+                    const progress = Math.min(elapsed / this.duration, 1);
+                    const settledCount = Math.floor(progress * len);
+
+                    let output = "";
+                    for (let i = 0; i < len; i++) {
+                        if (this.targetText[i] === " ") {
+                            output += " ";
+                        } else if (i < settledCount) {
+                            output += this.targetText[i];
+                        } else {
+                            const randChar = this.glyphs[Math.floor(Math.random() * this.glyphs.length)];
+                            output += `<span class="magic-char-scramble">${randChar}</span>`;
+                        }
+                    }
+
+                    this.element.innerHTML = output;
+
+                    if (progress < 1) {
+                        requestAnimationFrame(frame);
+                    } else {
+                        this.element.textContent = this.targetText;
+                    }
+                };
+
+                requestAnimationFrame(frame);
+            }
+        }
+
+        function replayMagicUI() {
+            const h2El = document.getElementById("magic-hyper-text");
+            new HyperTextScramble(h2El);
+
+            const descEl = document.getElementById("magic-desc");
+            const rawText = "Algoritm matematic conform proiecției stereografice 1970 pe elipsoidul Krasovski 1940 (EPSG:3844 conform normelor ANCPI). Nu necesită pagină separată.";
+            const words = rawText.split(/\s+/);
+            descEl.innerHTML = words.map((w, i) => 
+                `<span class="magic-desc-word" style="animation-delay: ${0.25 + i * 0.022}s">${w}</span>`
+            ).join(" ");
+        }
+
+        // -------------------------------------------------------------
+        // 3. 21st.dev: 3D Kinetic Character Flip (Kicker + Title)
+        // -------------------------------------------------------------
+        function replay21stDev() {
+            // 1. Kicker: —— UTILITAR TEHNIC INTEGRAT (Alb, Animație 3D Kinetică)
+            const kicker = document.getElementById("eng-kinetic-kicker");
+            if (kicker) {
+                const kickerText = "—— UTILITAR TEHNIC INTEGRAT";
+                kicker.innerHTML = "";
+                kicker.style.perspective = "1000px";
+                [...kickerText].forEach((char, index) => {
+                    const span = document.createElement("span");
+                    span.className = "eng-char";
+                    span.style.color = "#ffffff";
+                    span.innerHTML = char === " " ? "&nbsp;" : char;
+                    span.style.animationDelay = `${0.04 + index * 0.016}s`;
+                    kicker.appendChild(span);
+                });
+            }
+
+            // 2. Titlu H2: Calculator Transversal Stereo 70 ⇄ WGS84
+            const heading = document.getElementById("eng-kinetic-title");
+            if (heading) {
+                const text = "Calculator Transversal Stereo 70 ⇄ WGS84";
+                heading.innerHTML = "";
+                heading.style.perspective = "1000px";
+
+                [...text].forEach((char, index) => {
+                    const span = document.createElement("span");
+                    span.className = "eng-char";
+                    span.innerHTML = char === " " ? "&nbsp;" : char;
+                    span.style.animationDelay = `${0.22 + index * 0.016}s`;
+                    heading.appendChild(span);
+                });
+            }
+        }
+
+        // -------------------------------------------------------------
+        // 4. shadcn/ui: Precision Fade-Up
+        // -------------------------------------------------------------
+        function replayShadcn() {
+            const badge = document.getElementById("shadcn-badge");
+            const h2 = document.getElementById("shadcn-h2");
+            const p = document.getElementById("shadcn-p");
+
+            [badge, h2, p].forEach(el => {
+                el.style.animation = 'none';
+                el.offsetHeight; // reflow
+            });
+
+            badge.style.animation = 'shadcn-enter 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards';
+            h2.style.animation = 'shadcn-enter 0.45s cubic-bezier(0.16, 1, 0.3, 1) 0.08s forwards';
+            p.style.animation = 'shadcn-enter 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.16s forwards';
+        }
+
+        // -------------------------------------------------------------
+        // 5. HTML5 UP: CAD Drafting Ruler Draw
+        // -------------------------------------------------------------
+        function replayHtml5Up() {
+            const kicker = document.getElementById("cad-kicker");
+            const ruler = document.getElementById("cad-ruler");
+
+            kicker.style.animation = 'none';
+            ruler.style.animation = 'none';
+            kicker.offsetHeight; // reflow
+            ruler.offsetHeight;
+
+            kicker.style.animation = 'cad-bracket-snap 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards';
+            ruler.style.animation = 'cad-draw 1.2s cubic-bezier(0.25, 1, 0.5, 1) 0.2s forwards';
+        }
+
+        // Auto-run all on start
+        window.addEventListener('DOMContentLoaded', () => {
+            replayAceternity();
+            replayMagicUI();
+            replay21stDev();
+            replayShadcn();
+            replayHtml5Up();
+
+            // Hover trigger on Magic UI Title
+            const h2Magic = document.getElementById("magic-hyper-text");
+            h2Magic.addEventListener("mouseenter", () => new HyperTextScramble(h2Magic, 600));
+        });
+    </script>
+</body>
+</html>

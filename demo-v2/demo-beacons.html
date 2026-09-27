@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DEMO 1 — Piloni Geodezici Verticali (Light Beacons) · UGR</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:#030712; font-family:'IBM Plex Mono', 'Segoe UI', monospace; overflow:hidden; height:100vh; color:#e2e8f0; }
+
+  /* HEADER BANNER */
+  .demo-banner {
+    position:fixed; top:0; left:0; right:0; z-index:100;
+    background:rgba(3,7,18,0.85); backdrop-filter:blur(16px);
+    border-bottom:1px solid rgba(6,182,212,0.25);
+    padding:10px 24px; display:flex; align-items:center; justify-content:space-between;
+  }
+  .demo-banner .badge { background:rgba(6,182,212,0.15); color:#06b6d4; border:1px solid rgba(6,182,212,0.3); padding:4px 10px; border-radius:6px; font-size:11px; font-weight:700; letter-spacing:0.1em; }
+  .demo-banner .title { font-size:12px; color:#cbd5e1; font-weight:500; }
+  .demo-banner .nav-links { display:flex; gap:12px; font-size:11px; }
+  .demo-banner .nav-links a { color:#06b6d4; text-decoration:none; opacity:0.8; transition:opacity 0.2s; }
+  .demo-banner .nav-links a:hover { opacity:1; text-decoration:underline; }
+
+  #c { display:block; position:fixed; inset:0; }
+
+  /* GLASSMORPHIC DOCK */
+  .hud-dock {
+    position:fixed; bottom:24px; left:50%; transform:translateX(-50%);
+    background:rgba(3,7,18,0.7); backdrop-filter:blur(20px) saturate(180%);
+    border:1px solid rgba(6,182,212,0.22); border-radius:14px;
+    padding:10px 16px; display:flex; align-items:center; gap:8px; z-index:50;
+    box-shadow:0 8px 32px rgba(0,0,0,0.6);
+  }
+  .dock-btn {
+    background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08);
+    color:rgba(226,232,240,0.7); padding:8px 14px; border-radius:8px;
+    font-size:11px; font-family:inherit; cursor:pointer; transition:all 0.2s;
+    display:flex; align-items:center; gap:6px;
+  }
+  .dock-btn:hover { background:rgba(6,182,212,0.12); border-color:rgba(6,182,212,0.3); color:#fff; }
+  .dock-btn.active { background:rgba(6,182,212,0.22); border-color:#06b6d4; color:#06b6d4; font-weight:600; box-shadow:0 0 12px rgba(6,182,212,0.3); }
+
+  /* INFO CARD */
+  .info-card {
+    position:fixed; top:65px; right:24px; width:280px;
+    background:rgba(3,7,18,0.75); backdrop-filter:blur(20px);
+    border:1px solid rgba(6,182,212,0.2); border-radius:12px;
+    padding:16px; z-index:50; box-shadow:0 12px 36px rgba(0,0,0,0.5);
+  }
+  .info-card .tag { font-size:9px; letter-spacing:0.18em; color:#06b6d4; text-transform:uppercase; margin-bottom:6px; }
+  .info-card .name { font-size:14px; font-weight:600; color:#fff; margin-bottom:8px; }
+  .info-card .desc { font-size:11px; color:#94a3b8; line-height:1.6; margin-bottom:12px; }
+  .info-card .stat-row { display:flex; justify-content:space-between; font-size:10.5px; border-top:1px solid rgba(255,255,255,0.06); padding-top:8px; }
+  .info-card .stat-val { color:#06b6d4; font-weight:600; }
+</style>
+</head>
+<body>
+
+<div class="demo-banner">
+  <div style="display:flex; align-items:center; gap:12px;">
+    <span class="badge">DEMO 1</span>
+    <span class="title">Piloni Geodezici Verticali (Vertical Light Beacons) — Fără benzi între orașe</span>
+  </div>
+  <div class="nav-links">
+    <a href="demo-satellite.html">Vezi Demo 2 (Satelit GNSS) →</a>
+    <a href="demo-mesh.html">Vezi Demo 3 (Mesh Plan) →</a>
+  </div>
+</div>
+
+<canvas id="c"></canvas>
+
+<div class="info-card">
+  <div class="tag">Stație Activă · ROMPOS Live</div>
+  <div class="name" id="station-name">București — Sector 1</div>
+  <div class="desc" id="station-desc">Pilon vertical de lumină orientat spre zenit. Emite telemetrie GNSS fără nicio linie orizontală care să aglomereze harta.</div>
+  <div class="stat-row">
+    <span>Tip Semnal:</span>
+    <span class="stat-val">Laser Emisiv 0.003 r</span>
+  </div>
+  <div class="stat-row" style="margin-top:6px;">
+    <span>Aglomerație Sol:</span>
+    <span class="stat-val">0% (Complet Curat)</span>
+  </div>
+</div>
+
+<div class="hud-dock" id="dock-nodes"></div>
+
+<script src="https://unpkg.com/three@0.160.0/build/three.min.js"></script>
+<script>
+const canvas = document.getElementById('c');
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.setSize(innerWidth, innerHeight);
+renderer.setClearColor(0x030712);
+
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(40, innerWidth/innerHeight, 0.01, 100);
+camera.position.set(0, 0.4, 2.7);
+
+const globeGroup = new THREE.Group();
+scene.add(globeGroup);
+
+// Texture globe
+const tex = new THREE.TextureLoader().load('https://unpkg.com/three-globe/example/img/earth-dark.jpg');
+const globeMesh = new THREE.Mesh(
+  new THREE.SphereGeometry(1, 72, 72),
+  new THREE.MeshPhongMaterial({ map: tex, shininess: 5, specular: new THREE.Color(0x112233) })
+);
+globeGroup.add(globeMesh);
+
+// Atmosphere
+globeGroup.add(new THREE.Mesh(
+  new THREE.SphereGeometry(1.032, 32, 32),
+  new THREE.ShaderMaterial({
+    vertexShader:`varying vec3 vN;void main(){vN=normalize(normalMatrix*normal);gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}`,
+    fragmentShader:`varying vec3 vN;void main(){float i=pow(.65-dot(vN,vec3(0,0,1)),3.5);gl_FragColor=vec4(.0,.7,1.,i*.15);}`,
+    side:THREE.FrontSide,blending:THREE.AdditiveBlending,transparent:true,depthWrite:false
+  })
+));
+
+scene.add(new THREE.AmbientLight(0x1a2636, 1.8));
+const dl = new THREE.DirectionalLight(0xffffff, 0.7); dl.position.set(4,3,4); scene.add(dl);
+
+function ll2v(lat, lon, r = 1) {
+  const phi = (90 - lat) * Math.PI / 180, theta = (lon + 180) * Math.PI / 180;
+  return new THREE.Vector3(-r * Math.sin(phi) * Math.cos(theta), r * Math.cos(phi), r * Math.sin(phi) * Math.sin(theta));
+}
+
+const NODES = [
+  { id:'bucuresti', name:'București (Sector 1)', lat:44.468, lon:26.083, isMain:true },
+  { id:'cluj', name:'Cluj-Napoca', lat:46.770, lon:23.590 },
+  { id:'timisoara', name:'Timișoara', lat:45.750, lon:21.230 },
+  { id:'iasi', name:'Iași', lat:47.160, lon:27.590 },
+  { id:'constanta', name:'Constanța', lat:44.180, lon:28.650 },
+  { id:'chisinau', name:'Chișinău (UTM)', lat:47.005, lon:28.860, isIntl:true },
+];
+
+let selectedId = 'bucuresti';
+
+// ─── BEACONS VERTICALI (Cylinders pointing radially outward) ───────────
+const beaconObjects = [];
+
+NODES.forEach(node => {
+  const posGround = ll2v(node.lat, node.lon, 1.002);
+  const normal = posGround.clone().normalize();
+  const height = node.isMain ? 0.32 : (node.isIntl ? 0.28 : 0.22);
+  const posCenter = normal.clone().multiplyScalar(1.002 + height / 2);
+
+  // Vertical Laser Cylinder
+  const cylGeo = new THREE.CylinderGeometry(0.0025, 0.0035, height, 8);
+  const color = node.isIntl ? 0xf59e0b : (node.isMain ? 0x00f0ff : 0x06b6d4);
+  const cylMat = new THREE.MeshBasicMaterial({
+    color: color,
+    transparent: true,
+    opacity: node.isMain ? 0.9 : 0.45,
+    blending: THREE.AdditiveBlending,
+    depthWrite: false
+  });
+  const cyl = new THREE.Mesh(cylGeo, cylMat);
+  cyl.position.copy(posCenter);
+  cyl.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), normal);
+  globeGroup.add(cyl);
+
+  // Top Light Spark (Capul pilonului)
+  const capPos = normal.clone().multiplyScalar(1.002 + height);
+  const cap = new THREE.Mesh(
+    new THREE.SphereGeometry(node.isMain ? 0.012 : 0.008, 12, 12),
+    new THREE.MeshBasicMaterial({ color: 0xffffff, blending: THREE.AdditiveBlending })
+  );
+  cap.position.copy(capPos);
+  globeGroup.add(cap);
+
+  // Ground Pulsing Ring
+  const ringMat = new THREE.MeshBasicMaterial({
+    color: color, side: THREE.DoubleSide, transparent: true, opacity: 0.8,
+    blending: THREE.AdditiveBlending, depthWrite: false
+  });
+  const ring = new THREE.Mesh(new THREE.RingGeometry(0.012, 0.022, 28), ringMat);
+  ring.position.copy(posGround.clone().multiplyScalar(1.003));
+  ring.lookAt(posGround.clone().multiplyScalar(3));
+  globeGroup.add(ring);
+
+  beaconObjects.push({ node, cyl, cylMat, cap, ring, ringMat, baseHeight:height });
+});
+
+// UI DOCK
+const dock = document.getElementById('dock-nodes');
+NODES.forEach(n => {
+  const btn = document.createElement('button');
+  btn.className = 'dock-btn' + (n.id === selectedId ? ' active' : '');
+  btn.innerHTML = `<span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:${n.isIntl?'#f59e0b':'#06b6d4'};"></span> ${n.name}`;
+  btn.onclick = () => selectNode(n.id);
+  dock.appendChild(btn);
+});
+
+function selectNode(id) {
+  selectedId = id;
+  const n = NODES.find(x => x.id === id);
+  document.getElementById('station-name').textContent = n.name;
+  document.getElementById('station-desc').textContent = n.isMain 
+    ? "Sediul Filialei Sector 1 București. Pol central de coordonare cu ANCPI și ROMPOS."
+    : (n.isIntl ? "Pol Partener Chișinău UTM (Săptămâna Geodeziei Românești 2026)." : `Stație de referință geodezică activă ${n.name}.`);
+  
+  document.querySelectorAll('.dock-btn').forEach((b, i) => {
+    b.classList.toggle('active', NODES[i].id === id);
+  });
+
+  // Highlight beacon
+  beaconObjects.forEach(b => {
+    const isSel = b.node.id === id;
+    b.cylMat.opacity = isSel ? 0.95 : 0.35;
+    b.cyl.scale.x = isSel ? 1.6 : 1.0;
+    b.cyl.scale.z = isSel ? 1.6 : 1.0;
+    b.ringMat.opacity = isSel ? 1.0 : 0.4;
+  });
+}
+
+// Drag & Zoom
+let drag = false, px = 0, py = 0;
+canvas.addEventListener('mousedown', e => { drag = true; px = e.clientX; py = e.clientY; });
+window.addEventListener('mouseup', () => drag = false);
+window.addEventListener('mousemove', e => {
+  if (!drag) return;
+  globeGroup.rotation.y += (e.clientX - px) * 0.005;
+  globeGroup.rotation.x += (e.clientY - py) * 0.004;
+  px = e.clientX; py = e.clientY;
+});
+canvas.addEventListener('wheel', e => {
+  camera.position.z = Math.max(1.6, Math.min(5, camera.position.z + e.deltaY * 0.003));
+  e.preventDefault();
+}, { passive:false });
+
+globeGroup.rotation.y = -0.42;
+
+const clock = new THREE.Clock();
+function animate() {
+  requestAnimationFrame(animate);
+  const t = clock.getElapsedTime();
+  if (!drag) globeGroup.rotation.y += 0.0008;
+
+  beaconObjects.forEach((b, i) => {
+    const isSel = b.node.id === selectedId;
+    const pulse = 0.5 + 0.5 * Math.sin(t * (isSel ? 3.5 : 1.8) + i);
+    const ringScale = 0.8 + pulse * (isSel ? 1.2 : 0.6);
+    b.ring.scale.setScalar(ringScale);
+    b.ringMat.opacity = (1 - pulse * 0.6) * (isSel ? 0.9 : 0.4);
+  });
+
+  renderer.render(scene, camera);
+}
+animate();
+
+window.addEventListener('resize', () => {
+  camera.aspect = innerWidth / innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth, innerHeight);
+});
+</script>
+</body>
+</html>

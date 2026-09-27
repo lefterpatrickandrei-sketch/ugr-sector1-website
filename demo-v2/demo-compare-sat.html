@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Comparație 1 Satelit Geostaționar vs 3 Sateliți · UGR</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:#030712; overflow:hidden; height:100vh; font-family:'IBM Plex Mono', 'Segoe UI', monospace; }
+  #c { display:block; position:fixed; inset:0; cursor:grab; }
+  #c:active { cursor:grabbing; }
+
+  /* FLOATING CLEAN SWITCHER PILL (1 vs 3) */
+  .compare-pill {
+    position:fixed; top:20px; left:50%; transform:translateX(-50%); z-index:100;
+    display:flex; align-items:center; gap:6px;
+    background:rgba(3,11,22,0.80); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);
+    border:1px solid rgba(0,240,255,0.3); border-radius:30px; padding:5px 8px;
+    box-shadow:0 8px 30px rgba(0,0,0,0.6);
+  }
+  .compare-btn {
+    background:transparent; border:1px solid transparent;
+    color:rgba(255,255,255,0.65); font-family:inherit; font-size:11px; font-weight:600;
+    padding:6px 14px; border-radius:20px; cursor:pointer; transition:all 0.25s ease;
+    display:flex; align-items:center; gap:6px;
+  }
+  .compare-btn:hover { color:#fff; background:rgba(255,255,255,0.08); }
+  .compare-btn.active {
+    background:rgba(0,240,255,0.22); border-color:#00F0FF; color:#00F0FF;
+    box-shadow:0 0 14px rgba(0,240,255,0.35); font-weight:700;
+  }
+
+  /* TOOLTIP PE BULINE */
+  #tooltip {
+    position:fixed; pointer-events:none; z-index:100; display:none;
+    background:rgba(3,7,18,0.85); backdrop-filter:blur(12px);
+    border:1px solid rgba(0,240,255,0.4); border-radius:6px;
+    padding:4px 8px; font-size:10px; color:#00f0ff; letter-spacing:0.08em;
+    transform:translate(-50%, -130%); white-space:nowrap;
+    box-shadow:0 4px 16px rgba(0,0,0,0.6);
+  }
+
+  /* SUBTLE HELPER HINT */
+  .hint {
+    position:fixed; bottom:20px; left:50%; transform:translateX(-50%); z-index:90;
+    font-size:10px; color:rgba(255,255,255,0.4); letter-spacing:0.05em; pointer-events:none;
+    text-transform:uppercase; background:rgba(3,7,18,0.5); padding:4px 12px; border-radius:20px;
+  }
+</style>
+</head>
+<body>
+
+<canvas id="c"></canvas>
+<div id="tooltip"></div>
+
+<!-- SWITCHER CURAT: 1 SATELIT GEOSTAȚIONAR (OPȚIUNEA A) VS 3 SATELIȚI -->
+<div class="compare-pill">
+  <button type="button" class="compare-btn active" id="btn-mode-1" onclick="setMode('1')">
+    <span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#00F0FF;box-shadow:0 0 6px #00F0FF;"></span>
+    1 Satelit Geostaționar (Opțiunea A)
+  </button>
+  <button type="button" class="compare-btn" id="btn-mode-3" onclick="setMode('3')">
+    <span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#F59E0B;box-shadow:0 0 6px #F59E0B;"></span>
+    3 Sateliți (Opțiunea 2A)
+  </button>
+</div>
+
+<div class="hint">Dă click direct pe bulinele de pe glob pentru a schimba orașul</div>
+
+<script src="https://unpkg.com/three@0.160.0/build/three.min.js"></script>
+<script>
+const canvas = document.getElementById('c');
+const tooltip = document.getElementById('tooltip');
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.setSize(innerWidth, innerHeight);
+renderer.setClearColor(0x030712);
+
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(38, innerWidth/innerHeight, 0.01, 100);
+camera.position.set(0, 0.35, 2.75);
+
+const globeGroup = new THREE.Group();
+scene.add(globeGroup);
+
+// Texture globe
+const tex = new THREE.TextureLoader().load('https://unpkg.com/three-globe/example/img/earth-dark.jpg');
+const globeMesh = new THREE.Mesh(
+  new THREE.SphereGeometry(1, 72, 72),
+  new THREE.MeshPhongMaterial({ map: tex, shininess: 6, specular: new THREE.Color(0x112233) })
+);
+globeGroup.add(globeMesh);
+
+// Atmosphere
+globeGroup.add(new THREE.Mesh(
+  new THREE.SphereGeometry(1.032, 32, 32),
+  new THREE.ShaderMaterial({
+    vertexShader:`varying vec3 vN;void main(){vN=normalize(normalMatrix*normal);gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}`,
+    fragmentShader:`varying vec3 vN;void main(){float i=pow(.65-dot(vN,vec3(0,0,1)),3.5);gl_FragColor=vec4(.0,.75,1.,i*.16);}`,
+    side:THREE.FrontSide,blending:THREE.AdditiveBlending,transparent:true,depthWrite:false
+  })
+));
+
+scene.add(new THREE.AmbientLight(0x1a2636, 1.8));
+const dl = new THREE.DirectionalLight(0xffffff, 0.7); dl.position.set(4,3,4); scene.add(dl);
+
+function ll2v(lat, lon, r = 1) {
+  const phi = (90 - lat) * Math.PI / 180, theta = (lon + 180) * Math.PI / 180;
+  return new THREE.Vector3(-r * Math.sin(phi) * Math.cos(theta), r * Math.cos(phi), r * Math.sin(phi) * Math.sin(theta));
+}
+
+const NODES = [
+  { id:'bucuresti', name:'București (Sector 1)', lat:44.468, lon:26.083, isMain:true },
+  { id:'cluj', name:'Cluj-Napoca', lat:46.770, lon:23.590 },
+  { id:'timisoara', name:'Timișoara', lat:45.750, lon:21.230 },
+  { id:'iasi', name:'Iași', lat:47.160, lon:27.590 },
+  { id:'constanta', name:'Constanța', lat:44.180, lon:28.650 },
+  { id:'chisinau', name:'Chișinău (UTM)', lat:47.005, lon:28.860, isIntl:true },
+];
+
+let selectedId = 'bucuresti';
+let currentMode = '1'; // '1' sau '3'
+
+// ─── NODURI LA SOL (BULINE INTERACTIVE) ──────────────────────────────
+const nodeObjects = {};
+const hitTargets = [];
+
+NODES.forEach(n => {
+  const pos = ll2v(n.lat, n.lon, 1.004);
+  const col = n.isIntl ? 0xf59e0b : (n.isMain ? 0x00f0ff : 0x06b6d4);
+
+  // Bulină vizibilă
+  const dot = new THREE.Mesh(
+    new THREE.SphereGeometry(n.isMain ? 0.016 : 0.013, 16, 16),
+    new THREE.MeshBasicMaterial({ color:col, blending:THREE.AdditiveBlending })
+  );
+  dot.position.copy(pos);
+  globeGroup.add(dot);
+
+  // Inel pulsant la sol
+  const ringMat = new THREE.MeshBasicMaterial({ color:col, side:THREE.DoubleSide, transparent:true, opacity:0.6, blending:THREE.AdditiveBlending });
+  const ring = new THREE.Mesh(new THREE.RingGeometry(0.014, 0.024, 28), ringMat);
+  ring.position.copy(pos.clone().multiplyScalar(1.003));
+  ring.lookAt(pos.clone().multiplyScalar(3));
+  globeGroup.add(ring);
+
+  // Hit Sphere invizibilă pentru click ușor pe mobil & desktop
+  const hitGeo = new THREE.SphereGeometry(0.040, 8, 8);
+  const hitMat = new THREE.MeshBasicMaterial({ visible:false });
+  const hitMesh = new THREE.Mesh(hitGeo, hitMat);
+  hitMesh.position.copy(pos);
+  hitMesh.userData = { id: n.id, name: n.name };
+  globeGroup.add(hitMesh);
+  hitTargets.push(hitMesh);
+
+  nodeObjects[n.id] = { pos, dot, ring, ringMat, node:n };
+});
+
+// Model Satelit Aerospace Comun
+function buildSatBody(accentColor) {
+  const g = new THREE.Group();
+  const body = new THREE.Mesh(new THREE.BoxGeometry(0.022, 0.015, 0.022), new THREE.MeshStandardMaterial({ color:0xFBBF24, metalness:0.75, roughness:0.25 }));
+  g.add(body);
+
+  const panelGeo = new THREE.BoxGeometry(0.046, 0.003, 0.015);
+  const panelMat = new THREE.MeshBasicMaterial({ color:0x0284C7 });
+  const lp = new THREE.Mesh(panelGeo, panelMat); lp.position.x = -0.035; g.add(lp);
+  const rp = new THREE.Mesh(panelGeo, panelMat); rp.position.x = 0.035; g.add(rp);
+
+  const ant = new THREE.Mesh(new THREE.SphereGeometry(0.006, 8, 8), new THREE.MeshBasicMaterial({ color:accentColor || 0x00F0FF }));
+  ant.position.y = -0.01;
+  g.add(ant);
+
+  return g;
+}
+
+// ─── 1. SATELITUL GEOSTAȚIONAR FIX (OPȚIUNEA A) ──────────────────────
+// Poziționat direct în globeGroup deasupra României (lat ~35°, lon 25.5°, altitudine 1.48)
+// Fiind în globeGroup, se rotește odată cu globul — 100% geostaționar!
+const geoSatPos = ll2v(36.0, 25.5, 1.48);
+const geoSatMesh = buildSatBody(0x00F0FF);
+geoSatMesh.position.copy(geoSatPos);
+geoSatMesh.lookAt(ll2v(45.0, 25.0, 1.0)); // Orientează antena direct către România
+globeGroup.add(geoSatMesh);
+
+// Laserul fin 1px pentru satelitul geostaționar
+const geoLaserGeo = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(), new THREE.Vector3()]);
+const geoLaserMat = new THREE.LineBasicMaterial({
+  color: 0x00F0FF,
+  transparent: true,
+  opacity: 0.85,
+  blending: THREE.AdditiveBlending,
+  depthWrite: false
+});
+const geoLaserLine = new THREE.Line(geoLaserGeo, geoLaserMat);
+globeGroup.add(geoLaserLine);
+
+// ─── 2. CEI 3 SATELIȚI ÎN MIȘCARE (OPȚIUNEA 2A) ──────────────────────
+const SATS3_CFG = [
+  { name:'ROMPOS-GEO 01', r:1.45, inc: 0.65, spd:0.007, phase:0.3, color:0x00F0FF },
+  { name:'GALILEO E19',   r:1.58, inc:-0.55, spd:0.0055, phase:2.2, color:0x38BDF8 },
+  { name:'GPS-NAVSTAR 72',r:1.50, inc: 1.10, spd:0.0065, phase:4.0, color:0xF59E0B }
+];
+
+const sat3Objects = SATS3_CFG.map(cfg => {
+  const mesh = buildSatBody(cfg.color);
+  globeGroup.add(mesh);
+
+  // Orbit line
+  const orbitPts = [];
+  for (let i = 0; i <= 64; i++) {
+    const th = (i / 64) * Math.PI * 2;
+    orbitPts.push(new THREE.Vector3(Math.cos(th)*cfg.r, Math.sin(th)*cfg.r*Math.sin(cfg.inc), Math.sin(th)*cfg.r*Math.cos(cfg.inc)));
+  }
+  const orbitLine = new THREE.Line(new THREE.BufferGeometry().setFromPoints(orbitPts), new THREE.LineBasicMaterial({ color:cfg.color, transparent:true, opacity:0.10, blending:THREE.AdditiveBlending }));
+  globeGroup.add(orbitLine);
+
+  // Laser
+  const laserLine = new THREE.Line(new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(), new THREE.Vector3()]), new THREE.LineBasicMaterial({ color:cfg.color, transparent:true, opacity:0.85, blending:THREE.AdditiveBlending, depthWrite:false }));
+  globeGroup.add(laserLine);
+
+  return { cfg, mesh, orbitLine, laserLine };
+});
+
+// Comutare Mod (1 vs 3)
+function setMode(mode) {
+  currentMode = mode;
+  document.getElementById('btn-mode-1').classList.toggle('active', mode === '1');
+  document.getElementById('btn-mode-3').classList.toggle('active', mode === '3');
+
+  const isOne = (mode === '1');
+
+  // Afișează / ascunde satelitul geostaționar
+  geoSatMesh.visible = isOne;
+  geoLaserLine.visible = isOne;
+
+  // Afișează / ascunde cei 3 sateliți
+  sat3Objects.forEach(s => {
+    s.mesh.visible = !isOne;
+    s.orbitLine.visible = !isOne;
+    s.laserLine.visible = !isOne;
+  });
+}
+
+// Inițial setăm pe Modul 1 (Opțiunea A Geostaționar)
+setMode('1');
+
+function selectNode(id) {
+  selectedId = id;
+}
+
+// ─── RAYCASTER CLICK DIRECT PE BULINE ────────────────────────────────
+const raycaster = new THREE.Raycaster();
+const mouse = new THREE.Vector2();
+let isPointerDown = false;
+let downPos = { x:0, y:0 };
+
+canvas.addEventListener('pointerdown', e => {
+  isPointerDown = true;
+  downPos = { x: e.clientX, y: e.clientY };
+});
+
+canvas.addEventListener('pointerup', e => {
+  const dist = Math.hypot(e.clientX - downPos.x, e.clientY - downPos.y);
+  isPointerDown = false;
+  if (dist < 6) {
+    mouse.x = (e.clientX / innerWidth) * 2 - 1;
+    mouse.y = -(e.clientY / innerHeight) * 2 + 1;
+    raycaster.setFromCamera(mouse, camera);
+
+    const intersects = raycaster.intersectObjects(hitTargets, false);
+    if (intersects.length > 0) {
+      selectNode(intersects[0].object.userData.id);
+    }
+  }
+});
+
+canvas.addEventListener('pointermove', e => {
+  mouse.x = (e.clientX / innerWidth) * 2 - 1;
+  mouse.y = -(e.clientY / innerHeight) * 2 + 1;
+  raycaster.setFromCamera(mouse, camera);
+
+  const intersects = raycaster.intersectObjects(hitTargets, false);
+  if (intersects.length > 0) {
+    canvas.style.cursor = 'pointer';
+    tooltip.style.display = 'block';
+    tooltip.style.left = `${e.clientX}px`;
+    tooltip.style.top = `${e.clientY}px`;
+    tooltip.textContent = `📍 ${intersects[0].object.userData.name}`;
+  } else {
+    canvas.style.cursor = isPointerDown ? 'grabbing' : 'grab';
+    tooltip.style.display = 'none';
+  }
+});
+
+// Drag & Zoom
+let px = 0, py = 0;
+canvas.addEventListener('mousedown', e => { px = e.clientX; py = e.clientY; });
+window.addEventListener('mousemove', e => {
+  if (!isPointerDown) return;
+  const dx = e.clientX - px;
+  const dy = e.clientY - py;
+  if (Math.hypot(dx, dy) > 2) {
+    globeGroup.rotation.y += dx * 0.005;
+    globeGroup.rotation.x += dy * 0.004;
+  }
+  px = e.clientX; py = e.clientY;
+});
+canvas.addEventListener('wheel', e => {
+  camera.position.z = Math.max(1.6, Math.min(5, camera.position.z + e.deltaY * 0.003));
+  e.preventDefault();
+}, { passive:false });
+
+globeGroup.rotation.y = -0.42;
+
+const clock = new THREE.Clock();
+function animate() {
+  requestAnimationFrame(animate);
+  const t = clock.getElapsedTime();
+  if (!isPointerDown) globeGroup.rotation.y += 0.0008;
+
+  const targetGround = nodeObjects[selectedId].pos;
+
+  if (currentMode === '1') {
+    // 1 Satelit Geostaționar: raza pleacă din poziția fixă a satelitului geostaționar
+    geoLaserGeo.setFromPoints([geoSatPos, targetGround]);
+  } else {
+    // 3 Sateliți în mișcare: fiecare satelit își actualizează orbita și laserul
+    sat3Objects.forEach(s => {
+      const angle = t * s.cfg.spd * 8 + s.cfg.phase;
+      const x = Math.cos(angle) * s.cfg.r;
+      const y = Math.sin(angle) * s.cfg.r * Math.sin(s.cfg.inc);
+      const z = Math.sin(angle) * s.cfg.r * Math.cos(s.cfg.inc);
+      s.mesh.position.set(x, y, z);
+      s.mesh.lookAt(0, 0, 0);
+
+      s.laserLine.geometry.setFromPoints([s.mesh.position, targetGround]);
+    });
+  }
+
+  // Pulse rings pe buline
+  Object.entries(nodeObjects).forEach(([id, obj]) => {
+    const isSel = id === selectedId;
+    const p = 0.5 + 0.5 * Math.sin(t * (isSel ? 4.5 : 1.5));
+    obj.ring.scale.setScalar(0.9 + p * (isSel ? 0.9 : 0.2));
+    obj.ringMat.opacity = isSel ? (0.95 - p * 0.4) : 0.25;
+  });
+
+  renderer.render(scene, camera);
+}
+animate();
+
+window.addEventListener('resize', () => {
+  camera.aspect = innerWidth / innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth, innerHeight);
+});
+</script>
+</body>
+</html>

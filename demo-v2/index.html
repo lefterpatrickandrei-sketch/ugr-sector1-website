@@ -120,16 +120,6 @@
                     
                     <!-- Panou Text Hero -->
                     <div class="glass-panel" id="hero-text-panel">
-                        <!-- Structură Regională direct ca antet al cardului (fără viteză și fără sediu central) -->
-                        <div class="hero-badge-container animate-slide-left delay-100" style="margin-bottom: 16px;">
-                            <div class="hierarchy-badge badge-regional">
-                                <span class="badge-dot-cyan" aria-hidden="true"></span>
-                                <span class="badge-type">STRUCTURĂ REGIONALĂ:</span>
-                                <span class="badge-org">FILIALA SECTOR 1 BUCUREȘTI</span>
-                                <span class="badge-meta">· DIALOG OCPI SECTOR 1 &amp; CAPITALĂ</span>
-                            </div>
-                        </div>
-
                         <!-- Titlu H1 cu Glisare Fluidă din Original -->
                         <h1 class="hero-title animate-slide-left delay-200">
                             Rețeaua profesioniștilor care <em>măsoară</em> România.
@@ -143,7 +133,7 @@
                         </div>
 
                         <!-- Acțiuni Hero cu Stil Permanent Shimmer Beam & Grilă Simetrică 2 Coloane pe Mobil -->
-                        <div class="hero-actions animate-slide-left delay-300" id="hero-action-buttons">
+                        <div class="hero-actions animate-slide-left delay-400" id="hero-action-buttons">
                             <button onclick="openRegistrationModal()" class="btn-membership btn-shimmer-beam" id="hero-btn-membership">
                                 <span>Înscriere UGR</span>
                                 <span class="btn-arrow">→</span>
@@ -155,102 +145,76 @@
                         </div>
                     </div>
 
-                    <!-- Panou Interactiv: Harta 2D / Glob 3D cu Sateliți -->
-                    <div class="glass-panel">
-                        <div class="map-view-switcher">
-                            <span class="switcher-label">HARTĂ & TELEMETRIE GEODEZICĂ</span>
-                            <div class="mode-toggle-group" role="tablist">
-                                <button onclick="switchMapView('2d')" id="btn-mode-2d" class="mode-btn active" role="tab" aria-selected="true">HARTĂ 2D</button>
-                                <button onclick="switchMapView('3d')" id="btn-mode-3d" class="mode-btn" role="tab" aria-selected="false">GLOB 3D SATELIȚI</button>
+                    <!-- Panou Interactiv: VisionOS Spatial Glass HUD (Harta 2D / Glob 3D cu Sateliți) -->
+                    <div class="glass-panel" id="spatial-hud-card" style="position: relative; overflow: hidden; padding: 0; min-height: 520px; display: flex; flex-direction: column; background: rgba(4, 14, 26, 0.40); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border: 1px solid rgba(0, 229, 255, 0.35); border-radius: 14px; box-shadow: 0 20px 50px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.15);">
+                        
+                        <!-- Top Floating Controls: Glass Capsule HUD (Curățat complet conform cerinței) -->
+                        <div style="position: absolute; top: 12px; right: 12px; display: flex; align-items: center; z-index: 25; pointer-events: none;">
+                            <!-- Mode & Filter Capsule -->
+                            <div style="pointer-events: auto; display: flex; align-items: center; gap: 4px; padding: 4px 6px; background: rgba(3, 11, 22, 0.65); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(0, 229, 255, 0.3); border-radius: 20px; box-shadow: 0 4px 14px rgba(0,0,0,0.4);">
+                                <button type="button" onclick="switchMapView('2d')" id="btn-mode-2d" class="mode-btn active" style="padding: 4px 10px; font-size: 10px; border-radius: 14px;">2D</button>
+                                <button type="button" onclick="switchMapView('3d')" id="btn-mode-3d" class="mode-btn" style="padding: 4px 10px; font-size: 10px; border-radius: 14px;">3D</button>
+                                <select id="skill-selector" onchange="handleSkillFilterChange()" style="background: transparent; color: #fff; border: none; font-family: var(--font-mono); font-size: 10px; padding: 2px 4px; outline: none; cursor: pointer;">
+                                    <option value="toate" style="background:#061a2d;">Toate</option>
+                                    <option value="lidar" style="background:#061a2d;">LiDAR</option>
+                                    <option value="gnss" style="background:#061a2d;">GNSS</option>
+                                    <option value="cadastru" style="background:#061a2d;">Cadastru</option>
+                                </select>
                             </div>
                         </div>
 
-                        <!-- Filtru Competențe Tehnice -->
-                        <div style="margin-bottom: 12px; width: 100%;">
-                            <label for="skill-selector" class="form-label" style="font-size: 9.5px; margin-bottom: 4px; display: block;">Filtrează filiale după expertiză / tehnologie:</label>
-                            <select id="skill-selector" onchange="handleSkillFilterChange()" class="form-input" style="width: 100%; padding: 7px 10px; font-size: 11px;">
-                                <option value="toate">-- Toate competențele & filialele active --</option>
-                                <option value="lidar">Scanare laser 3D & Sisteme Mobile LiDAR</option>
-                                <option value="gnss">Rețele Naționale Geodezice Satelitare GNSS</option>
-                                <option value="cadastru">Cadastru General Sistematic & Publicitate Imobiliară</option>
-                                <option value="gis">Baze de Date Geospațiale & Tehnologii GIS</option>
-                                <option value="nivelment">Nivelment Geometric de Înaltă Precizie</option>
-                            </select>
-                        </div>
-
-                        <div class="map-card-body">
-                            <!-- Container 2D Harta Vectorială KML -->
-                            <div id="svg-map-wrapper">
+                        <!-- Canvas Central Harta (100% eliberat și aerisit) -->
+                        <div class="map-card-body" style="height: 380px; width: 100%; border: none; border-radius: 0; background: transparent; box-shadow: none;">
+                            <div id="svg-map-wrapper" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;">
                                 <svg viewBox="0 0 400 300" style="width: 100%; max-width: 360px; height: auto;" aria-label="Harta nodurilor geodezice din România">
-                                    <!-- Contur România KML -->
-                                    <path d="M168.1,270.7 L162.1,271.0 L135.3,262.3 L122.4,265.1 L115.2,262.8 L114.2,260.1 L115.6,255.5 L119.6,254.0 L121.5,250.9 L108.7,243.4 L108.5,240.3 L103.3,237.4 L100.2,230.5 L104.8,225.9 L110.4,226.7 L111.3,225.7 L109.4,222.9 L105.6,222.0 L99.1,217.3 L94.8,220.1 L89.8,229.3 L88.5,229.5 L84.7,225.3 L83.3,221.4 L70.5,220.0 L67.6,214.2 L61.5,213.6 L60.4,209.2 L67.2,207.8 L66.5,205.3 L62.6,204.2 L60.6,201.4 L65.7,194.7 L64.6,192.5 L48.7,185.5 L40.0,177.0 L38.5,169.9 L39.6,167.8 L39.7,162.3 L36.7,163.1 L31.8,154.9 L24.1,150.6 L20.0,143.6 L20.5,142.2 L28.2,140.1 L33.2,142.7 L36.7,140.9 L38.1,136.8 L40.6,135.1 L48.8,136.9 L53.4,134.0 L54.4,128.7 L57.5,125.4 L58.9,117.0 L65.0,113.5 L66.1,111.4 L65.0,109.9 L66.3,106.1 L69.3,103.1 L72.2,96.7 L70.8,95.6 L75.5,91.0 L80.9,78.2 L83.9,76.5 L84.8,69.0 L90.2,65.6 L91.7,61.3 L95.2,57.8 L99.9,55.3 L107.3,56.2 L111.9,52.7 L116.1,46.9 L123.1,43.8 L125.5,38.9 L129.4,39.7 L134.9,44.4 L157.6,46.8 L161.1,49.1 L176.7,46.9 L180.9,50.0 L181.7,52.4 L186.4,54.5 L190.3,59.5 L197.2,57.1 L201.1,51.0 L205.1,48.8 L235.2,45.2 L239.3,40.5 L241.0,35.2 L248.7,33.5 L252.5,31.0 L259.2,31.5 L265.9,36.3 L271.6,45.2 L276.8,62.4 L281.7,67.3 L286.9,77.8 L289.1,80.9 L292.1,82.0 L297.3,91.6 L305.2,98.0 L306.6,105.4 L311.3,117.6 L311.4,127.1 L305.7,145.6 L308.4,167.0 L308.2,169.2 L304.9,171.5 L308.7,177.3 L312.5,179.6 L314.9,185.6 L327.9,190.6 L331.4,189.6 L333.3,186.3 L350.6,179.1 L360.0,181.7 L363.2,186.7 L363.1,191.0 L361.7,190.9 L362.9,196.2 L361.0,210.3 L346.6,213.0 L341.3,211.5 L340.4,206.1 L342.6,204.1 L340.4,202.0 L338.2,201.9 L334.0,205.3 L333.9,208.5 L336.9,211.3 L335.2,215.0 L331.4,217.1 L330.8,220.0 L333.3,220.6 L335.2,217.6 L338.5,218.7 L336.9,221.6 L337.9,219.4 L337.3,218.5 L332.2,222.3 L330.2,221.8 L330.0,227.4 L336.2,222.3 L333.2,228.6 L325.3,239.1 L326.4,256.0 L323.6,268.0 L311.7,267.1 L303.7,263.4 L299.5,254.5 L292.9,256.8 L289.7,252.5 L280.7,253.6 L276.6,250.3 L275.8,247.8 L267.2,247.0 L234.3,255.6 L221.6,269.8 L212.3,273.5 L206.7,274.5 L201.1,271.1 L182.5,269.7 L175.7,267.3 L168.1,270.7 Z" fill="rgba(18,125,194,0.08)" stroke="rgba(64,176,240,0.45)" stroke-width="1.2" />
-
-                                    <!-- Contur Republica Moldova KML -->
-                                    <path d="M306.3,144.2 L311.4,127.1 L311.3,117.6 L306.6,105.4 L305.2,98.0 L295.0,89.0 L292.9,83.2 L289.1,80.9 L281.7,67.3 L276.8,62.4 L271.6,45.2 L265.9,36.3 L259.2,31.5 L252.5,31.0 L255.0,26.6 L274.6,25.1 L284.8,20.0 L293.7,20.8 L299.9,26.7 L305.1,28.1 L305.5,31.7 L310.1,33.6 L315.0,31.7 L316.5,35.9 L318.3,36.8 L320.7,37.4 L322.7,36.0 L331.8,37.9 L334.5,44.2 L338.2,47.8 L344.1,45.3 L348.2,56.7 L346.0,65.0 L343.8,68.2 L345.8,73.9 L347.8,73.0 L349.7,74.8 L353.9,81.7 L356.3,81.4 L357.1,78.9 L359.5,79.3 L360.7,82.4 L359.8,99.8 L373.3,106.6 L374.3,110.6 L374.0,119.6 L371.6,121.5 L380.0,128.3 L378.9,129.6 L372.5,129.5 L370.4,131.4 L365.6,126.4 L361.9,130.2 L356.9,126.3 L357.0,124.1 L351.6,124.9 L350.0,128.3 L346.8,130.3 L347.2,124.1 L346.2,120.9 L338.6,124.5 L336.4,127.0 L337.0,134.4 L340.3,139.3 L337.7,149.3 L330.2,151.6 L330.3,156.8 L327.1,161.2 L324.1,161.8 L321.5,164.8 L320.2,167.2 L321.5,168.1 L321.2,175.1 L312.9,174.5 L311.3,175.3 L310.2,178.6 L304.9,171.5 L308.2,169.2 L308.4,167.0 L305.7,150.0 L306.3,144.2 Z" fill="rgba(18,125,194,0.04)" stroke="rgba(64,176,240,0.3)" stroke-width="1" />
-
-                                    <!-- Conexiuni vectoriale -->
-                                    <line id="vec-chisinau" class="edge-vector" x1="233" y1="232" x2="334" y2="96" />
-                                    <line id="vec-cluj" class="edge-vector" x1="233" y1="232" x2="142" y2="109" />
-                                    <line id="vec-iasi" class="edge-vector" x1="233" y1="232" x2="271" y2="99" />
-                                    <line id="vec-constanta" class="edge-vector" x1="233" y1="232" x2="327" y2="246" />
-                                    <line id="vec-timisoara" class="edge-vector" x1="233" y1="232" x2="55" y2="163" />
-
-                                    <!-- Noduri interactiv clickable cu diferențiere vizuală -->
-                                    <!-- 1. Nod Flagship Capitală: București — Filiala Sector 1 -->
-                                    <g class="cursor-pointer" onclick="selectNode('bucuresti')" id="map-pin-bucuresti" title="București — Filiala Sector 1 (Pol Regional Capitală)">
-                                        <circle cx="233" cy="232" r="11" fill="rgba(0, 229, 255, 0.2)" class="node-ring-pulse-s1" stroke="#00E5FF" stroke-width="1.3" stroke-dasharray="3,2" />
-                                        <circle cx="233" cy="232" r="5.5" fill="#00E5FF" />
-                                        <circle cx="233" cy="232" r="2.2" fill="#FFFFFF" />
-                                        <text x="233" y="248" fill="#00E5FF" font-family="'IBM Plex Mono', monospace" font-size="7" font-weight="700" text-anchor="middle">★ SECTOR 1</text>
-                                    </g>
-                                    <!-- 2. Nod Gazdă Internațională: Chișinău UTM (SGR 2026) -->
-                                    <g class="cursor-pointer" onclick="selectNode('chisinau')" id="map-pin-chisinau" title="Chișinău — UTM (Gazda Internațională SGR)">
-                                        <circle cx="334" cy="96" r="5.5" fill="#FF9F1C" />
-                                        <circle cx="334" cy="96" class="node-ring" fill="none" stroke="#FF9F1C" stroke-width="1.2" />
-                                        <text x="334" y="87" fill="#FF9F1C" font-family="'IBM Plex Mono', monospace" font-size="6.5" font-weight="600" text-anchor="middle">SGR UTM</text>
-                                    </g>
-                                    <!-- 3. Filiale Regionale din Țară -->
-                                    <g class="cursor-pointer" onclick="selectNode('cluj')" title="Cluj-Napoca (Filială Regională)"><circle cx="142" cy="109" r="4.5" fill="#40B0F0" /></g>
-                                    <g class="cursor-pointer" onclick="selectNode('iasi')" title="Iași (Filială Regională)"><circle cx="271" cy="99" r="4.5" fill="#40B0F0" /></g>
-                                    <g class="cursor-pointer" onclick="selectNode('timisoara')" title="Timișoara (Filială Regională)"><circle cx="55" cy="163" r="4.5" fill="#40B0F0" /></g>
-                                    <g class="cursor-pointer" onclick="selectNode('constanta')" title="Constanța (Filială Regională)"><circle cx="327" cy="246" r="4.5" fill="#40B0F0" /></g>
+                                    <path d="M168.1,270.7 L162.1,271.0 L135.3,262.3 L122.4,265.1 L115.2,262.8 L114.2,260.1 L115.6,255.5 L119.6,254.0 L121.5,250.9 L108.7,243.4 L108.5,240.3 L103.3,237.4 L100.2,230.5 L104.8,225.9 L110.4,226.7 L111.3,225.7 L109.4,222.9 L105.6,222.0 L99.1,217.3 L94.8,220.1 L89.8,229.3 L88.5,229.5 L84.7,225.3 L83.3,221.4 L70.5,220.0 L67.6,214.2 L61.5,213.6 L60.4,209.2 L67.2,207.8 L66.5,205.3 L62.6,204.2 L60.6,201.4 L65.7,194.7 L64.6,192.5 L48.7,185.5 L40.0,177.0 L38.5,169.9 L39.6,167.8 L39.7,162.3 L36.7,163.1 L31.8,154.9 L24.1,150.6 L20.0,143.6 L20.5,142.2 L28.2,140.1 L33.2,142.7 L36.7,140.9 L38.1,136.8 L40.6,135.1 L48.8,136.9 L53.4,134.0 L54.4,128.7 L57.5,125.4 L58.9,117.0 L65.0,113.5 L66.1,111.4 L65.0,109.9 L66.3,106.1 L69.3,103.1 L72.2,96.7 L70.8,95.6 L75.5,91.0 L80.9,78.2 L83.9,76.5 L84.8,69.0 L90.2,65.6 L91.7,61.3 L95.2,57.8 L99.9,55.3 L107.3,56.2 L111.9,52.7 L116.1,46.9 L123.1,43.8 L125.5,38.9 L129.4,39.7 L134.9,44.4 L157.6,46.8 L161.1,49.1 L176.7,46.9 L180.9,50.0 L181.7,52.4 L186.4,54.5 L190.3,59.5 L197.2,57.1 L201.1,51.0 L205.1,48.8 L235.2,45.2 L239.3,40.5 L241.0,35.2 L248.7,33.5 L252.5,31.0 L259.2,31.5 L265.9,36.3 L271.6,45.2 L276.8,62.4 L281.7,67.3 L286.9,77.8 L289.1,80.9 L292.1,82.0 L297.3,91.6 L305.2,98.0 L306.6,105.4 L311.3,117.6 L311.4,127.1 L305.7,145.6 L308.4,167.0 L308.2,169.2 L304.9,171.5 L308.7,177.3 L312.5,179.6 L314.9,185.6 L327.9,190.6 L331.4,189.6 L333.3,186.3 L350.6,179.1 L360.0,181.7 L363.2,186.7 L363.1,191.0 L361.7,190.9 L362.9,196.2 L361.0,210.3 L346.6,213.0 L341.3,211.5 L340.4,206.1 L342.6,204.1 L340.4,202.0 L338.2,201.9 L334.0,205.3 L333.9,208.5 L336.9,211.3 L335.2,215.0 L331.4,217.1 L330.8,220.0 L333.3,220.6 L335.2,217.6 L338.5,218.7 L336.9,221.6 L337.9,219.4 L337.3,218.5 L332.2,222.3 L330.2,221.8 L330.0,227.4 L336.2,222.3 L333.2,228.6 L325.3,239.1 L326.4,256.0 L323.6,268.0 L311.7,267.1 L303.7,263.4 L299.5,254.5 L292.9,256.8 L289.7,252.5 L280.7,253.6 L276.6,250.3 L275.8,247.8 L267.2,247.0 L234.3,255.6 L221.6,269.8 L212.3,273.5 L206.7,274.5 L201.1,271.1 L182.5,269.7 L175.7,267.3 L168.1,270.7 Z" fill="rgba(18,125,194,0.12)" stroke="rgba(0,229,255,0.6)" stroke-width="1.2" />
+                                    <path d="M306.3,144.2 L311.4,127.1 L311.3,117.6 L306.6,105.4 L305.2,98.0 L295.0,89.0 L292.9,83.2 L289.1,80.9 L281.7,67.3 L276.8,62.4 L271.6,45.2 L265.9,36.3 L259.2,31.5 L252.5,31.0 L255.0,26.6 L274.6,25.1 L284.8,20.0 L293.7,20.8 L299.9,26.7 L305.1,28.1 L305.5,31.7 L310.1,33.6 L315.0,31.7 L316.5,35.9 L318.3,36.8 L320.7,37.4 L322.7,36.0 L331.8,37.9 L334.5,44.2 L338.2,47.8 L344.1,45.3 L348.2,56.7 L346.0,65.0 L343.8,68.2 L345.8,73.9 L347.8,73.0 L349.7,74.8 L353.9,81.7 L356.3,81.4 L357.1,78.9 L359.5,79.3 L360.7,82.4 L359.8,99.8 L373.3,106.6 L374.3,110.6 L374.0,119.6 L371.6,121.5 L380.0,128.3 L378.9,129.6 L372.5,129.5 L370.4,131.4 L365.6,126.4 L361.9,130.2 L356.9,126.3 L357.0,124.1 L351.6,124.9 L350.0,128.3 L346.8,130.3 L347.2,124.1 L346.2,120.9 L338.6,124.5 L336.4,127.0 L337.0,134.4 L340.3,139.3 L337.7,149.3 L330.2,151.6 L330.3,156.8 L327.1,161.2 L324.1,161.8 L321.5,164.8 L320.2,167.2 L321.5,168.1 L321.2,175.1 L312.9,174.5 L311.3,175.3 L310.2,178.6 L304.9,171.5 L308.2,169.2 L308.4,167.0 L305.7,150.0 L306.3,144.2 Z" fill="rgba(18,125,194,0.06)" stroke="rgba(0,229,255,0.4)" stroke-width="1" />
+                                    <line id="vec-chisinau" class="edge-vector" x1="233" y1="232" x2="334" y2="96" stroke="#00E5FF" stroke-width="1.6" />
+                                    <line id="vec-cluj" class="edge-vector" x1="233" y1="232" x2="142" y2="109" stroke="#00E5FF" stroke-width="1.6" />
+                                    <line id="vec-iasi" class="edge-vector" x1="233" y1="232" x2="271" y2="99" stroke="#00E5FF" stroke-width="1.6" />
+                                    <line id="vec-constanta" class="edge-vector" x1="233" y1="232" x2="327" y2="246" stroke="#00E5FF" stroke-width="1.6" />
+                                    <line id="vec-timisoara" class="edge-vector" x1="233" y1="232" x2="55" y2="163" stroke="#00E5FF" stroke-width="1.6" />
+                                    
+                                    <g class="cursor-pointer" onclick="selectNode('bucuresti')"><circle cx="233" cy="232" r="6" fill="#00E5FF" /><circle cx="233" cy="232" r="12" fill="none" stroke="#00E5FF" stroke-width="1" stroke-dasharray="2,2"/><text x="233" y="248" fill="#00E5FF" font-family="'IBM Plex Mono', monospace" font-size="7" font-weight="700" text-anchor="middle">★ SECTOR 1</text></g>
+                                    <g class="cursor-pointer" onclick="selectNode('chisinau')"><circle cx="334" cy="96" r="5" fill="#FF9F1C" /><text x="334" y="87" fill="#FF9F1C" font-family="'IBM Plex Mono', monospace" font-size="6.5" font-weight="600" text-anchor="middle">SGR UTM</text></g>
+                                    <g class="cursor-pointer" onclick="selectNode('cluj')"><circle cx="142" cy="109" r="4.5" fill="#40B0F0" /></g>
+                                    <g class="cursor-pointer" onclick="selectNode('iasi')"><circle cx="271" cy="99" r="4.5" fill="#40B0F0" /></g>
+                                    <g class="cursor-pointer" onclick="selectNode('timisoara')"><circle cx="55" cy="163" r="4.5" fill="#40B0F0" /></g>
+                                    <g class="cursor-pointer" onclick="selectNode('constanta')"><circle cx="327" cy="246" r="4.5" fill="#40B0F0" /></g>
                                 </svg>
                             </div>
-
-                            <!-- Container 3D Globe WebGL (Three.js + Sateliți + Lasere) -->
-                            <div id="globe-3d-wrapper" style="display: none;" aria-label="Vizualizare 3D a globului terestru cu sateliți orbitali">
-                                <div id="globe-canvas-container" style="width: 100%; height: 290px;"></div>
+                            <div id="globe-3d-wrapper" style="display: none; width: 100%; height: 100%;">
+                                <div id="globe-canvas-container" style="width: 100%; height: 380px;"></div>
                             </div>
                         </div>
 
-                        <!-- Panou Afișare Detalii Nod & Telemetrie Teritorială -->
-                        <div id="node-info-panel" class="node-info-box">
-                            <div class="node-info-header">
-                                <span id="node-info-title">București — Filiala Sector 1 (Pol Regional Capitală)</span>
-                                <span id="node-info-coords" class="node-info-coords">44°27'12" N / 26°05'05" E • X: 328733.315 m | Y: 586483.430 m</span>
+                        <!-- Bottom Floating Telemetry Dock (Progressive Disclosure) -->
+                        <div id="spatial-dock" style="position: absolute; bottom: 12px; left: 12px; right: 12px; z-index: 30; background: rgba(3, 11, 22, 0.82); backdrop-filter: blur(28px); -webkit-backdrop-filter: blur(28px); border: 1px solid rgba(0, 229, 255, 0.35); border-radius: 12px; box-shadow: 0 12px 35px rgba(0,0,0,0.6); padding: 10px 14px; transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);">
+                            <!-- Glance Header (Tot timpul vizibil, foarte aerisit) -->
+                            <div style="display: flex; align-items: center; justify-content: space-between; cursor: pointer;" onclick="toggleSpatialDrawer()">
+                                <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                                    <span id="spatial-node-badge" style="font-family: var(--font-mono); font-size: 11px; font-weight: 700; color: #00E5FF; letter-spacing: 0.04em;">★ Sector 1 București</span>
+                                    <span style="color: rgba(255,255,255,0.25);">•</span>
+                                    <span id="spatial-node-coords-short" style="font-family: var(--font-mono); font-size: 10px; color: rgba(250,251,252,0.85);">X: 328733.315 m | Y: 586483.430 m</span>
+                                </div>
+                                <button type="button" style="display: flex; align-items: center; gap: 4px; padding: 4px 10px; border-radius: 6px; background: rgba(0,229,255,0.15); border: 1px solid rgba(0,229,255,0.4); color: #00E5FF; font-family: var(--font-mono); font-size: 10px; font-weight: 600; cursor: pointer;">
+                                    <span id="spatial-toggle-text">Detalii Nod</span>
+                                    <span id="spatial-chevron" style="display: inline-block; transition: transform 0.25s;">▲</span>
+                                </button>
                             </div>
-                            <p id="node-info-text" style="color: rgba(250,251,252,0.85); line-height: 1.45; margin-bottom: 6px;">
-                                Nod strategic național și pol legislativ al Capitalei: Filiala Sector 1 reprezintă comunitatea geodezilor autorizați din București în parteneriat tehnic-legislativ direct cu ANCPI și OCPI București. Coordonează Rețeaua Geodezică Locală a Municipiului București (RGLMB) și infrastructura stațiilor GNSS permanente ROMPOS (BUCU, BUC1, BUC2).
-                            </p>
-                            <div id="node-telemetry-container" class="node-telemetry-grid" style="margin-top: 10px; display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px;">
-                                <div class="telemetry-card" style="background: rgba(0,229,255,0.08); border: 1px solid rgba(0,229,255,0.3); padding: 6px 8px; border-radius: 4px; font-family: var(--font-mono); font-size: 10px;">
-                                    <div style="color: var(--ugr-cyan); font-weight: 700; font-size: 9px; text-transform: uppercase;">STAȚII ROMPOS REF</div>
-                                    <div style="color: #fff; font-size: 10.5px;">BUCU (Tei) & BUC1 (Vest)</div>
-                                </div>
-                                <div class="telemetry-card" style="background: rgba(0,229,255,0.08); border: 1px solid rgba(0,229,255,0.3); padding: 6px 8px; border-radius: 4px; font-family: var(--font-mono); font-size: 10px;">
-                                    <div style="color: var(--ugr-cyan); font-weight: 700; font-size: 9px; text-transform: uppercase;">REȚEA RGLMB S1</div>
-                                    <div style="color: #fff; font-size: 10.5px;">P. Victoriei / Arcul de Triumf</div>
-                                </div>
-                                <div class="telemetry-card" style="background: rgba(0,229,255,0.08); border: 1px solid rgba(0,229,255,0.3); padding: 6px 8px; border-radius: 4px; font-family: var(--font-mono); font-size: 10px;">
-                                    <div style="color: var(--ugr-cyan); font-weight: 700; font-size: 9px; text-transform: uppercase;">DATUM / CRS</div>
-                                    <div style="color: #fff; font-size: 10.5px;">Stereo 70 / EPSG:31700</div>
-                                </div>
-                                <div class="telemetry-card" style="background: rgba(0,229,255,0.08); border: 1px solid rgba(0,229,255,0.3); padding: 6px 8px; border-radius: 4px; font-family: var(--font-mono); font-size: 10px;">
-                                    <div style="color: var(--ugr-cyan); font-weight: 700; font-size: 9px; text-transform: uppercase;">PRECIZIE GEODEZICĂ</div>
-                                    <div style="color: #fff; font-size: 10.5px;">GNSS RTK 1-2cm / Niv. Clasa I</div>
+
+                            <!-- Drawer Extensibil Smooth (Fără căsuțe false, 100% date reale) -->
+                            <div id="spatial-drawer-body" style="max-height: 0; opacity: 0; overflow: hidden; transition: max-height 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s ease, margin 0.35s ease; border-top: 1px solid transparent;">
+                                <p id="spatial-node-desc" style="font-size: 12px; line-height: 1.5; color: rgba(250,251,252,0.88); margin: 10px 0; transition: opacity 0.2s ease;">
+                                    Nod strategic național și pol legislativ al Capitalei: Filiala Sector 1 reprezintă comunitatea geodezilor autorizați din București în parteneriat tehnic-legislativ direct cu ANCPI și OCPI București.
+                                </p>
+                                <div style="display: flex; gap: 8px; margin-bottom: 2px;">
+                                    <a href="#calculator" class="btn-membership" style="padding: 6px 14px; font-size: 10.5px; text-decoration: none;">Calculează în Stereo 70 →</a>
+                                    <button type="button" onclick="selectNode('chisinau')" class="btn-secondary" style="padding: 6px 14px; font-size: 10.5px;">Comută la Chișinău UTM ↗</button>
                                 </div>
                             </div>
                         </div>
+
                     </div>
 
                 </div>
@@ -281,12 +245,24 @@
             <!-- CALCULATOR STEREO 70 INTEGRAT DIRECT ÎN ACASĂ (FĂRĂ PAGINĂ SEPARATĂ) -->
             <div class="section-block section-dark" style="border-top: 1px solid var(--ugr-border); padding-top: 50px;">
                 <div class="content-container">
-                    <div class="section-header" style="text-align: center; margin: 0 auto 30px auto;">
-                        <div class="section-tag" style="justify-content: center;">Utilitar Tehnic Integrat</div>
-                        <h2 class="section-title">Calculator Transversal Stereo 70 ⇄ WGS84</h2>
-                        <p style="color: var(--ugr-text-muted); font-size: 13.5px; margin-top: 8px;">
-                            Algoritm matematic conform proiecției stereografice 1970 pe elipsoidul Krasovski 1940 (EPSG:31700). Nu necesită pagină separată.
-                        </p>
+                    <div class="section-header style-21stdev" style="text-align: center; margin: 0 auto 32px auto; display: flex; flex-direction: column; align-items: center;">
+                        <!-- Kicker Alb cu Liniuță "——" (Inspirat din Imaginea 2) cu Animație 3D Kinetică -->
+                        <div class="calc-kicker-white-kinetic" id="calc-kinetic-kicker" aria-label="—— UTILITAR TEHNIC INTEGRAT">
+                            —— UTILITAR TEHNIC INTEGRAT
+                        </div>
+
+                        <!-- Titlu H2: 3D Kinetic Split & Ambient Specular Glow (Opțiunea 3 / 21st.dev) -->
+                        <h2 class="eng-h2" id="calc-kinetic-title" aria-label="Calculator Transversal Stereo 70 ⇄ WGS84">
+                            Calculator Transversal Stereo 70 ⇄ WGS84
+                        </h2>
+
+                        <!-- Precision Spec Box Description (Opțiunea 3 / 21st.dev) -->
+                        <div class="eng-spec-box">
+                            <p class="eng-description">
+                                Algoritm matematic conform proiecției stereografice 1970 pe elipsoidul Krasovski 1940 
+                                (<span class="eng-badge-pill">EPSG:3844 ANCPI</span>). Nu necesită pagină separată.
+                            </p>
+                        </div>
                     </div>
 
                     <div class="calc-card">
@@ -308,9 +284,66 @@
                             </div>
                         </form>
 
-                        <div id="calc-result-box" class="calc-results" style="display: none;">
-                            <div class="calc-res-item">Latitudine (WGS84): <b id="res-lat">-</b></div>
-                            <div class="calc-res-item">Longitudine (WGS84): <b id="res-lon">-</b></div>
+                        <!-- Tabel Rezultate Transformare Geodezică Animat -->
+                        <div id="calc-result-box" class="calc-results-container" style="display: none;">
+                            <div class="calc-result-header">
+                                <div class="calc-badge-ancpi">
+                                    <span class="calc-status-indicator"></span>
+                                    <span>CONFORMITATE ANCPI ◆ EPSG:3844 (STEREO 70) ⇄ EPSG:4326 (WGS84)</span>
+                                </div>
+                                <div class="calc-accuracy-tag">Ordinul ANCPI 108/2010 ◆ Helmert 7-Params</div>
+                            </div>
+
+                            <div class="calc-table-wrapper">
+                                <table class="calc-geodetic-table" aria-label="Tabel Rezultate Transformare Geodezică">
+                                    <thead>
+                                        <tr>
+                                            <th>Sistem Referință</th>
+                                            <th>Coordonată Nord / Lat (φ)</th>
+                                            <th>Coordonată Est / Long (λ)</th>
+                                            <th>Format Sexagesimal (DMS)</th>
+                                            <th>Elipsoid & Datum</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr class="calc-row-source">
+                                            <td><span class="crs-badge crs-stereo">Stereo 70 (EPSG:3844)</span></td>
+                                            <td class="font-mono text-cyan" id="res-source-x">334250.125 m</td>
+                                            <td class="font-mono text-cyan" id="res-source-y">591240.850 m</td>
+                                            <td class="font-mono text-muted">Proiecție Plană Conformată</td>
+                                            <td style="color: var(--ugr-text-muted); font-size: 11px;">Krasovski 1940</td>
+                                        </tr>
+                                        <tr class="calc-row-target">
+                                            <td><span class="crs-badge crs-wgs">WGS84 Global (GPS)</span></td>
+                                            <td class="font-mono text-gold font-bold" id="res-lat-val">44.502276° N</td>
+                                            <td class="font-mono text-gold font-bold" id="res-lon-val">26.145473° E</td>
+                                            <td class="font-mono text-white" id="res-dms-val">44° 30' 08" N | 26° 08' 43" E</td>
+                                            <td style="color: var(--ugr-text-muted); font-size: 11px;">Elipsoid GRS80 / WGS84</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div class="calc-actions-bar">
+                                <div class="calc-actions-left">
+                                    <button type="button" class="btn-calc-action" onclick="copyCalculatedCoords(this)">
+                                        <span>📋</span> Copiază Coordonate WGS84
+                                    </button>
+                                    <button type="button" class="btn-calc-action" onclick="exportCalculatedPoint('csv')">
+                                        <span>📥</span> Export .CSV
+                                    </button>
+                                    <button type="button" class="btn-calc-action" onclick="exportCalculatedPoint('txt')">
+                                        <span>📄</span> Raport .TXT
+                                    </button>
+                                </div>
+                                <div class="calc-citation">Toleranță milimetrică garantată matematic conform ANCPI</div>
+                            </div>
+
+                            <!-- Câmpuri ascunse pentru retrocompatibilitate -->
+                            <div style="display: none;">
+                                <span id="res-lat">-</span>
+                                <span id="res-lon">-</span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -701,8 +734,77 @@
                     </div>
                 </div>
 
+                <!-- Tabel Cotizații și Categorii Membri UGR -->
+                <div style="background: var(--ugr-paper); border: 1px solid rgba(11,46,78,0.12); border-radius: 12px; padding: 24px; margin-bottom: 35px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 8px;">
+                        <div>
+                            <span style="font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; color: var(--ugr-accent); font-weight: 700; letter-spacing: 0.08em;">GRILĂ STATUTARĂ UGR</span>
+                            <h3 style="font-size: 18px; color: var(--ugr-text-main); margin: 4px 0 0 0;">Categorii de Membri & Grilă Cotizații Anuale</h3>
+                        </div>
+                        <span style="font-family: var(--font-mono); font-size: 11px; color: var(--ugr-text-muted); background: #fff; padding: 4px 10px; border-radius: 20px; border: 1px solid rgba(11,46,78,0.1);">Actualizat conform Hotărârii BEX UGR</span>
+                    </div>
+
+                    <div style="overflow-x: auto; border: 1px solid rgba(11,46,78,0.1); border-radius: 8px;">
+                        <table class="members-table-interactive" style="width: 100%; border-collapse: collapse; text-align: left; font-size: 13px;" aria-label="Tabel cu grila de cotizații">
+                            <thead>
+                                <tr style="background: var(--ugr-navy); color: #fff; font-family: var(--font-mono); font-size: 11px; text-transform: uppercase;">
+                                    <th style="padding: 12px 16px;">Categorie Membru</th>
+                                    <th style="padding: 12px 16px;">Taxă Înscriere</th>
+                                    <th style="padding: 12px 16px;">Cotizație Anuală</th>
+                                    <th style="padding: 12px 16px;">Drepturi Statutare & Beneficii</th>
+                                    <th style="padding: 12px 16px;">Validare Dosar</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="table-row-animated" style="border-bottom: 1px solid rgba(11,46,78,0.08); background: #fff;">
+                                    <td style="padding: 14px 16px; font-weight: 700; color: var(--ugr-navy);">
+                                        <div>Membru Titular</div>
+                                        <div style="font-size: 11px; color: var(--ugr-text-muted); font-weight: normal;">Inginer geodez autorizat ANCPI</div>
+                                    </td>
+                                    <td style="padding: 14px 16px; font-family: var(--font-mono); font-weight: 700; color: var(--ugr-accent);">50 LEI</td>
+                                    <td style="padding: 14px 16px; font-family: var(--font-mono); font-weight: 700; color: #047857;">100 LEI / AN</td>
+                                    <td style="padding: 14px 16px; color: var(--ugr-text-main); font-size: 12px;">
+                                        Drept de vot în Adunarea Generală, reprezentare la OCPI/ANCPI, legitimație oficială UGR, reduceri congrese FIG/CLGE.
+                                    </td>
+                                    <td style="padding: 14px 16px;">
+                                        <span style="font-size: 11px; font-family: var(--font-mono); background: rgba(16,185,129,0.12); color: #065F46; padding: 3px 8px; border-radius: 4px; border: 1px solid rgba(16,185,129,0.25);">Biroul Executiv (BEX)</span>
+                                    </td>
+                                </tr>
+                                <tr class="table-row-animated" style="border-bottom: 1px solid rgba(11,46,78,0.08); background: #fff;">
+                                    <td style="padding: 14px 16px; font-weight: 700; color: var(--ugr-navy);">
+                                        <div>Membru Junior / Student</div>
+                                        <div style="font-size: 11px; color: var(--ugr-text-muted); font-weight: normal;">Studenți și masteranzi ai facultăților de profil</div>
+                                    </td>
+                                    <td style="padding: 14px 16px; font-family: var(--font-mono); font-weight: 700; color: var(--ugr-accent);">10 LEI</td>
+                                    <td style="padding: 14px 16px; font-family: var(--font-mono); font-weight: 700; color: #047857;">10 LEI / AN</td>
+                                    <td style="padding: 14px 16px; color: var(--ugr-text-main); font-size: 12px;">
+                                        Acces liber la conferințe naționale, stagii de practică la companii membre, participare SGR Chișinău 2026.
+                                    </td>
+                                    <td style="padding: 14px 16px;">
+                                        <span style="font-size: 11px; font-family: var(--font-mono); background: rgba(2,132,199,0.12); color: #0369A1; padding: 3px 8px; border-radius: 4px; border: 1px solid rgba(2,132,199,0.25);">Secretariat Filială</span>
+                                    </td>
+                                </tr>
+                                <tr class="table-row-animated" style="background: #fff;">
+                                    <td style="padding: 14px 16px; font-weight: 700; color: var(--ugr-navy);">
+                                        <div>Membru Corespondent / Firmă</div>
+                                        <div style="font-size: 11px; color: var(--ugr-text-muted); font-weight: normal;">Societăți comerciale de geodezie și cadastru</div>
+                                    </td>
+                                    <td style="padding: 14px 16px; font-family: var(--font-mono); font-weight: 700; color: var(--ugr-accent);">100 LEI</td>
+                                    <td style="padding: 14px 16px; font-family: var(--font-mono); font-weight: 700; color: #047857;">DIFERENȚIATĂ</td>
+                                    <td style="padding: 14px 16px; color: var(--ugr-text-main); font-size: 12px;">
+                                        Promovare în Registrul Firmelor Partenere UGR, consultanță juridico-tehnică în proceduri cadastrale complexe.
+                                    </td>
+                                    <td style="padding: 14px 16px;">
+                                        <span style="font-size: 11px; font-family: var(--font-mono); background: rgba(147,51,234,0.12); color: #7E22CE; padding: 3px 8px; border-radius: 4px; border: 1px solid rgba(147,51,234,0.25);">Consiliul Național</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
                 <!-- Căutare și filtru registru -->
-                <div style="display: flex; gap: 16px; margin-bottom: 24px; flex-wrap: wrap;">
+                <div style="display: flex; gap: 16px; margin-bottom: 12px; flex-wrap: wrap; align-items: flex-end;">
                     <div style="flex: 1; min-width: 260px;">
                         <label for="member-search-input" class="form-label" style="color: var(--ugr-text-main);">Caută după nume sau serie autorizație:</label>
                         <input type="text" id="member-search-input" oninput="filterMembers()" onkeyup="filterMembers()" class="form-input" style="width: 100%; border-color: rgba(11,46,78,0.2); color: var(--ugr-text-main); background: #fff;" placeholder="Ex: Popescu sau RO-B-F...">
@@ -721,9 +823,14 @@
                     </div>
                 </div>
 
+                <!-- Indicator dinamic număr rezultate -->
+                <div id="members-count-badge" class="members-badge-count" style="margin-bottom: 16px; font-family: var(--font-mono); font-size: 11px; color: var(--ugr-accent);">
+                    Se afișează <b>6</b> membri autorizați
+                </div>
+
                 <!-- Tabel Membri -->
-                <div style="overflow-x: auto; border: 1px solid rgba(11,46,78,0.12); border-radius: 8px; margin-bottom: 40px;">
-                    <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 13.5px;" aria-label="Tabel cu membrii autorizați">
+                <div style="overflow-x: auto; border: 1px solid rgba(11,46,78,0.12); border-radius: 8px; margin-bottom: 40px; box-shadow: 0 4px 16px rgba(0,0,0,0.04);">
+                    <table class="members-table-interactive" style="width: 100%; border-collapse: collapse; text-align: left; font-size: 13.5px;" aria-label="Tabel cu membrii autorizați">
                         <thead>
                             <tr style="background: var(--ugr-navy); color: #fff; font-family: var(--font-mono); font-size: 11px; text-transform: uppercase;">
                                 <th style="padding: 14px 16px;">Nr. Legitimație</th>

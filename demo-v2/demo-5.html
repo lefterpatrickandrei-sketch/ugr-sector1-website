@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DEMO 5 — Cyberpunk Blueprint Wireframe · UGR Sector 1</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    background: #020408;
+    font-family: 'IBM Plex Mono', 'Courier New', monospace;
+    overflow: hidden;
+    height: 100vh;
+    color: #e2e8f0;
+  }
+
+  .demo-banner {
+    position: fixed; top:0; left:0; right:0;
+    background: rgba(2,4,8,0.8);
+    backdrop-filter: blur(14px);
+    border-bottom: 1px solid rgba(56,189,248,0.25);
+    padding: 10px 20px;
+    display: flex; align-items:center; justify-content:space-between;
+    z-index:100; font-size:11px; letter-spacing:0.12em; text-transform:uppercase;
+  }
+  .demo-banner .label { color: #38bdf8; font-weight:700; }
+  .demo-banner .name  { color: rgba(226,232,240,0.5); }
+
+  #main-canvas { display:block; width:100%; height:100%; }
+
+  /* Scanline overlay */
+  .scanlines {
+    position: fixed; inset:0; pointer-events:none; z-index:10;
+    background: repeating-linear-gradient(
+      to bottom,
+      transparent 0px,
+      transparent 2px,
+      rgba(0,0,0,0.12) 2px,
+      rgba(0,0,0,0.12) 4px
+    );
+  }
+
+  /* Corner brackets */
+  .corner { position:fixed; width:28px; height:28px; z-index:20; pointer-events:none; }
+  .corner::before, .corner::after {
+    content:''; position:absolute; background:#38bdf8;
+  }
+  .corner.tl { top:52px; left:12px; }
+  .corner.tl::before { width:2px; height:100%; }
+  .corner.tl::after  { width:100%; height:2px; }
+  .corner.tr { top:52px; right:12px; }
+  .corner.tr::before { width:2px; height:100%; right:0; }
+  .corner.tr::after  { width:100%; height:2px; right:0; }
+  .corner.bl { bottom:12px; left:12px; }
+  .corner.bl::before { width:2px; height:100%; bottom:0; }
+  .corner.bl::after  { width:100%; height:2px; bottom:0; }
+  .corner.br { bottom:12px; right:12px; }
+  .corner.br::before { width:2px; height:100%; right:0; bottom:0; }
+  .corner.br::after  { width:100%; height:2px; right:0; bottom:0; }
+
+  /* Telemetry HUD */
+  .hud {
+    position:fixed; top:50%; left:24px; transform:translateY(-50%);
+    display:flex; flex-direction:column; gap:10px; z-index:50; width:200px;
+  }
+  .hud-row {
+    display:flex; flex-direction:column;
+    background: rgba(2,4,8,0.6);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(56,189,248,0.18);
+    border-radius:8px; padding:10px 14px;
+  }
+  .hud-row .lbl { font-size:9px; letter-spacing:0.18em; color:rgba(56,189,248,0.5); text-transform:uppercase; margin-bottom:4px; }
+  .hud-row .val { font-size:12px; color:#38bdf8; }
+  .hud-row .bar {
+    height:2px; background: rgba(56,189,248,0.15);
+    border-radius:2px; margin-top:6px; overflow:hidden;
+  }
+  .hud-row .bar-fill {
+    height:100%; background:#38bdf8;
+    animation: bar-anim 3s ease-in-out infinite;
+  }
+  @keyframes bar-anim {
+    0% { width:20%; } 50% { width:92%; } 100% { width:20%; }
+  }
+
+  /* Node labels */
+  .node-label {
+    position:fixed; padding:4px 10px;
+    background: rgba(2,4,8,0.7);
+    border: 1px solid rgba(56,189,248,0.3);
+    border-radius:4px;
+    font-size:9px; letter-spacing:0.12em; color:#38bdf8;
+    text-transform:uppercase; pointer-events:none; z-index:30;
+    transform: translate(-50%, -120%);
+    white-space: nowrap;
+  }
+
+  .style-tag {
+    position:fixed; bottom:24px; left:50%; transform:translateX(-50%);
+    background:rgba(56,189,248,0.06);
+    backdrop-filter:blur(12px);
+    border:1px solid rgba(56,189,248,0.18);
+    border-radius:999px; padding:8px 22px;
+    font-size:10px; letter-spacing:0.15em; color:rgba(56,189,248,0.6);
+    text-transform:uppercase; z-index:50;
+  }
+</style>
+</head>
+<body>
+
+<div class="demo-banner">
+  <span class="label">DEMO 5</span>
+  <span class="name">Cyberpunk Blueprint Wireframe · Dark Luxury CAD</span>
+  <span class="label">UGR · Sector 1</span>
+</div>
+
+<canvas id="main-canvas"></canvas>
+<div class="scanlines"></div>
+<div class="corner tl"></div>
+<div class="corner tr"></div>
+<div class="corner bl"></div>
+<div class="corner br"></div>
+
+<!-- Telemetry HUD -->
+<div class="hud">
+  <div class="hud-row">
+    <div class="lbl">Proiecție</div>
+    <div class="val">Stereo 70</div>
+  </div>
+  <div class="hud-row">
+    <div class="lbl">Datum</div>
+    <div class="val">ETRS89</div>
+  </div>
+  <div class="hud-row">
+    <div class="lbl">RTK Signal</div>
+    <div class="val">96.3%</div>
+    <div class="bar"><div class="bar-fill"></div></div>
+  </div>
+  <div class="hud-row">
+    <div class="lbl">GNSS Lock</div>
+    <div class="val" id="gnss-val">SV: 12/14</div>
+  </div>
+</div>
+
+<div class="style-tag">Blueprint CAD Wireframe · Canvas 2D + CSS</div>
+
+<script>
+const canvas = document.getElementById('main-canvas');
+const ctx = canvas.getContext('2d');
+
+function resize() {
+  canvas.width = innerWidth;
+  canvas.height = innerHeight;
+}
+resize();
+window.addEventListener('resize', () => { resize(); });
+
+// ─── NODES (Romania screen positions, relative to center) ─────────────
+// We project the nodes onto the 2D canvas using a simple affine transform
+const NODES = [
+  { name: 'BUC · S1', lat: 44.468, lon: 26.083, code: 'BUC' },
+  { name: 'Cluj',     lat: 46.770, lon: 23.590, code: 'CLJ' },
+  { name: 'Timișoara',lat: 45.750, lon: 21.230, code: 'TIM' },
+  { name: 'Iași',     lat: 47.160, lon: 27.590, code: 'IAS' },
+  { name: 'Constanța',lat: 44.180, lon: 28.650, code: 'CTZ' },
+  { name: 'Chișinău', lat: 47.005, lon: 28.860, code: 'CHI' },
+];
+
+// Romania bbox
+const LAT_MIN=43.6, LAT_MAX=48.3, LON_MIN=20.2, LON_MAX=30.0;
+
+function project(lat, lon) {
+  const MAP_W = Math.min(innerWidth, innerHeight) * 0.62;
+  const MAP_H = MAP_W * 0.62;
+  const cx = innerWidth * 0.52;
+  const cy = innerHeight * 0.52;
+  const x = cx + ((lon - (LON_MIN+LON_MAX)/2) / (LON_MAX-LON_MIN)) * MAP_W;
+  const y = cy - ((lat - (LAT_MIN+LAT_MAX)/2) / (LAT_MAX-LAT_MIN)) * MAP_H;
+  return { x, y };
+}
+
+// Romania border — simplified polygon points [lat, lon]
+const ROMANIA_BORDER = [
+  [48.25,22.15],[48.10,22.62],[47.96,23.30],[47.72,24.02],[47.72,24.88],
+  [47.63,25.50],[47.96,26.30],[48.22,26.82],[48.25,27.50],[47.97,28.23],
+  [47.22,28.78],[46.68,29.64],[45.89,29.74],[45.49,29.25],[44.88,29.01],
+  [44.20,28.65],[43.79,28.10],[43.68,27.24],[44.05,26.10],[44.33,25.60],
+  [44.22,24.93],[43.90,24.10],[44.10,23.05],[44.52,22.70],[44.75,22.08],
+  [45.50,21.48],[46.18,20.73],[46.52,20.26],[47.10,20.35],[47.63,21.00],
+  [48.10,21.75],[48.25,22.15],
+];
+
+// ─── GRID ─────────────────────────────────────────────────────────────
+function drawGrid(t) {
+  const spacing = 48;
+  const offset = (t * 12) % spacing;
+  ctx.strokeStyle = 'rgba(56,189,248,0.06)';
+  ctx.lineWidth = 0.5;
+  ctx.beginPath();
+  for (let x = offset; x < canvas.width; x += spacing) {
+    ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height);
+  }
+  for (let y = offset; y < canvas.height; y += spacing) {
+    ctx.moveTo(0, y); ctx.lineTo(canvas.width, y);
+  }
+  ctx.stroke();
+}
+
+// ─── SCANNER ──────────────────────────────────────────────────────────
+function drawScanner(t) {
+  const { x: x0, y: y0 } = project(LAT_MIN, LON_MIN);
+  const { x: x1, y: y1 } = project(LAT_MAX, LON_MAX);
+  const scanY = y0 + ((Math.sin(t * 0.5) * 0.5 + 0.5)) * (y1 - y0);
+
+  const grad = ctx.createLinearGradient(x0, scanY - 30, x0, scanY + 30);
+  grad.addColorStop(0, 'rgba(56,189,248,0)');
+  grad.addColorStop(0.5, 'rgba(56,189,248,0.12)');
+  grad.addColorStop(1, 'rgba(56,189,248,0)');
+  ctx.fillStyle = grad;
+  ctx.fillRect(x0, scanY - 30, x1 - x0, 60);
+
+  ctx.strokeStyle = 'rgba(56,189,248,0.5)';
+  ctx.lineWidth = 1;
+  ctx.setLineDash([4, 8]);
+  ctx.beginPath();
+  ctx.moveTo(x0, scanY);
+  ctx.lineTo(x1, scanY);
+  ctx.stroke();
+  ctx.setLineDash([]);
+}
+
+// ─── ROMANIA BORDER ───────────────────────────────────────────────────
+function drawBorder(t) {
+  const pts = ROMANIA_BORDER.map(([lat, lon]) => project(lat, lon));
+
+  // Filled interior
+  ctx.beginPath();
+  ctx.moveTo(pts[0].x, pts[0].y);
+  for (let i = 1; i < pts.length; i++) ctx.lineTo(pts[i].x, pts[i].y);
+  ctx.closePath();
+  ctx.fillStyle = 'rgba(14,30,50,0.65)';
+  ctx.fill();
+
+  // Animated border
+  const dashOffset = t * 20;
+  ctx.strokeStyle = 'rgba(56,189,248,0.6)';
+  ctx.lineWidth = 1.5;
+  ctx.setLineDash([6, 14]);
+  ctx.lineDashOffset = -dashOffset;
+  ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.lineDashOffset = 0;
+
+  // Glow border
+  ctx.strokeStyle = 'rgba(56,189,248,0.12)';
+  ctx.lineWidth = 6;
+  ctx.stroke();
+}
+
+// ─── TRIANGULATION MESH ────────────────────────────────────────────────
+function drawMesh() {
+  const pts = NODES.map(n => project(n.lat, n.lon));
+  // Draw all edges
+  for (let i = 0; i < pts.length; i++) {
+    for (let j = i+1; j < pts.length; j++) {
+      const d = Math.hypot(pts[i].x - pts[j].x, pts[i].y - pts[j].y);
+      if (d > 420) continue; // skip very long edges (Chișinău far)
+      ctx.strokeStyle = `rgba(56,189,248,${0.06 + 0.04 * Math.random()})`;
+      ctx.lineWidth = 0.7;
+      ctx.beginPath();
+      ctx.moveTo(pts[i].x, pts[i].y);
+      ctx.lineTo(pts[j].x, pts[j].y);
+      ctx.stroke();
+    }
+  }
+}
+
+// ─── NODES ────────────────────────────────────────────────────────────
+function drawNodes(t) {
+  NODES.forEach((node, i) => {
+    const { x, y } = project(node.lat, node.lon);
+
+    // Pulse rings
+    for (let r = 1; r <= 3; r++) {
+      const phase = (t * 1.2 + i * 0.5 + r * 0.4) % 1;
+      const radius = 6 + phase * 32;
+      const alpha = (1 - phase) * 0.5;
+      ctx.strokeStyle = `rgba(56,189,248,${alpha})`;
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.arc(x, y, radius, 0, Math.PI * 2);
+      ctx.stroke();
+    }
+
+    // Core dot
+    const grd = ctx.createRadialGradient(x,y,0, x,y,8);
+    grd.addColorStop(0, 'rgba(56,189,248,1)');
+    grd.addColorStop(1, 'rgba(56,189,248,0)');
+    ctx.fillStyle = grd;
+    ctx.beginPath();
+    ctx.arc(x, y, 8, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.fillStyle = '#38bdf8';
+    ctx.beginPath();
+    ctx.arc(x, y, 3, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Label
+    ctx.fillStyle = 'rgba(56,189,248,0.9)';
+    ctx.font = '9px IBM Plex Mono, monospace';
+    ctx.letterSpacing = '0.1em';
+    ctx.textAlign = 'center';
+    ctx.fillText(node.code, x, y - 18);
+  });
+}
+
+// ─── CROSSHAIR CENTER ─────────────────────────────────────────────────
+function drawCrosshair(t) {
+  const buc = project(44.468, 26.083);
+  const size = 14;
+  const pulse = 0.6 + 0.4 * Math.sin(t * 3);
+
+  ctx.strokeStyle = `rgba(56,189,248,${pulse})`;
+  ctx.lineWidth = 1;
+  // Horizontal
+  ctx.beginPath();
+  ctx.moveTo(buc.x - size - 4, buc.y); ctx.lineTo(buc.x - 5, buc.y);
+  ctx.moveTo(buc.x + 5, buc.y); ctx.lineTo(buc.x + size + 4, buc.y);
+  ctx.stroke();
+  // Vertical
+  ctx.beginPath();
+  ctx.moveTo(buc.x, buc.y - size - 4); ctx.lineTo(buc.x, buc.y - 5);
+  ctx.moveTo(buc.x, buc.y + 5); ctx.lineTo(buc.x, buc.y + size + 4);
+  ctx.stroke();
+  // Corners
+  ctx.strokeStyle = `rgba(56,189,248,${pulse * 0.8})`;
+  ctx.lineWidth = 1.5;
+  [[-1,-1],[1,-1],[-1,1],[1,1]].forEach(([sx,sy]) => {
+    ctx.beginPath();
+    ctx.moveTo(buc.x + sx*7, buc.y + sy*3); ctx.lineTo(buc.x + sx*7, buc.y + sy*7);
+    ctx.lineTo(buc.x + sx*3, buc.y + sy*7);
+    ctx.stroke();
+  });
+}
+
+// ─── COORDINATES TICKER ───────────────────────────────────────────────
+let coordTick = 0;
+function drawTicker(t) {
+  const coords = [
+    'φ 44°28\'06"N  λ 26°04\'57"E',
+    'X: 336812.43 m  Y: 585421.17 m (Stereo 70)',
+    'PDOP: 1.2  SV: 12  RTK FIX OK',
+    'H Ellips: 85.42 m  H Ortho: 76.18 m',
+  ];
+  const idx = Math.floor(t * 0.4) % coords.length;
+  const str = coords[idx];
+  const visible = str.substring(0, Math.floor((t * 18) % (str.length + 10)));
+
+  ctx.fillStyle = 'rgba(56,189,248,0.7)';
+  ctx.font = '10px IBM Plex Mono, monospace';
+  ctx.textAlign = 'left';
+  ctx.fillText('› ' + visible + (Math.sin(t*4)>0 ? '_' : ' '), 24, canvas.height - 44);
+}
+
+// ─── MAIN LOOP ────────────────────────────────────────────────────────
+let t0 = null;
+function animate(ts) {
+  requestAnimationFrame(animate);
+  if (!t0) t0 = ts;
+  const t = (ts - t0) / 1000;
+
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // Background gradient
+  const bg = ctx.createRadialGradient(canvas.width/2, canvas.height/2, 0, canvas.width/2, canvas.height/2, canvas.width*0.7);
+  bg.addColorStop(0, 'rgba(4,14,28,1)');
+  bg.addColorStop(1, 'rgba(2,4,8,1)');
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  drawGrid(t);
+  drawBorder(t);
+  drawScanner(t);
+  drawMesh();
+  drawNodes(t);
+  drawCrosshair(t);
+  drawTicker(t);
+
+  // GNSS counter update
+  if (Math.floor(t) !== Math.floor(t - 1/60)) {
+    const sv = 10 + Math.floor(Math.random() * 4);
+    document.getElementById('gnss-val').textContent = `SV: ${sv}/14`;
+  }
+}
+requestAnimationFrame(animate);
+</script>
+</body>
+</html>
