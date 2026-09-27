@@ -67,9 +67,16 @@ function navigateTo(viewId) {
     appState.currentView = viewId;
     window.scrollTo({ top: 0, behavior: 'smooth' });
 
-    // Declanșează animația de tipărire la schimbarea paginii
+    // Declanșează animația de tipărire și glisarea textului la schimbarea paginii
     if (isPageChange) {
         playBrandTypewriter();
+        if (viewId === 'acasa') {
+            document.querySelectorAll('.animate-slide-left').forEach(el => {
+                el.style.animation = 'none';
+                void el.offsetWidth;
+                el.style.animation = '';
+            });
+        }
     }
 }
 
@@ -109,26 +116,48 @@ function closeMobileNav() {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
-// 2. VITEZĂ PHOTO TICKER HERO (HERO MARQUEE)
+// 2. COMUTATOR ANIMAȚIE BUTOANE HERO & VITEZĂ PHOTO TICKER
 // ═══════════════════════════════════════════════════════════════════════════
+
+function setBtnAnimationVariant(variant) {
+    const isVariantB = (variant === 'b' || variant === '2');
+    const btnMembership = document.getElementById('hero-btn-membership');
+    const btnSecondary = document.getElementById('hero-btn-secondary');
+    const pillA = document.getElementById('pill-btn-a');
+    const pillB = document.getElementById('pill-btn-b');
+
+    if (btnMembership) {
+        btnMembership.classList.toggle('btn-variant-a', !isVariantB);
+        btnMembership.classList.toggle('btn-variant-b', isVariantB);
+    }
+    if (btnSecondary) {
+        btnSecondary.classList.toggle('btn-variant-a', !isVariantB);
+        btnSecondary.classList.toggle('btn-variant-b', isVariantB);
+    }
+
+    if (pillA) pillA.classList.toggle('active', !isVariantB);
+    if (pillB) pillB.classList.toggle('active', isVariantB);
+
+    // Actualizează parametrul în URL fără reîncărcare de pagină
+    try {
+        const url = new URL(window.location.href);
+        url.searchParams.set('btn', isVariantB ? 'b' : 'a');
+        window.history.replaceState({}, '', url.toString());
+    } catch (e) {}
+}
+window.setBtnAnimationVariant = setBtnAnimationVariant;
 
 function setTickerSpeed(speed) {
     const ticker = document.getElementById('hero-photo-ticker');
-    const btnCalm = document.getElementById('btn-speed-calm');
-    const btnDyn = document.getElementById('btn-speed-dynamic');
-
     if (!ticker) return;
 
     if (speed === 'dynamic') {
         ticker.classList.add('dynamic');
-        btnDyn?.classList.add('active');
-        btnCalm?.classList.remove('active');
     } else {
         ticker.classList.remove('dynamic');
-        btnCalm?.classList.add('active');
-        btnDyn?.classList.remove('active');
     }
 }
+window.setTickerSpeed = setTickerSpeed;
 
 // ═══════════════════════════════════════════════════════════════════════════
 // 3. INTERACȚIUNE HARTĂ 2D & FILTRU COMPETENȚE
@@ -1071,6 +1100,17 @@ document.addEventListener('DOMContentLoaded', () => {
     handleHashChange();
 
     selectNode('bucuresti');
+
+    // Verifică parametrul de URL pentru stilul butoanelor (?btn=a / ?btn=b sau ?btn=1 / ?btn=2)
+    try {
+        const urlParams = new URLSearchParams(window.location.search);
+        const btnParam = urlParams.get('btn');
+        if (btnParam === 'b' || btnParam === '2') {
+            setBtnAnimationVariant('b');
+        } else {
+            setBtnAnimationVariant('a');
+        }
+    } catch (e) {}
 
     // Declanșare inițială la pornire / refresh (rămâne permanent la final)
     setTimeout(() => {

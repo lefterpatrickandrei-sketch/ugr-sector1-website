@@ -119,26 +119,9 @@
                 <div class="hero-container">
                     
                     <!-- Panou Text Hero -->
-                    <div class="glass-panel">
-                        <div class="speed-toggle" aria-label="Control viteză fundal foto">
-                            <span style="color: var(--ugr-accent-light); font-weight: 600;">VITEZĂ:</span>
-                            <button onclick="setTickerSpeed('calm')" id="btn-speed-calm" class="speed-btn active">LINIȘTITĂ</button>
-                            <span style="color: rgba(255,255,255,0.2);">|</span>
-                            <button onclick="setTickerSpeed('dynamic')" id="btn-speed-dynamic" class="speed-btn">DINAMICĂ</button>
-                        </div>
-
-                        <!-- Ierarhie Instituțională Dublă: Național vs Filială -->
-                        <div class="hero-hierarchy-stack" role="region" aria-label="Ierarhie Instituțională Oficială">
-                            <div class="hierarchy-badge badge-national">
-                                <span class="badge-dot-gold" aria-hidden="true"></span>
-                                <span class="badge-type">SEDIUL CENTRAL NAȚIONAL:</span>
-                                <span class="badge-org">UNIUNEA GEODEZILOR DIN ROMÂNIA</span>
-                                <span class="badge-meta">· FONDAT 1990 · MEMBRU FIG &amp; CLGE</span>
-                            </div>
-                            <div class="hierarchy-connector-flow" aria-hidden="true">
-                                <span class="connector-arrow">└─▶</span>
-                                <span class="connector-label">SUBORDONARE STATUTARĂ DIRECTĂ</span>
-                            </div>
+                    <div class="glass-panel" id="hero-text-panel">
+                        <!-- Structură Regională direct ca antet al cardului (fără viteză și fără sediu central) -->
+                        <div class="hero-badge-container animate-slide-left delay-100" style="margin-bottom: 16px;">
                             <div class="hierarchy-badge badge-regional">
                                 <span class="badge-dot-cyan" aria-hidden="true"></span>
                                 <span class="badge-type">STRUCTURĂ REGIONALĂ:</span>
@@ -146,17 +129,38 @@
                                 <span class="badge-meta">· DIALOG OCPI SECTOR 1 &amp; CAPITALĂ</span>
                             </div>
                         </div>
-                        <h1 class="hero-title">
+
+                        <!-- Titlu H1 cu Glisare Fluidă din Original -->
+                        <h1 class="hero-title animate-slide-left delay-200">
                             Rețeaua profesioniștilor care <em>măsoară</em> România.
                         </h1>
-                        <div class="hero-lead-capsule">
+
+                        <!-- Capsulă Lead cu Glisare Fluidă din Original -->
+                        <div class="hero-lead-capsule animate-slide-left delay-300">
                             <p class="hero-lead">
                                 <strong>Filiala Sector 1 București</strong> a Uniunii Geodezilor din România (UGR Național — asociația profesională fondată în 1990) reunește ingineri geodezi, topografi autorizați și cartografi într-o structură națională unitară dedicată preciziei matematice, integrității profesionale și dialogului legislativ permanent cu ANCPI și OCPI București.
                             </p>
                         </div>
-                        <div class="hero-actions">
-                            <button onclick="openRegistrationModal()" class="btn-membership">Înscriere UGR →</button>
-                            <a href="#evenimente" class="btn-secondary">SGR Chișinău 11–14 Nov ↗</a>
+
+                        <!-- Switcher discret pentru cele 2 variante de animație la butoane -->
+                        <div class="btn-anim-mode-bar" id="btn-mode-bar" role="region" aria-label="Comutator stil butoane">
+                            <span class="btn-mode-label">STIL BUTOANE:</span>
+                            <div class="btn-mode-pills">
+                                <button type="button" onclick="setBtnAnimationVariant('a')" class="btn-mode-pill active" id="pill-btn-a">1. Kinetic Glow</button>
+                                <button type="button" onclick="setBtnAnimationVariant('b')" class="btn-mode-pill" id="pill-btn-b">2. Shimmer Beam</button>
+                            </div>
+                        </div>
+
+                        <!-- Acțiuni Hero cu Grilă Simetrică 2 Coloane pe Mobil -->
+                        <div class="hero-actions animate-slide-left delay-300" id="hero-action-buttons">
+                            <button onclick="openRegistrationModal()" class="btn-membership btn-variant-a" id="hero-btn-membership">
+                                <span>Înscriere UGR</span>
+                                <span class="btn-arrow">→</span>
+                            </button>
+                            <a href="#evenimente" class="btn-secondary btn-variant-a" id="hero-btn-secondary" title="Săptămâna Geodeziei Românești (SGR) Chișinău 11–14 Noiembrie">
+                                <span>SGR Chișinău</span>
+                                <span class="btn-arrow">↗</span>
+                            </a>
                         </div>
                     </div>
 
