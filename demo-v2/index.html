@@ -34,17 +34,9 @@
          ══════════════════════════════════════════════════════════════════ -->
     <header class="site-header" role="banner">
         <div class="header-container">
-            <a href="#acasa" class="brand-link" aria-label="Acasă - Filiala Sector 1 București subordonată Uniunii Geodezilor din România">
-                <img src="logo_geodez.png" alt="Siglă UGR" class="brand-logo" width="38" height="38">
-                <div class="brand-identity-stack">
-                    <div class="brand-hierarchy-badge-header">
-                        <span class="badge-hq-pill">UGR NAȚIONAL</span>
-                        <span class="badge-hier-arrow">›</span>
-                        <span class="badge-branch-pill">FILIALA SECTOR 1</span>
-                    </div>
-                    <span class="brand-title">Filiala Sector 1 UGR</span>
-                    <span class="brand-sub">Uniunea Geodezilor din România</span>
-                </div>
+            <a href="#acasa" class="brand-link" aria-label="Acasă - UGR Filiala Sector 1">
+                <img src="logo_geodez.png" alt="Siglă UGR" class="brand-logo" id="header-brand-logo" width="38" height="38">
+                <span class="brand-title" id="header-brand-title">UGR Filiala Sector 1</span>
             </a>
 
             <!-- Meniu Desktop (5 Secțiuni Esențiale) -->
@@ -80,6 +72,21 @@
             </button>
         </div>
     </header>
+
+    <!-- Bara de Previzualizare Interactivă: 3 Variante de Animație Nume Header -->
+    <div class="brand-anim-preview-bar" id="anim-preview-bar" role="region" aria-label="Control Previzualizare Animație Header">
+        <div class="preview-bar-inner">
+            <span class="preview-bar-label">
+                <span class="preview-dot"></span> PREVIEW ANIMAȚIE NUME:
+            </span>
+            <div class="preview-bar-pills">
+                <button onclick="setBrandAnimationVariant(1)" class="preview-pill active" id="btn-anim-1">1. Tipărire (Typewriter)</button>
+                <button onclick="setBrandAnimationVariant(2)" class="preview-pill" id="btn-anim-2">2. Glisare &amp; Shimmer</button>
+                <button onclick="setBrandAnimationVariant(3)" class="preview-pill" id="btn-anim-3">3. Decodare Geodezică</button>
+                <button onclick="replayCurrentAnimation()" class="preview-pill pill-replay" id="btn-anim-replay" title="Reia animația">↺ Replay</button>
+            </div>
+        </div>
+    </div>
 
     <!-- ══════════════════════════════════════════════════════════════════
          CONȚINUT PRINCIPAL (SPA)

@@ -236,11 +236,56 @@ button {
 }
 .brand-title {
     font-family: var(--font-display);
-    font-size: 16px;
+    font-size: 17px;
     font-weight: 700;
     line-height: 1.2;
     color: var(--ugr-white);
+    letter-spacing: -0.01em;
     white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+}
+.brand-cursor {
+    display: inline-block;
+    margin-left: 2px;
+    color: var(--ugr-cyan);
+    font-family: var(--font-mono);
+    font-size: 15px;
+    font-weight: 400;
+    animation: brand-cursor-blink 0.75s step-end infinite;
+}
+@keyframes brand-cursor-blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+}
+
+.anim-slide-shimmer {
+    display: inline-block;
+    background: linear-gradient(90deg, #FFFFFF 0%, #FFFFFF 30%, var(--ugr-cyan) 50%, #FFFFFF 70%, #FFFFFF 100%);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: brand-slide-in 0.5s cubic-bezier(0.16, 1, 0.3, 1), brand-shimmer-sweep 2.4s ease-in-out infinite 0.5s;
+}
+@keyframes brand-slide-in {
+    from {
+        opacity: 0;
+        transform: translateX(-14px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+@keyframes brand-shimmer-sweep {
+    0% { background-position: 200% center; }
+    100% { background-position: -200% center; }
+}
+
+.brand-scramble-char {
+    color: var(--ugr-cyan);
+    text-shadow: 0 0 8px rgba(0, 229, 255, 0.8);
+    font-family: var(--font-mono);
 }
 .brand-sub {
     font-family: var(--font-mono);
@@ -1771,4 +1816,119 @@ button {
     color: var(--ugr-cyan);
     font-weight: 700;
     padding-left: 6px;
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   BARĂ DE PREVIZUALIZARE INTERACTIVĂ (3 VARIANTE ANIMAȚIE BRAND)
+   ══════════════════════════════════════════════════════════════════ */
+.brand-anim-preview-bar {
+    background: rgba(6, 26, 45, 0.98);
+    border-bottom: 1px solid rgba(0, 229, 255, 0.22);
+    padding: 8px 16px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+    position: sticky;
+    top: 76px;
+    z-index: 950;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+.preview-bar-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+.preview-bar-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: var(--ugr-accent-light);
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+.preview-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--ugr-cyan);
+    box-shadow: 0 0 8px var(--ugr-cyan);
+    animation: preview-dot-pulse 1.8s ease-in-out infinite;
+}
+@keyframes preview-dot-pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(0.85); }
+}
+.preview-bar-pills {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding-bottom: 2px;
+}
+.preview-bar-pills::-webkit-scrollbar {
+    display: none;
+}
+.preview-pill {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    padding: 5px 12px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    color: rgba(250, 251, 252, 0.85);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+.preview-pill:hover {
+    background: rgba(0, 229, 255, 0.12);
+    border-color: var(--ugr-cyan);
+    color: #FFFFFF;
+}
+.preview-pill.active {
+    background: linear-gradient(135deg, rgba(0, 229, 255, 0.25), rgba(18, 125, 194, 0.4));
+    border-color: var(--ugr-cyan);
+    color: #FFFFFF;
+    box-shadow: 0 0 10px rgba(0, 229, 255, 0.35);
+}
+.preview-pill.pill-replay {
+    background: rgba(197, 160, 89, 0.18);
+    border-color: rgba(197, 160, 89, 0.5);
+    color: var(--ugr-hq-gold-bright);
+}
+.preview-pill.pill-replay:hover {
+    background: rgba(197, 160, 89, 0.3);
+    box-shadow: 0 0 10px rgba(197, 160, 89, 0.4);
+}
+
+@media (max-width: 768px) {
+    .brand-anim-preview-bar {
+        padding: 6px 12px;
+    }
+    .preview-bar-inner {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
+    }
+    .preview-bar-pills {
+        width: 100%;
+    }
+    .preview-pill {
+        font-size: 10.5px;
+        padding: 4px 10px;
+    }
+    .brand-title {
+        font-size: 15px;
+    }
 }

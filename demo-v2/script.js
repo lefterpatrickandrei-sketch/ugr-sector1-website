@@ -1011,6 +1011,111 @@ function prevModalStep() {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
+// 9.5 SISTEM INTERACTIV DE PREVIZUALIZARE ANIMAȚIE NUME BRAND (3 VARIANTE)
+// ═══════════════════════════════════════════════════════════════════════════
+
+const BRAND_NAME_TEXT = "UGR Filiala Sector 1";
+let currentBrandAnimVariant = 1;
+let brandAnimTimer = null;
+let brandAnimInterval = null;
+
+function setBrandAnimationVariant(variantNumber) {
+    currentBrandAnimVariant = variantNumber;
+    
+    [1, 2, 3].forEach(num => {
+        const btn = document.getElementById(`btn-anim-${num}`);
+        if (btn) {
+            if (num === variantNumber) {
+                btn.classList.add('active');
+            } else {
+                btn.classList.remove('active');
+            }
+        }
+    });
+
+    playBrandAnimation(variantNumber);
+}
+window.setBrandAnimationVariant = setBrandAnimationVariant;
+
+function replayCurrentAnimation() {
+    const replayBtn = document.getElementById('btn-anim-replay');
+    if (replayBtn) {
+        replayBtn.style.transform = 'scale(0.92)';
+        setTimeout(() => {
+            replayBtn.style.transform = 'none';
+        }, 150);
+    }
+    playBrandAnimation(currentBrandAnimVariant);
+}
+window.replayCurrentAnimation = replayCurrentAnimation;
+
+function playBrandAnimation(variantNumber) {
+    const titleEl = document.getElementById('header-brand-title');
+    if (!titleEl) return;
+
+    if (brandAnimTimer) clearTimeout(brandAnimTimer);
+    if (brandAnimInterval) clearInterval(brandAnimInterval);
+
+    // VARIANTA 1: Tipărire (Typewriter cu cursor cyan intermitent)
+    if (variantNumber === 1) {
+        titleEl.className = 'brand-title';
+        titleEl.innerHTML = '<span class="brand-cursor">▋</span>';
+        let charIndex = 0;
+        
+        brandAnimInterval = setInterval(() => {
+            if (charIndex < BRAND_NAME_TEXT.length) {
+                charIndex++;
+                const currentSubstr = BRAND_NAME_TEXT.substring(0, charIndex);
+                titleEl.innerHTML = currentSubstr + '<span class="brand-cursor">▋</span>';
+            } else {
+                clearInterval(brandAnimInterval);
+                brandAnimInterval = null;
+            }
+        }, 45);
+    }
+    
+    // VARIANTA 2: Glisare & Shimmer (Slide-in lin cu luciu cyan continuu)
+    else if (variantNumber === 2) {
+        titleEl.className = 'brand-title';
+        titleEl.innerHTML = `<span class="anim-slide-shimmer">${BRAND_NAME_TEXT}</span>`;
+    }
+    
+    // VARIANTA 3: Decodare Geodezică (Efect Matrix / Cypher cu simboluri topografice)
+    else if (variantNumber === 3) {
+        titleEl.className = 'brand-title';
+        const glyphs = ['Δ', 'λ', 'φ', 'Σ', 'X', 'Y', 'Z', '0', '1', '7', '8', '°', 'N', 'E', '±'];
+        const totalFrames = 22;
+        let currentFrame = 0;
+
+        brandAnimInterval = setInterval(() => {
+            currentFrame++;
+            const progress = currentFrame / totalFrames;
+            const resolvedCount = Math.floor(progress * BRAND_NAME_TEXT.length);
+
+            let renderedHtml = '';
+            for (let i = 0; i < BRAND_NAME_TEXT.length; i++) {
+                if (i < resolvedCount) {
+                    renderedHtml += BRAND_NAME_TEXT[i];
+                } else if (BRAND_NAME_TEXT[i] === ' ') {
+                    renderedHtml += ' ';
+                } else {
+                    const randomGlyph = glyphs[Math.floor(Math.random() * glyphs.length)];
+                    renderedHtml += `<span class="brand-scramble-char">${randomGlyph}</span>`;
+                }
+            }
+            titleEl.innerHTML = renderedHtml;
+
+            if (currentFrame >= totalFrames) {
+                clearInterval(brandAnimInterval);
+                brandAnimInterval = null;
+                titleEl.textContent = BRAND_NAME_TEXT;
+            }
+        }, 38);
+    }
+}
+window.playBrandAnimation = playBrandAnimation;
+
+// ═══════════════════════════════════════════════════════════════════════════
 // 10. INIȚIALIZARE LA ÎNCĂRCAREA PAGINII
 // ═══════════════════════════════════════════════════════════════════════════
 
@@ -1027,6 +1132,11 @@ document.addEventListener('DOMContentLoaded', () => {
     handleHashChange();
 
     selectNode('bucuresti');
+
+    // Pornire automată previzualizare animație brand (Varianta 1)
+    setTimeout(() => {
+        setBrandAnimationVariant(1);
+    }, 200);
 
     // Închidere drawer mobil la tasta Escape sau la click în afara lui
     document.addEventListener('keydown', (e) => {
