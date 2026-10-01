@@ -44,6 +44,20 @@ function navigateTo(viewId) {
     const targetSection = document.getElementById('view-' + viewId);
     if (targetSection) {
         targetSection.classList.remove('hidden');
+
+        // Declanșează animația fluidă în cascadă pentru Hero la intrarea pe pagină (identic cu Home & Despre Noi)
+        if (isPageChange) {
+            const heroReveals = targetSection.querySelectorAll('.events-hero-v2 .scroll-reveal, .despre-hero-v2 .scroll-reveal');
+            if (heroReveals.length) {
+                heroReveals.forEach(el => el.classList.remove('is-visible'));
+                setTimeout(() => {
+                    heroReveals.forEach((el, idx) => {
+                        setTimeout(() => el.classList.add('is-visible'), idx * 80);
+                    });
+                }, 40);
+            }
+        }
+
         if (typeof initScrollReveal === 'function') {
             setTimeout(() => initScrollReveal(), 60);
         }
@@ -70,15 +84,20 @@ function navigateTo(viewId) {
     appState.currentView = viewId;
     window.scrollTo({ top: 0, behavior: 'smooth' });
 
-    // Declanșează animația de tipărire și glisarea textului la schimbarea paginii
+    // Declanșează animația de tipărire la prima vizită
     if (isPageChange) {
         playBrandTypewriter(false);
-        if (viewId === 'acasa') {
-            document.querySelectorAll('.animate-slide-left').forEach(el => {
-                el.style.animation = 'none';
-                void el.offsetWidth;
-                el.style.animation = '';
-            });
+        // Oprește loop-ul 3D WebGL dacă utilizatorul nu este pe pagina Acasă
+        if (viewId !== 'acasa') {
+            if (animationFrameId) {
+                cancelAnimationFrame(animationFrameId);
+                animationFrameId = null;
+            }
+        } else {
+            const btn3d = document.getElementById('btn-mode-3d');
+            if (btn3d && btn3d.classList.contains('active') && typeof window.startSatelliteAnimation === 'function') {
+                window.startSatelliteAnimation();
+            }
         }
     }
 }
@@ -430,15 +449,20 @@ function switchMapView(mode) {
 
         if (!appState.globeInitialized) {
             init3DGlobe();
-        } else if (myGlobe) {
-            const activeKey = appState.selectedNode || 'bucuresti';
-            const node = ugrData.mapNodes[activeKey];
-            if (node) {
-                myGlobe.pointOfView({ lat: node.lat, lng: node.lon, altitude: activeKey === 'bucuresti' ? 0.32 : 0.36 }, 1200);
-                updateGlobeRings(activeKey);
-                updateGlobePoints(activeKey);
-                if (typeof updateLaserTracking === 'function') {
-                    updateLaserTracking();
+        } else {
+            if (typeof window.startSatelliteAnimation === 'function') {
+                window.startSatelliteAnimation();
+            }
+            if (myGlobe) {
+                const activeKey = appState.selectedNode || 'bucuresti';
+                const node = ugrData.mapNodes[activeKey];
+                if (node) {
+                    myGlobe.pointOfView({ lat: node.lat, lng: node.lon, altitude: activeKey === 'bucuresti' ? 0.32 : 0.36 }, 1200);
+                    updateGlobeRings(activeKey);
+                    updateGlobePoints(activeKey);
+                    if (typeof updateLaserTracking === 'function') {
+                        updateLaserTracking();
+                    }
                 }
             }
         }
@@ -453,6 +477,12 @@ function switchMapView(mode) {
 
         globeWrapper.style.display = 'none';
         svgWrapper.style.display = 'block';
+
+        // Oprește loop-ul Three.js când modul 2D este activ
+        if (animationFrameId) {
+            cancelAnimationFrame(animationFrameId);
+            animationFrameId = null;
+        }
     }
 }
 
@@ -749,17 +779,32 @@ function setupSatellitesAndLasers() {
             updateLaserTracking();
         }
 
-        if (!prefersReducedMotion) {
+        const globeWrapper = document.getElementById('globe-3d-wrapper');
+        const isGlobeVisible = (appState.currentView === 'acasa' && globeWrapper && globeWrapper.style.display !== 'none');
+
+        if (!prefersReducedMotion && isGlobeVisible) {
             animationFrameId = requestAnimationFrame(animateSatellites);
+        } else {
+            animationFrameId = null;
         }
     }
+
+    function startSatelliteAnimation() {
+        if (!animationFrameId && appState.globeInitialized) {
+            const globeWrapper = document.getElementById('globe-3d-wrapper');
+            if (appState.currentView === 'acasa' && globeWrapper && globeWrapper.style.display !== 'none') {
+                animationFrameId = requestAnimationFrame(animateSatellites);
+            }
+        }
+    }
+    window.startSatelliteAnimation = startSatelliteAnimation;
 
     animateSatellites();
 
     // Re-check animation if user changes preference at runtime
     window.matchMedia('(prefers-reduced-motion: reduce)').addEventListener('change', (e) => {
         if (!e.matches && appState.globeInitialized) {
-            animateSatellites();
+            startSatelliteAnimation();
         }
     });
 }
@@ -1058,21 +1103,21 @@ function renderNewsBento(filterScope = 'all') {
         <article class="bento-card ${borderClass}">
             <div class="bento-card-media">
                 <img src="${item.image}" alt="${item.title}" loading="lazy">
-                <div class="event-scope-ribbon ${badgeClass}">
-                    <span class="${dotClass}"></span>
-                    <span>${item.scopeLabel || (isNational ? '[EVENIMENT NAȚIONAL UGR / FIG / CLGE]' : '[ACTIVITATE LOCALĂ FILIALA SECTOR 1]')}</span>
-                </div>
             </div>
             <div class="bento-card-content">
+                <div class="bento-scope-badge ${badgeClass}">
+                    <span class="${dotClass}"></span>
+                    <span>${item.scopeLabel || (isNational ? 'EVENIMENT NAȚIONAL UGR / FIG / CLGE' : 'ACTIVITATE LOCALĂ FILIALA SECTOR 1')}</span>
+                </div>
                 <div class="bento-meta">
                     <span class="bento-cat-text">${item.category}</span>
                     <span class="bento-date-text">${item.date}</span>
                 </div>
                 <h3 class="bento-card-title">${item.title}</h3>
                 <p class="bento-card-desc">${item.desc}</p>
-                <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--ugr-border); padding-top: 14px; margin-top: auto; flex-wrap: wrap; gap: 8px;">
-                    <span style="font-family: var(--font-mono); font-size: 10px; color: var(--ugr-accent-light);">📍 ${item.location}</span>
-                    <a href="${item.source.url}" ${targetAttr} style="font-family: var(--font-mono); font-size: 11px; color: ${isNational ? 'var(--ugr-hq-gold-bright)' : 'var(--ugr-cyan)'}; font-weight: 600;">
+                <div class="bento-card-footer">
+                    <span class="bento-location">📍 ${item.location}</span>
+                    <a href="${item.source.url}" ${targetAttr} class="bento-action-link ${isNational ? 'link-gold' : 'link-cyan'}">
                         ${item.actionText || 'Deschide detalii ↗'}
                     </a>
                 </div>
@@ -1378,25 +1423,21 @@ function playBrandTypewriter(force = false) {
     if (brandAnimTimer) clearTimeout(brandAnimTimer);
 
     titleEl.className = 'brand-title';
-    titleEl.innerHTML = '<span class="brand-cursor"></span>';
+    titleEl.innerHTML = '<span class="brand-text"></span><span class="brand-cursor"></span>';
+    const textSpan = titleEl.querySelector('.brand-text');
+    const cursorSpan = titleEl.querySelector('.brand-cursor');
     let charIndex = 0;
 
     function typeStep() {
         if (charIndex < BRAND_NAME_TEXT.length) {
             charIndex++;
-            const currentSubstr = BRAND_NAME_TEXT.substring(0, charIndex);
-            titleEl.innerHTML = currentSubstr + '<span class="brand-cursor"></span>';
-
-            // Cadență fluidă, organică (fără sacadare mecanică)
-            const lastChar = BRAND_NAME_TEXT[charIndex - 1];
-            let delay = 35;
-            if (lastChar === ' ') {
-                delay = 85; // Mică pauză firească între cuvinte
-            } else if (charIndex === 3) {
-                delay = 95; // Respirație subtilă după "UGR"
-            } else {
-                delay = 28 + Math.floor(Math.random() * 12);
+            if (textSpan) {
+                textSpan.textContent = BRAND_NAME_TEXT.substring(0, charIndex);
             }
+
+            // Cadență calmă, nobilă și lizibilă pentru un public matur (46ms / 95ms la spațiu)
+            const lastChar = BRAND_NAME_TEXT[charIndex - 1];
+            const delay = (lastChar === ' ') ? 95 : 46;
 
             brandAnimTimeout = setTimeout(typeStep, delay);
         } else {
@@ -1404,16 +1445,17 @@ function playBrandTypewriter(force = false) {
             brandAnimTimeout = null;
             // Cursorul pulsează discret 1.8 secunde apoi se estompează lin
             brandAnimTimer = setTimeout(() => {
-                const cursor = titleEl.querySelector('.brand-cursor');
-                if (cursor) {
-                    cursor.style.opacity = '0';
-                    setTimeout(() => cursor.remove(), 350);
+                if (cursorSpan) {
+                    cursorSpan.style.opacity = '0';
+                    setTimeout(() => {
+                        if (cursorSpan && cursorSpan.parentNode) cursorSpan.remove();
+                    }, 500);
                 }
             }, 1800);
         }
     }
 
-    brandAnimTimeout = setTimeout(typeStep, 140);
+    brandAnimTimeout = setTimeout(typeStep, 100);
 }
 window.playBrandTypewriter = playBrandTypewriter;
 
@@ -1587,11 +1629,10 @@ function initCalculatorKineticText() {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
-// 12. SCROLL REVEAL & STAGGER TYPEWRITER PENTRU MISIUNE & STATISTICI
-//     (ADAPTAT DIN ORIGINAL: Integritate terestră, viziune spațială)
+// 12. SCROLL REVEAL & SINCRONIZARE FLUIDĂ LA SCROLL (CALIBRAT PENTRU ~35 ANI)
 // ═══════════════════════════════════════════════════════════════════════════
 
-function typeText(el, text, speed = 24) {
+function typeText(el, text, speed = 34) {
     if (!el) return;
     el.textContent = '';
     el.classList.add('typing-cursor');
@@ -1604,14 +1645,14 @@ function typeText(el, text, speed = 24) {
         } else {
             setTimeout(() => {
                 el.classList.remove('typing-cursor');
-            }, 1000);
+            }, 800);
         }
     })();
 }
 
 function initMissionScrollSync() {
-    // Sincronizare la derularea paginii: secțiunea de misiune se declanșează
-    // exact când este în câmpul vizual al utilizatorului (threshold: 0.22, rootMargin: -60px)
+    // Sincronizare la derularea paginii (Scroll / View Sync):
+    // Secțiunea se declanșează calm și nobil când ajunge în câmpul vizual optim (threshold: 0.14)
     const missionSections = document.querySelectorAll('.mission-section-clean');
     if (!missionSections.length) return;
 
@@ -1620,37 +1661,37 @@ function initMissionScrollSync() {
             if (entry.isIntersecting) {
                 const sec = entry.target;
 
-                // 1. Titlul și Kicker-ul din stânga
+                // 1. Titlul, Kicker-ul și Paragraful (Blocul stânga - ritm calm, așezat)
                 const headerEls = sec.querySelectorAll('.mission-header-block .scroll-reveal');
                 headerEls.forEach((el, idx) => {
                     setTimeout(() => el.classList.add('is-visible'), idx * 80);
                 });
 
-                // 2. Paragraful explicativ din stânga
                 const paragraph = sec.querySelector('.mission-paragraph');
                 if (paragraph) {
-                    setTimeout(() => paragraph.classList.add('is-visible'), 120);
+                    setTimeout(() => paragraph.classList.add('is-visible'), 160);
                 }
 
-                // 3. Grila de 4 statistici din dreapta (Stagger armonios de 120ms între blocuri)
+                // 2. Grila de 4 statistici din dreapta (Stagger armonios de 140ms, cadență așezată)
                 const statBlocks = Array.from(sec.querySelectorAll('.stat-block'));
                 statBlocks.forEach((block, idx) => {
                     setTimeout(() => {
                         block.classList.add('is-visible');
                         const label = block.querySelector('.stat-label');
-                        const fullText = label ? label.getAttribute('data-text') : '';
-                        if (label && fullText && !label.textContent.trim()) {
-                            setTimeout(() => typeText(label, fullText, 24), 80);
+                        const fullText = label ? (label.getAttribute('data-text') || label.textContent.trim()) : '';
+                        if (label && fullText && (!label.textContent.trim() || label.textContent.trim() !== fullText)) {
+                            // Pornire calmă a tastării (34ms/caracter) la 220ms după așezarea cardului
+                            setTimeout(() => typeText(label, fullText, 34), 220);
                         }
-                    }, 180 + idx * 120);
+                    }, 180 + idx * 140);
                 });
 
                 missionObs.unobserve(sec);
             }
         });
     }, {
-        threshold: 0.22,
-        rootMargin: '0px 0px -60px 0px'
+        threshold: 0.14,
+        rootMargin: '0px 0px -40px 0px'
     });
 
     missionSections.forEach((sec) => missionObs.observe(sec));
@@ -1669,17 +1710,129 @@ function initMissionScrollSync() {
                 }
             });
         }, {
-            threshold: 0.18,
-            rootMargin: '0px 0px -50px 0px'
+            threshold: 0.14,
+            rootMargin: '0px 0px -40px 0px'
         });
 
         ctaSections.forEach((cta) => ctaObs.observe(cta));
     }
 }
 
+// Optimizare performanță: pune pe pauză animațiile grele din Hero când acesta nu e pe ecran
+function initHeroPerformanceOptimizer() {
+    const heroSec = document.querySelector('.hero-section');
+    const ticker = document.getElementById('hero-photo-ticker');
+    if (!heroSec || !ticker || !('IntersectionObserver' in window)) return;
+
+    const heroObs = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                ticker.style.animationPlayState = 'running';
+                if (appState.currentView === 'acasa' && document.getElementById('btn-mode-3d')?.classList.contains('active')) {
+                    if (typeof window.startSatelliteAnimation === 'function') {
+                        window.startSatelliteAnimation();
+                    }
+                }
+            } else {
+                ticker.style.animationPlayState = 'paused';
+                if (animationFrameId) {
+                    cancelAnimationFrame(animationFrameId);
+                    animationFrameId = null;
+                }
+            }
+        });
+    }, { threshold: 0 });
+
+    heroObs.observe(heroSec);
+}
+
 function initScrollReveal() {
     initMissionScrollSync();
+    initHeroPerformanceOptimizer();
+
+    // Sincronizare automată pentru toate elementele .scroll-reveal din vederea activă (ex: Despre Noi)
+    if ('IntersectionObserver' in window) {
+        const activeSection = document.querySelector('.view-section:not(.hidden)');
+        if (activeSection) {
+            const reveals = activeSection.querySelectorAll('.scroll-reveal:not(.is-visible)');
+            if (reveals.length) {
+                const revealObs = new IntersectionObserver((entries) => {
+                    entries.forEach((entry) => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('is-visible');
+                            revealObs.unobserve(entry.target);
+                        }
+                    });
+                }, {
+                    threshold: 0.05,
+                    rootMargin: '0px 0px -10px 0px'
+                });
+                reveals.forEach(el => revealObs.observe(el));
+            }
+        }
+    }
 }
+
+// Comutator interactiv fin pentru testarea fotografiilor în secțiunea Despre Noi
+window.switchDesprePhoto = function(src, btn) {
+    const img = document.getElementById('despre-main-photo');
+    if (!img) return;
+    img.style.opacity = '0.35';
+    img.style.transform = 'scale(0.985)';
+    setTimeout(() => {
+        img.src = src;
+        img.onload = () => {
+            img.style.opacity = '1';
+            img.style.transform = 'scale(1)';
+        };
+        // fallback in case already cached
+        setTimeout(() => {
+            img.style.opacity = '1';
+            img.style.transform = 'scale(1)';
+        }, 120);
+    }, 120);
+
+    document.querySelectorAll('.photo-switch-btn').forEach(b => b.classList.remove('active'));
+    if (btn) btn.classList.add('active');
+};
+
+// Comutator interactiv pentru cele 4 Demo-uri de Design Evenimente & Media
+window.switchEventsDemo = function(demoNum, btn) {
+    for (let i = 1; i <= 4; i++) {
+        const pane = document.getElementById('events-demo-' + i);
+        if (pane) {
+            if (i === demoNum) {
+                pane.classList.remove('hidden');
+                pane.style.opacity = '0';
+                pane.style.transform = 'translateY(8px)';
+                setTimeout(() => {
+                    pane.style.opacity = '1';
+                    pane.style.transform = 'translateY(0)';
+                }, 40);
+            } else {
+                pane.classList.add('hidden');
+            }
+        }
+    }
+    document.querySelectorAll('.events-demo-btn').forEach(b => b.classList.remove('active'));
+    if (btn) btn.classList.add('active');
+
+    // Trigger scroll reveal for newly visible elements
+    if (typeof initScrollReveal === 'function') {
+        setTimeout(() => initScrollReveal(), 60);
+    }
+};
+
+window.switchDemo4Tab = function(tabId, btn) {
+    document.querySelectorAll('.demo4-panel').forEach(p => p.classList.add('hidden'));
+    const target = document.getElementById('demo4-pane-' + tabId);
+    if (target) {
+        target.classList.remove('hidden');
+    }
+    document.querySelectorAll('.demo4-tab-btn').forEach(b => b.classList.remove('active'));
+    if (btn) btn.classList.add('active');
+};
+
 
 
 

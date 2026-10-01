@@ -1,0 +1,1014 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UGR Sector 1 — 5 Demo-uri Text „Despre Noi” (Aceternity, Magic UI, 21st.dev, shadcn, HTML5 UP)</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800;900&family=IBM+Plex+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-deep: #061320;
+            --bg-surface: #0a1f33;
+            --ugr-cyan: #00e5ff;
+            --ugr-blue: #0077b6;
+            --ugr-gold: #ffb703;
+            --ugr-green: #10b981;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-subtle: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-deep);
+            color: var(--text-main);
+            font-family: 'Inter', -apple-system, sans-serif;
+            min-height: 100vh;
+            padding-bottom: 80px;
+            overflow-x: hidden;
+        }
+
+        /* Top Sticky Master Navigation Dock */
+        .showcase-header {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: rgba(6, 19, 32, 0.94);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(0, 229, 255, 0.2);
+            padding: 14px 24px;
+        }
+
+        .showcase-header-inner {
+            max-width: 1300px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .showcase-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .brand-badge {
+            background: rgba(0, 229, 255, 0.15);
+            border: 1px solid var(--ugr-cyan);
+            color: var(--ugr-cyan);
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 4px 8px;
+            border-radius: 4px;
+            text-transform: uppercase;
+        }
+
+        .brand-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .brand-sub {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        /* Dock Tabs */
+        .demo-tabs {
+            display: flex;
+            gap: 6px;
+            background: rgba(10, 31, 51, 0.8);
+            border: 1px solid var(--border-subtle);
+            border-radius: 9999px;
+            padding: 4px;
+            overflow-x: auto;
+        }
+
+        .demo-tab-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-family: 'Inter', sans-serif;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 8px 16px;
+            border-radius: 9999px;
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .demo-tab-btn:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .demo-tab-btn.active {
+            background: var(--ugr-cyan);
+            color: #061320;
+            box-shadow: 0 0 16px rgba(0, 229, 255, 0.4);
+            font-weight: 700;
+        }
+
+        .main-container {
+            max-width: 1100px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .demo-card {
+            background: rgba(10, 31, 51, 0.65);
+            border: 1px solid rgba(0, 229, 255, 0.2);
+            border-radius: 20px;
+            padding: 48px;
+            margin-bottom: 40px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(14px);
+        }
+
+        .demo-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            padding-bottom: 16px;
+            margin-bottom: 36px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .demo-badge-meta {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .demo-num {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 12px;
+            font-weight: 700;
+            background: rgba(0, 229, 255, 0.15);
+            color: var(--ugr-cyan);
+            border: 1px solid var(--ugr-cyan);
+            border-radius: 6px;
+            padding: 3px 8px;
+        }
+
+        .demo-name {
+            font-size: 16px;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .demo-features {
+            font-size: 12px;
+            color: var(--text-muted);
+            font-family: 'IBM Plex Mono', monospace;
+        }
+
+        .btn-replay {
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: #fff;
+            font-size: 12px;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            padding: 6px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-replay:hover {
+            background: rgba(0, 229, 255, 0.15);
+            border-color: var(--ugr-cyan);
+            color: var(--ugr-cyan);
+            transform: translateY(-1px);
+        }
+
+        /* ============================================================ */
+        /* 1. ACETERNITY UI — Word Blur-Stagger & Conic Shimmer Border */
+        /* ============================================================ */
+        .style-aceternity {
+            text-align: left;
+            max-width: 880px;
+        }
+
+        .aceternity-kicker-wrapper {
+            position: relative;
+            display: inline-flex;
+            overflow: hidden;
+            border-radius: 9999px;
+            padding: 1px;
+            margin-bottom: 18px;
+        }
+
+        .aceternity-shimmer-border {
+            position: absolute;
+            inset: -1000%;
+            background: conic-gradient(from 90deg at 50% 50%, #061320 0%, #00e5ff 50%, #061320 100%);
+            animation: aceternity-spin 3.5s linear infinite;
+        }
+
+        .aceternity-kicker-content {
+            position: relative;
+            z-index: 1;
+            display: inline-flex;
+            align-items: center;
+            background: #091a2b;
+            color: #38bdf8;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.16em;
+            padding: 6px 16px;
+            border-radius: 9999px;
+            text-transform: uppercase;
+        }
+
+        @keyframes aceternity-spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .aceternity-h2 {
+            font-family: 'Archivo', sans-serif;
+            font-size: 2.25rem;
+            font-weight: 800;
+            line-height: 1.25;
+            letter-spacing: -0.025em;
+            color: #ffffff;
+            margin-bottom: 16px;
+        }
+
+        .aceternity-word {
+            display: inline-block;
+            opacity: 0;
+            filter: blur(12px);
+            transform: translateY(10px);
+            transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+                        filter 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+                        transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+            margin-right: 0.28em;
+        }
+
+        .aceternity-word.revealed {
+            opacity: 1;
+            filter: blur(0px);
+            transform: translateY(0);
+        }
+
+        .aceternity-word.highlight {
+            background: linear-gradient(135deg, #00e5ff 0%, #38bdf8 50%, #818cf8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 30px rgba(0, 229, 255, 0.35);
+        }
+
+        .aceternity-description {
+            font-size: 1rem;
+            line-height: 1.68;
+            color: #94a3b8;
+            opacity: 0;
+            animation: aceternity-fade 1s cubic-bezier(0.16, 1, 0.3, 1) 0.6s forwards;
+        }
+
+        @keyframes aceternity-fade {
+            to { opacity: 1; }
+        }
+
+        /* ============================================================ */
+        /* 2. MAGIC UI — HyperText Cypher Scramble & Shiny Text        */
+        /* ============================================================ */
+        .style-magicui {
+            text-align: left;
+            max-width: 880px;
+        }
+
+        .magic-kicker-badge {
+            display: inline-flex;
+            align-items: center;
+            border: 1px solid rgba(0, 229, 255, 0.25);
+            background: rgba(0, 229, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 9999px;
+            padding: 5px 16px;
+            margin-bottom: 18px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .magic-kicker-badge:hover {
+            border-color: var(--ugr-cyan);
+            background: rgba(0, 229, 255, 0.12);
+        }
+
+        .magic-shiny-text {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.74rem;
+            font-weight: 700;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            background: linear-gradient(
+                110deg,
+                #64748b 0%,
+                #94a3b8 35%,
+                #ffffff 50%,
+                #94a3b8 65%,
+                #64748b 100%
+            );
+            background-size: 200% 100%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: magic-shimmer 4s linear infinite;
+        }
+
+        @keyframes magic-shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        .magic-h2 {
+            font-family: 'Archivo', sans-serif;
+            font-size: 2.25rem;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            color: #f8fafc;
+            margin-bottom: 16px;
+            cursor: pointer;
+        }
+
+        .magic-char-scramble {
+            color: var(--ugr-cyan);
+            font-family: 'IBM Plex Mono', monospace;
+            font-weight: 700;
+            text-shadow: 0 0 12px rgba(0, 229, 255, 0.6);
+        }
+
+        .magic-description {
+            font-size: 1rem;
+            line-height: 1.68;
+            color: #94a3b8;
+        }
+
+        .magic-desc-word {
+            display: inline-block;
+            opacity: 0;
+            transform: translateY(12px);
+            filter: blur(5px);
+            animation: magic-word-pull 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            margin-right: 0.28em;
+        }
+
+        @keyframes magic-word-pull {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+                filter: blur(0px);
+            }
+        }
+
+        /* ============================================================ */
+        /* 3. 21ST.DEV — 3D Kinetic Character Flip & Specular Glow      */
+        /* ============================================================ */
+        .style-21stdev {
+            text-align: left;
+            max-width: 880px;
+        }
+
+        .calc-kicker-white-kinetic {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.78rem;
+            font-weight: 700;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            color: #ffffff;
+            margin-bottom: 16px;
+            display: inline-block;
+            perspective: 1000px;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.35);
+        }
+
+        .eng-h2 {
+            font-family: 'Archivo', sans-serif;
+            font-size: 2.3rem;
+            font-weight: 800;
+            letter-spacing: -0.035em;
+            line-height: 1.22;
+            margin-bottom: 18px;
+            perspective: 1000px;
+            color: #ffffff;
+            text-shadow: 0 0 35px rgba(0, 229, 255, 0.2), 0 2px 4px rgba(0, 0, 0, 0.8);
+        }
+
+        .eng-char {
+            display: inline-block;
+            opacity: 0;
+            transform: rotateX(40deg) translateY(16px) translateZ(-15px);
+            filter: blur(4px);
+            will-change: transform, opacity, filter;
+        }
+
+        .eng-char.animated {
+            animation: eng-kinetic-entry 1.05s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        @keyframes eng-kinetic-entry {
+            to {
+                opacity: 1;
+                transform: rotateX(0deg) translateY(0) translateZ(0);
+                filter: blur(0);
+            }
+        }
+
+        .eng-spec-box {
+            background: rgba(14, 42, 71, 0.45);
+            border-left: 2px solid var(--ugr-cyan);
+            border-radius: 0 8px 8px 0;
+            padding: 14px 20px;
+        }
+
+        .eng-description {
+            font-size: 1rem;
+            line-height: 1.68;
+            color: #cbd5e1;
+            margin: 0;
+        }
+
+        .eng-badge-pill {
+            display: inline-block;
+            background: rgba(0, 229, 255, 0.15);
+            color: var(--ugr-cyan);
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 1px 6px;
+            border-radius: 4px;
+        }
+
+        /* ============================================================ */
+        /* 4. SHADCN/UI — Minimalist Precision Heading & Tight Tracking  */
+        /* ============================================================ */
+        .style-shadcn {
+            text-align: left;
+            max-width: 880px;
+        }
+
+        .shadcn-badge {
+            display: inline-flex;
+            align-items: center;
+            border-radius: 9999px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            background-color: rgba(255, 255, 255, 0.05);
+            color: #f8fafc;
+            font-size: 0.74rem;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            padding: 5px 14px;
+            margin-bottom: 16px;
+            animation: shadcn-enter 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        .shadcn-h2 {
+            font-family: 'Archivo', sans-serif;
+            font-size: 2.25rem;
+            font-weight: 700;
+            letter-spacing: -0.03em;
+            line-height: 1.25;
+            color: #f8fafc;
+            margin-bottom: 14px;
+            opacity: 0;
+            animation: shadcn-enter 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.1s forwards;
+        }
+
+        .shadcn-p {
+            font-size: 1rem;
+            line-height: 1.68;
+            color: #94a3b8;
+            opacity: 0;
+            animation: shadcn-enter 0.55s cubic-bezier(0.16, 1, 0.3, 1) 0.2s forwards;
+        }
+
+        @keyframes shadcn-enter {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ============================================================ */
+        /* 5. HTML5 UP — Editorial CAD Blueprint & Crosshairs          */
+        /* ============================================================ */
+        .style-html5up {
+            text-align: left;
+            position: relative;
+            padding: 28px;
+            border: 1px dashed rgba(0, 229, 255, 0.25);
+            border-radius: 12px;
+            background: rgba(6, 19, 32, 0.4);
+            max-width: 880px;
+        }
+
+        .cad-crosshair {
+            position: absolute;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 14px;
+            font-weight: 300;
+            color: var(--ugr-cyan);
+            opacity: 0.7;
+        }
+        .cad-crosshair.top-left { top: 8px; left: 10px; }
+        .cad-crosshair.top-right { top: 8px; right: 10px; }
+        .cad-crosshair.bottom-left { bottom: 8px; left: 10px; }
+        .cad-crosshair.bottom-right { bottom: 8px; right: 10px; }
+
+        .cad-kicker {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.78rem;
+            font-weight: 700;
+            letter-spacing: 0.32em;
+            text-transform: uppercase;
+            color: var(--ugr-cyan);
+            margin-bottom: 14px;
+            animation: cad-bracket-snap 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        .cad-bracket {
+            color: #ffffff;
+            font-weight: 400;
+        }
+
+        @keyframes cad-bracket-snap {
+            0% {
+                letter-spacing: 0.55em;
+                opacity: 0;
+            }
+            100% {
+                letter-spacing: 0.32em;
+                opacity: 1;
+            }
+        }
+
+        .cad-h2 {
+            font-family: 'Archivo', sans-serif;
+            font-size: 2.25rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: #ffffff;
+            margin-bottom: 14px;
+        }
+
+        .cad-ruler-track {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            width: 100%;
+            margin-bottom: 16px;
+        }
+
+        .cad-ruler-draw {
+            height: 1px;
+            flex: 1;
+            background: linear-gradient(90deg, var(--ugr-cyan) 0%, rgba(0, 229, 255, 0.2) 100%);
+            width: 0%;
+            animation: cad-draw 1.2s cubic-bezier(0.25, 1, 0.5, 1) 0.2s forwards;
+        }
+
+        @keyframes cad-draw {
+            to { width: 100%; }
+        }
+
+        .cad-spec-code {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.68rem;
+            color: #64748b;
+            letter-spacing: 0.2em;
+            white-space: nowrap;
+        }
+
+        .cad-description {
+            font-size: 0.95rem;
+            line-height: 1.68;
+            color: #94a3b8;
+            border-left: 2px solid var(--ugr-cyan);
+            padding-left: 14px;
+        }
+
+        /* Responsive View Switching */
+        .demo-view {
+            display: none;
+        }
+        .demo-view.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sticky Master Header Navigation -->
+    <header class="showcase-header">
+        <div class="showcase-header-inner">
+            <div class="showcase-brand">
+                <span class="brand-badge">DESPRE NOI · 5 DEMO-URI</span>
+                <div>
+                    <h1 class="brand-title">Secțiunea „Despre noi” — Laborator Animații Text</h1>
+                    <p class="brand-sub">Strict bucata: Kicker · Titlu H2 · Subtitlu Introductiv</p>
+                </div>
+            </div>
+
+            <!-- 5 Switcher Tabs -->
+            <nav class="demo-tabs" role="tablist">
+                <button class="demo-tab-btn active" onclick="switchView('all', this)" role="tab">
+                    <span>🔲</span> Toate cele 5 (Comparație)
+                </button>
+                <button class="demo-tab-btn" onclick="switchView('aceternity', this)" role="tab">
+                    <span>1.</span> Aceternity UI
+                </button>
+                <button class="demo-tab-btn" onclick="switchView('magicui', this)" role="tab">
+                    <span>2.</span> Magic UI
+                </button>
+                <button class="demo-tab-btn" onclick="switchView('21stdev', this)" role="tab">
+                    <span>3.</span> 21st.dev
+                </button>
+                <button class="demo-tab-btn" onclick="switchView('shadcn', this)" role="tab">
+                    <span>4.</span> shadcn/ui
+                </button>
+                <button class="demo-tab-btn" onclick="switchView('html5up', this)" role="tab">
+                    <span>5.</span> HTML5 UP
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main-container">
+
+        <!-- ======================================================== -->
+        <!-- DEMO 1: ACETERNITY UI -->
+        <!-- ======================================================== -->
+        <article class="demo-card demo-view view-aceternity active" id="card-aceternity">
+            <div class="demo-card-header">
+                <div class="demo-badge-meta">
+                    <span class="demo-num">DEMO 1</span>
+                    <h2 class="demo-name">Aceternity UI</h2>
+                    <span class="demo-features">• Word Blur-Stagger + Conic Shimmer Border</span>
+                </div>
+                <button class="btn-replay" onclick="replayAceternity()">
+                    <span>↻</span> Re-play Animație
+                </button>
+            </div>
+
+            <div class="style-aceternity">
+                <div class="aceternity-kicker-wrapper">
+                    <span class="aceternity-shimmer-border"></span>
+                    <span class="aceternity-kicker-content">IDENTITATE &amp; MISIUNE INSTITUȚIONALĂ</span>
+                </div>
+
+                <h2 class="aceternity-h2" id="aceternity-title" aria-label="Cine Suntem Noi? O Tradiție de Excelență din 1990">
+                    <!-- Populated by JavaScript -->
+                </h2>
+
+                <p class="aceternity-description" id="aceternity-desc">
+                    Uniunea Geodezilor din România (UGR) este organizația profesională, neguvernamentală, apolitică și non-profit reprezentativă la nivel național pentru inginerii geodezi, topografi, cartografi și experții în cadastru.
+                </p>
+            </div>
+        </article>
+
+        <!-- ======================================================== -->
+        <!-- DEMO 2: MAGIC UI -->
+        <!-- ======================================================== -->
+        <article class="demo-card demo-view view-magicui active" id="card-magicui">
+            <div class="demo-card-header">
+                <div class="demo-badge-meta">
+                    <span class="demo-num">DEMO 2</span>
+                    <h2 class="demo-name">Magic UI</h2>
+                    <span class="demo-features">• HyperText Cypher Scramble + Animated Shiny Text</span>
+                </div>
+                <button class="btn-replay" onclick="replayMagicUI()">
+                    <span>↻</span> Re-play Scramble
+                </button>
+            </div>
+
+            <div class="style-magicui">
+                <div class="magic-kicker-badge" onclick="replayMagicUI()" title="Apasă pentru re-scramble">
+                    <span class="magic-shiny-text">IDENTITATE &amp; MISIUNE INSTITUȚIONALĂ</span>
+                </div>
+
+                <h2 class="magic-h2" id="magic-hyper-text" data-text="Cine Suntem Noi? O Tradiție de Excelență din 1990" title="Plimbă mouse-ul pentru decodare cypher">
+                    Cine Suntem Noi? O Tradiție de Excelență din 1990
+                </h2>
+
+                <p class="magic-description" id="magic-desc">
+                    Uniunea Geodezilor din România (UGR) este organizația profesională, neguvernamentală, apolitică și non-profit reprezentativă la nivel național pentru inginerii geodezi, topografi, cartografi și experții în cadastru.
+                </p>
+            </div>
+        </article>
+
+        <!-- ======================================================== -->
+        <!-- DEMO 3: 21ST.DEV -->
+        <!-- ======================================================== -->
+        <article class="demo-card demo-view view-21stdev active" id="card-21stdev">
+            <div class="demo-card-header">
+                <div class="demo-badge-meta">
+                    <span class="demo-num">DEMO 3</span>
+                    <h2 class="demo-name">21st.dev (Design Engineer)</h2>
+                    <span class="demo-features">• Kicker Alb cu Liniuță "——" + 3D Kinetic Flip sincron</span>
+                </div>
+                <button class="btn-replay" onclick="replay21stDev()">
+                    <span>↻</span> Re-play 3D Flip
+                </button>
+            </div>
+
+            <div class="style-21stdev">
+                <div class="calc-kicker-white-kinetic" id="eng-kinetic-kicker" aria-label="—— IDENTITATE & MISIUNE INSTITUȚIONALĂ">
+                    <!-- Populated by JavaScript -->
+                </div>
+
+                <h2 class="eng-h2" id="eng-kinetic-title" aria-label="Cine Suntem Noi? O Tradiție de Excelență din 1990">
+                    <!-- Populated by JavaScript -->
+                </h2>
+
+                <div class="eng-spec-box">
+                    <p class="eng-description">
+                        Uniunea Geodezilor din România (UGR) este organizația profesională, neguvernamentală, apolitică și non-profit reprezentativă la nivel național pentru inginerii geodezi, topografi, cartografi și experții în cadastru (<span class="eng-badge-pill">FONDAT 1990</span>).
+                    </p>
+                </div>
+            </div>
+        </article>
+
+        <!-- ======================================================== -->
+        <!-- DEMO 4: SHADCN/UI -->
+        <!-- ======================================================== -->
+        <article class="demo-card demo-view view-shadcn active" id="card-shadcn">
+            <div class="demo-card-header">
+                <div class="demo-badge-meta">
+                    <span class="demo-num">DEMO 4</span>
+                    <h2 class="demo-name">shadcn/ui</h2>
+                    <span class="demo-features">• Minimalist Precision Heading & Tight Tracking</span>
+                </div>
+                <button class="btn-replay" onclick="replayShadcn()">
+                    <span>↻</span> Re-play Fade-Up
+                </button>
+            </div>
+
+            <div class="style-shadcn">
+                <div class="shadcn-badge" id="shadcn-badge">
+                    IDENTITATE &amp; MISIUNE INSTITUȚIONALĂ
+                </div>
+
+                <h2 class="shadcn-h2" id="shadcn-h2">
+                    Cine Suntem Noi? O Tradiție de Excelență din 1990
+                </h2>
+
+                <p class="shadcn-p" id="shadcn-p">
+                    Uniunea Geodezilor din România (UGR) este organizația profesională, neguvernamentală, apolitică și non-profit reprezentativă la nivel național pentru inginerii geodezi, topografi, cartografi și experții în cadastru.
+                </p>
+            </div>
+        </article>
+
+        <!-- ======================================================== -->
+        <!-- DEMO 5: HTML5 UP -->
+        <!-- ======================================================== -->
+        <article class="demo-card demo-view view-html5up active" id="card-html5up">
+            <div class="demo-card-header">
+                <div class="demo-badge-meta">
+                    <span class="demo-num">DEMO 5</span>
+                    <h2 class="demo-name">HTML5 UP (CAD Blueprint)</h2>
+                    <span class="demo-features">• Architectural Crosshairs & Animated Drafting Ruler</span>
+                </div>
+                <button class="btn-replay" onclick="replayHtml5Up()">
+                    <span>↻</span> Re-play Ruler Draw
+                </button>
+            </div>
+
+            <div class="style-html5up">
+                <span class="cad-crosshair top-left">+</span>
+                <span class="cad-crosshair top-right">+</span>
+                <span class="cad-crosshair bottom-left">+</span>
+                <span class="cad-crosshair bottom-right">+</span>
+
+                <div class="cad-kicker" id="cad-kicker">
+                    <span class="cad-bracket">[</span>
+                    IDENTITATE &amp; MISIUNE INSTITUȚIONALĂ
+                    <span class="cad-bracket">]</span>
+                </div>
+
+                <h2 class="cad-h2">
+                    Cine Suntem Noi? O Tradiție de Excelență din 1990
+                </h2>
+
+                <div class="cad-ruler-track">
+                    <div class="cad-ruler-draw" id="cad-ruler"></div>
+                    <span class="cad-spec-code">EST. 1990 // UGR-CENTRAL</span>
+                </div>
+
+                <p class="cad-description">
+                    Uniunea Geodezilor din România (UGR) este organizația profesională, neguvernamentală, apolitică și non-profit reprezentativă la nivel național pentru inginerii geodezi, topografi, cartografi și experții în cadastru.
+                </p>
+            </div>
+        </article>
+
+    </main>
+
+    <!-- JavaScript Controllers -->
+    <script>
+        function switchView(viewName, btnEl) {
+            document.querySelectorAll('.demo-tab-btn').forEach(b => b.classList.remove('active'));
+            if (btnEl) btnEl.classList.add('active');
+
+            const allViews = document.querySelectorAll('.demo-view');
+            if (viewName === 'all') {
+                allViews.forEach(v => v.classList.add('active'));
+            } else {
+                allViews.forEach(v => v.classList.remove('active'));
+                const target = document.querySelector('.view-' + viewName);
+                if (target) target.classList.add('active');
+            }
+        }
+
+        // 1. Aceternity UI: Blur-Stagger
+        function replayAceternity() {
+            const container = document.getElementById("aceternity-title");
+            const words = ["Cine", "Suntem", "Noi?", "O", "Tradiție", "de", "Excelență", "din", "1990"];
+            
+            container.innerHTML = "";
+            words.forEach((w, idx) => {
+                const span = document.createElement("span");
+                const isHighlight = (w === "Tradiție" || w === "Excelență" || w === "1990");
+                span.className = "aceternity-word" + (isHighlight ? " highlight" : "");
+                span.textContent = w;
+                container.appendChild(span);
+                
+                setTimeout(() => {
+                    span.classList.add("revealed");
+                }, 120 + idx * 85);
+            });
+
+            const desc = document.getElementById("aceternity-desc");
+            desc.style.animation = 'none';
+            desc.offsetHeight;
+            desc.style.animation = 'aceternity-fade 1s cubic-bezier(0.16, 1, 0.3, 1) 0.6s forwards';
+        }
+
+        // 2. Magic UI: HyperText Scramble
+        class HyperTextScramble {
+            constructor(element, duration = 900) {
+                this.element = element;
+                this.targetText = element.getAttribute("data-text") || element.innerText.trim();
+                this.duration = duration;
+                this.glyphs = "01ΔλφΣΩξηπ1990!@#&*";
+                this.play();
+            }
+
+            play() {
+                const startTime = performance.now();
+                const len = this.targetText.length;
+
+                const frame = (now) => {
+                    const elapsed = now - startTime;
+                    const progress = Math.min(elapsed / this.duration, 1);
+                    const settledCount = Math.floor(progress * len);
+
+                    let output = "";
+                    for (let i = 0; i < len; i++) {
+                        if (this.targetText[i] === " ") {
+                            output += " ";
+                        } else if (i < settledCount) {
+                            output += this.targetText[i];
+                        } else {
+                            const randChar = this.glyphs[Math.floor(Math.random() * this.glyphs.length)];
+                            output += `<span class="magic-char-scramble">${randChar}</span>`;
+                        }
+                    }
+
+                    this.element.innerHTML = output;
+
+                    if (progress < 1) {
+                        requestAnimationFrame(frame);
+                    } else {
+                        this.element.textContent = this.targetText;
+                    }
+                };
+
+                requestAnimationFrame(frame);
+            }
+        }
+
+        function replayMagicUI() {
+            const h2El = document.getElementById("magic-hyper-text");
+            new HyperTextScramble(h2El);
+
+            const descEl = document.getElementById("magic-desc");
+            const rawText = "Uniunea Geodezilor din România (UGR) este organizația profesională, neguvernamentală, apolitică și non-profit reprezentativă la nivel național pentru inginerii geodezi, topografi, cartografi și experții în cadastru.";
+            const words = rawText.split(/\s+/);
+            descEl.innerHTML = words.map((w, i) => 
+                `<span class="magic-desc-word" style="animation-delay: ${0.25 + i * 0.02}s">${w}</span>`
+            ).join(" ");
+        }
+
+        // 3. 21st.dev: 3D Kinetic Flip (Kicker + Title)
+        function replay21stDev() {
+            const kicker = document.getElementById("eng-kinetic-kicker");
+            if (kicker) {
+                const kickerText = "—— IDENTITATE & MISIUNE INSTITUȚIONALĂ";
+                kicker.innerHTML = "";
+                kicker.style.perspective = "1000px";
+                [...kickerText].forEach((char, index) => {
+                    const span = document.createElement("span");
+                    span.className = "eng-char";
+                    span.style.color = "#ffffff";
+                    span.innerHTML = char === " " ? "&nbsp;" : char;
+                    span.style.animationDelay = `${0.06 + index * 0.032}s`;
+                    span.classList.add("animated");
+                    kicker.appendChild(span);
+                });
+            }
+
+            const heading = document.getElementById("eng-kinetic-title");
+            if (heading) {
+                const text = "Cine Suntem Noi? O Tradiție de Excelență din 1990";
+                heading.innerHTML = "";
+                heading.style.perspective = "1000px";
+
+                [...text].forEach((char, index) => {
+                    const span = document.createElement("span");
+                    span.className = "eng-char";
+                    span.innerHTML = char === " " ? "&nbsp;" : char;
+                    span.style.animationDelay = `${0.45 + index * 0.030}s`;
+                    span.classList.add("animated");
+                    heading.appendChild(span);
+                });
+            }
+        }
+
+        // 4. shadcn/ui: Precision Fade-Up
+        function replayShadcn() {
+            const badge = document.getElementById("shadcn-badge");
+            const h2 = document.getElementById("shadcn-h2");
+            const p = document.getElementById("shadcn-p");
+
+            [badge, h2, p].forEach(el => {
+                el.style.animation = 'none';
+                el.offsetHeight;
+            });
+
+            badge.style.animation = 'shadcn-enter 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards';
+            h2.style.animation = 'shadcn-enter 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.1s forwards';
+            p.style.animation = 'shadcn-enter 0.55s cubic-bezier(0.16, 1, 0.3, 1) 0.2s forwards';
+        }
+
+        // 5. HTML5 UP: CAD Drafting Ruler Draw
+        function replayHtml5Up() {
+            const kicker = document.getElementById("cad-kicker");
+            const ruler = document.getElementById("cad-ruler");
+
+            kicker.style.animation = 'none';
+            ruler.style.animation = 'none';
+            kicker.offsetHeight;
+            ruler.offsetHeight;
+
+            kicker.style.animation = 'cad-bracket-snap 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards';
+            ruler.style.animation = 'cad-draw 1.2s cubic-bezier(0.25, 1, 0.5, 1) 0.2s forwards';
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            replayAceternity();
+            replayMagicUI();
+            replay21stDev();
+            replayShadcn();
+            replayHtml5Up();
+
+            const h2Magic = document.getElementById("magic-hyper-text");
+            if (h2Magic) {
+                h2Magic.addEventListener("mouseenter", () => new HyperTextScramble(h2Magic, 650));
+            }
+        });
+    </script>
+</body>
+</html>

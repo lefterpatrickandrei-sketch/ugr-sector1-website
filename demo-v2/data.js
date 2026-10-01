@@ -177,7 +177,7 @@ const ugrData = {
             location: "SEDIUL OCPI BUCUREȘTI / BCPI SECTOR 1",
             date: "PROGRAM LUNAR FILIALĂ",
             source: { org: "Filiala Sector 1", url: "#contact" },
-            image: "ugr-images/ISP8061.png",
+            image: "ugr-images/ig_post_5.jpg",
             actionText: "Transmite propuneri & spețe locale →"
         },
         {
@@ -190,7 +190,7 @@ const ugrData = {
             location: "SEDIUL CENTRAL UGR, BUCUREȘTI",
             date: "ACTUALIZARE 2026",
             source: { org: "UGR Stiri", url: "https://www.ugr.ro/stiri/comunicat-privind-bex-ugr-din-21-mai-2026" },
-            image: "ugr-images/ISP8267.png",
+            image: "ugr-images/6a0c30e4559d8Board-CLGE-Tartu-mai-2026.png",
             actionText: "Citește comunicatul oficial ↗"
         },
         {
@@ -242,7 +242,7 @@ const ugrData = {
             location: "CANALE OFICIALE FILIALA SECTOR 1",
             date: "14 IULIE 2026",
             source: { org: "Facebook Filiala Sector 1 UGR", url: "https://www.facebook.com/share/14xwxtFChmC/" },
-            image: "ugr-images/ig_post_2.jpg",
+            image: "ugr-images/ig_post_6.jpg",
             actionText: "Citește anunțul pe Facebook ↗"
         },
         {
