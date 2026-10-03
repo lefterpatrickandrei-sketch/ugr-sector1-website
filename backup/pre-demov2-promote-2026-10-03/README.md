@@ -1,22 +1,21 @@
 # Uniunea Geodezilor din România (UGR) — Filiala Sector 1
 
 > [!IMPORTANT]  
-> **Status Proiect:** 🚀 **Demo V2 Este Acum Site-ul Oficial (Live în Rădăcina Repozitoriului)**.  
-> Platforma web modernizată oferă o structură instituțională completă, diferențiind forul național central de activitatea teritorială a Filialei Sector 1 București.  
-> GitHub Pages este configurat pe branch-ul `main`, folder `/ (root)` — deci `index.html` din rădăcină **este** site-ul live.
+> **Status Proiect:** 🚀 **Demo V2 Lansat & Disponibil pentru Testare**.  
+> Platforma web modernizată oferă o structură instituțională completă, diferențiind forul național central de activitatea teritorială a Filialei Sector 1 București.
 
 Acest repository conține codul sursă pentru website-ul oficial al Filialei Sector 1 a Uniunii Geodezilor din România.
 
 ---
 
-## 🌐 Previzualizare Live
+## 🌐 Previzualizare Live Propuneri & Demo V2
 
-Pentru a vizualiza site-ul oficial și variantele de design anterioare, accesează linkurile de mai jos (servite prin GitHub Pages):
+Pentru a vizualiza versiunile de design și a le compara, accesează linkurile de mai jos (servite prin GitHub Pages):
 
 | Versiune Website | Descriere Vizuală & Tehnică | 🌐 Previzualizare Live (GitHub Pages) |
 | :--- | :--- | :--- |
-| ⭐ **Site Oficial (Demo V2)** | 🚀 **Platformă Instituțională Completă**: Distincție clară UGR Național vs Filiala Sector 1, arhitectură modernă în 5 tab-uri, Calculator Stereo 70 integrat pe prima pagină, Galeria Foto oficială UGR Student Community & 18 Workshopuri, Hub Social Media exclusiv Facebook & Instagram, conformitate WCAG 2.2 AA. | **[Deschide Site-ul Oficial](https://lefterpatrickandrei-sketch.github.io/ugr-sector1-website/)** |
-| **Demo V2 (copie de arhivă)** | Identică cu site-ul oficial, păstrată în folderul `demo-v2/` pentru referință istorică. | [Deschide `/demo-v2/`](https://lefterpatrickandrei-sketch.github.io/ugr-sector1-website/demo-v2/index.html) |
+| ⭐ **Demo V2 (Master 2026)** | 🚀 **Platformă Instituțională Completă**: Distincție clară UGR Național vs Filiala Sector 1, arhitectură modernă în 5 tab-uri, Calculator Stereo 70 integrat pe prima pagină, Galeria Foto oficială UGR Student Community & 18 Workshopuri, Hub Social Media exclusiv Facebook & Instagram, conformitate WCAG 2.2 AA. | [Deschide Demo V2](https://lefterpatrickandrei-sketch.github.io/ugr-sector1-website/demo-v2/index.html) |
+| **Site-ul Original** | ⚠️ **Versiunea Curată de Bază** (Varianta originală a site-ului cu textul static complet restaurat) | [Deschide Site Original](https://lefterpatrickandrei-sketch.github.io/ugr-sector1-website/index.html) |
 | **Propunerea 1** | **Tech-Precision Grid** (Temă Cyan/Portocaliu, hartă 3D de precizie cu tooltips pe hover, layout curat) | [Deschide Varianta 1](https://lefterpatrickandrei-sketch.github.io/ugr-sector1-website/ugr-variants/variant-1.html) |
 | **Propunerea 2** | **Vintage Brass/Editorial** (Temă Aurie/Terracotta, stil academic elegant, etichete pe hover) | [Deschide Varianta 2](https://lefterpatrickandrei-sketch.github.io/ugr-sector1-website/ugr-variants/variant-2.html) |
 | **Propunerea 3** | **Swiss Corporate/Clean** (Temă Crimson Red/Royal Blue, font modern geometric, etichete pe hover) | [Deschide Varianta 3](https://lefterpatrickandrei-sketch.github.io/ugr-sector1-website/ugr-variants/variant-3.html) |
@@ -38,7 +37,7 @@ Versiunea **Demo V2** reprezintă evoluția completă a platformei digitale, dez
 * **Facebook Oficial Filiala Sector 1:** [Filiala Sector 1 UGR](https://www.facebook.com/share/14xwxtFChmC/) (comunitate, notificări operative ANCPI / e-Terra).
 * **Instagram Oficial Filiala Sector 1:** [@filiala.sector1.ugr](https://www.instagram.com/filiala.sector1.ugr) (proiectul *UGR Student Community*, workshopuri practice, viața de teren).
 * **Notă de conformitate:** Filiala Sector 1 **nu deține canale de YouTube sau LinkedIn**; acestea au fost complet eliminate din platformă.
-* **Telefon Direct:** `0726 390 774` | **Email:** `filiala.ugr.s1@gmail.com`
+* **Telefon Direct:** `0720 336 736` | **Email:** `filiala.ugr.s1@gmail.com`
 * **Parteneriat Academic:** Facultatea de Îmbunătățiri Funciare și Ingineria Mediului (FIFIM) — USAMV București (Bulevardul Mărăști nr. 59, Sector 1).
 
 ### 3. Utilitare Geodezice & Cartografie Integrată
@@ -64,16 +63,9 @@ Versiunea **Demo V2** reprezintă evoluția completă a platformei digitale, dez
 
 ## 💡 Structura de Resurse
 
-1. **Rădăcina repo-ului (site-ul live):**
-   * `index.html`, `style.css`, `script.js`, `data.js`, `borders.js` — nucleul platformei **Demo V2**, servit de GitHub Pages din branch-ul `main`, folder `/ (root)`.
-   * Pagini legate direct din `index.html`: `demos-faq.html`, `demos-calculator.html`, `demos-membri.html`.
+1. **Folderul `demo-v2/`:**
+   * Conține versiunea Demo V2 de sine stătătoare (`index.html`, `style.css`, `script.js`, `data.js`, `borders.js` și `ugr-images/`), gata pentru vizualizare directă pe GitHub Pages.
 2. **Folderul `ugr-images/`:**
    * Conține arhiva de imagini reale de pe site-ul oficial `ugr.ro` și postările oficiale ale Filialei Sector 1 de pe Facebook și Instagram.
-3. **Folderul `documente/`:**
-   * Conține documentele oficiale: Statutul UGR (PDF) și cererile de înscriere (persoane fizice / juridice).
-4. **Folderul `demo-v2/`:**
-   * Copie de arhivă a Demo V2, păstrată pentru comparare și rollback.
-5. **Folderul `ugr-variants/`:**
+3. **Folderul `ugr-variants/`:**
    * Păstrează propunerile de design anterioare (Varianta 1, Varianta 2, Varianta 3) pentru referință istorică și comparație.
-6. **Folderul `backup/`:**
-   * Copii de siguranță ale versiunilor anterioare ale site-ului.

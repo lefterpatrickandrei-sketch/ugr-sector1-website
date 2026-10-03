@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>5 DEMO SHOWCASE — Calculator Stereo 70 (EPSG:3844)</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            background: #020617;
+            color: #f8fafc;
+            font-family: 'Inter', sans-serif;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* Top Header Switcher */
+        .showcase-header {
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 14px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 14px;
+            z-index: 100;
+        }
+
+        .showcase-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .brand-badge {
+            background: linear-gradient(135deg, #0284c7, #4f46e5);
+            color: #fff;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 700;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .brand-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .showcase-nav {
+            display: flex;
+            gap: 8px;
+            background: rgba(2, 6, 23, 0.8);
+            padding: 4px;
+            border-radius: 9999px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .nav-btn {
+            background: transparent;
+            border: none;
+            color: #94a3b8;
+            padding: 8px 16px;
+            border-radius: 9999px;
+            font-size: 12.5px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .nav-btn:hover {
+            color: #fff;
+        }
+
+        .nav-btn.active {
+            background: rgba(56, 189, 248, 0.2);
+            color: #38bdf8;
+            border: 1px solid rgba(56, 189, 248, 0.4);
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.2);
+        }
+
+        .ext-btn {
+            color: #f59e0b;
+            text-decoration: none;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 6px 14px;
+            border-radius: 9999px;
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            background: rgba(245, 158, 11, 0.1);
+            transition: all 0.2s;
+        }
+
+        .ext-btn:hover {
+            background: rgba(245, 158, 11, 0.2);
+        }
+
+        /* Main Preview Iframe */
+        .showcase-frame {
+            flex: 1;
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: #030712;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header Switcher -->
+    <header class="showcase-header">
+        <div class="showcase-brand">
+            <span class="brand-badge">5 STILURI DE DESIGN</span>
+            <span class="brand-title">Calculator Transversal Stereo 70 (EPSG:3844)</span>
+        </div>
+
+        <nav class="showcase-nav">
+            <button class="nav-btn active" onclick="loadDemo('demo-aceternity.html', this)">
+                <span>✨</span> 1. Aceternity UI
+            </button>
+            <button class="nav-btn" onclick="loadDemo('demo-magicui.html', this)">
+                <span>⚡</span> 2. Magic UI
+            </button>
+            <button class="nav-btn" onclick="loadDemo('demo-21stdev.html', this)">
+                <span>💎</span> 3. 21st.dev
+            </button>
+            <button class="nav-btn" onclick="loadDemo('demo-shadcn.html', this)">
+                <span>⚙️</span> 4. shadcn/ui
+            </button>
+            <button class="nav-btn" onclick="loadDemo('demo-html5up.html', this)">
+                <span>📐</span> 5. HTML5 UP
+            </button>
+        </nav>
+
+        <a href="index.html#calculator" class="ext-btn">↩ Pagina Principală</a>
+    </header>
+
+    <!-- Live Iframe Viewport -->
+    <iframe id="preview-frame" class="showcase-frame" src="demo-aceternity.html" title="Demo Preview"></iframe>
+
+    <script>
+        function loadDemo(url, btn) {
+            document.getElementById('preview-frame').src = url;
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            if (btn) btn.classList.add('active');
+        }
+    </script>
+</body>
+</html>

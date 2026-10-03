@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo 4: shadcn/ui — Calculator Stereo 70 (EPSG:3844)</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/proj4@2.9.0/dist/proj4.js"></script>
+    <style>
+        :root {
+            --background: #09090b;
+            --foreground: #fafafa;
+            --card: #09090b;
+            --card-foreground: #fafafa;
+            --border: #27272a;
+            --muted: #71717a;
+            --muted-foreground: #a1a1aa;
+            --accent: #27272a;
+            --accent-foreground: #fafafa;
+            --primary: #fafafa;
+            --primary-foreground: #18181b;
+            --cyan-accent: #00E5FF;
+            --font-sans: 'Geist', -apple-system, BlinkMacSystemFont, sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background-color: var(--background);
+            color: var(--foreground);
+            font-family: var(--font-sans);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 20px 80px 20px;
+        }
+
+        /* Top Demo Bar */
+        .demo-nav-bar {
+            width: 100%;
+            max-width: 900px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding: 12px 20px;
+            background: #18181b;
+            border: 1px solid var(--border);
+            border-radius: 9999px;
+            font-size: 13px;
+        }
+        .demo-nav-links {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+        .demo-nav-link {
+            color: var(--muted-foreground);
+            text-decoration: none;
+            padding: 6px 12px;
+            border-radius: 9999px;
+            transition: all 0.2s;
+            font-weight: 500;
+        }
+        .demo-nav-link.active, .demo-nav-link:hover {
+            color: #fff;
+            background: var(--accent);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        /* shadcn Card Container */
+        .shadcn-card {
+            width: 100%;
+            max-width: 820px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.6);
+            overflow: hidden;
+        }
+
+        .shadcn-card-header {
+            padding: 28px 28px 20px 28px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .shadcn-header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .shadcn-card-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--foreground);
+            margin: 0 0 4px 0;
+            letter-spacing: -0.015em;
+        }
+
+        .shadcn-card-description {
+            font-size: 13.5px;
+            color: var(--muted-foreground);
+            line-height: 1.5;
+        }
+
+        .shadcn-badge-zinc {
+            background: #18181b;
+            border: 1px solid var(--border);
+            color: #e4e4e7;
+            padding: 5px 12px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-family: var(--font-mono);
+            font-weight: 600;
+        }
+
+        /* Tabs List */
+        .shadcn-tabs-list {
+            display: inline-flex;
+            background: #18181b;
+            padding: 4px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+
+        .shadcn-tab {
+            padding: 6px 14px;
+            background: transparent;
+            border: none;
+            color: var(--muted-foreground);
+            font-size: 13px;
+            font-weight: 500;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .shadcn-tab.active {
+            background: var(--background);
+            color: var(--foreground);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+        }
+
+        .shadcn-card-content {
+            padding: 28px;
+        }
+
+        /* Input Groups with Addons */
+        .shadcn-input-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+            margin-bottom: 22px;
+        }
+
+        .shadcn-label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            color: #e4e4e7;
+            margin-bottom: 8px;
+        }
+
+        .shadcn-input-group {
+            display: flex;
+            align-items: center;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: #09090b;
+            overflow: hidden;
+            transition: all 0.15s;
+        }
+
+        .shadcn-input-group:focus-within {
+            border-color: #fafafa;
+            box-shadow: 0 0 0 1px #fafafa;
+        }
+
+        .shadcn-addon {
+            background: #18181b;
+            color: var(--muted);
+            font-size: 12px;
+            font-family: var(--font-mono);
+            font-weight: 700;
+            padding: 10px 12px;
+            border-right: 1px solid var(--border);
+        }
+
+        .shadcn-addon-unit {
+            background: #18181b;
+            color: var(--muted);
+            font-size: 12px;
+            font-family: var(--font-mono);
+            padding: 10px 12px;
+            border-left: 1px solid var(--border);
+        }
+
+        .shadcn-input-group input {
+            width: 100%;
+            background: transparent;
+            border: none;
+            padding: 10px 12px;
+            color: var(--foreground);
+            font-size: 14px;
+            font-family: var(--font-mono);
+            outline: none;
+        }
+
+        /* Controls Row */
+        .shadcn-action-wrap {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 26px;
+        }
+
+        .shadcn-presets {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-shadcn-preset {
+            background: #18181b;
+            border: 1px solid var(--border);
+            color: var(--muted-foreground);
+            padding: 7px 12px;
+            border-radius: 6px;
+            font-size: 11.5px;
+            font-family: var(--font-mono);
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .btn-shadcn-preset:hover {
+            background: var(--accent);
+            color: var(--foreground);
+        }
+
+        .shadcn-primary-btn {
+            padding: 10px 20px;
+            background: #fafafa;
+            color: #18181b;
+            border: none;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.15s, transform 0.1s;
+        }
+
+        .shadcn-primary-btn:hover {
+            opacity: 0.9;
+        }
+
+        .shadcn-primary-btn:active {
+            transform: scale(0.985);
+        }
+
+        /* Table */
+        .shadcn-table-wrapper {
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .shadcn-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        .shadcn-table th {
+            background: #18181b;
+            color: var(--muted-foreground);
+            font-weight: 500;
+            text-align: left;
+            padding: 12px 16px;
+            font-size: 12px;
+            border-bottom: 1px solid var(--border);
+            font-family: var(--font-mono);
+            text-transform: uppercase;
+        }
+
+        .shadcn-table td {
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--border);
+            color: #e4e4e7;
+        }
+
+        .shadcn-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .shadcn-table tr:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .font-mono { font-family: var(--font-mono); }
+
+        .shadcn-copy-badge {
+            background: #18181b;
+            border: 1px solid var(--border);
+            color: var(--muted-foreground);
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 11px;
+            cursor: pointer;
+            transition: all 0.15s;
+            font-family: var(--font-mono);
+        }
+
+        .shadcn-copy-badge:hover {
+            background: #27272a;
+            color: #fafafa;
+        }
+
+        .shadcn-card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .btn-shadcn-export {
+            background: #18181b;
+            border: 1px solid var(--border);
+            color: var(--muted-foreground);
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-family: var(--font-mono);
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .btn-shadcn-export:hover {
+            background: var(--accent);
+            color: #fff;
+        }
+
+        /* Toast */
+        .shadcn-toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: #18181b;
+            border: 1px solid var(--border);
+            color: #fafafa;
+            padding: 12px 18px;
+            border-radius: 8px;
+            font-size: 13px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+            transform: translateY(120%);
+            opacity: 0;
+            transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s;
+            pointer-events: none;
+            z-index: 999;
+        }
+
+        .shadcn-toast.visible {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        @media (max-width: 640px) {
+            .shadcn-input-row { grid-template-columns: 1fr; }
+            .shadcn-card-content { padding: 20px 16px; }
+            .demo-nav-bar { flex-direction: column; gap: 10px; border-radius: 16px; }
+            .demo-nav-links { flex-wrap: wrap; justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Top Navigation -->
+    <div class="demo-nav-bar">
+        <div style="font-weight: 700; color: #fafafa;">⚙️ 5 DEMO SHOWCASE: DESIGN SYSTEMS</div>
+        <div class="demo-nav-links">
+            <a href="demo-aceternity.html" class="demo-nav-link">1. Aceternity UI</a>
+            <a href="demo-magicui.html" class="demo-nav-link">2. Magic UI</a>
+            <a href="demo-21stdev.html" class="demo-nav-link">3. 21st.dev</a>
+            <a href="demo-shadcn.html" class="demo-nav-link active">4. shadcn/ui</a>
+            <a href="demo-html5up.html" class="demo-nav-link">5. HTML5 UP</a>
+            <a href="index.html#calculator" class="demo-nav-link" style="color: #f59e0b;">↩ Înapoi pe Site</a>
+        </div>
+    </div>
+
+    <!-- Main Card -->
+    <div class="shadcn-card">
+        
+        <!-- Header -->
+        <div class="shadcn-card-header">
+            <div class="shadcn-header-row">
+                <div>
+                    <h1 class="shadcn-card-title">Stereo 70 ⇄ WGS84 Transformer</h1>
+                    <p class="shadcn-card-description">Official Romanian Geodetic Transformation (EPSG:3844 to EPSG:4326)</p>
+                </div>
+                <div class="shadcn-badge-zinc">
+                    ANCPI EPSG:3844
+                </div>
+            </div>
+
+            <!-- Tabs -->
+            <div class="shadcn-tabs-list">
+                <button class="shadcn-tab active" id="sc-tab-st">Stereo 70 (X, Y) ➔ WGS84</button>
+                <button class="shadcn-tab" id="sc-tab-wgs">WGS84 (φ, λ) ➔ Stereo 70</button>
+            </div>
+        </div>
+
+        <!-- Content -->
+        <div class="shadcn-card-content">
+            <form id="sc-form" onsubmit="handleShadcnTransform(event)">
+                <div class="shadcn-input-row">
+                    <div class="shadcn-input-field">
+                        <label class="shadcn-label" for="sc-x">Nordificare X (Stereo 70)</label>
+                        <div class="shadcn-input-group">
+                            <span class="shadcn-addon">X</span>
+                            <input type="number" id="sc-x" step="0.001" value="328733.315" required />
+                            <span class="shadcn-addon-unit">m</span>
+                        </div>
+                    </div>
+
+                    <div class="shadcn-input-field">
+                        <label class="shadcn-label" for="sc-y">Estificare Y (Stereo 70)</label>
+                        <div class="shadcn-input-group">
+                            <span class="shadcn-addon">Y</span>
+                            <input type="number" id="sc-y" step="0.001" value="586483.430" required />
+                            <span class="shadcn-addon-unit">m</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action & Presets -->
+                <div class="shadcn-action-wrap">
+                    <div class="shadcn-presets">
+                        <button type="button" class="btn-shadcn-preset" onclick="setShadcnPreset('central')">Sediul Central UGR</button>
+                        <button type="button" class="btn-shadcn-preset" onclick="setShadcnPreset('sector1')">Sector 1 (Piața Victoriei)</button>
+                    </div>
+
+                    <button type="submit" class="shadcn-primary-btn">
+                        Transform Coordinates
+                    </button>
+                </div>
+            </form>
+
+            <!-- Results Data Table -->
+            <div class="shadcn-table-wrapper">
+                <table class="shadcn-table">
+                    <thead>
+                        <tr>
+                            <th>Parametru Geodezic</th>
+                            <th>Format Zecimal (DD)</th>
+                            <th>Sexagesimal (DMS)</th>
+                            <th style="text-align: right;">Acțiune</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style="font-weight: 500;">Latitudine WGS84 (φ)</td>
+                            <td class="font-mono" id="sc-lat-dd">44.453225° N</td>
+                            <td class="font-mono" id="sc-lat-dms">44° 27' 11" N</td>
+                            <td style="text-align: right;">
+                                <button type="button" class="shadcn-copy-badge" onclick="copyValue('44.453225')">Copy</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight: 500;">Longitudine WGS84 (λ)</td>
+                            <td class="font-mono" id="sc-lon-dd">26.084722° E</td>
+                            <td class="font-mono" id="sc-lon-dms">26° 05' 05" E</td>
+                            <td style="text-align: right;">
+                                <button type="button" class="shadcn-copy-badge" onclick="copyValue('26.084722')">Copy</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight: 500;">Model Transformare</td>
+                            <td class="font-mono" style="color: var(--muted-foreground);">Helmert 7-Parametri</td>
+                            <td class="font-mono" style="color: var(--muted-foreground);">Ordin ANCPI 108/2010</td>
+                            <td style="text-align: right;">
+                                <span style="font-size: 11px; color: #10b981; font-weight: 600;">✓ ANCPI</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Footer Actions -->
+            <div class="shadcn-card-footer">
+                <div style="display: flex; gap: 8px;">
+                    <button type="button" class="btn-shadcn-export" onclick="copyFull()">📋 Copy All</button>
+                    <button type="button" class="btn-shadcn-export" onclick="exportShadcn('csv')">📥 Export CSV</button>
+                    <button type="button" class="btn-shadcn-export" onclick="exportShadcn('txt')">📄 Report TXT</button>
+                </div>
+                <span style="font-size: 11px; color: var(--muted); font-family: var(--font-mono);">
+                    Krasovski 1940 ⇄ WGS84
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sonner Toast -->
+    <div class="shadcn-toast" id="sc-toast">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2">
+            <polyline points="20 6 9 17 4 12"></polyline>
+        </svg>
+        <span id="sc-toast-msg">Coordonate copiate în clipboard!</span>
+    </div>
+
+    <script>
+        // Init Proj4 EPSG:3844
+        proj4.defs(
+            "EPSG:3844",
+            "+proj=sterea +lat_0=46 +lon_0=25 +k=0.99975 +x_0=500000 +y_0=500000 +ellps=krass +towgs84=2.3287,-147.0425,-92.0802,0.3092483,0.3248218,-0.4973001,5.68906266 +units=m +no_defs"
+        );
+
+        function formatDMS(deg, type) {
+            const abs = Math.abs(deg);
+            const d = Math.floor(abs);
+            const mFull = (abs - d) * 60;
+            const m = Math.floor(mFull);
+            const s = Math.floor((mFull - m) * 60);
+            const dir = type === 'lat' ? (deg >= 0 ? 'N' : 'S') : (deg >= 0 ? 'E' : 'V');
+            return `${d}° ${m}' ${s}" ${dir}`;
+        }
+
+        function handleShadcnTransform(e) {
+            if (e) e.preventDefault();
+            const x = parseFloat(document.getElementById('sc-x').value);
+            const y = parseFloat(document.getElementById('sc-y').value);
+
+            if (isNaN(x) || isNaN(y)) {
+                alert("Introduceți valori numerice valide.");
+                return;
+            }
+
+            try {
+                const [lon, lat] = proj4("EPSG:3844", "WGS84", [y, x]);
+                document.getElementById('sc-lat-dd').innerText = `${lat.toFixed(6)}° N`;
+                document.getElementById('sc-lon-dd').innerText = `${lon.toFixed(6)}° E`;
+                document.getElementById('sc-lat-dms').innerText = formatDMS(lat, 'lat');
+                document.getElementById('sc-lon-dms').innerText = formatDMS(lon, 'lon');
+            } catch (err) {
+                console.error(err);
+                alert("Eroare la calcularea proiecției.");
+            }
+        }
+
+        function setShadcnPreset(preset) {
+            if (preset === 'sector1') {
+                document.getElementById('sc-x').value = '328733.315';
+                document.getElementById('sc-y').value = '586483.430';
+            } else {
+                document.getElementById('sc-x').value = '334250.125';
+                document.getElementById('sc-y').value = '591240.850';
+            }
+            handleShadcnTransform();
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('sc-toast');
+            document.getElementById('sc-toast-msg').innerText = msg;
+            toast.classList.add('visible');
+            setTimeout(() => toast.classList.remove('visible'), 2200);
+        }
+
+        function copyValue(val) {
+            navigator.clipboard.writeText(val).then(() => {
+                showToast(`Valoare copiată: ${val}`);
+            });
+        }
+
+        function copyFull() {
+            const lat = document.getElementById('sc-lat-dd').innerText;
+            const lon = document.getElementById('sc-lon-dd').innerText;
+            navigator.clipboard.writeText(`WGS84: ${lat}, ${lon} (EPSG:3844)`).then(() => {
+                showToast("Coordonate complete copiate!");
+            });
+        }
+
+        function exportShadcn(type) {
+            const x = document.getElementById('sc-x').value;
+            const y = document.getElementById('sc-y').value;
+            const lat = document.getElementById('sc-lat-dd').innerText;
+            const lon = document.getElementById('sc-lon-dd').innerText;
+            let content = '', filename = '', mime = 'text/plain';
+
+            if (type === 'csv') {
+                content = `Punct,Sursa,X,Y,Destinatie,Lat,Lon\r\n1,Stereo70_EPSG3844,${x},${y},WGS84,${lat},${lon}\r\n`;
+                filename = "punct_shadcn.csv";
+                mime = 'text/csv;charset=utf-8;';
+            } else {
+                content = `RAPORT GEODEZIC SHADCN/UI\r\nData: ${new Date().toLocaleString('ro-RO')}\r\nX: ${x}\r\nY: ${y}\r\nLat: ${lat}\r\nLon: ${lon}\r\n`;
+                filename = "raport_shadcn.txt";
+            }
+            const blob = new Blob([content], { type: mime });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = filename;
+            a.click();
+        }
+
+        // Run once on load
+        handleShadcnTransform();
+    </script>
+</body>
+</html>

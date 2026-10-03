@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo 3: 21st.dev — Calculator Stereo 70 (EPSG:3844)</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/proj4@2.9.0/dist/proj4.js"></script>
+    <style>
+        :root {
+            --bg-obsidian: #09090b;
+            --card-surface: rgba(18, 18, 22, 0.95);
+            --border-subtle: rgba(255, 255, 255, 0.08);
+            --text-main: #fafafa;
+            --text-muted: #71717a;
+            --emerald-status: #10b981;
+            --cyan-accent: #00E5FF;
+            --font-sans: 'Geist', -apple-system, sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background-color: var(--bg-obsidian);
+            color: var(--text-main);
+            font-family: var(--font-sans);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 20px 80px 20px;
+        }
+
+        /* Top Demo Bar */
+        .demo-nav-bar {
+            width: 100%;
+            max-width: 900px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding: 12px 20px;
+            background: rgba(24, 24, 27, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border-subtle);
+            border-radius: 9999px;
+            font-size: 13px;
+        }
+        .demo-nav-links {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+        .demo-nav-link {
+            color: #94a3b8;
+            text-decoration: none;
+            padding: 6px 12px;
+            border-radius: 9999px;
+            transition: all 0.2s;
+            font-weight: 500;
+        }
+        .demo-nav-link.active, .demo-nav-link:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        /* 21st.dev Main HUD Card */
+        .eng-hud-card {
+            width: 100%;
+            max-width: 840px;
+            background: var(--card-surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: 20px;
+            padding: 36px;
+            box-shadow: 
+                0 0 0 1px rgba(255, 255, 255, 0.04),
+                0 25px 50px -15px rgba(0, 0, 0, 0.9),
+                inset 0 1px 0 0 rgba(255, 255, 255, 0.14);
+        }
+
+        .eng-topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .eng-hud-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 5px 12px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 9999px;
+            font-size: 11.5px;
+            font-family: var(--font-mono);
+        }
+
+        .eng-status-dot {
+            width: 6px;
+            height: 6px;
+            background: var(--emerald-status);
+            border-radius: 50%;
+            box-shadow: 0 0 8px var(--emerald-status);
+        }
+
+        .eng-hud-meta {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .eng-chip {
+            font-size: 10.5px;
+            font-weight: 600;
+            color: #a1a1aa;
+            font-family: var(--font-mono);
+        }
+
+        .eng-title-area {
+            margin-bottom: 24px;
+        }
+
+        .eng-heading {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 6px;
+            letter-spacing: -0.02em;
+        }
+
+        .eng-subtext {
+            font-size: 13.5px;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        /* Segmented Slider Pill Switcher */
+        .eng-segmented-wrap {
+            position: relative;
+            display: flex;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 4px;
+            margin-bottom: 26px;
+        }
+
+        .eng-indicator-pill {
+            position: absolute;
+            top: 4px;
+            bottom: 4px;
+            left: 4px;
+            width: calc(50% - 4px);
+            background: rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+            transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+            pointer-events: none;
+        }
+
+        .eng-seg-item {
+            flex: 1;
+            position: relative;
+            z-index: 2;
+            padding: 10px 16px;
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: color 0.2s;
+            text-align: center;
+        }
+
+        .eng-seg-item.active {
+            color: #ffffff;
+        }
+
+        /* Input Grid */
+        .eng-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+            margin-bottom: 22px;
+        }
+
+        .eng-cell-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .eng-cell-header label {
+            font-size: 11px;
+            font-weight: 600;
+            color: #e4e4e7;
+            font-family: var(--font-mono);
+            text-transform: uppercase;
+        }
+
+        .eng-cell-unit {
+            font-size: 10px;
+            color: var(--text-muted);
+            font-family: var(--font-mono);
+        }
+
+        .eng-input-box {
+            display: flex;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 0 16px;
+            transition: all 0.2s ease;
+        }
+
+        .eng-input-box:focus-within {
+            border-color: rgba(255, 255, 255, 0.4);
+            box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.4);
+            background: rgba(0, 0, 0, 0.7);
+        }
+
+        .eng-input-box input {
+            width: 100%;
+            background: transparent;
+            border: none;
+            padding: 12px 0;
+            color: #ffffff;
+            font-family: var(--font-mono);
+            font-size: 15px;
+            outline: none;
+        }
+
+        .eng-input-suffix {
+            font-size: 12px;
+            color: var(--text-muted);
+            font-family: var(--font-mono);
+        }
+
+        /* Preset dock and Action button */
+        .eng-action-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 26px;
+        }
+
+        .eng-presets {
+            display: flex;
+            gap: 8px;
+        }
+
+        .eng-btn-preset {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: #a1a1aa;
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-family: var(--font-mono);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .eng-btn-preset:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .eng-solve-btn {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 11px 22px;
+            background: #ffffff;
+            color: #09090b;
+            border: none;
+            border-radius: 10px;
+            font-size: 13.5px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.15s, transform 0.1s;
+        }
+
+        .eng-solve-btn:hover {
+            background: #f4f4f5;
+            transform: translateY(-1px);
+        }
+
+        .eng-solve-btn:active {
+            transform: scale(0.98);
+        }
+
+        .eng-kbd {
+            background: #e4e4e7;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-family: var(--font-mono);
+            font-weight: 700;
+        }
+
+        /* Results Display Grid */
+        .eng-results-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 14px;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 14px;
+            padding: 18px;
+            margin-bottom: 22px;
+        }
+
+        .eng-res-box {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .eng-res-label {
+            font-size: 10px;
+            color: var(--text-muted);
+            letter-spacing: 0.06em;
+            font-weight: 700;
+            font-family: var(--font-mono);
+        }
+
+        .eng-res-val {
+            font-size: 15px;
+            font-weight: 700;
+            color: #fafafa;
+            font-family: var(--font-mono);
+            margin: 4px 0 2px 0;
+        }
+
+        .eng-res-dec {
+            font-size: 11px;
+            color: #a1a1aa;
+            font-family: var(--font-mono);
+        }
+
+        /* Detailed Comparison Table */
+        .eng-table-wrap {
+            overflow-x: auto;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            margin-bottom: 22px;
+        }
+
+        .eng-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+            text-align: left;
+        }
+
+        .eng-table th {
+            background: #18181b;
+            color: #a1a1aa;
+            font-family: var(--font-mono);
+            font-size: 10px;
+            text-transform: uppercase;
+            padding: 10px 14px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .eng-table td {
+            padding: 12px 14px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            font-family: var(--font-mono);
+        }
+
+        /* Floating Glass Telemetry Dock */
+        .eng-glass-dock {
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 12px 18px;
+            margin-bottom: 20px;
+        }
+
+        .dock-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+        }
+
+        .dock-title {
+            font-size: 9px;
+            color: var(--text-muted);
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            font-family: var(--font-mono);
+        }
+
+        .dock-val {
+            font-size: 11px;
+            font-family: var(--font-mono);
+            color: #d4d4d8;
+        }
+
+        .dock-divider {
+            width: 1px;
+            height: 20px;
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .eng-actions-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .btn-eng-copy {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            color: #fafafa;
+            padding: 7px 14px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-family: var(--font-mono);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-eng-copy:hover {
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+        @media (max-width: 640px) {
+            .eng-grid { grid-template-columns: 1fr; }
+            .eng-results-grid { grid-template-columns: 1fr; }
+            .eng-hud-card { padding: 24px 16px; }
+            .demo-nav-bar { flex-direction: column; gap: 10px; border-radius: 16px; }
+            .demo-nav-links { flex-wrap: wrap; justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Top Navigation -->
+    <div class="demo-nav-bar">
+        <div style="font-weight: 700; color: #fff;">💎 5 DEMO SHOWCASE: DESIGN SYSTEMS</div>
+        <div class="demo-nav-links">
+            <a href="demo-aceternity.html" class="demo-nav-link">1. Aceternity UI</a>
+            <a href="demo-magicui.html" class="demo-nav-link">2. Magic UI</a>
+            <a href="demo-21stdev.html" class="demo-nav-link active">3. 21st.dev</a>
+            <a href="demo-shadcn.html" class="demo-nav-link">4. shadcn/ui</a>
+            <a href="demo-html5up.html" class="demo-nav-link">5. HTML5 UP</a>
+            <a href="index.html#calculator" class="demo-nav-link" style="color: #f59e0b;">↩ Înapoi pe Site</a>
+        </div>
+    </div>
+
+    <!-- Main HUD Card -->
+    <div class="eng-hud-card">
+        
+        <!-- Top Bar -->
+        <div class="eng-topbar">
+            <div class="eng-hud-badge">
+                <span class="eng-status-dot"></span>
+                <span>EPSG:3844 // STEREO 70 ANCPI</span>
+            </div>
+            <div class="eng-hud-meta">
+                <span class="eng-chip">DATUM: KRASOVSKI 1940</span>
+                <span class="eng-chip">HELMERT 7-PAR</span>
+            </div>
+        </div>
+
+        <!-- Title -->
+        <div class="eng-title-area">
+            <h1 class="eng-heading">Transversal Stereo 70 Coordinates HUD</h1>
+            <p class="eng-subtext">Precision cartographic conversion complying with ANCPI Technical Standard 108/2010.</p>
+        </div>
+
+        <!-- Sliding Segmented Mode Switcher -->
+        <div class="eng-segmented-wrap" id="eng-segment-container">
+            <div class="eng-indicator-pill" id="eng-pill"></div>
+            <button class="eng-seg-item active" id="seg-btn-1" onclick="switchEngMode(0, 'st70')">
+                Stereo 70 (EPSG:3844) ➔ WGS84
+            </button>
+            <button class="eng-seg-item" id="seg-btn-2" onclick="switchEngMode(1, 'wgs')">
+                WGS84 (GPS) ➔ Stereo 70
+            </button>
+        </div>
+
+        <!-- Inputs Form -->
+        <form id="eng-form" onsubmit="handleEngSolve(event)">
+            <div class="eng-grid">
+                <div class="eng-cell">
+                    <div class="eng-cell-header">
+                        <label for="eng-x">X (Nord / North)</label>
+                        <span class="eng-cell-unit">False N: 500km</span>
+                    </div>
+                    <div class="eng-input-box">
+                        <input type="number" id="eng-x" step="0.001" value="328733.315" required />
+                        <span class="eng-input-suffix">m</span>
+                    </div>
+                </div>
+
+                <div class="eng-cell">
+                    <div class="eng-cell-header">
+                        <label for="eng-y">Y (Est / East)</label>
+                        <span class="eng-cell-unit">False E: 500km</span>
+                    </div>
+                    <div class="eng-input-box">
+                        <input type="number" id="eng-y" step="0.001" value="586483.430" required />
+                        <span class="eng-input-suffix">m</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Controls -->
+            <div class="eng-action-row">
+                <div class="eng-presets">
+                    <button type="button" class="eng-btn-preset" onclick="setEngPreset('central')">Sediul Central UGR</button>
+                    <button type="button" class="eng-btn-preset" onclick="setEngPreset('sector1')">Sector 1 (P. Victoriei)</button>
+                </div>
+
+                <button type="submit" class="eng-solve-btn">
+                    <span>Compute Coordinates</span>
+                    <kbd class="eng-kbd">↵</kbd>
+                </button>
+            </div>
+        </form>
+
+        <!-- Output Metric Grid -->
+        <div class="eng-results-grid">
+            <div class="eng-res-box">
+                <span class="eng-res-label">GEODETIC LATITUDE (φ)</span>
+                <div class="eng-res-val" id="eng-out-lat">44.453225° N</div>
+                <div class="eng-res-dec" id="eng-out-lat-dms">44° 27' 11" N</div>
+            </div>
+
+            <div class="eng-res-box">
+                <span class="eng-res-label">GEODETIC LONGITUDE (λ)</span>
+                <div class="eng-res-val" id="eng-out-lon">26.084722° E</div>
+                <div class="eng-res-dec" id="eng-out-lon-dms">26° 05' 05" E</div>
+            </div>
+
+            <div class="eng-res-box">
+                <span class="eng-res-label">CONVERGENCE & ACCURACY</span>
+                <div class="eng-res-val" style="color: #10b981;">&lt; 2 cm</div>
+                <div class="eng-res-dec">ANCPI Helmert Matched</div>
+            </div>
+        </div>
+
+        <!-- Table Display -->
+        <div class="eng-table-wrap">
+            <table class="eng-table">
+                <thead>
+                    <tr>
+                        <th>CRS System</th>
+                        <th>Northing / Lat</th>
+                        <th>Easting / Lon</th>
+                        <th>DMS Notation</th>
+                        <th>Conformity</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="color: #38bdf8; font-weight: 600;">Stereo 70 (EPSG:3844)</td>
+                        <td id="tbl-eng-x">328733.315 m</td>
+                        <td id="tbl-eng-y">586483.430 m</td>
+                        <td>Plan Secant S-42</td>
+                        <td style="color: #10b981;">Validat Oficial</td>
+                    </tr>
+                    <tr>
+                        <td style="color: #f59e0b; font-weight: 600;">WGS84 Global (GPS)</td>
+                        <td id="tbl-eng-lat" style="color: #f59e0b;">44.453225° N</td>
+                        <td id="tbl-eng-lon" style="color: #f59e0b;">26.084722° E</td>
+                        <td id="tbl-eng-dms">44° 27' 11" N | 26° 05' 05" E</td>
+                        <td style="color: #10b981;">Elipsoid GRS80</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Floating Glass Telemetry Dock -->
+        <div class="eng-glass-dock">
+            <div class="dock-item">
+                <span class="dock-title">ELLIPSOID</span>
+                <span class="dock-val">Krasovsky 1940</span>
+            </div>
+            <div class="dock-divider"></div>
+            <div class="dock-item">
+                <span class="dock-title">SEMI-MAJOR (a)</span>
+                <span class="dock-val">6,378,245.0 m</span>
+            </div>
+            <div class="dock-divider"></div>
+            <div class="dock-item">
+                <span class="dock-title">FLATTENING (1/f)</span>
+                <span class="dock-val">298.30000</span>
+            </div>
+            <div class="dock-divider"></div>
+            <div class="dock-item">
+                <span class="dock-title">SCALE (k₀)</span>
+                <span class="dock-val">0.99975000</span>
+            </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="eng-actions-footer">
+            <div style="display: flex; gap: 8px;">
+                <button type="button" class="btn-eng-copy" onclick="copyEngResult(this)">📋 Copy WGS84</button>
+                <button type="button" class="btn-eng-copy" onclick="exportEngData('csv')">📥 Export CSV</button>
+                <button type="button" class="btn-eng-copy" onclick="exportEngData('txt')">📄 Report TXT</button>
+            </div>
+            <span style="font-size: 11px; color: var(--text-muted); font-family: var(--font-mono);">ANCPI Ord. 108/2010</span>
+        </div>
+
+    </div>
+
+    <script>
+        // Init Proj4 EPSG:3844
+        proj4.defs(
+            "EPSG:3844",
+            "+proj=sterea +lat_0=46 +lon_0=25 +k=0.99975 +x_0=500000 +y_0=500000 +ellps=krass +towgs84=2.3287,-147.0425,-92.0802,0.3092483,0.3248218,-0.4973001,5.68906266 +units=m +no_defs"
+        );
+
+        function switchEngMode(idx, mode) {
+            const pill = document.getElementById('eng-pill');
+            const btn1 = document.getElementById('seg-btn-1');
+            const btn2 = document.getElementById('seg-btn-2');
+            if (idx === 0) {
+                pill.style.transform = 'translateX(0%)';
+                btn1.classList.add('active');
+                btn2.classList.remove('active');
+            } else {
+                pill.style.transform = 'translateX(100%)';
+                btn2.classList.add('active');
+                btn1.classList.remove('active');
+            }
+        }
+
+        function formatDMS(deg, type) {
+            const abs = Math.abs(deg);
+            const d = Math.floor(abs);
+            const mFull = (abs - d) * 60;
+            const m = Math.floor(mFull);
+            const s = Math.floor((mFull - m) * 60);
+            const dir = type === 'lat' ? (deg >= 0 ? 'N' : 'S') : (deg >= 0 ? 'E' : 'V');
+            return `${d}° ${m}' ${s}" ${dir}`;
+        }
+
+        function handleEngSolve(e) {
+            if (e) e.preventDefault();
+            const x = parseFloat(document.getElementById('eng-x').value);
+            const y = parseFloat(document.getElementById('eng-y').value);
+
+            if (isNaN(x) || isNaN(y)) {
+                alert("Introduceți valori numerice valide.");
+                return;
+            }
+
+            try {
+                const [lon, lat] = proj4("EPSG:3844", "WGS84", [y, x]);
+                const dmsLat = formatDMS(lat, 'lat');
+                const dmsLon = formatDMS(lon, 'lon');
+
+                document.getElementById('eng-out-lat').innerText = `${lat.toFixed(6)}° N`;
+                document.getElementById('eng-out-lat-dms').innerText = dmsLat;
+                document.getElementById('eng-out-lon').innerText = `${lon.toFixed(6)}° E`;
+                document.getElementById('eng-out-lon-dms').innerText = dmsLon;
+
+                document.getElementById('tbl-eng-x').innerText = `${x.toFixed(3)} m`;
+                document.getElementById('tbl-eng-y').innerText = `${y.toFixed(3)} m`;
+                document.getElementById('tbl-eng-lat').innerText = `${lat.toFixed(6)}° N`;
+                document.getElementById('tbl-eng-lon').innerText = `${lon.toFixed(6)}° E`;
+                document.getElementById('tbl-eng-dms').innerText = `${dmsLat} | ${dmsLon}`;
+            } catch (err) {
+                console.error(err);
+                alert("Eroare la calcularea proiecției.");
+            }
+        }
+
+        function setEngPreset(preset) {
+            if (preset === 'sector1') {
+                document.getElementById('eng-x').value = '328733.315';
+                document.getElementById('eng-y').value = '586483.430';
+            } else {
+                document.getElementById('eng-x').value = '334250.125';
+                document.getElementById('eng-y').value = '591240.850';
+            }
+            handleEngSolve();
+        }
+
+        function copyEngResult(btn) {
+            const lat = document.getElementById('eng-out-lat').innerText;
+            const lon = document.getElementById('eng-out-lon').innerText;
+            const txt = `WGS84: ${lat}, ${lon} — Stereo 70 ANCPI EPSG:3844`;
+            navigator.clipboard.writeText(txt).then(() => {
+                const prev = btn.innerHTML;
+                btn.innerHTML = "✓ Copied!";
+                btn.style.color = "#10b981";
+                setTimeout(() => { btn.innerHTML = prev; btn.style.color = ""; }, 2000);
+            });
+        }
+
+        function exportEngData(type) {
+            const x = document.getElementById('eng-x').value;
+            const y = document.getElementById('eng-y').value;
+            const lat = document.getElementById('eng-out-lat').innerText;
+            const lon = document.getElementById('eng-out-lon').innerText;
+            let content = '', filename = '', mime = 'text/plain';
+
+            if (type === 'csv') {
+                content = `Punct,Sursa,X_m,Y_m,Destinatie,Lat_WGS84,Lon_WGS84\r\n1,Stereo70_EPSG3844,${x},${y},WGS84,${lat},${lon}\r\n`;
+                filename = "punct_21stdev.csv";
+                mime = 'text/csv;charset=utf-8;';
+            } else {
+                content = `RAPORT GEODEZIC 21ST.DEV EPSG:3844\r\nData: ${new Date().toLocaleString('ro-RO')}\r\nX: ${x} m\r\nY: ${y} m\r\nLat: ${lat}\r\nLon: ${lon}\r\n`;
+                filename = "raport_21stdev.txt";
+            }
+            const blob = new Blob([content], { type: mime });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = filename;
+            a.click();
+        }
+
+        // Run once on load
+        handleEngSolve();
+    </script>
+</body>
+</html>
