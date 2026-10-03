@@ -1193,7 +1193,7 @@ function renderDocuments() {
                 </div>
                 <h4 style="font-size: 16px; font-weight: 700; margin-bottom: 8px; color: var(--ugr-text-main);">${doc.title}</h4>
                 <p style="font-size: 12.5px; color: var(--ugr-text-muted); line-height: 1.5; margin-bottom: 20px;">${doc.desc}</p>
-                <a href="${doc.fileUrl}" target="_blank" rel="noopener noreferrer" class="btn-secondary" style="border-color: var(--ugr-accent); color: var(--ugr-accent); justify-content: center; text-align: center; font-size: 11px; margin-top: auto;">
+                <a href="${doc.fileUrl}" download target="_blank" rel="noopener noreferrer" class="btn-secondary" style="border-color: var(--ugr-accent); color: var(--ugr-accent); justify-content: center; text-align: center; font-size: 11px; margin-top: auto;">
                     Descarcă formularul tipizat ⬇
                 </a>
             </div>

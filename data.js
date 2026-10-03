@@ -200,21 +200,21 @@ const ugrData = {
     // -------------------------------------------------------------------------
     documentsList: [
         {
-            title: "Cerere de Adeziune - Persoane Fizice",
-            desc: "Formular tipizat pentru înscrierea geodezilor autorizați în asociația locală a UGR.",
-            fileUrl: "https://www.ugr.ro/assets/upload/cerere_inscriere_UGR_persoane_fizice.docx",
+            title: "Cerere de Adeziune — Persoane Fizice",
+            desc: "Formular tipizat oficial UGR Filiala Sector 1 București pentru ingineri geodezi și topografi autorizați ANCPI.",
+            fileUrl: "documente/cerere_inscriere_UGR_persoane_fizice_sector1.docx",
             format: "DOCX (Word)"
         },
         {
-            title: "Cerere de Adeziune - Persoane Juridice",
-            desc: "Formular oficial dedicat companiilor din domeniul geodeziei, cadastrului și cartografiei.",
-            fileUrl: "https://www.ugr.ro/assets/upload/cerere_inscriere_UGR_persoane_juridice.docx",
+            title: "Cerere de Adeziune — Persoane Juridice",
+            desc: "Formular tipizat oficial UGR Filiala Sector 1 dedicat birourilor de proiectare, societăților de cadastru și geodezie.",
+            fileUrl: "documente/cerere_inscriere_UGR_persoane_juridice_sector1.docx",
             format: "DOCX (Word)"
         },
         {
-            title: "Declarație Acord GDPR UGR",
-            desc: "Formular obligatoriu privind protecția datelor cu caracter personal pentru toți membrii înscriși.",
-            fileUrl: "https://www.ugr.ro/assets/upload/statut_ugr.pdf", // Folosim pdf ca fallback
+            title: "Statutul Oficial UGR & Regulament de Organizare",
+            desc: "Documentul fundamental care reglementează funcționarea asociației, drepturile, îndatoririle și codul deontologic.",
+            fileUrl: "documente/statut_ugr.pdf",
             format: "PDF (Acrobat)"
         }
     ],
