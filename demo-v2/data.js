@@ -117,36 +117,88 @@ const ugrData = {
     // -------------------------------------------------------------------------
     faqList: [
         {
+            category: "aderare",
+            tag: "STATUT & PROTOCOL",
             q: "Ce este Uniunea Geodezilor din România (UGR) și ce rol are Filiala Sector 1?",
             a: "UGR este asociația profesională națională neguvernamentală, apolitică și non-profit a inginerilor geodezi, topografilor și cartografilor din România, fondată în 1990. Filiala Sector 1 București asigură reprezentarea geodezilor din Capitală, facilitând dialogul legislativ cu ANCPI, OCPI București și participarea la evenimente de perfecționare tehnică."
         },
         {
+            category: "aderare",
+            tag: "STATUT & COTIZAȚII",
             q: "Cum devin membru UGR și care sunt pașii de înscriere?",
             a: "Conform procedurii oficiale (ugr.ro/cum-devin-membru): 1. Se completează cererea de adeziune tipizată. 2. Se trimit actele de studii și autorizația ANCPI. 3. Se achită taxa de înscriere (50 lei) și cotizația anuală (100 lei). 4. Dosarul este validat de Biroul Executiv (BEX) și se emite legitimația oficială."
         },
         {
-            q: "Studenții la Geodezie se pot înscrie în UGR? Ce costuri implică?",
-            a: "Da, studenții înmatriculați la facultățile de profil (ex: Facultatea de Geodezie UTCB, UTM Chișinău, USAMV) beneficiază de un regim facilitat: taxa de înscriere este de doar 10 lei, iar cotizația anuală este de 10 lei, pe baza unei adeverințe de student valabile."
-        },
-        {
-            q: "Ce este Săptămâna Geodeziei Românești (SGR) și cum pot participa la Chișinău?",
-            a: "SGR este cel mai important congres tehnico-științific anual organizat de UGR. Ediția internațională se desfășoară în perioada 11–14 Noiembrie la Chișinău, la Universitatea Tehnică a Moldovei (UTM). Detaliile de înscriere, programul și transmiterea lucrărilor științifice sunt disponibile pe portalul oficial https://sgr.ugr.ro/indexr.php."
-        },
-        {
+            category: "aderare",
+            tag: "CONTURI & PLĂȚI",
             q: "Care sunt datele bancare oficiale pentru achitarea cotizației?",
             a: "Plățile se efectuează în contul oficial UGR: RO57 BRDE 426S V810 0757 4450 (deschis la BRD Ag. Tei, Sector 2) sau RO04 RNCB 0074 0104 7856 0001 (BCR), menționând obligatoriu la detaliile plății: Nume Prenume, CNP și 'Cotizație Filiala Sector 1'."
         },
         {
+            category: "aderare",
+            tag: "BENEFICII MEMBRI",
             q: "Ce avantaje profesionale oferă apartenența la UGR?",
             a: "Membrii beneficiază de: recunoaștere în forurile europene (FIG & CLGE), tarife preferențiale la conferințe internaționale, consultanță juridică și legislativă în relația cu ANCPI, acces la cursuri de formare continuă (LiDAR, GIS, GNSS) și promovare în Registrul Geodezilor Autorizați."
         },
         {
+            category: "aderare",
+            tag: "HUB COMUNICARE",
             q: "Unde pot urmări noutățile operative și activitățile Filialei Sector 1?",
             a: "Toate notificările operative ANCPI privind platforma e-Terra, evenimentele din cadrul UGR Student Community la FIFIM USAMV, workshopurile de specialitate și fotografiile de la întâlniri sunt publicate pe pagina oficială de Facebook (facebook.com/share/14xwxtFChmC/) și pe contul de Instagram (@filiala.sector1.ugr). Pentru solicitări directe: filiala.ugr.s1@gmail.com sau telefonic la 0720 336 736."
         },
         {
+            category: "bcpi",
+            tag: "BCPI & CADASTRU",
+            q: "Cum acordă Filiala Sector 1 suport tehnic în relația cu BCPI Sector 1 și platforma e-Terra?",
+            a: "Filiala Sector 1 colectează și centralizează sincopele tehnice raportate de membrii săi în platforma integrată e-Terra și la BCPI Sector 1 (erori de validare CP/CF, întârzieri nejustificate la recepții, interpretări neunitare ale Ordinului ANCPI 600/2023). Acestea sunt înaintate lunar grupului de lucru ANCPI–UGR pentru rezolvare instituțională."
+        },
+        {
+            category: "bcpi",
+            tag: "SUPORT TEHNIC BCPI",
+            q: "Ce asistență oferă filiala în cazul dosarelor respinse sau blocajelor de recepție la OCPI București?",
+            a: "Dacă ați primit o notă de respingere neconformă cu normele tehnice ANCPI sau un referat de completare abuziv la BCPI Sector 1, puteți trimite numărul cererii și memoriul tehnic pe emailul filiala.ugr.s1@gmail.com. Comisia tehnică a filialei oferă asistență colegială și poate solicita punct de vedere oficial conducerii OCPI București."
+        },
+        {
+            category: "bcpi",
+            tag: "LEGISLAȚIE & ANCPI",
             q: "Cum influențează UGR normele tehnice și legislația ANCPI?",
             a: "Prin reprezentanții din Biroul Executiv (BEX) și comisiile de specialitate, UGR participă direct la redactarea și revizuirea Ordinelor ANCPI privind recepția planurilor cadastrale, utilizarea platformei e-Terra și tarifele oficiale pentru serviciile de cadastru."
+        },
+        {
+            category: "studenti",
+            tag: "FIFIM STUDENȚI",
+            q: "Studenții la Geodezie se pot înscrie în UGR? Ce costuri implică?",
+            a: "Da, studenții înmatriculați la facultățile de profil (ex: Facultatea de Geodezie UTCB, UTM Chișinău, FIFIM USAMV București) beneficiază de un regim facilitat: taxa de înscriere este de doar 10 lei, iar cotizația anuală este de 10 lei, pe baza unei adeverințe de student valabile."
+        },
+        {
+            category: "studenti",
+            tag: "COMUNITATE FIFIM",
+            q: "Ce este UGR Student Community și unde se desfășoară activitățile academice?",
+            a: "UGR Student Community este puntea dintre mediul universitar și practica inginerească, având punctul central de întâlnire la Facultatea de Îmbunătățiri Funciare și Ingineria Mediului (FIFIM) — USAMV București (Bd. Mărăști nr. 59). Studenții participă la demonstrații practice cu stații totale robotice, scanere LiDAR 3D și drone fotogrammetrice."
+        },
+        {
+            category: "studenti",
+            tag: "WORKSHOPURI & FORMARE",
+            q: "Au studenții acces gratuit la conferințe și cursuri de formare LiDAR/GIS organizate de filială?",
+            a: "Da, toți studenții membri UGR au acces gratuit sau subvenționat la workshopurile tehnice, webinariile de formare software (AutoCAD Civil 3D, QGIS, TopoLT) și beneficiază de reduceri speciale la congresele majore precum Săptămâna Geodeziei Românești."
+        },
+        {
+            category: "evenimente",
+            tag: "SGR CHIȘINĂU",
+            q: "Ce este Săptămâna Geodeziei Românești (SGR) și cum pot participa la Chișinău?",
+            a: "SGR este cel mai important congres tehnico-științific anual organizat de UGR. Ediția internațională se desfășoară în perioada 11–14 Noiembrie la Chișinău, la Universitatea Tehnică a Moldovei (UTM). Detaliile de înscriere, programul și transmiterea lucrărilor științifice sunt disponibile pe portalul oficial https://sgr.ugr.ro/indexr.php."
+        },
+        {
+            category: "evenimente",
+            tag: "SGR CALL FOR PAPERS",
+            q: "Care este calendarul transmiterii lucrărilor științifice pentru SGR Chișinău?",
+            a: "Rezumatele și lucrările in extenso se depun prin platforma sgr.ugr.ro conform calendarului oficial afișat. Lucrările acceptate de comitetul științific internațional sunt publicate în volume indexate și prezentate în cadrul sesiunilor tematice dedicate cadastrului 3D, GIS și teledetecției."
+        },
+        {
+            category: "evenimente",
+            tag: "EVENIMENTE FILIALĂ",
+            q: "Cum pot participa membrii la conferințele tehnice și Adunările Generale ale Filialei Sector 1?",
+            a: "Convocările pentru Adunările Generale ale Filialei Sector 1 și conferințele tehnice se transmit prin email membrilor activi și se anunță pe canalele oficiale de Facebook și Instagram cu cel puțin 15 zile înainte. Participarea poate fi cu prezență fizică sau în format hibrid (videoconferință)."
         }
     ],
 

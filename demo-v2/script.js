@@ -48,7 +48,7 @@ function navigateTo(viewId) {
         // Declanșează animația fluidă în cascadă pentru Hero la intrarea pe pagină (identic cu Home, Despre Noi & Evenimente)
         if (isPageChange) {
             const heroReveals = targetSection.querySelectorAll(
-                '.events-hero-v2 .scroll-reveal, .despre-hero-v2 .scroll-reveal, .membri-hero-v2 .scroll-reveal'
+                '.events-hero-v2 .scroll-reveal, .despre-hero-v2 .scroll-reveal, .membri-hero-v2 .scroll-reveal, .membri-section-header .scroll-reveal, .section-header .scroll-reveal, .m-demo4-beam-card .scroll-reveal, .faq-hero-header .scroll-reveal'
             );
             if (heroReveals.length) {
                 heroReveals.forEach(el => el.classList.remove('is-visible'));
@@ -1046,7 +1046,7 @@ function renderMembersTable(members) {
     const emptyRow = `<tr><td colspan="5" style="padding: 24px; text-align: center; color: rgba(250,251,252,0.6);">Nu a fost găsit niciun membru conform criteriilor de căutare.</td></tr>`;
 
     const rowsHtml = members.length === 0 ? emptyRow : members.map((m, idx) => `
-        <tr class="table-row-animated" style="border-bottom: 1px solid rgba(255,255,255,0.06); animation-delay: ${idx * 25}ms;">
+        <tr class="table-row-animated" style="border-bottom: 1px solid rgba(255,255,255,0.06); animation-delay: ${idx * 40}ms;">
             <td style="padding: 13px 16px; font-family: var(--font-mono); font-weight: 600; color: #00E5FF;">${m.id}</td>
             <td style="padding: 13px 16px; font-weight: 600; color: #FFFFFF;">${m.name}</td>
             <td style="padding: 13px 16px; color: rgba(250,251,252,0.75);">${m.judet}</td>
@@ -1202,72 +1202,540 @@ function renderDocuments() {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
-// 7. ACORDEON FAQ (ÎNTREBĂRI FRECVENTE)
 // ═══════════════════════════════════════════════════════════════════════════
+// 7. ACORDEON FAQ (ÎNTREBĂRI FRECVENTE) — FILTRARE DINAMICĂ, CĂUTARE & MICRO-INTERACȚIUNI
+// ═══════════════════════════════════════════════════════════════════════════
+
+let currentFaqCategory = 'all';
+let currentFaqSearch = '';
+
+// Memorie & persistență pentru voturile de utilitate FAQ
+let faqVotes = {};
+try {
+    const storedVotes = localStorage.getItem('ugr_faq_votes');
+    if (storedVotes) {
+        faqVotes = JSON.parse(storedVotes);
+    }
+} catch (e) {
+    faqVotes = {};
+}
+
+function removeDiacritics(str) {
+    if (!str) return '';
+    return String(str)
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/[șşȘŞ]/g, 's')
+        .replace(/[țţȚŢ]/g, 't')
+        .replace(/[ăâĂÂ]/g, 'a')
+        .replace(/[îÎ]/g, 'i')
+        .replace(/[?]/g, '');
+}
+
+function escapeHtml(str) {
+    if (!str) return '';
+    return String(str).replace(/[&<>"']/g, s => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;'
+    })[s]);
+}
+
+// Evidențiere termeni căutați în text (Highlighting prietenos cu diacriticele)
+function highlightFaqTerms(text, query) {
+    if (!text) return '';
+    if (!query || query.trim().length === 0) return escapeHtml(text);
+    
+    const terms = query.trim().split(/\s+/).filter(t => t.length > 0);
+    if (!terms.length) return escapeHtml(text);
+
+    const diacriticMap = {
+        'a': '[aăâAĂÂ]',
+        'i': '[iîIÎ]',
+        's': '[sșSȘ]',
+        't': '[tțTȚ]',
+        'e': '[eE]',
+        'c': '[cC]',
+        'u': '[uU]',
+        'o': '[oO]'
+    };
+
+    const patternParts = terms.map(term => {
+        const clean = removeDiacritics(term).toLowerCase();
+        return clean.split('').map(ch => diacriticMap[ch] || ch.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('');
+    });
+
+    try {
+        const regex = new RegExp(`(${patternParts.join('|')})`, 'gi');
+        const escaped = escapeHtml(text);
+        return escaped.replace(regex, '<mark class="faq-highlight">$1</mark>');
+    } catch (e) {
+        return escapeHtml(text);
+    }
+}
+
+// Afișarea unui contor dinamic de rezultate: 'X întrebări găsite'
+function updateFaqResultsCounter(filteredCount, totalCount) {
+    let counterEl = document.getElementById('faq-results-counter');
+    const container = document.getElementById('faq-accordion-container');
+    if (!counterEl && container) {
+        counterEl = document.createElement('div');
+        counterEl.id = 'faq-results-counter';
+        counterEl.className = 'faq-results-counter';
+        counterEl.setAttribute('role', 'status');
+        counterEl.setAttribute('aria-live', 'polite');
+        container.parentNode.insertBefore(counterEl, container);
+    }
+
+    if (!counterEl) return;
+
+    let countText = '';
+    if (filteredCount === 0) {
+        countText = 'Nicio întrebare găsită';
+    } else if (filteredCount === 1) {
+        countText = '1 întrebare găsită';
+    } else {
+        countText = `${filteredCount} întrebări găsite`;
+    }
+
+    const catLabels = {
+        'all': 'Toate categoriile',
+        'aderare': 'Înscriere & Cotizații',
+        'bcpi': 'BCPI Sector 1 & ANCPI',
+        'studenti': 'Studenți FIFIM USAMV',
+        'evenimente': 'Evenimente & SGR Chișinău'
+    };
+    const catName = catLabels[currentFaqCategory] || currentFaqCategory;
+
+    let metaContext = '';
+    if (currentFaqSearch) {
+        metaContext += ` pentru <strong style="color: var(--ugr-cyan, #00E5FF);">„${escapeHtml(currentFaqSearch)}”</strong>`;
+    }
+    if (currentFaqCategory !== 'all') {
+        metaContext += ` în <span style="color: var(--ugr-hq-gold-bright, #F5D77F);">${catName}</span>`;
+    }
+
+    const hasFilters = (currentFaqCategory !== 'all' || currentFaqSearch);
+    const resetHtml = hasFilters ? `<a href="javascript:void(0)" class="faq-reset-link" onclick="resetFaqFilters()">✕ Resetează filtrele</a>` : '';
+
+    counterEl.innerHTML = `
+        <span class="faq-results-badge">
+            <strong>${countText}</strong>${metaContext}
+        </span>
+        ${resetHtml}
+    `;
+}
 
 function renderFaq() {
     const container = document.getElementById('faq-accordion-container');
-    if (!container || !ugrData.faqList) return;
+    if (!container || !ugrData || !ugrData.faqList) return;
 
-    container.innerHTML = ugrData.faqList.map((item, index) => `
-        <div class="faq-card ${index === 0 ? 'open' : ''}" id="faq-item-${index}">
-            <button type="button" class="faq-question" id="faq-btn-${index}" aria-expanded="${index === 0 ? 'true' : 'false'}" aria-controls="faq-ans-${index}" onclick="toggleFaq(${index})">
-                <span>${item.q}</span>
-                <span class="faq-icon" aria-hidden="true">${index === 0 ? '−' : '+'}</span>
+    let items = ugrData.faqList;
+
+    // Filtrare pe categorii
+    if (currentFaqCategory && currentFaqCategory !== 'all') {
+        const normCat = removeDiacritics(currentFaqCategory).toLowerCase();
+        items = items.filter(item => {
+            const itemCat = removeDiacritics(item.category || '').toLowerCase();
+            return itemCat === normCat;
+        });
+    }
+
+    // Căutare în timp real pe titlu, conținut, categorie și tag (cu suport pentru flexiuni românești și diacritice)
+    if (currentFaqSearch) {
+        const qClean = removeDiacritics(currentFaqSearch).toLowerCase().trim();
+        const searchWords = qClean.split(/\s+/).filter(Boolean);
+        const stems = searchWords.map(w => w.length > 4 ? w.replace(/(iilor|iile|ilor|ului|elor|eaza|este|esc|at|ie|ia|ii|ea|ul|ei|ui)$/i, '') : w);
+
+        items = items.filter(item => {
+            const combined = removeDiacritics(`${item.q || ''} ${item.a || ''} ${item.tag || ''} ${item.category || ''}`).toLowerCase();
+            if (combined.includes(qClean)) return true;
+            return stems.length > 0 && stems.every(stem => combined.includes(stem));
+        });
+    }
+
+    // Actualizare contor dinamic de rezultate
+    updateFaqResultsCounter(items.length, ugrData.faqList.length);
+
+    // Stare fără rezultate (Empty State)
+    if (items.length === 0) {
+        container.innerHTML = `
+            <div class="faq-empty-state" role="status">
+                <div class="faq-empty-icon" aria-hidden="true">
+                    <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        <line x1="8" y1="11" x2="14" y2="11"></line>
+                    </svg>
+                </div>
+                <h4 style="color: #fff; font-size: 17px; margin: 8px 0 6px 0; font-family: var(--font-display);">Nicio întrebare găsită</h4>
+                <p style="color: var(--ugr-text-muted); font-size: 13.5px; margin-bottom: 18px; max-width: 480px; margin-left: auto; margin-right: auto;">
+                    Nu am identificat întrebări care să conțină termenul căutat în categoria selectată. Încercați o altă căutare sau resetați filtrele.
+                </p>
+                <button type="button" class="faq-pill-btn active" onclick="resetFaqFilters()">Resetează Căutarea &amp; Filtrele</button>
+            </div>
+        `;
+        return;
+    }
+
+    // Rendare carduri FAQ curate, demne și elegante (fără badge-uri stridente sau widget-uri AI)
+    container.innerHTML = items.map((item, index) => {
+        const isOpen = index === 0 && !currentFaqSearch;
+        const highlightedQ = highlightFaqTerms(item.q, currentFaqSearch);
+        const highlightedA = highlightFaqTerms(item.a, currentFaqSearch);
+
+        return `
+        <div class="faq-card ${isOpen ? 'open' : ''}" id="faq-item-${index}">
+            <button type="button" class="faq-question" id="faq-btn-${index}" aria-expanded="${isOpen ? 'true' : 'false'}" aria-controls="faq-ans-${index}" onclick="toggleFaq(${index})">
+                <span class="faq-question-text">${highlightedQ}</span>
+                <span class="faq-chevron" aria-hidden="true">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                </span>
             </button>
-            <div class="faq-answer" id="faq-ans-${index}" role="region" aria-labelledby="faq-btn-${index}" ${index === 0 ? '' : 'hidden'}>
-                <p>${item.a}</p>
+            <div class="faq-answer" id="faq-ans-${index}" role="region" aria-labelledby="faq-btn-${index}" aria-hidden="${isOpen ? 'false' : 'true'}" ${isOpen ? '' : 'hidden'}>
+                <div class="faq-answer-text">
+                    <p style="margin: 0;">${highlightedA}</p>
+                </div>
             </div>
         </div>
-    `).join('');
+        `;
+    }).join('');
 }
 
+// Acordeon fluid: toggleFaq(index) cu animație lină și sincronizare ARIA
 function toggleFaq(index) {
     const target = document.getElementById(`faq-item-${index}`);
     if (!target) return;
 
+    const btn = document.getElementById(`faq-btn-${index}`);
+    const ans = document.getElementById(`faq-ans-${index}`);
     const wasOpen = target.classList.contains('open');
 
-    // Închide toate
-    document.querySelectorAll('.faq-card').forEach((card, idx) => {
+    // Închide toate din container cu actualizare completă a stărilor ARIA
+    document.querySelectorAll('#faq-accordion-container .faq-card').forEach((card, idx) => {
         card.classList.remove('open');
-        const btn = document.getElementById(`faq-btn-${idx}`);
-        const ans = document.getElementById(`faq-ans-${idx}`);
-        const icon = btn ? btn.querySelector('.faq-icon') : null;
-        if (btn) btn.setAttribute('aria-expanded', 'false');
-        if (ans) ans.setAttribute('hidden', '');
-        if (icon) icon.innerText = '+';
+        const cBtn = document.getElementById(`faq-btn-${idx}`);
+        const cAns = document.getElementById(`faq-ans-${idx}`);
+        if (cBtn) cBtn.setAttribute('aria-expanded', 'false');
+        if (cAns) {
+            cAns.setAttribute('aria-hidden', 'true');
+            cAns.setAttribute('hidden', '');
+        }
     });
 
     if (!wasOpen) {
         target.classList.add('open');
-        const btn = document.getElementById(`faq-btn-${index}`);
-        const ans = document.getElementById(`faq-ans-${index}`);
-        const icon = btn ? btn.querySelector('.faq-icon') : null;
         if (btn) btn.setAttribute('aria-expanded', 'true');
-        if (ans) ans.removeAttribute('hidden');
-        if (icon) icon.innerText = '−';
+        if (ans) {
+            ans.removeAttribute('hidden');
+            ans.setAttribute('aria-hidden', 'false');
+        }
     }
 }
 
+function filterFaqCategory(category, btnElement) {
+    currentFaqCategory = category;
+    document.querySelectorAll('.faq-pill-btn').forEach(btn => {
+        btn.classList.remove('active');
+        btn.setAttribute('aria-selected', 'false');
+    });
+    if (btnElement) {
+        btnElement.classList.add('active');
+        btnElement.setAttribute('aria-selected', 'true');
+    }
+    renderFaq();
+}
+
+function handleFaqSearch(val) {
+    currentFaqSearch = val.trim();
+    const clearBtn = document.getElementById('faq-search-clear');
+    if (clearBtn) {
+        clearBtn.style.display = currentFaqSearch ? 'block' : 'none';
+    }
+    renderFaq();
+}
+
+function clearFaqSearch() {
+    const input = document.getElementById('faq-search-input');
+    if (input) input.value = '';
+    const clearBtn = document.getElementById('faq-search-clear');
+    if (clearBtn) clearBtn.style.display = 'none';
+    currentFaqSearch = '';
+    renderFaq();
+}
+
+function resetFaqFilters() {
+    clearFaqSearch();
+    currentFaqCategory = 'all';
+    document.querySelectorAll('.faq-pill-btn').forEach(btn => {
+        if (btn.getAttribute('data-category') === 'all') {
+            btn.classList.add('active');
+            btn.setAttribute('aria-selected', 'true');
+        } else {
+            btn.classList.remove('active');
+            btn.setAttribute('aria-selected', 'false');
+        }
+    });
+    renderFaq();
+}
+
 // ═══════════════════════════════════════════════════════════════════════════
-// 8. CONTACT FORM SUBMISSION
+// TOAST NOTIFICATION SYSTEM
+// ═══════════════════════════════════════════════════════════════════════════
+
+function showToast(options = {}) {
+    const {
+        title = 'Notificare',
+        message = '',
+        type = 'info',
+        icon = 'ℹ️',
+        duration = 3500
+    } = typeof options === 'string' ? { message: options } : options;
+
+    let toastContainer = document.getElementById('ugr-toast-container');
+    if (!toastContainer) {
+        toastContainer = document.createElement('div');
+        toastContainer.id = 'ugr-toast-container';
+        document.body.appendChild(toastContainer);
+    }
+
+    const toast = document.createElement('div');
+    toast.className = `ugr-toast toast-${type}`;
+    toast.setAttribute('role', 'alert');
+    toast.innerHTML = `
+        <div class="ugr-toast-icon">${icon}</div>
+        <div class="ugr-toast-body">
+            <div class="ugr-toast-title">${escapeHtml(title)}</div>
+            <div class="ugr-toast-msg">${escapeHtml(message)}</div>
+        </div>
+        <button type="button" class="ugr-toast-close" aria-label="Închide">&times;</button>
+        <div class="ugr-toast-progress" style="animation-duration: ${duration}ms;"></div>
+    `;
+
+    toastContainer.appendChild(toast);
+
+    requestAnimationFrame(() => {
+        toast.classList.add('show');
+    });
+
+    const removeToast = () => {
+        toast.classList.remove('show');
+        toast.classList.add('hide');
+        setTimeout(() => {
+            if (toast.parentNode) {
+                toast.parentNode.removeChild(toast);
+            }
+        }, 320);
+    };
+
+    const timer = setTimeout(removeToast, duration);
+
+    const closeBtn = toast.querySelector('.ugr-toast-close');
+    if (closeBtn) {
+        closeBtn.addEventListener('click', () => {
+            clearTimeout(timer);
+            removeToast();
+        });
+    }
+}
+
+// Funcție de copiere rapidă cu toast de confirmare: copyToClipboard(text, label)
+function copyToClipboard(text, label = 'Informație', sourceBtn = null) {
+    if (!text) return;
+
+    let resolvedLabel = typeof label === 'string' ? label : 'Informație';
+    let targetBtn = sourceBtn;
+    
+    // Suportă compatibilitate retroactivă dacă se transmite (text, btnElement)
+    if (label && typeof label === 'object' && label.nodeType === 1) {
+        targetBtn = label;
+        resolvedLabel = text.includes('@') ? 'Adresă de Email' : (text.startsWith('07') ? 'Număr de Telefon' : 'Date Copiate');
+    }
+    
+    if (!targetBtn && typeof window !== 'undefined' && window.event && window.event.currentTarget) {
+        targetBtn = window.event.currentTarget;
+    }
+
+    const onCopySuccess = () => {
+        showToast({
+            title: 'Copiat în clipboard!',
+            message: `${resolvedLabel}: ${text}`,
+            type: 'success',
+            icon: '📋',
+            duration: 3200
+        });
+
+        if (targetBtn && targetBtn.nodeType === 1) {
+            const originalHtml = targetBtn.getAttribute('data-orig-html') || targetBtn.innerHTML;
+            if (!targetBtn.getAttribute('data-orig-html')) {
+                targetBtn.setAttribute('data-orig-html', originalHtml);
+            }
+            targetBtn.classList.add('btn-copied-active');
+            targetBtn.innerHTML = `✓ Copiat!`;
+            setTimeout(() => {
+                targetBtn.innerHTML = originalHtml;
+                targetBtn.classList.remove('btn-copied-active');
+            }, 2200);
+        }
+    };
+
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(onCopySuccess).catch(() => {
+            fallbackCopy(text, onCopySuccess);
+        });
+    } else {
+        fallbackCopy(text, onCopySuccess);
+    }
+}
+
+function fallbackCopy(text, callback) {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    try {
+        document.execCommand('copy');
+        if (callback) callback();
+    } catch (e) {
+        console.warn('Nu s-a putut copia automat:', e);
+    }
+    document.body.removeChild(ta);
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// 8. CONTACT FORM SUBMISSION CU VALIDARE & NOTIFICARE DE SUCCES ELEGANTĂ
 // ═══════════════════════════════════════════════════════════════════════════
 
 function handleContactSubmit(event) {
     event.preventDefault();
+    const form = event.target;
+    
+    const nameEl = document.getElementById('contact-name');
+    const emailEl = document.getElementById('contact-email');
+    const messageEl = document.getElementById('contact-message');
+    const topicEl = document.getElementById('contact-topic');
     const statusMsg = document.getElementById('contact-status-msg');
-    if (statusMsg) {
-        statusMsg.style.display = 'block';
+    const submitBtn = form.querySelector('button[type="submit"]');
+
+    // Curățare erori anterioare
+    form.querySelectorAll('.form-field').forEach(field => {
+        field.classList.remove('has-error');
+        const err = field.querySelector('.form-field-error-text');
+        if (err) err.remove();
+    });
+
+    let isValid = true;
+    let firstInvalidEl = null;
+
+    const setFieldError = (el, msg) => {
+        isValid = false;
+        if (!firstInvalidEl) firstInvalidEl = el;
+        const parentField = el.closest('.form-field');
+        if (parentField) {
+            parentField.classList.add('has-error');
+            const errDiv = document.createElement('div');
+            errDiv.className = 'form-field-error-text';
+            errDiv.innerHTML = `<span aria-hidden="true">⚠️</span> ${escapeHtml(msg)}`;
+            parentField.appendChild(errDiv);
+        }
+    };
+
+    // Validare Nume (minim 3 caractere)
+    const nameVal = nameEl ? nameEl.value.trim() : '';
+    if (!nameVal || nameVal.length < 3) {
+        setFieldError(nameEl, 'Vă rugăm să introduceți numele complet sau denumirea companiei (minim 3 caractere).');
     }
 
+    // Validare Email (format RFC 5322 simplificat)
+    const emailVal = emailEl ? emailEl.value.trim() : '';
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+    if (!emailVal || !emailRegex.test(emailVal)) {
+        setFieldError(emailEl, 'Vă rugăm să introduceți o adresă de email validă (ex: inginer@cadastru.ro).');
+    }
+
+    // Validare Mesaj (minim 10 caractere)
+    const msgVal = messageEl ? messageEl.value.trim() : '';
+    if (!msgVal || msgVal.length < 10) {
+        setFieldError(messageEl, 'Vă rugăm să descrieți speța dumneavoastră (minim 10 caractere).');
+    }
+
+    if (!isValid) {
+        if (firstInvalidEl) firstInvalidEl.focus();
+        showToast({
+            title: 'Verificați datele',
+            message: 'Unele câmpuri conțin erori sau informații incomplete.',
+            type: 'warning',
+            icon: '⚠️'
+        });
+        return;
+    }
+
+    // Stare de trimitere buton
+    const originalBtnHtml = submitBtn ? submitBtn.innerHTML : '';
+    if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.style.opacity = '0.7';
+        submitBtn.innerText = 'Se trimite mesajul...';
+    }
+
+    // Confirmare trimitere solicitare
     setTimeout(() => {
-        if (statusMsg) statusMsg.style.display = 'none';
-        document.getElementById('contact-name').value = '';
-        document.getElementById('contact-email').value = '';
-        document.getElementById('contact-message').value = '';
-    }, 4000);
+        // Resetare formular
+        form.reset();
+
+        if (statusMsg) {
+            statusMsg.style.display = 'block';
+            statusMsg.innerHTML = `
+                <div class="contact-success-simple">
+                    <strong>✓ Mesaj trimis cu succes!</strong> Vă mulțumim pentru solicitare. Secretariatul Filialei Sector 1 vă va răspunde în cel mai scurt timp pe adresa <em>${escapeHtml(emailVal)}</em>.
+                </div>
+            `;
+            statusMsg.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        showToast({
+            title: 'Mesaj transmis',
+            message: 'Solicitarea dumneavoastră a fost trimisă secretariatului.',
+            type: 'success',
+            icon: '✓',
+            duration: 4000
+        });
+
+        if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.style.opacity = '1';
+            submitBtn.innerHTML = originalBtnHtml;
+        }
+    }, 450);
 }
+
+function resetContactFormUI() {
+    const statusMsg = document.getElementById('contact-status-msg');
+    if (statusMsg) {
+        statusMsg.style.display = 'none';
+        statusMsg.innerHTML = '';
+    }
+    const nameEl = document.getElementById('contact-name');
+    if (nameEl) nameEl.focus();
+}
+
+// Exporturi globale pentru compatibilitate cu atributele HTML inline
+window.renderFaq = renderFaq;
+window.toggleFaq = toggleFaq;
+window.filterFaqCategory = filterFaqCategory;
+window.handleFaqSearch = handleFaqSearch;
+window.clearFaqSearch = clearFaqSearch;
+window.resetFaqFilters = resetFaqFilters;
+window.showToast = showToast;
+window.copyToClipboard = copyToClipboard;
+window.handleContactSubmit = handleContactSubmit;
+window.resetContactFormUI = resetContactFormUI;
 
 // ═══════════════════════════════════════════════════════════════════════════
 // 9. MODAL DE ÎNREGISTRARE MULTI-STEP (WCAG 2.2 AA COMPLIANT)
@@ -1777,13 +2245,47 @@ function initHeroPerformanceOptimizer() {
     heroObs.observe(heroSec);
 }
 
+// Sincronizare fluidă în cascadă (stagger 80ms) pentru toate secțiunile din pagina Membri
+function initMembriScrollSync() {
+    const membriSec = document.getElementById('view-membri');
+    if (!membriSec || !('IntersectionObserver' in window)) return;
+
+    // Observăm fiecare bloc structural din Membri pentru apariție secvențială la scroll
+    const membriBlocks = membriSec.querySelectorAll(
+        '.membri-section-header, .section-header, .m-demo4-beam-card, .m-apartenenta-block, .m-procedura-box, .m-cotizatii-box, .m-directory-box, .m-docs-box'
+    );
+
+    if (!membriBlocks.length) return;
+
+    const blockObs = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+                const block = entry.target;
+                const reveals = block.querySelectorAll('.scroll-reveal:not(.is-visible)');
+                reveals.forEach((el, idx) => {
+                    setTimeout(() => {
+                        el.classList.add('is-visible');
+                    }, idx * 80);
+                });
+                blockObs.unobserve(block);
+            }
+        });
+    }, {
+        threshold: 0.08,
+        rootMargin: '0px 0px -25px 0px'
+    });
+
+    membriBlocks.forEach(b => blockObs.observe(b));
+}
+
 function initScrollReveal() {
     initMissionScrollSync();
+    initMembriScrollSync();
     initHeroPerformanceOptimizer();
 
     // Sincronizare automată pentru toate elementele .scroll-reveal din vederea activă (ex: Despre Noi)
     if ('IntersectionObserver' in window) {
-        const activeSection = document.querySelector('.view-section:not(.hidden)');
+        const activeSection = document.querySelector('.view-section:not(.hidden)') || document.querySelector('#view-membri') || document.querySelector('main') || document.body;
         if (activeSection) {
             const reveals = activeSection.querySelectorAll('.scroll-reveal:not(.is-visible)');
             if (reveals.length) {

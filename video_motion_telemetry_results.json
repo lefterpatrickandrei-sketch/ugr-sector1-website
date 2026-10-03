@@ -1,0 +1,2470 @@
+[
+  {
+    "url": "http://localhost:8088/demo-v2/#membri",
+    "urlName": "Main SPA (#membri)",
+    "viewport": "Desktop (1440px)",
+    "totalScrollHeight": 3523,
+    "maxScrollY": 2623,
+    "totalSimulationDurationMs": 2513,
+    "totalFrames": 15,
+    "clsScore": 0.0005000939723722565,
+    "clsPass": true,
+    "photoAudit": {
+      "photoFound": true,
+      "photoComplete": true,
+      "naturalSize": "1536x2048",
+      "renderedBox": {
+        "x": 938,
+        "y": -2289,
+        "width": 316,
+        "height": 237
+      },
+      "aspectRatio": "1.33",
+      "badgeSelectorCount": 0,
+      "badgeExistsInDom": false,
+      "badgeOverlappingPhoto": false,
+      "overlappingElementsInsidePhotoFrame": []
+    },
+    "elements": [
+      {
+        "id": "header_section",
+        "label": "1. Header Container",
+        "selector": "#view-membri .section-header",
+        "found": true,
+        "enteredViewportMs": 0,
+        "becameVisibleMs": 0,
+        "entryScrollY": 0,
+        "initialBox": {
+          "x": 144,
+          "y": 116,
+          "width": 860,
+          "height": 148
+        },
+        "visibleBox": {
+          "x": 144,
+          "y": 116,
+          "width": 860,
+          "height": 148
+        },
+        "finalBox": {
+          "x": 144,
+          "y": -2507,
+          "width": 860,
+          "height": 148
+        },
+        "maxShiftPx": 0
+      },
+      {
+        "id": "header_tag",
+        "label": "1.1 Header Tag (Comunitate & Evidenta Oficiala)",
+        "selector": "#view-membri .section-header .section-tag",
+        "found": true,
+        "enteredViewportMs": 0,
+        "becameVisibleMs": 0,
+        "entryScrollY": 0,
+        "initialBox": {
+          "x": 144,
+          "y": 125,
+          "width": 334,
+          "height": 18
+        },
+        "visibleBox": {
+          "x": 144,
+          "y": 125,
+          "width": 334,
+          "height": 18
+        },
+        "finalBox": {
+          "x": 144,
+          "y": -2498,
+          "width": 334,
+          "height": 18
+        },
+        "maxShiftPx": 0.34375
+      },
+      {
+        "id": "header_title",
+        "label": "1.2 Header Titlu H1 (Registrul Geodezilor)",
+        "selector": "#view-membri .section-header .section-title",
+        "found": true,
+        "enteredViewportMs": 0,
+        "becameVisibleMs": 0,
+        "entryScrollY": 0,
+        "initialBox": {
+          "x": 144,
+          "y": 152,
+          "width": 860,
+          "height": 50
+        },
+        "visibleBox": {
+          "x": 144,
+          "y": 152,
+          "width": 860,
+          "height": 50
+        },
+        "finalBox": {
+          "x": 144,
+          "y": -2471,
+          "width": 860,
+          "height": 50
+        },
+        "maxShiftPx": 0
+      },
+      {
+        "id": "header_subtitle",
+        "label": "1.3 Header Subtitlu",
+        "selector": "#view-membri .section-header .section-subtitle",
+        "found": true,
+        "enteredViewportMs": 0,
+        "becameVisibleMs": 0,
+        "entryScrollY": 0,
+        "initialBox": {
+          "x": 144,
+          "y": 215,
+          "width": 780,
+          "height": 50
+        },
+        "visibleBox": {
+          "x": 144,
+          "y": 215,
+          "width": 780,
+          "height": 50
+        },
+        "finalBox": {
+          "x": 144,
+          "y": -2408,
+          "width": 780,
+          "height": 50
+        },
+        "maxShiftPx": 0
+      },
+      {
+        "id": "beam_card",
+        "label": "2. Card Magic UI Neon Beam",
+        "selector": "#view-membri .m-demo4-beam-card",
+        "found": true,
+        "enteredViewportMs": 0,
+        "becameVisibleMs": 0,
+        "entryScrollY": 0,
+        "initialBox": {
+          "x": 144,
+          "y": 292,
+          "width": 1152,
+          "height": 347
+        },
+        "visibleBox": {
+          "x": 144,
+          "y": 292,
+          "width": 1152,
+          "height": 347
+        },
+        "finalBox": {
+          "x": 144,
+          "y": -2331,
+          "width": 1152,
+          "height": 347
+        },
+        "maxShiftPx": 0
+      },
+      {
+        "id": "card_kicker",
+        "label": "2.1 Card Kicker (Aderare Digitala Rapida)",
+        "selector": "#view-membri .m-demo4-content-col > div:nth-child(1)",
+        "found": true,
+        "enteredViewportMs": 0,
+        "becameVisibleMs": 0,
+        "entryScrollY": 0,
+        "initialBox": {
+          "x": 179,
+          "y": 345,
+          "width": 323,
+          "height": 18
+        },
+        "visibleBox": {
+          "x": 179,
+          "y": 345,
+          "width": 323,
+          "height": 18
+        },
+        "finalBox": {
+          "x": 179,
+          "y": -2278,
+          "width": 323,
+          "height": 18
+        },
+        "maxShiftPx": 0.125
+      },
+      {
+        "id": "card_title",
+        "label": "2.2 Card Titlu H2 (Devino Membru)",
+        "selector": "#view-membri .m-demo4-card-title",
+        "found": true,
+        "enteredViewportMs": 0,
+        "becameVisibleMs": 0,
+        "entryScrollY": 0,
+        "initialBox": {
+          "x": 179,
+          "y": 381,
+          "width": 706,
+          "height": 88
+        },
+        "visibleBox": {
+          "x": 179,
+          "y": 381,
+          "width": 706,
+          "height": 88
+        },
+        "finalBox": {
+          "x": 179,
+          "y": -2242,
+          "width": 706,
+          "height": 88
+        },
+        "maxShiftPx": 0
+      },
+      {
+        "id": "card_sub",
+        "label": "2.3 Card Subtitlu Beneficii",
+        "selector": "#view-membri .m-demo4-card-sub",
+        "found": true,
+        "enteredViewportMs": 0,
+        "becameVisibleMs": 0,
+        "entryScrollY": 0,
+        "initialBox": {
+          "x": 179,
+          "y": 483,
+          "width": 706,
+          "height": 48
+        },
+        "visibleBox": {
+          "x": 179,
+          "y": 483,
+          "width": 706,
+          "height": 48
+        },
+        "finalBox": {
+          "x": 179,
+          "y": -2140,
+          "width": 706,
+          "height": 48
+        },
+        "maxShiftPx": 0
+      },
+      {
+        "id": "card_actions",
+        "label": "2.4 Card Butoane Actiune",
+        "selector": "#view-membri .m-demo4-actions",
+        "found": true,
+        "enteredViewportMs": 0,
+        "becameVisibleMs": 0,
+        "entryScrollY": 0,
+        "initialBox": {
+          "x": 179,
+          "y": 551,
+          "width": 706,
+          "height": 41
+        },
+        "visibleBox": {
+          "x": 179,
+          "y": 551,
+          "width": 706,
+          "height": 41
+        },
+        "finalBox": {
+          "x": 179,
+          "y": -2072,
+          "width": 706,
+          "height": 41
+        },
+        "maxShiftPx": 0
+      },
+      {
+        "id": "photo_col",
+        "label": "2.5 Coloana Foto Autentica",
+        "selector": "#view-membri .m-demo4-photo-col",
+        "found": true,
+        "enteredViewportMs": 0,
+        "becameVisibleMs": 0,
+        "entryScrollY": 0,
+        "initialBox": {
+          "x": 921,
+          "y": 327,
+          "width": 340,
+          "height": 277
+        },
+        "visibleBox": {
+          "x": 921,
+          "y": 327,
+          "width": 340,
+          "height": 277
+        },
+        "finalBox": {
+          "x": 921,
+          "y": -2296,
+          "width": 340,
+          "height": 277
+        },
+        "maxShiftPx": 0
+      },
+      {
+        "id": "photo_frame",
+        "label": "2.6 Cadru Foto (Laser HUD)",
+        "selector": "#view-membri .m-demo4-photo-frame",
+        "found": true,
+        "enteredViewportMs": 0,
+        "becameVisibleMs": 0,
+        "entryScrollY": 0,
+        "initialBox": {
+          "x": 931,
+          "y": 327,
+          "width": 330,
+          "height": 251
+        },
+        "visibleBox": {
+          "x": 931,
+          "y": 327,
+          "width": 330,
+          "height": 251
+        },
+        "finalBox": {
+          "x": 931,
+          "y": -2296,
+          "width": 330,
+          "height": 251
+        },
+        "maxShiftPx": 0
+      },
+      {
+        "id": "photo_img",
+        "label": "2.7 Imagine USAMV Sala Consiliu",
+        "selector": "#view-membri .m-demo4-photo-frame img",
+        "found": true,
+        "enteredViewportMs": 0,
+        "becameVisibleMs": 0,
+        "entryScrollY": 0,
+        "initialBox": {
+          "x": 938,
+          "y": 334,
+          "width": 316,
+          "height": 237
+        },
+        "visibleBox": {
+          "x": 938,
+          "y": 334,
+          "width": 316,
+          "height": 237
+        },
+        "finalBox": {
+          "x": 938,
+          "y": -2289,
+          "width": 316,
+          "height": 237
+        },
+        "maxShiftPx": 0
+      },
+      {
+        "id": "photo_caption",
+        "label": "2.8 Eticheta Sub Foto",
+        "selector": "#view-membri .m-demo4-photo-caption",
+        "found": true,
+        "enteredViewportMs": 0,
+        "becameVisibleMs": 0,
+        "entryScrollY": 0,
+        "initialBox": {
+          "x": 1054,
+          "y": 586,
+          "width": 207,
+          "height": 18
+        },
+        "visibleBox": {
+          "x": 1054,
+          "y": 586,
+          "width": 207,
+          "height": 18
+        },
+        "finalBox": {
+          "x": 1054,
+          "y": -2037,
+          "width": 207,
+          "height": 18
+        },
+        "maxShiftPx": 0.21875
+      },
+      {
+        "id": "apartenenta_box",
+        "label": "3. Apartenenta: Inscriere Locala (Retro Grid)",
+        "selector": "#view-membri .m-demo4-retro-grid",
+        "found": true,
+        "enteredViewportMs": 0,
+        "becameVisibleMs": 0,
+        "entryScrollY": 0,
+        "initialBox": {
+          "x": 144,
+          "y": 679,
+          "width": 1152,
+          "height": 297
+        },
+        "visibleBox": {
+          "x": 144,
+          "y": 679,
+          "width": 1152,
+          "height": 297
+        },
+        "finalBox": {
+          "x": 144,
+          "y": -1944,
+          "width": 1152,
+          "height": 297
+        },
+        "maxShiftPx": 0
+      },
+      {
+        "id": "apartenenta_cards",
+        "label": "3.1 Carduri Apartenenta (1. Inscriere, 2. Vot, 3. BEX)",
+        "selector": "#view-membri .m-demo4-retro-grid > div:last-child",
+        "found": true,
+        "enteredViewportMs": 0,
+        "becameVisibleMs": 0,
+        "entryScrollY": 0,
+        "initialBox": {
+          "x": 169,
+          "y": 854,
+          "width": 1102,
+          "height": 97
+        },
+        "visibleBox": {
+          "x": 169,
+          "y": 854,
+          "width": 1102,
+          "height": 97
+        },
+        "finalBox": {
+          "x": 169,
+          "y": -1769,
+          "width": 1102,
+          "height": 97
+        },
+        "maxShiftPx": 0
+      },
+      {
+        "id": "procedura_box",
+        "label": "4. Procedura Oficiala in 4 Pasi",
+        "selector": "#view-membri div[class*=\"scroll-reveal\"]:has(h3)",
+        "found": true,
+        "enteredViewportMs": 0,
+        "becameVisibleMs": 0,
+        "entryScrollY": 0,
+        "initialBox": {
+          "x": 144,
+          "y": 679,
+          "width": 1152,
+          "height": 297
+        },
+        "visibleBox": {
+          "x": 144,
+          "y": 679,
+          "width": 1152,
+          "height": 297
+        },
+        "finalBox": {
+          "x": 144,
+          "y": -1944,
+          "width": 1152,
+          "height": 297
+        },
+        "maxShiftPx": 0
+      },
+      {
+        "id": "cotizatii_box",
+        "label": "5. Grila Cotizatii & Date Bancare",
+        "selector": "#view-membri div[class*=\"scroll-reveal\"]:has(table.dark-members-table)",
+        "found": true,
+        "enteredViewportMs": 382,
+        "becameVisibleMs": 382,
+        "entryScrollY": 700,
+        "initialBox": {
+          "x": 144,
+          "y": 716,
+          "width": 1152,
+          "height": 610
+        },
+        "visibleBox": {
+          "x": 144,
+          "y": 716,
+          "width": 1152,
+          "height": 610
+        },
+        "finalBox": {
+          "x": 144,
+          "y": -1220,
+          "width": 1152,
+          "height": 610
+        },
+        "maxShiftPx": 0
+      },
+      {
+        "id": "cotizatii_table",
+        "label": "5.1 Tabel Cotizatii",
+        "selector": "#view-membri table.dark-members-table",
+        "found": true,
+        "enteredViewportMs": 382,
+        "becameVisibleMs": 382,
+        "entryScrollY": 700,
+        "initialBox": {
+          "x": 174,
+          "y": 826,
+          "width": 1092,
+          "height": 339
+        },
+        "visibleBox": {
+          "x": 174,
+          "y": 826,
+          "width": 1092,
+          "height": 339
+        },
+        "finalBox": {
+          "x": 174,
+          "y": -1110,
+          "width": 1092,
+          "height": 339
+        },
+        "maxShiftPx": 0
+      },
+      {
+        "id": "directoriu_box",
+        "label": "6. Directoriul Membrilor Acreditati",
+        "selector": "#view-membri div[class*=\"scroll-reveal\"]:has(#member-search-input)",
+        "found": true,
+        "enteredViewportMs": 756,
+        "becameVisibleMs": 756,
+        "entryScrollY": 1225,
+        "initialBox": {
+          "x": 144,
+          "y": 841,
+          "width": 1152,
+          "height": 671
+        },
+        "visibleBox": {
+          "x": 144,
+          "y": 841,
+          "width": 1152,
+          "height": 671
+        },
+        "finalBox": {
+          "x": 144,
+          "y": -570,
+          "width": 1152,
+          "height": 671
+        },
+        "maxShiftPx": 0
+      },
+      {
+        "id": "directoriu_search",
+        "label": "6.1 Bara Cautare & Filtre",
+        "selector": "#view-membri #member-search-input",
+        "found": true,
+        "enteredViewportMs": 881,
+        "becameVisibleMs": 756,
+        "entryScrollY": 1400,
+        "initialBox": {
+          "x": 173,
+          "y": 770,
+          "width": 860,
+          "height": 39
+        },
+        "visibleBox": {
+          "x": 173,
+          "y": 953,
+          "width": 860,
+          "height": 39
+        },
+        "finalBox": {
+          "x": 173,
+          "y": -458,
+          "width": 860,
+          "height": 39
+        },
+        "maxShiftPx": 0
+      },
+      {
+        "id": "directoriu_table",
+        "label": "6.2 Tabel Membri Activi",
+        "selector": "#view-membri #members-table-body",
+        "found": true,
+        "enteredViewportMs": 881,
+        "becameVisibleMs": 756,
+        "entryScrollY": 1400,
+        "initialBox": {
+          "x": 174,
+          "y": 878,
+          "width": 1092,
+          "height": 421
+        },
+        "visibleBox": {
+          "x": 174,
+          "y": 1060,
+          "width": 1092,
+          "height": 421
+        },
+        "finalBox": {
+          "x": 174,
+          "y": -350,
+          "width": 1092,
+          "height": 421
+        },
+        "maxShiftPx": 0
+      }
+    ]
+  },
+  {
+    "url": "http://localhost:8088/demo-v2/#membri",
+    "urlName": "Main SPA (#membri)",
+    "viewport": "Mobile (390px)",
+    "totalScrollHeight": 7139,
+    "maxScrollY": 6295,
+    "totalSimulationDurationMs": 5303,
+    "totalFrames": 36,
+    "clsScore": 0.0006041552560330216,
+    "clsPass": true,
+    "photoAudit": {
+      "photoFound": true,
+      "photoComplete": true,
+      "naturalSize": "1536x2048",
+      "renderedBox": {
+        "x": 66,
+        "y": -5475,
+        "width": 258,
+        "height": 194
+      },
+      "aspectRatio": "1.33",
+      "badgeSelectorCount": 0,
+      "badgeExistsInDom": false,
+      "badgeOverlappingPhoto": false,
+      "overlappingElementsInsidePhotoFrame": []
+    },
+    "elements": [
+      {
+        "id": "header_section",
+        "label": "1. Header Container",
+        "selector": "#view-membri .section-header",
+        "found": true,
+        "enteredViewportMs": 0,
+        "becameVisibleMs": 0,
+        "entryScrollY": 0,
+        "initialBox": {
+          "x": 24,
+          "y": 116,
+          "width": 342,
+          "height": 214
+        },
+        "visibleBox": {
+          "x": 24,
+          "y": 116,
+          "width": 342,
+          "height": 214
+        },
+        "finalBox": {
+          "x": 24,
+          "y": -6179,
+          "width": 342,
+          "height": 214
+        },
+        "maxShiftPx": 0
+      },
+      {
+        "id": "header_tag",
+        "label": "1.1 Header Tag (Comunitate & Evidenta Oficiala)",
+        "selector": "#view-membri .section-header .section-tag",
+        "found": true,
+        "enteredViewportMs": 0,
+        "becameVisibleMs": 0,
+        "entryScrollY": 0,
+        "initialBox": {
+          "x": 24,
+          "y": 125,
+          "width": 334,
+          "height": 18
+        },
+        "visibleBox": {
+          "x": 24,
+          "y": 125,
+          "width": 334,
+          "height": 18
+        },
+        "finalBox": {
+          "x": 24,
+          "y": -6170,
+          "width": 334,
+          "height": 18
+        },
+        "maxShiftPx": 0.34375
+      },
+      {
+        "id": "header_title",
+        "label": "1.2 Header Titlu H1 (Registrul Geodezilor)",
+        "selector": "#view-membri .section-header .section-title",
+        "found": true,
+        "enteredViewportMs": 0,
+        "becameVisibleMs": 0,
+        "entryScrollY": 0,
+        "initialBox": {
+          "x": 24,
+          "y": 152,
+          "width": 342,
+          "height": 67
+        },
+        "visibleBox": {
+          "x": 24,
+          "y": 152,
+          "width": 342,
+          "height": 67
+        },
+        "finalBox": {
+          "x": 24,
+          "y": -6143,
+          "width": 342,
+          "height": 67
+        },
+        "maxShiftPx": 0
+      },
+      {
+        "id": "header_subtitle",
+        "label": "1.3 Header Subtitlu",
+        "selector": "#view-membri .section-header .section-subtitle",
+        "found": true,
+        "enteredViewportMs": 0,
+        "becameVisibleMs": 0,
+        "entryScrollY": 0,
+        "initialBox": {
+          "x": 24,
+          "y": 231,
+          "width": 342,
+          "height": 99
+        },
+        "visibleBox": {
+          "x": 24,
+          "y": 231,
+          "width": 342,
+          "height": 99
+        },
+        "finalBox": {
+          "x": 24,
+          "y": -6064,
+          "width": 342,
+          "height": 99
+        },
+        "maxShiftPx": 0
+      },
+      {
+        "id": "beam_card",
+        "label": "2. Card Magic UI Neon Beam",
+        "selector": "#view-membri .m-demo4-beam-card",
+        "found": true,
+        "enteredViewportMs": 0,
+        "becameVisibleMs": 0,
+        "entryScrollY": 0,
+        "initialBox": {
+          "x": 24,
+          "y": 358,
+          "width": 342,
+          "height": 722
+        },
+        "visibleBox": {
+          "x": 24,
+          "y": 358,
+          "width": 342,
+          "height": 722
+        },
+        "finalBox": {
+          "x": 24,
+          "y": -5937,
+          "width": 342,
+          "height": 722
+        },
+        "maxShiftPx": 0
+      },
+      {
+        "id": "card_kicker",
+        "label": "2.1 Card Kicker (Aderare Digitala Rapida)",
+        "selector": "#view-membri .m-demo4-content-col > div:nth-child(1)",
+        "found": true,
+        "enteredViewportMs": 0,
+        "becameVisibleMs": 0,
+        "entryScrollY": 0,
+        "initialBox": {
+          "x": 59,
+          "y": 399,
+          "width": 272,
+          "height": 35
+        },
+        "visibleBox": {
+          "x": 59,
+          "y": 399,
+          "width": 272,
+          "height": 35
+        },
+        "finalBox": {
+          "x": 59,
+          "y": -5896,
+          "width": 272,
+          "height": 35
+        },
+        "maxShiftPx": 0
+      },
+      {
+        "id": "card_title",
+        "label": "2.2 Card Titlu H2 (Devino Membru)",
+        "selector": "#view-membri .m-demo4-card-title",
+        "found": true,
+        "enteredViewportMs": 0,
+        "becameVisibleMs": 0,
+        "entryScrollY": 0,
+        "initialBox": {
+          "x": 59,
+          "y": 453,
+          "width": 272,
+          "height": 88
+        },
+        "visibleBox": {
+          "x": 59,
+          "y": 453,
+          "width": 272,
+          "height": 88
+        },
+        "finalBox": {
+          "x": 59,
+          "y": -5842,
+          "width": 272,
+          "height": 88
+        },
+        "maxShiftPx": 0
+      },
+      {
+        "id": "card_sub",
+        "label": "2.3 Card Subtitlu Beneficii",
+        "selector": "#view-membri .m-demo4-card-sub",
+        "found": true,
+        "enteredViewportMs": 0,
+        "becameVisibleMs": 0,
+        "entryScrollY": 0,
+        "initialBox": {
+          "x": 59,
+          "y": 554,
+          "width": 272,
+          "height": 120
+        },
+        "visibleBox": {
+          "x": 59,
+          "y": 554,
+          "width": 272,
+          "height": 120
+        },
+        "finalBox": {
+          "x": 59,
+          "y": -5741,
+          "width": 272,
+          "height": 120
+        },
+        "maxShiftPx": 0
+      },
+      {
+        "id": "card_actions",
+        "label": "2.4 Card Butoane Actiune",
+        "selector": "#view-membri .m-demo4-actions",
+        "found": true,
+        "enteredViewportMs": 0,
+        "becameVisibleMs": 0,
+        "entryScrollY": 0,
+        "initialBox": {
+          "x": 59,
+          "y": 694,
+          "width": 272,
+          "height": 91
+        },
+        "visibleBox": {
+          "x": 59,
+          "y": 694,
+          "width": 272,
+          "height": 91
+        },
+        "finalBox": {
+          "x": 59,
+          "y": -5601,
+          "width": 272,
+          "height": 91
+        },
+        "maxShiftPx": 0
+      },
+      {
+        "id": "photo_col",
+        "label": "2.5 Coloana Foto Autentica",
+        "selector": "#view-membri .m-demo4-photo-col",
+        "found": true,
+        "enteredViewportMs": 0,
+        "becameVisibleMs": 0,
+        "entryScrollY": 0,
+        "initialBox": {
+          "x": 59,
+          "y": 813,
+          "width": 272,
+          "height": 233
+        },
+        "visibleBox": {
+          "x": 59,
+          "y": 813,
+          "width": 272,
+          "height": 233
+        },
+        "finalBox": {
+          "x": 59,
+          "y": -5482,
+          "width": 272,
+          "height": 233
+        },
+        "maxShiftPx": 0
+      },
+      {
+        "id": "photo_frame",
+        "label": "2.6 Cadru Foto (Laser HUD)",
+        "selector": "#view-membri .m-demo4-photo-frame",
+        "found": true,
+        "enteredViewportMs": 0,
+        "becameVisibleMs": 0,
+        "entryScrollY": 0,
+        "initialBox": {
+          "x": 59,
+          "y": 813,
+          "width": 272,
+          "height": 208
+        },
+        "visibleBox": {
+          "x": 59,
+          "y": 813,
+          "width": 272,
+          "height": 208
+        },
+        "finalBox": {
+          "x": 59,
+          "y": -5482,
+          "width": 272,
+          "height": 208
+        },
+        "maxShiftPx": 0
+      },
+      {
+        "id": "photo_img",
+        "label": "2.7 Imagine USAMV Sala Consiliu",
+        "selector": "#view-membri .m-demo4-photo-frame img",
+        "found": true,
+        "enteredViewportMs": 0,
+        "becameVisibleMs": 0,
+        "entryScrollY": 0,
+        "initialBox": {
+          "x": 66,
+          "y": 820,
+          "width": 258,
+          "height": 194
+        },
+        "visibleBox": {
+          "x": 66,
+          "y": 820,
+          "width": 258,
+          "height": 194
+        },
+        "finalBox": {
+          "x": 66,
+          "y": -5475,
+          "width": 258,
+          "height": 194
+        },
+        "maxShiftPx": 0
+      },
+      {
+        "id": "photo_caption",
+        "label": "2.8 Eticheta Sub Foto",
+        "selector": "#view-membri .m-demo4-photo-caption",
+        "found": true,
+        "enteredViewportMs": 135,
+        "becameVisibleMs": 0,
+        "entryScrollY": 350,
+        "initialBox": {
+          "x": 91,
+          "y": 678,
+          "width": 207,
+          "height": 18
+        },
+        "visibleBox": {
+          "x": 91,
+          "y": 1028,
+          "width": 207,
+          "height": 18
+        },
+        "finalBox": {
+          "x": 91,
+          "y": -5267,
+          "width": 207,
+          "height": 18
+        },
+        "maxShiftPx": 0.21875
+      },
+      {
+        "id": "apartenenta_box",
+        "label": "3. Apartenenta: Inscriere Locala (Retro Grid)",
+        "selector": "#view-membri .m-demo4-retro-grid",
+        "found": true,
+        "enteredViewportMs": 135,
+        "becameVisibleMs": 260,
+        "entryScrollY": 350,
+        "initialBox": {
+          "x": 24,
+          "y": 795,
+          "width": 342,
+          "height": 796
+        },
+        "visibleBox": {
+          "x": 24,
+          "y": 608,
+          "width": 342,
+          "height": 796
+        },
+        "finalBox": {
+          "x": 24,
+          "y": -5174,
+          "width": 342,
+          "height": 796
+        },
+        "maxShiftPx": 0
+      },
+      {
+        "id": "apartenenta_cards",
+        "label": "3.1 Carduri Apartenenta (1. Inscriere, 2. Vot, 3. BEX)",
+        "selector": "#view-membri .m-demo4-retro-grid > div:last-child",
+        "found": true,
+        "enteredViewportMs": 520,
+        "becameVisibleMs": 260,
+        "entryScrollY": 875,
+        "initialBox": {
+          "x": 49,
+          "y": 680,
+          "width": 292,
+          "height": 338
+        },
+        "visibleBox": {
+          "x": 49,
+          "y": 1041,
+          "width": 292,
+          "height": 338
+        },
+        "finalBox": {
+          "x": 49,
+          "y": -4741,
+          "width": 292,
+          "height": 338
+        },
+        "maxShiftPx": 0
+      },
+      {
+        "id": "procedura_box",
+        "label": "4. Procedura Oficiala in 4 Pasi",
+        "selector": "#view-membri div[class*=\"scroll-reveal\"]:has(h3)",
+        "found": true,
+        "enteredViewportMs": 135,
+        "becameVisibleMs": 260,
+        "entryScrollY": 350,
+        "initialBox": {
+          "x": 24,
+          "y": 795,
+          "width": 342,
+          "height": 796
+        },
+        "visibleBox": {
+          "x": 24,
+          "y": 608,
+          "width": 342,
+          "height": 796
+        },
+        "finalBox": {
+          "x": 24,
+          "y": -5174,
+          "width": 342,
+          "height": 796
+        },
+        "maxShiftPx": 0
+      },
+      {
+        "id": "cotizatii_box",
+        "label": "5. Grila Cotizatii & Date Bancare",
+        "selector": "#view-membri div[class*=\"scroll-reveal\"]:has(table.dark-members-table)",
+        "found": true,
+        "enteredViewportMs": 1543,
+        "becameVisibleMs": 1543,
+        "entryScrollY": 2275,
+        "initialBox": {
+          "x": 24,
+          "y": 737,
+          "width": 342,
+          "height": 1233
+        },
+        "visibleBox": {
+          "x": 24,
+          "y": 737,
+          "width": 342,
+          "height": 1233
+        },
+        "finalBox": {
+          "x": 24,
+          "y": -3295,
+          "width": 342,
+          "height": 1233
+        },
+        "maxShiftPx": 0
+      },
+      {
+        "id": "cotizatii_table",
+        "label": "5.1 Tabel Cotizatii",
+        "selector": "#view-membri table.dark-members-table",
+        "found": true,
+        "enteredViewportMs": 1669,
+        "becameVisibleMs": 1543,
+        "entryScrollY": 2450,
+        "initialBox": {
+          "x": 54,
+          "y": 735,
+          "width": 544,
+          "height": 786
+        },
+        "visibleBox": {
+          "x": 54,
+          "y": 917,
+          "width": 544,
+          "height": 786
+        },
+        "finalBox": {
+          "x": 54,
+          "y": -3115,
+          "width": 544,
+          "height": 786
+        },
+        "maxShiftPx": 0.234375
+      },
+      {
+        "id": "directoriu_box",
+        "label": "6. Directoriul Membrilor Acreditati",
+        "selector": "#view-membri div[class*=\"scroll-reveal\"]:has(#member-search-input)",
+        "found": true,
+        "enteredViewportMs": 2416,
+        "becameVisibleMs": 2541,
+        "entryScrollY": 3500,
+        "initialBox": {
+          "x": 24,
+          "y": 797,
+          "width": 342,
+          "height": 946
+        },
+        "visibleBox": {
+          "x": 24,
+          "y": 610,
+          "width": 342,
+          "height": 946
+        },
+        "finalBox": {
+          "x": 24,
+          "y": -2022,
+          "width": 342,
+          "height": 946
+        },
+        "maxShiftPx": 0
+      },
+      {
+        "id": "directoriu_search",
+        "label": "6.1 Bara Cautare & Filtre",
+        "selector": "#view-membri #member-search-input",
+        "found": true,
+        "enteredViewportMs": 2541,
+        "becameVisibleMs": 2541,
+        "entryScrollY": 3675,
+        "initialBox": {
+          "x": 53,
+          "y": 803,
+          "width": 284,
+          "height": 39
+        },
+        "visibleBox": {
+          "x": 53,
+          "y": 803,
+          "width": 284,
+          "height": 39
+        },
+        "finalBox": {
+          "x": 53,
+          "y": -1829,
+          "width": 284,
+          "height": 39
+        },
+        "maxShiftPx": 0
+      },
+      {
+        "id": "directoriu_table",
+        "label": "6.2 Tabel Membri Activi",
+        "selector": "#view-membri #members-table-body",
+        "found": true,
+        "enteredViewportMs": 2668,
+        "becameVisibleMs": 2541,
+        "entryScrollY": 3850,
+        "initialBox": {
+          "x": 54,
+          "y": 798,
+          "width": 491,
+          "height": 546
+        },
+        "visibleBox": {
+          "x": 54,
+          "y": 980,
+          "width": 491,
+          "height": 546
+        },
+        "finalBox": {
+          "x": 54,
+          "y": -1652,
+          "width": 491,
+          "height": 546
+        },
+        "maxShiftPx": 0.234375
+      }
+    ]
+  },
+  {
+    "url": "http://localhost:8088/demo-v2/demos-membri.html",
+    "urlName": "Showcase Dedicat (demos-membri.html)",
+    "viewport": "Desktop (1440px)",
+    "totalScrollHeight": 3189,
+    "maxScrollY": 2289,
+    "totalSimulationDurationMs": 2395,
+    "totalFrames": 14,
+    "clsScore": 0,
+    "clsPass": true,
+    "photoAudit": {
+      "photoFound": true,
+      "photoComplete": true,
+      "naturalSize": "1536x2048",
+      "renderedBox": {
+        "x": 938,
+        "y": -1924,
+        "width": 316,
+        "height": 237
+      },
+      "aspectRatio": "1.33",
+      "badgeSelectorCount": 0,
+      "badgeExistsInDom": false,
+      "badgeOverlappingPhoto": false,
+      "overlappingElementsInsidePhotoFrame": []
+    },
+    "elements": [
+      {
+        "id": "header_section",
+        "label": "1. Header Container",
+        "selector": "#view-membri .section-header",
+        "found": true,
+        "enteredViewportMs": 0,
+        "becameVisibleMs": 0,
+        "entryScrollY": 0,
+        "initialBox": {
+          "x": 144,
+          "y": 97,
+          "width": 860,
+          "height": 199
+        },
+        "visibleBox": {
+          "x": 144,
+          "y": 97,
+          "width": 860,
+          "height": 199
+        },
+        "finalBox": {
+          "x": 144,
+          "y": -2192,
+          "width": 860,
+          "height": 199
+        },
+        "maxShiftPx": 0
+      },
+      {
+        "id": "header_tag",
+        "label": "1.1 Header Tag (Comunitate & Evidenta Oficiala)",
+        "selector": "#view-membri .section-header .section-tag",
+        "found": true,
+        "enteredViewportMs": 0,
+        "becameVisibleMs": 0,
+        "entryScrollY": 0,
+        "initialBox": {
+          "x": 144,
+          "y": 105,
+          "width": 359,
+          "height": 18
+        },
+        "visibleBox": {
+          "x": 144,
+          "y": 105,
+          "width": 359,
+          "height": 18
+        },
+        "finalBox": {
+          "x": 144,
+          "y": -2184,
+          "width": 359,
+          "height": 18
+        },
+        "maxShiftPx": 0.09375
+      },
+      {
+        "id": "header_title",
+        "label": "1.2 Header Titlu H1 (Registrul Geodezilor)",
+        "selector": "#view-membri .section-header .section-title",
+        "found": true,
+        "enteredViewportMs": 0,
+        "becameVisibleMs": 0,
+        "entryScrollY": 0,
+        "initialBox": {
+          "x": 144,
+          "y": 133,
+          "width": 860,
+          "height": 101
+        },
+        "visibleBox": {
+          "x": 144,
+          "y": 133,
+          "width": 860,
+          "height": 101
+        },
+        "finalBox": {
+          "x": 144,
+          "y": -2156,
+          "width": 860,
+          "height": 101
+        },
+        "maxShiftPx": 0
+      },
+      {
+        "id": "header_subtitle",
+        "label": "1.3 Header Subtitlu",
+        "selector": "#view-membri .section-header .section-subtitle",
+        "found": true,
+        "enteredViewportMs": 0,
+        "becameVisibleMs": 0,
+        "entryScrollY": 0,
+        "initialBox": {
+          "x": 144,
+          "y": 246,
+          "width": 780,
+          "height": 50
+        },
+        "visibleBox": {
+          "x": 144,
+          "y": 246,
+          "width": 780,
+          "height": 50
+        },
+        "finalBox": {
+          "x": 144,
+          "y": -2043,
+          "width": 780,
+          "height": 50
+        },
+        "maxShiftPx": 0
+      },
+      {
+        "id": "beam_card",
+        "label": "2. Card Magic UI Neon Beam",
+        "selector": "#view-membri .m-demo4-beam-card",
+        "found": true,
+        "enteredViewportMs": 0,
+        "becameVisibleMs": 0,
+        "entryScrollY": 0,
+        "initialBox": {
+          "x": 144,
+          "y": 323,
+          "width": 1152,
+          "height": 347
+        },
+        "visibleBox": {
+          "x": 144,
+          "y": 323,
+          "width": 1152,
+          "height": 347
+        },
+        "finalBox": {
+          "x": 144,
+          "y": -1966,
+          "width": 1152,
+          "height": 347
+        },
+        "maxShiftPx": 0
+      },
+      {
+        "id": "card_kicker",
+        "label": "2.1 Card Kicker (Aderare Digitala Rapida)",
+        "selector": "#view-membri .m-demo4-content-col > div:nth-child(1)",
+        "found": true,
+        "enteredViewportMs": 0,
+        "becameVisibleMs": 0,
+        "entryScrollY": 0,
+        "initialBox": {
+          "x": 179,
+          "y": 377,
+          "width": 342,
+          "height": 18
+        },
+        "visibleBox": {
+          "x": 179,
+          "y": 377,
+          "width": 342,
+          "height": 18
+        },
+        "finalBox": {
+          "x": 179,
+          "y": -1912,
+          "width": 342,
+          "height": 18
+        },
+        "maxShiftPx": 0.046875
+      },
+      {
+        "id": "card_title",
+        "label": "2.2 Card Titlu H2 (Devino Membru)",
+        "selector": "#view-membri .m-demo4-card-title",
+        "found": true,
+        "enteredViewportMs": 0,
+        "becameVisibleMs": 0,
+        "entryScrollY": 0,
+        "initialBox": {
+          "x": 179,
+          "y": 413,
+          "width": 706,
+          "height": 88
+        },
+        "visibleBox": {
+          "x": 179,
+          "y": 413,
+          "width": 706,
+          "height": 88
+        },
+        "finalBox": {
+          "x": 179,
+          "y": -1876,
+          "width": 706,
+          "height": 88
+        },
+        "maxShiftPx": 0
+      },
+      {
+        "id": "card_sub",
+        "label": "2.3 Card Subtitlu Beneficii",
+        "selector": "#view-membri .m-demo4-card-sub",
+        "found": true,
+        "enteredViewportMs": 0,
+        "becameVisibleMs": 0,
+        "entryScrollY": 0,
+        "initialBox": {
+          "x": 179,
+          "y": 515,
+          "width": 706,
+          "height": 48
+        },
+        "visibleBox": {
+          "x": 179,
+          "y": 515,
+          "width": 706,
+          "height": 48
+        },
+        "finalBox": {
+          "x": 179,
+          "y": -1775,
+          "width": 706,
+          "height": 48
+        },
+        "maxShiftPx": 0
+      },
+      {
+        "id": "card_actions",
+        "label": "2.4 Card Butoane Actiune",
+        "selector": "#view-membri .m-demo4-actions",
+        "found": true,
+        "enteredViewportMs": 0,
+        "becameVisibleMs": 0,
+        "entryScrollY": 0,
+        "initialBox": {
+          "x": 179,
+          "y": 582,
+          "width": 706,
+          "height": 40
+        },
+        "visibleBox": {
+          "x": 179,
+          "y": 582,
+          "width": 706,
+          "height": 40
+        },
+        "finalBox": {
+          "x": 179,
+          "y": -1707,
+          "width": 706,
+          "height": 40
+        },
+        "maxShiftPx": 0
+      },
+      {
+        "id": "photo_col",
+        "label": "2.5 Coloana Foto Autentica",
+        "selector": "#view-membri .m-demo4-photo-col",
+        "found": true,
+        "enteredViewportMs": 0,
+        "becameVisibleMs": 0,
+        "entryScrollY": 0,
+        "initialBox": {
+          "x": 921,
+          "y": 359,
+          "width": 340,
+          "height": 277
+        },
+        "visibleBox": {
+          "x": 921,
+          "y": 359,
+          "width": 340,
+          "height": 277
+        },
+        "finalBox": {
+          "x": 921,
+          "y": -1931,
+          "width": 340,
+          "height": 277
+        },
+        "maxShiftPx": 0
+      },
+      {
+        "id": "photo_frame",
+        "label": "2.6 Cadru Foto (Laser HUD)",
+        "selector": "#view-membri .m-demo4-photo-frame",
+        "found": true,
+        "enteredViewportMs": 0,
+        "becameVisibleMs": 0,
+        "entryScrollY": 0,
+        "initialBox": {
+          "x": 931,
+          "y": 359,
+          "width": 330,
+          "height": 251
+        },
+        "visibleBox": {
+          "x": 931,
+          "y": 359,
+          "width": 330,
+          "height": 251
+        },
+        "finalBox": {
+          "x": 931,
+          "y": -1931,
+          "width": 330,
+          "height": 251
+        },
+        "maxShiftPx": 0
+      },
+      {
+        "id": "photo_img",
+        "label": "2.7 Imagine USAMV Sala Consiliu",
+        "selector": "#view-membri .m-demo4-photo-frame img",
+        "found": true,
+        "enteredViewportMs": 0,
+        "becameVisibleMs": 0,
+        "entryScrollY": 0,
+        "initialBox": {
+          "x": 938,
+          "y": 366,
+          "width": 316,
+          "height": 237
+        },
+        "visibleBox": {
+          "x": 938,
+          "y": 366,
+          "width": 316,
+          "height": 237
+        },
+        "finalBox": {
+          "x": 938,
+          "y": -1924,
+          "width": 316,
+          "height": 237
+        },
+        "maxShiftPx": 0
+      },
+      {
+        "id": "photo_caption",
+        "label": "2.8 Eticheta Sub Foto",
+        "selector": "#view-membri .m-demo4-photo-caption",
+        "found": true,
+        "enteredViewportMs": 0,
+        "becameVisibleMs": 0,
+        "entryScrollY": 0,
+        "initialBox": {
+          "x": 1036,
+          "y": 618,
+          "width": 225,
+          "height": 18
+        },
+        "visibleBox": {
+          "x": 1036,
+          "y": 618,
+          "width": 225,
+          "height": 18
+        },
+        "finalBox": {
+          "x": 1036,
+          "y": -1672,
+          "width": 225,
+          "height": 18
+        },
+        "maxShiftPx": 0.1875
+      },
+      {
+        "id": "apartenenta_box",
+        "label": "3. Apartenenta: Inscriere Locala (Retro Grid)",
+        "selector": "#view-membri .m-demo4-retro-grid",
+        "found": true,
+        "enteredViewportMs": 0,
+        "becameVisibleMs": 0,
+        "entryScrollY": 0,
+        "initialBox": {
+          "x": 144,
+          "y": 710,
+          "width": 1152,
+          "height": 297
+        },
+        "visibleBox": {
+          "x": 144,
+          "y": 710,
+          "width": 1152,
+          "height": 297
+        },
+        "finalBox": {
+          "x": 144,
+          "y": -1579,
+          "width": 1152,
+          "height": 297
+        },
+        "maxShiftPx": 0
+      },
+      {
+        "id": "apartenenta_cards",
+        "label": "3.1 Carduri Apartenenta (1. Inscriere, 2. Vot, 3. BEX)",
+        "selector": "#view-membri .m-demo4-retro-grid > div:last-child",
+        "found": true,
+        "enteredViewportMs": 0,
+        "becameVisibleMs": 0,
+        "entryScrollY": 0,
+        "initialBox": {
+          "x": 169,
+          "y": 885,
+          "width": 1102,
+          "height": 97
+        },
+        "visibleBox": {
+          "x": 169,
+          "y": 885,
+          "width": 1102,
+          "height": 97
+        },
+        "finalBox": {
+          "x": 169,
+          "y": -1404,
+          "width": 1102,
+          "height": 97
+        },
+        "maxShiftPx": 0
+      },
+      {
+        "id": "procedura_box",
+        "label": "4. Procedura Oficiala in 4 Pasi",
+        "selector": "#view-membri div[class*=\"scroll-reveal\"]:has(h3)",
+        "found": true,
+        "enteredViewportMs": 0,
+        "becameVisibleMs": 0,
+        "entryScrollY": 0,
+        "initialBox": {
+          "x": 144,
+          "y": 710,
+          "width": 1152,
+          "height": 297
+        },
+        "visibleBox": {
+          "x": 144,
+          "y": 710,
+          "width": 1152,
+          "height": 297
+        },
+        "finalBox": {
+          "x": 144,
+          "y": -1579,
+          "width": 1152,
+          "height": 297
+        },
+        "maxShiftPx": 0
+      },
+      {
+        "id": "cotizatii_box",
+        "label": "5. Grila Cotizatii & Date Bancare",
+        "selector": "#view-membri div[class*=\"scroll-reveal\"]:has(table.dark-members-table)",
+        "found": true,
+        "enteredViewportMs": 383,
+        "becameVisibleMs": 383,
+        "entryScrollY": 700,
+        "initialBox": {
+          "x": 144,
+          "y": 746,
+          "width": 1152,
+          "height": 610
+        },
+        "visibleBox": {
+          "x": 144,
+          "y": 746,
+          "width": 1152,
+          "height": 610
+        },
+        "finalBox": {
+          "x": 144,
+          "y": -855,
+          "width": 1152,
+          "height": 610
+        },
+        "maxShiftPx": 0
+      },
+      {
+        "id": "cotizatii_table",
+        "label": "5.1 Tabel Cotizatii",
+        "selector": "#view-membri table.dark-members-table",
+        "found": true,
+        "enteredViewportMs": 383,
+        "becameVisibleMs": 383,
+        "entryScrollY": 700,
+        "initialBox": {
+          "x": 174,
+          "y": 856,
+          "width": 1092,
+          "height": 339
+        },
+        "visibleBox": {
+          "x": 174,
+          "y": 856,
+          "width": 1092,
+          "height": 339
+        },
+        "finalBox": {
+          "x": 174,
+          "y": -745,
+          "width": 1092,
+          "height": 339
+        },
+        "maxShiftPx": 0
+      },
+      {
+        "id": "directoriu_box",
+        "label": "6. Directoriul Membrilor Acreditati",
+        "selector": "#view-membri div[class*=\"scroll-reveal\"]:has(#member-search-input)",
+        "found": true,
+        "enteredViewportMs": 769,
+        "becameVisibleMs": 906,
+        "entryScrollY": 1225,
+        "initialBox": {
+          "x": 144,
+          "y": 883,
+          "width": 1152,
+          "height": 668
+        },
+        "visibleBox": {
+          "x": 144,
+          "y": 697,
+          "width": 1152,
+          "height": 668
+        },
+        "finalBox": {
+          "x": 144,
+          "y": -205,
+          "width": 1152,
+          "height": 668
+        },
+        "maxShiftPx": 0
+      },
+      {
+        "id": "directoriu_search",
+        "label": "6.1 Bara Cautare & Filtre",
+        "selector": "#view-membri #member-search-input",
+        "found": true,
+        "enteredViewportMs": 906,
+        "becameVisibleMs": 906,
+        "entryScrollY": 1400,
+        "initialBox": {
+          "x": 173,
+          "y": 810,
+          "width": 860,
+          "height": 36
+        },
+        "visibleBox": {
+          "x": 173,
+          "y": 810,
+          "width": 860,
+          "height": 36
+        },
+        "finalBox": {
+          "x": 173,
+          "y": -93,
+          "width": 860,
+          "height": 36
+        },
+        "maxShiftPx": 0
+      },
+      {
+        "id": "directoriu_table",
+        "label": "6.2 Tabel Membri Activi",
+        "selector": "#view-membri #members-table-body",
+        "found": true,
+        "enteredViewportMs": 1030,
+        "becameVisibleMs": 906,
+        "entryScrollY": 1575,
+        "initialBox": {
+          "x": 174,
+          "y": 731,
+          "width": 1092,
+          "height": 421
+        },
+        "visibleBox": {
+          "x": 174,
+          "y": 914,
+          "width": 1092,
+          "height": 421
+        },
+        "finalBox": {
+          "x": 174,
+          "y": 12,
+          "width": 1092,
+          "height": 421
+        },
+        "maxShiftPx": 0
+      }
+    ]
+  },
+  {
+    "url": "http://localhost:8088/demo-v2/demos-membri.html",
+    "urlName": "Showcase Dedicat (demos-membri.html)",
+    "viewport": "Mobile (390px)",
+    "totalScrollHeight": 6278,
+    "maxScrollY": 5434,
+    "totalSimulationDurationMs": 4676,
+    "totalFrames": 32,
+    "clsScore": 0,
+    "clsPass": true,
+    "photoAudit": {
+      "photoFound": true,
+      "photoComplete": true,
+      "naturalSize": "1536x2048",
+      "renderedBox": {
+        "x": 66,
+        "y": -4602,
+        "width": 258,
+        "height": 194
+      },
+      "aspectRatio": "1.33",
+      "badgeSelectorCount": 0,
+      "badgeExistsInDom": false,
+      "badgeOverlappingPhoto": false,
+      "overlappingElementsInsidePhotoFrame": []
+    },
+    "elements": [
+      {
+        "id": "header_section",
+        "label": "1. Header Container",
+        "selector": "#view-membri .section-header",
+        "found": true,
+        "enteredViewportMs": 0,
+        "becameVisibleMs": 0,
+        "entryScrollY": 0,
+        "initialBox": {
+          "x": 24,
+          "y": 171,
+          "width": 342,
+          "height": 199
+        },
+        "visibleBox": {
+          "x": 24,
+          "y": 171,
+          "width": 342,
+          "height": 199
+        },
+        "finalBox": {
+          "x": 24,
+          "y": -5263,
+          "width": 342,
+          "height": 199
+        },
+        "maxShiftPx": 0
+      },
+      {
+        "id": "header_tag",
+        "label": "1.1 Header Tag (Comunitate & Evidenta Oficiala)",
+        "selector": "#view-membri .section-header .section-tag",
+        "found": true,
+        "enteredViewportMs": 0,
+        "becameVisibleMs": 0,
+        "entryScrollY": 0,
+        "initialBox": {
+          "x": 24,
+          "y": 171,
+          "width": 342,
+          "height": 35
+        },
+        "visibleBox": {
+          "x": 24,
+          "y": 171,
+          "width": 342,
+          "height": 35
+        },
+        "finalBox": {
+          "x": 24,
+          "y": -5263,
+          "width": 342,
+          "height": 35
+        },
+        "maxShiftPx": 0
+      },
+      {
+        "id": "header_title",
+        "label": "1.2 Header Titlu H1 (Registrul Geodezilor)",
+        "selector": "#view-membri .section-header .section-title",
+        "found": true,
+        "enteredViewportMs": 0,
+        "becameVisibleMs": 0,
+        "entryScrollY": 0,
+        "initialBox": {
+          "x": 24,
+          "y": 216,
+          "width": 342,
+          "height": 67
+        },
+        "visibleBox": {
+          "x": 24,
+          "y": 216,
+          "width": 342,
+          "height": 67
+        },
+        "finalBox": {
+          "x": 24,
+          "y": -5218,
+          "width": 342,
+          "height": 67
+        },
+        "maxShiftPx": 0
+      },
+      {
+        "id": "header_subtitle",
+        "label": "1.3 Header Subtitlu",
+        "selector": "#view-membri .section-header .section-subtitle",
+        "found": true,
+        "enteredViewportMs": 0,
+        "becameVisibleMs": 0,
+        "entryScrollY": 0,
+        "initialBox": {
+          "x": 24,
+          "y": 295,
+          "width": 342,
+          "height": 74
+        },
+        "visibleBox": {
+          "x": 24,
+          "y": 295,
+          "width": 342,
+          "height": 74
+        },
+        "finalBox": {
+          "x": 24,
+          "y": -5139,
+          "width": 342,
+          "height": 74
+        },
+        "maxShiftPx": 0
+      },
+      {
+        "id": "beam_card",
+        "label": "2. Card Magic UI Neon Beam",
+        "selector": "#view-membri .m-demo4-beam-card",
+        "found": true,
+        "enteredViewportMs": 0,
+        "becameVisibleMs": 0,
+        "entryScrollY": 0,
+        "initialBox": {
+          "x": 24,
+          "y": 397,
+          "width": 342,
+          "height": 696
+        },
+        "visibleBox": {
+          "x": 24,
+          "y": 397,
+          "width": 342,
+          "height": 696
+        },
+        "finalBox": {
+          "x": 24,
+          "y": -5037,
+          "width": 342,
+          "height": 696
+        },
+        "maxShiftPx": 0
+      },
+      {
+        "id": "card_kicker",
+        "label": "2.1 Card Kicker (Aderare Digitala Rapida)",
+        "selector": "#view-membri .m-demo4-content-col > div:nth-child(1)",
+        "found": true,
+        "enteredViewportMs": 0,
+        "becameVisibleMs": 0,
+        "entryScrollY": 0,
+        "initialBox": {
+          "x": 59,
+          "y": 438,
+          "width": 272,
+          "height": 35
+        },
+        "visibleBox": {
+          "x": 59,
+          "y": 438,
+          "width": 272,
+          "height": 35
+        },
+        "finalBox": {
+          "x": 59,
+          "y": -4996,
+          "width": 272,
+          "height": 35
+        },
+        "maxShiftPx": 0
+      },
+      {
+        "id": "card_title",
+        "label": "2.2 Card Titlu H2 (Devino Membru)",
+        "selector": "#view-membri .m-demo4-card-title",
+        "found": true,
+        "enteredViewportMs": 0,
+        "becameVisibleMs": 0,
+        "entryScrollY": 0,
+        "initialBox": {
+          "x": 59,
+          "y": 491,
+          "width": 272,
+          "height": 88
+        },
+        "visibleBox": {
+          "x": 59,
+          "y": 491,
+          "width": 272,
+          "height": 88
+        },
+        "finalBox": {
+          "x": 59,
+          "y": -4943,
+          "width": 272,
+          "height": 88
+        },
+        "maxShiftPx": 0
+      },
+      {
+        "id": "card_sub",
+        "label": "2.3 Card Subtitlu Beneficii",
+        "selector": "#view-membri .m-demo4-card-sub",
+        "found": true,
+        "enteredViewportMs": 0,
+        "becameVisibleMs": 0,
+        "entryScrollY": 0,
+        "initialBox": {
+          "x": 59,
+          "y": 593,
+          "width": 272,
+          "height": 96
+        },
+        "visibleBox": {
+          "x": 59,
+          "y": 593,
+          "width": 272,
+          "height": 96
+        },
+        "finalBox": {
+          "x": 59,
+          "y": -4841,
+          "width": 272,
+          "height": 96
+        },
+        "maxShiftPx": 0
+      },
+      {
+        "id": "card_actions",
+        "label": "2.4 Card Butoane Actiune",
+        "selector": "#view-membri .m-demo4-actions",
+        "found": true,
+        "enteredViewportMs": 0,
+        "becameVisibleMs": 0,
+        "entryScrollY": 0,
+        "initialBox": {
+          "x": 59,
+          "y": 709,
+          "width": 272,
+          "height": 89
+        },
+        "visibleBox": {
+          "x": 59,
+          "y": 709,
+          "width": 272,
+          "height": 89
+        },
+        "finalBox": {
+          "x": 59,
+          "y": -4725,
+          "width": 272,
+          "height": 89
+        },
+        "maxShiftPx": 0
+      },
+      {
+        "id": "photo_col",
+        "label": "2.5 Coloana Foto Autentica",
+        "selector": "#view-membri .m-demo4-photo-col",
+        "found": true,
+        "enteredViewportMs": 0,
+        "becameVisibleMs": 0,
+        "entryScrollY": 0,
+        "initialBox": {
+          "x": 59,
+          "y": 826,
+          "width": 272,
+          "height": 233
+        },
+        "visibleBox": {
+          "x": 59,
+          "y": 826,
+          "width": 272,
+          "height": 233
+        },
+        "finalBox": {
+          "x": 59,
+          "y": -4609,
+          "width": 272,
+          "height": 233
+        },
+        "maxShiftPx": 0
+      },
+      {
+        "id": "photo_frame",
+        "label": "2.6 Cadru Foto (Laser HUD)",
+        "selector": "#view-membri .m-demo4-photo-frame",
+        "found": true,
+        "enteredViewportMs": 0,
+        "becameVisibleMs": 0,
+        "entryScrollY": 0,
+        "initialBox": {
+          "x": 59,
+          "y": 826,
+          "width": 272,
+          "height": 208
+        },
+        "visibleBox": {
+          "x": 59,
+          "y": 826,
+          "width": 272,
+          "height": 208
+        },
+        "finalBox": {
+          "x": 59,
+          "y": -4609,
+          "width": 272,
+          "height": 208
+        },
+        "maxShiftPx": 0
+      },
+      {
+        "id": "photo_img",
+        "label": "2.7 Imagine USAMV Sala Consiliu",
+        "selector": "#view-membri .m-demo4-photo-frame img",
+        "found": true,
+        "enteredViewportMs": 0,
+        "becameVisibleMs": 0,
+        "entryScrollY": 0,
+        "initialBox": {
+          "x": 66,
+          "y": 833,
+          "width": 258,
+          "height": 194
+        },
+        "visibleBox": {
+          "x": 66,
+          "y": 833,
+          "width": 258,
+          "height": 194
+        },
+        "finalBox": {
+          "x": 66,
+          "y": -4602,
+          "width": 258,
+          "height": 194
+        },
+        "maxShiftPx": 0
+      },
+      {
+        "id": "photo_caption",
+        "label": "2.8 Eticheta Sub Foto",
+        "selector": "#view-membri .m-demo4-photo-caption",
+        "found": true,
+        "enteredViewportMs": 135,
+        "becameVisibleMs": 0,
+        "entryScrollY": 350,
+        "initialBox": {
+          "x": 82,
+          "y": 691,
+          "width": 225,
+          "height": 18
+        },
+        "visibleBox": {
+          "x": 82,
+          "y": 1041,
+          "width": 225,
+          "height": 18
+        },
+        "finalBox": {
+          "x": 82,
+          "y": -4393,
+          "width": 225,
+          "height": 18
+        },
+        "maxShiftPx": 0.1875
+      },
+      {
+        "id": "apartenenta_box",
+        "label": "3. Apartenenta: Inscriere Locala (Retro Grid)",
+        "selector": "#view-membri .m-demo4-retro-grid",
+        "found": true,
+        "enteredViewportMs": 135,
+        "becameVisibleMs": 273,
+        "entryScrollY": 350,
+        "initialBox": {
+          "x": 24,
+          "y": 808,
+          "width": 342,
+          "height": 802
+        },
+        "visibleBox": {
+          "x": 24,
+          "y": 622,
+          "width": 342,
+          "height": 802
+        },
+        "finalBox": {
+          "x": 24,
+          "y": -4300,
+          "width": 342,
+          "height": 802
+        },
+        "maxShiftPx": 0
+      },
+      {
+        "id": "apartenenta_cards",
+        "label": "3.1 Carduri Apartenenta (1. Inscriere, 2. Vot, 3. BEX)",
+        "selector": "#view-membri .m-demo4-retro-grid > div:last-child",
+        "found": true,
+        "enteredViewportMs": 536,
+        "becameVisibleMs": 273,
+        "entryScrollY": 875,
+        "initialBox": {
+          "x": 49,
+          "y": 699,
+          "width": 292,
+          "height": 338
+        },
+        "visibleBox": {
+          "x": 49,
+          "y": 1061,
+          "width": 292,
+          "height": 338
+        },
+        "finalBox": {
+          "x": 49,
+          "y": -3861,
+          "width": 292,
+          "height": 338
+        },
+        "maxShiftPx": 0
+      },
+      {
+        "id": "procedura_box",
+        "label": "4. Procedura Oficiala in 4 Pasi",
+        "selector": "#view-membri div[class*=\"scroll-reveal\"]:has(h3)",
+        "found": true,
+        "enteredViewportMs": 135,
+        "becameVisibleMs": 273,
+        "entryScrollY": 350,
+        "initialBox": {
+          "x": 24,
+          "y": 808,
+          "width": 342,
+          "height": 802
+        },
+        "visibleBox": {
+          "x": 24,
+          "y": 622,
+          "width": 342,
+          "height": 802
+        },
+        "finalBox": {
+          "x": 24,
+          "y": -4300,
+          "width": 342,
+          "height": 802
+        },
+        "maxShiftPx": 0
+      },
+      {
+        "id": "cotizatii_box",
+        "label": "5. Grila Cotizatii & Date Bancare",
+        "selector": "#view-membri div[class*=\"scroll-reveal\"]:has(table.dark-members-table)",
+        "found": true,
+        "enteredViewportMs": 1558,
+        "becameVisibleMs": 1558,
+        "entryScrollY": 2275,
+        "initialBox": {
+          "x": 24,
+          "y": 737,
+          "width": 342,
+          "height": 1232
+        },
+        "visibleBox": {
+          "x": 24,
+          "y": 737,
+          "width": 342,
+          "height": 1232
+        },
+        "finalBox": {
+          "x": 24,
+          "y": -2435,
+          "width": 342,
+          "height": 1232
+        },
+        "maxShiftPx": 0
+      },
+      {
+        "id": "cotizatii_table",
+        "label": "5.1 Tabel Cotizatii",
+        "selector": "#view-membri table.dark-members-table",
+        "found": true,
+        "enteredViewportMs": 1683,
+        "becameVisibleMs": 1558,
+        "entryScrollY": 2450,
+        "initialBox": {
+          "x": 54,
+          "y": 734,
+          "width": 559,
+          "height": 786
+        },
+        "visibleBox": {
+          "x": 54,
+          "y": 917,
+          "width": 559,
+          "height": 786
+        },
+        "finalBox": {
+          "x": 54,
+          "y": -2255,
+          "width": 559,
+          "height": 786
+        },
+        "maxShiftPx": 0.234375
+      },
+      {
+        "id": "directoriu_box",
+        "label": "6. Directoriul Membrilor Acreditati",
+        "selector": "#view-membri div[class*=\"scroll-reveal\"]:has(#member-search-input)",
+        "found": true,
+        "enteredViewportMs": 2434,
+        "becameVisibleMs": 2561,
+        "entryScrollY": 3500,
+        "initialBox": {
+          "x": 24,
+          "y": 795,
+          "width": 342,
+          "height": 940
+        },
+        "visibleBox": {
+          "x": 24,
+          "y": 609,
+          "width": 342,
+          "height": 940
+        },
+        "finalBox": {
+          "x": 24,
+          "y": -1163,
+          "width": 342,
+          "height": 940
+        },
+        "maxShiftPx": 0
+      },
+      {
+        "id": "directoriu_search",
+        "label": "6.1 Bara Cautare & Filtre",
+        "selector": "#view-membri #member-search-input",
+        "found": true,
+        "enteredViewportMs": 2561,
+        "becameVisibleMs": 2561,
+        "entryScrollY": 3675,
+        "initialBox": {
+          "x": 53,
+          "y": 802,
+          "width": 284,
+          "height": 36
+        },
+        "visibleBox": {
+          "x": 53,
+          "y": 802,
+          "width": 284,
+          "height": 36
+        },
+        "finalBox": {
+          "x": 53,
+          "y": -970,
+          "width": 284,
+          "height": 36
+        },
+        "maxShiftPx": 0
+      },
+      {
+        "id": "directoriu_table",
+        "label": "6.2 Tabel Membri Activi",
+        "selector": "#view-membri #members-table-body",
+        "found": true,
+        "enteredViewportMs": 2685,
+        "becameVisibleMs": 2561,
+        "entryScrollY": 3850,
+        "initialBox": {
+          "x": 54,
+          "y": 790,
+          "width": 505,
+          "height": 546
+        },
+        "visibleBox": {
+          "x": 54,
+          "y": 973,
+          "width": 505,
+          "height": 546
+        },
+        "finalBox": {
+          "x": 54,
+          "y": -799,
+          "width": 505,
+          "height": 546
+        },
+        "maxShiftPx": 0.1875
+      }
+    ]
+  }
+]

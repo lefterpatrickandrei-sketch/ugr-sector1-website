@@ -597,7 +597,7 @@
                             <h2 class="statut-card-title">Statutul Uniunii Geodezilor din România</h2>
                             <p class="statut-card-sub">Aprobat în data de 24 noiembrie 2017</p>
                         </div>
-                        <a href="https://www.ugr.ro/assets/upload/statut_UGR_aprobat_2017.pdf" target="_blank" rel="noopener" class="btn-statut-download">
+                        <a href="https://www.ugr.ro/assets/upload/statut_UGR_aprobat_2017.pdf" target="_blank" rel="noopener noreferrer" class="btn-statut-download">
                             <span>Descarcă statutul (PDF)</span>
                             <span>→</span>
                         </a>
@@ -819,24 +819,55 @@
                 </div>
             </section></div>
 
-                                <!-- ================= 4. SECȚIUNE MEMBRI & ADEZIUNE (ARHITECTURĂ IDENTICĂ CU DESPRE & EVENIMENTE) ================= -->
-        <div id="view-membri" class="view-section hidden">
-            
-            <!-- 1. Header Hero identic ca structură și animație de text cu Despre Noi & Evenimente -->
-            <section class="membri-hero-v2">
-                <div class="content-container">
-                    <div class="membri-hero-inner">
-                        <div class="membri-hero-content">
-                            <div class="scroll-reveal reveal-left membri-tag-gold">
-                                Comunitate Oficială &amp; Aderare
+        <!-- ================= 4. SECȚIUNE MEMBRI & ADEZIUNE (VARIANTA 4: MAGIC UI FINAL) ================= -->
+        <section id="view-membri" class="section-block section-dark view-section hidden" style="padding-top: 40px;">
+            <div class="content-container">
+
+                <!-- 1. Section Header cu Animații de Text Fluide (Stagger 80ms) -->
+                <div class="section-header membri-section-header">
+                    <div class="scroll-reveal reveal-left membri-tag-gold section-tag">
+                        <span>Comunitate &amp; Evidență Oficială</span>
+                        <span style="color: var(--ugr-hq-gold-bright);">· STATUT UGR</span>
+                    </div>
+                    <h1 class="scroll-reveal reveal-left section-title membri-main-title">
+                        Registrul Geodezilor &amp; Ghidul de Aderare
+                    </h1>
+                    <p class="scroll-reveal reveal-left section-subtitle membri-main-sub">
+                        Evidența membrilor acreditați UGR și procedura completă de înscriere conform normelor statutare oficiale de pe <a href="https://ugr.ro/cum-devin-membru" target="_blank" rel="noopener noreferrer" class="ugr-link-cyan">ugr.ro/cum-devin-membru</a>.
+                    </p>
+                </div>
+
+                <!-- 2. VARIANTA 4: MAGIC UI NEON BORDER BEAM CARD (Fără radar, Fără cutie neagră, Fără coordonate GPS) -->
+                <div class="m-demo4-beam-card scroll-reveal reveal-up" style="margin-bottom: 40px;">
+                    
+                    <!-- SVG Laser Runner (Fascicul Magic UI compact și clar vizibil pe contur) -->
+                    <svg class="m-card-laser-svg" aria-hidden="true">
+                        <defs>
+                            <linearGradient id="cyanGoldLaserMembri" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#00E5FF" stop-opacity="1" />
+                                <stop offset="50%" stop-color="#FFE082" stop-opacity="1" />
+                                <stop offset="100%" stop-color="#00E5FF" stop-opacity="0" />
+                            </linearGradient>
+                        </defs>
+                        <rect class="m-laser-track" x="1" y="1" width="calc(100% - 2px)" height="calc(100% - 2px)" rx="16" />
+                        <rect class="m-laser-runner" x="1" y="1" width="calc(100% - 2px)" height="calc(100% - 2px)" rx="16" pathLength="1000" />
+                    </svg>
+
+                    <!-- Conținutul intern în 2 coloane responsive -->
+                    <div class="m-demo4-inner-row">
+                        <!-- Coloana Stânga: Text cu Animații Stagger 80ms -->
+                        <div class="m-demo4-content-col">
+                            <div class="scroll-reveal reveal-left m-demo4-kicker">
+                                <span>✨ ADERARE DIGITALĂ RAPIDĂ</span>
+                                <span style="color: var(--ugr-hq-gold-bright);">· SECTOR 1 BUCUREȘTI</span>
                             </div>
-                            <h1 class="scroll-reveal reveal-left membri-hero-title">
-                                Registrul Geodezilor &amp; Ghidul de Aderare
-                            </h1>
-                            <p class="scroll-reveal reveal-left membri-hero-sub">
-                                Evidența membrilor acreditați UGR și procedura completă de înscriere conform normelor statutare oficiale de pe <a href="https://ugr.ro/cum-devin-membru" target="_blank" rel="noopener noreferrer" style="color: var(--ugr-cyan); text-decoration: underline; font-weight: 600;">ugr.ro/cum-devin-membru</a>.
+                            <h2 class="scroll-reveal reveal-left m-demo4-card-title">
+                                Devino Membru al Filialei Sector 1 București
+                            </h2>
+                            <p class="scroll-reveal reveal-left m-demo4-card-sub">
+                                Bucură-te de recunoaștere națională, asistență tehnico-juridică la BCPI Sector 1, reduceri la cursurile de perfecționare și vot statutar în adunările generale UGR.
                             </p>
-                            <div class="scroll-reveal reveal-left hero-actions" style="margin-top: 24px;">
+                            <div class="scroll-reveal reveal-left m-demo4-actions">
                                 <button onclick="openRegistrationModal()" class="btn-membership btn-shimmer-beam">
                                     <span>Lansează Înscrierea Acum</span>
                                     <span class="btn-arrow">→</span>
@@ -846,225 +877,227 @@
                                 </a>
                             </div>
                         </div>
-                        <div class="membri-hero-media scroll-reveal reveal-right">
-                            <div class="membri-image-frame">
-                                <img src="ugr-images/ISP8267.png" alt="Comunitatea Geodezilor și Plenul Uniunii Geodezilor din România" onerror="this.src='ugr-images/ISP8061.png';" />
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
 
-            <!-- 2. Secțiunea de Conținut Magic UI Rafinat -->
-            <section class="section-block section-dark" style="padding-top: 45px;">
-                <div class="content-container">
-
-                    <!-- Arhitectură Apartenență: Înscriere Locală cu Voce Națională -->
-                    <div class="m-demo4-retro-grid scroll-reveal reveal-up" style="margin-bottom: 40px;">
-                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
-                            <span style="font-family: var(--font-mono); font-size: 10px; color: var(--ugr-cyan); font-weight: 700; text-transform: uppercase; background: rgba(0,229,255,0.12); padding: 3px 8px; border-radius: 4px; border: 1px solid rgba(0,229,255,0.3);">Mecanism Statutar</span>
-                            <h3 style="font-size: 18px; margin: 0; color: #fff; font-weight: 700;">Cum Funcționează Apartenența: Înscriere Locală cu Voce Națională</h3>
-                        </div>
-                        <p style="font-size: 13.5px; color: rgba(250,251,252,0.85); line-height: 1.65; margin: 0 0 20px 0; max-width: 880px;">
-                            Geodezii autorizați și societățile de profil care activează în Sectorul 1 se înscriu direct în <strong>Filiala Sector 1 București</strong>. Prin această aderare teritorială, membrii dobândesc automat calitatea de membru deplin al <strong>Uniunii Geodezilor din România (UGR Național)</strong>, participă cu drept de vot la Adunările Generale Locale, aleg conducerea filialei și mandatează delegații locali pentru forul național. Totodată, Filiala Sector 1 colectează blocajele tehnice din BCPI Sector 1 și le înaintează către Biroul Executiv (BEX) pentru susținere directă în fața ANCPI.
-                        </p>
-                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px;">
-                            <div style="background: rgba(6, 26, 45, 0.85); padding: 16px; border-radius: 8px; border: 1px solid rgba(0, 229, 255, 0.25); border-left: 3px solid var(--ugr-cyan);">
-                                <b style="color: var(--ugr-cyan); font-size: 13.5px; display: block; margin-bottom: 4px;">1. Înscriere în Filială</b>
-                                <span style="color: rgba(250,251,252,0.75); font-size: 12.5px; line-height: 1.5; display: block;">Adeziune teritorială la Filiala Sector 1 ➔ calitatea deplină de membru UGR Național.</span>
+                        <!-- Coloana Dreapta: Fotografie Autentică Întâlnire Sala Consiliu FIFIM USAMV (Curată, Fără Badge Peste Poze) -->
+                        <div class="m-demo4-photo-col scroll-reveal reveal-right">
+                            <div class="m-demo4-photo-frame">
+                                <img src="ugr-images/ugr_student_community_meeting.jpg" alt="UGR Student Community Ediția a II-a — Filiala Sector 1 și Studenții Geodezi la USAMV București" loading="lazy" />
                             </div>
-                            <div style="background: rgba(6, 26, 45, 0.85); padding: 16px; border-radius: 8px; border: 1px solid rgba(0, 229, 255, 0.25); border-left: 3px solid var(--ugr-hq-gold-bright);">
-                                <b style="color: var(--ugr-hq-gold-bright); font-size: 13.5px; display: block; margin-bottom: 4px;">2. Vot &amp; Decizie Locală</b>
-                                <span style="color: rgba(250,251,252,0.75); font-size: 12.5px; line-height: 1.5; display: block;">Alegi reprezentanții filialei și mandatezi delegații oficiali pentru Congresul Național.</span>
+                            <div class="m-demo4-photo-caption">
+                                <span>Ediția a II-a · Sala de Consiliu FIFIM USAMV</span>
                             </div>
-                            <div style="background: rgba(6, 26, 45, 0.85); padding: 16px; border-radius: 8px; border: 1px solid rgba(0, 229, 255, 0.25); border-left: 3px solid #10B981;">
-                                <b style="color: #10B981; font-size: 13.5px; display: block; margin-bottom: 4px;">3. Escaladare la BEX / ANCPI</b>
-                                <span style="color: rgba(250,251,252,0.75); font-size: 12.5px; line-height: 1.5; display: block;">Sinteza spețelor BCPI Sector 1 este susținută de forul central în dialogul legislativ cu ANCPI.</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Procedura Oficială în 4 Pași (ugr.ro) -->
-                    <div style="background: rgba(10, 30, 52, 0.7); border: 1px solid rgba(0, 229, 255, 0.2); border-radius: 14px; padding: 32px; margin-bottom: 40px;" class="scroll-reveal reveal-up">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 12px;">
-                            <div>
-                                <span style="font-family: var(--font-mono); font-size: 10.5px; color: var(--ugr-cyan); font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em;">FLUX STATUTAR</span>
-                                <h3 style="font-family: var(--font-display); font-size: 20px; color: #fff; margin: 4px 0 0 0;">Procedura Oficială de Aderare în 4 Pași</h3>
-                            </div>
-                            <button onclick="openRegistrationModal()" class="btn-membership" style="font-size: 11px; padding: 9px 18px;">
-                                <span>Completează Cererea Acum</span>
-                                <span class="btn-arrow">→</span>
-                            </button>
-                        </div>
-
-                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 16px;">
-                            <div style="background: rgba(6, 26, 45, 0.85); padding: 22px; border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.08); transition: transform 0.25s ease, border-color 0.25s ease;">
-                                <span style="font-family: var(--font-mono); font-size: 22px; font-weight: 800; color: #00E5FF; display: block; margin-bottom: 8px;">01.</span>
-                                <b style="font-size: 14.5px; color: #fff; display: block; margin-bottom: 6px;">Cerere Adeziune</b>
-                                <p style="font-size: 12.5px; color: rgba(250,251,252,0.75); line-height: 1.55; margin: 0;">Descarcă și completează formularul tipizat oficial pentru persoane fizice sau societăți comerciale.</p>
-                            </div>
-                            <div style="background: rgba(6, 26, 45, 0.85); padding: 22px; border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.08); transition: transform 0.25s ease, border-color 0.25s ease;">
-                                <span style="font-family: var(--font-mono); font-size: 22px; font-weight: 800; color: #00E5FF; display: block; margin-bottom: 8px;">02.</span>
-                                <b style="font-size: 14.5px; color: #fff; display: block; margin-bottom: 6px;">Dosar Profesional</b>
-                                <p style="font-size: 12.5px; color: rgba(250,251,252,0.75); line-height: 1.55; margin: 0;">Anexează copia actului de identitate, diplomă de licență (geodezie/topografie) și certificatul ANCPI.</p>
-                            </div>
-                            <div style="background: rgba(6, 26, 45, 0.85); padding: 22px; border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.08); transition: transform 0.25s ease, border-color 0.25s ease;">
-                                <span style="font-family: var(--font-mono); font-size: 22px; font-weight: 800; color: #00E5FF; display: block; margin-bottom: 8px;">03.</span>
-                                <b style="font-size: 14.5px; color: #fff; display: block; margin-bottom: 6px;">Plată Cotizație</b>
-                                <p style="font-size: 12.5px; color: rgba(250,251,252,0.75); line-height: 1.55; margin: 0;">Achită taxa de înscriere (50 lei) și cotizația anuală (100 lei activi / 10 lei studenți) prin virament bancar.</p>
-                            </div>
-                            <div style="background: rgba(6, 26, 45, 0.85); padding: 22px; border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.08); transition: transform 0.25s ease, border-color 0.25s ease;">
-                                <span style="font-family: var(--font-mono); font-size: 22px; font-weight: 800; color: var(--ugr-hq-gold-bright); display: block; margin-bottom: 8px;">04.</span>
-                                <b style="font-size: 14.5px; color: #fff; display: block; margin-bottom: 6px;">Validare BEX</b>
-                                <p style="font-size: 12.5px; color: rgba(250,251,252,0.75); line-height: 1.55; margin: 0;">Dosarul este validat în ședința Biroului Executiv și se eliberează legitimația oficială cu număr național.</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Grilă Cotizații & Date Bancare Oficiale -->
-                    <div style="background: rgba(10, 30, 52, 0.75); border: 1px solid rgba(0, 229, 255, 0.22); border-radius: 14px; padding: 28px; margin-bottom: 40px;" class="scroll-reveal reveal-up">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
-                            <div>
-                                <span style="font-family: var(--font-mono); font-size: 10.5px; text-transform: uppercase; color: var(--ugr-hq-gold-bright); font-weight: 700; letter-spacing: 0.08em;">GRILĂ STATUTARĂ UGR</span>
-                                <h3 style="font-size: 19px; color: #fff; margin: 4px 0 0 0;">Categorii de Membri &amp; Grilă Cotizații Anuale</h3>
-                            </div>
-                            <span style="font-family: var(--font-mono); font-size: 11px; color: rgba(250,251,252,0.7); background: rgba(255,255,255,0.06); padding: 5px 12px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1);">Actualizat conform Hotărârii BEX UGR</span>
-                        </div>
-
-                        <div style="overflow-x: auto; border: 1px solid rgba(0, 229, 255, 0.2); border-radius: 8px; margin-bottom: 22px;">
-                            <table class="dark-members-table">
-                                <thead>
-                                    <tr>
-                                        <th>Categorie Membru</th>
-                                        <th>Taxă Înscriere</th>
-                                        <th>Cotizație Anuală</th>
-                                        <th>Drepturi Statutare &amp; Beneficii</th>
-                                        <th>Validare Dosar</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>
-                                            <b style="color: #fff; font-size: 14px;">Membru Titular</b>
-                                            <div style="font-size: 11.5px; color: rgba(250,251,252,0.65); margin-top: 2px;">Inginer geodez autorizat ANCPI</div>
-                                        </td>
-                                        <td style="font-family: var(--font-mono); font-weight: 700; color: #00E5FF;">50 LEI</td>
-                                        <td style="font-family: var(--font-mono); font-weight: 700; color: #10B981; font-size: 14px;">100 LEI / AN</td>
-                                        <td style="font-size: 12.5px; color: rgba(250,251,252,0.85); line-height: 1.55;">
-                                            Drept de vot în Adunarea Generală, reprezentare la OCPI/ANCPI, legitimație oficială UGR, reduceri congrese FIG/CLGE.
-                                        </td>
-                                        <td>
-                                            <span style="font-size: 11px; font-family: var(--font-mono); background: rgba(16,185,129,0.15); color: #10B981; padding: 4px 10px; border-radius: 4px; border: 1px solid rgba(16,185,129,0.3); font-weight: 700;">Biroul Executiv (BEX)</span>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <b style="color: #fff; font-size: 14px;">Membru Student</b>
-                                            <div style="font-size: 11.5px; color: rgba(250,251,252,0.65); margin-top: 2px;">Studenți și masteranzi (UTCB, UTM Chișinău, FIFIM)</div>
-                                        </td>
-                                        <td style="font-family: var(--font-mono); font-weight: 700; color: #00E5FF;">10 LEI</td>
-                                        <td style="font-family: var(--font-mono); font-weight: 700; color: #10B981; font-size: 14px;">10 LEI / AN</td>
-                                        <td style="font-size: 12.5px; color: rgba(250,251,252,0.85); line-height: 1.55;">
-                                            Acces liber la conferințe naționale, stagii de practică la birouri membre, participare SGR Chișinău 2026.
-                                        </td>
-                                        <td>
-                                            <span style="font-size: 11px; font-family: var(--font-mono); background: rgba(0,229,255,0.15); color: #00E5FF; padding: 4px 10px; border-radius: 4px; border: 1px solid rgba(0,229,255,0.3); font-weight: 700;">Secretariat Filială</span>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <b style="color: #fff; font-size: 14px;">Membru Corespondent / Firmă</b>
-                                            <div style="font-size: 11.5px; color: rgba(250,251,252,0.65); margin-top: 2px;">Societăți comerciale de geodezie și cadastru</div>
-                                        </td>
-                                        <td style="font-family: var(--font-mono); font-weight: 700; color: #00E5FF;">100 LEI</td>
-                                        <td style="font-family: var(--font-mono); font-weight: 700; color: #FFE082; font-size: 14px;">DIFERENȚIATĂ</td>
-                                        <td style="font-size: 12.5px; color: rgba(250,251,252,0.85); line-height: 1.55;">
-                                            Promovare în Registrul Firmelor Partenere UGR, consultanță juridico-tehnică în proceduri cadastrale complexe.
-                                        </td>
-                                        <td>
-                                            <span style="font-size: 11px; font-family: var(--font-mono); background: rgba(167,139,250,0.15); color: #A78BFA; padding: 4px 10px; border-radius: 4px; border: 1px solid rgba(167,139,250,0.3); font-weight: 700;">Consiliul Național</span>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-
-                        <!-- Date Bancare UGR -->
-                        <div style="background: rgba(6, 26, 45, 0.7); padding: 18px 22px; border-radius: 10px; border: 1px solid rgba(0, 229, 255, 0.25); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px;">
-                            <div>
-                                <span style="font-family: var(--font-mono); font-size: 10px; color: #00E5FF; font-weight: 700; text-transform: uppercase;">DATE BANCARE OFICIALE (UGR.RO):</span>
-                                <div style="font-family: var(--font-mono); font-size: 12.5px; color: #fff; margin-top: 4px;">
-                                    BRD Ag. Tei: <b style="color: #FFE082;">RO57 BRDE 426S V810 0757 4450</b> &nbsp;|&nbsp; BCR: <b style="color: #FFE082;">RO04 RNCB 0074 0104 7856 0001</b>
-                                </div>
-                                <span style="font-size: 11px; color: rgba(250,251,252,0.65); display: block; margin-top: 4px;">Mențiune virament: <em>Nume Prenume / CNP / Cotizație Filiala Sector 1</em></span>
-                            </div>
-                            <button onclick="openRegistrationModal()" class="btn-secondary" style="font-size: 11px; padding: 8px 16px;">Instrucțiuni Plată →</button>
-                        </div>
-                    </div>
-
-                    <!-- Registrul Membrilor Autorizați UGR (Live Search & Filter) -->
-                    <div style="background: rgba(10, 30, 52, 0.85); border: 1px solid rgba(0, 229, 255, 0.25); border-radius: 14px; padding: 28px; margin-bottom: 40px;" class="scroll-reveal reveal-up">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 14px;">
-                            <div>
-                                <span style="font-family: var(--font-mono); font-size: 11px; color: #00E5FF; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 700;">Evidență Acreditată</span>
-                                <h3 style="font-family: var(--font-display); font-size: 21px; color: #fff; font-weight: 700; margin-top: 4px;">Registrul Membrilor Autorizați UGR</h3>
-                            </div>
-                            <div id="members-count-badge" style="font-family: var(--font-mono); font-size: 12px; color: #00E5FF; background: rgba(0, 229, 255, 0.12); padding: 6px 14px; border-radius: 20px; border: 1px solid rgba(0, 229, 255, 0.3);">
-                                Se afișează <b>8</b> membri autorizați
-                            </div>
-                        </div>
-
-                        <!-- Filtre Live -->
-                        <div style="display: flex; gap: 14px; margin-bottom: 20px; flex-wrap: wrap;">
-                            <div style="flex: 1; min-width: 240px;">
-                                <input type="text" id="member-search-input" oninput="filterMembers()" onkeyup="filterMembers()" class="dark-filter-input" style="width: 100%;" placeholder="🔍 Caută după nume, serie autorizație sau ID...">
-                            </div>
-                            <div style="width: 220px;">
-                                <select id="member-county-select" onchange="filterMembers()" class="dark-filter-input" style="width: 100%;">
-                                    <option value="toate">Toate filialele (41 județe)</option>
-                                    <option value="București">București (Sector 1)</option>
-                                    <option value="Cluj">Cluj</option>
-                                    <option value="Iași">Iași</option>
-                                    <option value="Timiș">Timiș</option>
-                                    <option value="Constanța">Constanța</option>
-                                    <option value="Chișinău">Chișinău (UTM)</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div style="overflow-x: auto; border: 1px solid rgba(0, 229, 255, 0.2); border-radius: 8px;">
-                            <table class="dark-members-table">
-                                <thead>
-                                    <tr>
-                                        <th>Nr. Legitimație</th>
-                                        <th>Nume &amp; Prenume</th>
-                                        <th>Filială / Județ</th>
-                                        <th>Autorizație ANCPI</th>
-                                        <th>Status</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="members-table-body">
-                                    <!-- Populat dinamic prin script.js -->
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                    <!-- Formulare Oficiale Descărcabile (DOCX) -->
-                    <div class="scroll-reveal reveal-up" style="margin-bottom: 20px;">
-                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 16px;">
-                            <span style="font-family: var(--font-mono); font-size: 11px; color: var(--ugr-hq-gold-bright); font-weight: 700; text-transform: uppercase;">Resurse Oficiale</span>
-                            <h3 style="font-size: 20px; color: #fff; margin: 0; font-weight: 700;">Formulare Tipizate de Înscriere (Descărcare Gratuită)</h3>
-                        </div>
-
-                        <div class="bento-grid" id="documents-container">
-                            <!-- Populat dinamic prin data.js -->
                         </div>
                     </div>
 
                 </div>
-            </section>
-        </div>
+
+                <!-- 3. Arhitectură Apartenență: Înscriere Locală cu Voce Națională -->
+                <div id="m-apartenenta-block" class="m-demo4-retro-grid m-apartenenta-block scroll-reveal reveal-up">
+                    <div class="m-block-header">
+                        <span class="scroll-reveal reveal-left m-kicker-badge">Mecanism Statutar</span>
+                        <h3 class="scroll-reveal reveal-left m-block-title">Cum Funcționează Apartenența: Înscriere Locală cu Voce Națională</h3>
+                    </div>
+                    <p class="scroll-reveal reveal-left m-block-desc">
+                        Geodezii autorizați și societățile de profil care activează în Sectorul 1 se înscriu direct în <strong>Filiala Sector 1 București</strong>. Prin această aderare teritorială, membrii dobândesc automat calitatea de membru deplin al <strong>Uniunii Geodezilor din România (UGR Național)</strong>, participă cu drept de vot la Adunările Generale Locale, aleg conducerea filialei și mandatează delegații locali pentru forul național. Totodată, Filiala Sector 1 colectează blocajele tehnice din BCPI Sector 1 și le înaintează către Biroul Executiv (BEX) pentru susținere directă în fața ANCPI.
+                    </p>
+                    <div class="m-apartenenta-cards-grid">
+                        <div class="m-step-card-mini step-filiala scroll-reveal reveal-up">
+                            <b style="color: var(--ugr-cyan); font-size: 14px; display: block; margin-bottom: 6px;">1. Înscriere în Filială</b>
+                            <span style="color: rgba(250,251,252,0.78); font-size: 12.5px; line-height: 1.55; display: block;">Adeziune teritorială la Filiala Sector 1 ➔ calitatea deplină de membru UGR Național.</span>
+                        </div>
+                        <div class="m-step-card-mini step-vot scroll-reveal reveal-up">
+                            <b style="color: var(--ugr-hq-gold-bright); font-size: 14px; display: block; margin-bottom: 6px;">2. Vot &amp; Decizie Locală</b>
+                            <span style="color: rgba(250,251,252,0.78); font-size: 12.5px; line-height: 1.55; display: block;">Alegi reprezentanții filialei și mandatezi delegații oficiali pentru Congresul Național.</span>
+                        </div>
+                        <div class="m-step-card-mini step-escaladare scroll-reveal reveal-up">
+                            <b style="color: #10B981; font-size: 14px; display: block; margin-bottom: 6px;">3. Escaladare la BEX / ANCPI</b>
+                            <span style="color: rgba(250,251,252,0.78); font-size: 12.5px; line-height: 1.55; display: block;">Sinteza spețelor BCPI Sector 1 este susținută de forul central în dialogul legislativ cu ANCPI.</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 4. Procedura Oficială în 4 Pași (ugr.ro) -->
+                <div id="m-procedura-block" class="m-procedura-box scroll-reveal reveal-up">
+                    <div class="m-pasi-header">
+                        <div class="m-pasi-header-text">
+                            <span class="scroll-reveal reveal-left m-tag-cyan">FLUX STATUTAR</span>
+                            <h3 class="scroll-reveal reveal-left m-section-subheading">Procedura Oficială de Aderare în 4 Pași</h3>
+                        </div>
+                        <button onclick="openRegistrationModal()" class="btn-membership scroll-reveal reveal-right m-pasi-btn" style="font-size: 11.5px; padding: 9px 20px;">
+                            <span>Completează Cererea Acum</span>
+                            <span class="btn-arrow">→</span>
+                        </button>
+                    </div>
+
+                    <div class="m-pasi-cards-grid">
+                        <div class="m-pasi-card scroll-reveal reveal-up">
+                            <span class="m-pasi-num">01.</span>
+                            <b style="font-size: 14.5px; color: #fff; display: block; margin-bottom: 6px;">Cerere Adeziune</b>
+                            <p style="font-size: 12.5px; color: rgba(250,251,252,0.75); line-height: 1.55; margin: 0;">Descarcă și completează formularul tipizat oficial pentru persoane fizice sau societăți comerciale.</p>
+                        </div>
+                        <div class="m-pasi-card scroll-reveal reveal-up">
+                            <span class="m-pasi-num">02.</span>
+                            <b style="font-size: 14.5px; color: #fff; display: block; margin-bottom: 6px;">Dosar Profesional</b>
+                            <p style="font-size: 12.5px; color: rgba(250,251,252,0.75); line-height: 1.55; margin: 0;">Anexează copia actului de identitate, diplomă de licență (geodezie/topografie) și certificatul ANCPI.</p>
+                        </div>
+                        <div class="m-pasi-card scroll-reveal reveal-up">
+                            <span class="m-pasi-num">03.</span>
+                            <b style="font-size: 14.5px; color: #fff; display: block; margin-bottom: 6px;">Plată Cotizație</b>
+                            <p style="font-size: 12.5px; color: rgba(250,251,252,0.75); line-height: 1.55; margin: 0;">Achită taxa de înscriere (50 lei) și cotizația anuală (100 lei activi / 10 lei studenți) prin virament bancar.</p>
+                        </div>
+                        <div class="m-pasi-card scroll-reveal reveal-up">
+                            <span class="m-pasi-num gold">04.</span>
+                            <b style="font-size: 14.5px; color: #fff; display: block; margin-bottom: 6px;">Validare BEX</b>
+                            <p style="font-size: 12.5px; color: rgba(250,251,252,0.75); line-height: 1.55; margin: 0;">Dosarul este validat în ședința Biroului Executiv și se eliberează legitimația oficială cu număr național.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 5. Grilă Cotizații & Date Bancare Oficiale -->
+                <div id="m-cotizatii-block" class="m-cotizatii-box scroll-reveal reveal-up">
+                    <div class="m-cotizatii-header">
+                        <div class="m-cotizatii-header-text">
+                            <span class="scroll-reveal reveal-left m-tag-gold">GRILĂ STATUTARĂ UGR</span>
+                            <h3 class="scroll-reveal reveal-left m-section-subheading">Categorii de Membri &amp; Grilă Cotizații Anuale</h3>
+                        </div>
+                        <span class="scroll-reveal reveal-right m-update-badge">Actualizat conform Hotărârii BEX UGR</span>
+                    </div>
+
+                    <div class="scroll-reveal reveal-up m-cotizatii-table-wrap">
+                        <table class="dark-members-table">
+                            <thead>
+                                <tr>
+                                    <th>Categorie Membru</th>
+                                    <th>Taxă Înscriere</th>
+                                    <th>Cotizație Anuală</th>
+                                    <th>Drepturi Statutare &amp; Beneficii</th>
+                                    <th>Validare Dosar</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <b style="color: #fff; font-size: 14px;">Membru Titular</b>
+                                        <div style="font-size: 11.5px; color: rgba(250,251,252,0.65); margin-top: 2px;">Inginer geodez autorizat ANCPI</div>
+                                    </td>
+                                    <td style="font-family: var(--font-mono); font-weight: 700; color: #00E5FF;">50 LEI</td>
+                                    <td style="font-family: var(--font-mono); font-weight: 700; color: #10B981; font-size: 14px;">100 LEI / AN</td>
+                                    <td style="font-size: 12.5px; color: rgba(250,251,252,0.85); line-height: 1.55;">
+                                        Drept de vot în Adunarea Generală, reprezentare la OCPI/ANCPI, legitimație oficială UGR, reduceri congrese FIG/CLGE.
+                                    </td>
+                                    <td>
+                                        <span style="font-size: 11px; font-family: var(--font-mono); background: rgba(16,185,129,0.15); color: #10B981; padding: 4px 10px; border-radius: 4px; border: 1px solid rgba(16,185,129,0.3); font-weight: 700;">Biroul Executiv (BEX)</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <b style="color: #fff; font-size: 14px;">Membru Student</b>
+                                        <div style="font-size: 11.5px; color: rgba(250,251,252,0.65); margin-top: 2px;">Studenți și masteranzi (UTCB, UTM Chișinău, FIFIM)</div>
+                                    </td>
+                                    <td style="font-family: var(--font-mono); font-weight: 700; color: #00E5FF;">10 LEI</td>
+                                    <td style="font-family: var(--font-mono); font-weight: 700; color: #10B981; font-size: 14px;">10 LEI / AN</td>
+                                    <td style="font-size: 12.5px; color: rgba(250,251,252,0.85); line-height: 1.55;">
+                                        Acces liber la conferințe naționale, stagii de practică la birouri membre, participare SGR Chișinău 2026.
+                                    </td>
+                                    <td>
+                                        <span style="font-size: 11px; font-family: var(--font-mono); background: rgba(0,229,255,0.15); color: #00E5FF; padding: 4px 10px; border-radius: 4px; border: 1px solid rgba(0,229,255,0.3); font-weight: 700;">Secretariat Filială</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <b style="color: #fff; font-size: 14px;">Membru Corespondent / Firmă</b>
+                                        <div style="font-size: 11.5px; color: rgba(250,251,252,0.65); margin-top: 2px;">Societăți comerciale de geodezie și cadastru</div>
+                                    </td>
+                                    <td style="font-family: var(--font-mono); font-weight: 700; color: #00E5FF;">100 LEI</td>
+                                    <td style="font-family: var(--font-mono); font-weight: 700; color: #FFE082; font-size: 14px;">DIFERENȚIATĂ</td>
+                                    <td style="font-size: 12.5px; color: rgba(250,251,252,0.85); line-height: 1.55;">
+                                        Promovare în Registrul Firmelor Partenere UGR, consultanță juridico-tehnică în proceduri cadastrale complexe.
+                                    </td>
+                                    <td>
+                                        <span style="font-size: 11px; font-family: var(--font-mono); background: rgba(167,139,250,0.15); color: #A78BFA; padding: 4px 10px; border-radius: 4px; border: 1px solid rgba(167,139,250,0.3); font-weight: 700;">Consiliul Național</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Date Bancare UGR -->
+                    <div class="scroll-reveal reveal-up m-cotizatii-bank">
+                        <div>
+                            <span style="font-family: var(--font-mono); font-size: 10px; color: #00E5FF; font-weight: 700; text-transform: uppercase;">DATE BANCARE OFICIALE (UGR.RO):</span>
+                            <div style="font-family: var(--font-mono); font-size: 12.5px; color: #fff; margin-top: 4px;">
+                                BRD Ag. Tei: <b style="color: #FFE082;">RO57 BRDE 426S V810 0757 4450</b> &nbsp;|&nbsp; BCR: <b style="color: #FFE082;">RO04 RNCB 0074 0104 7856 0001</b>
+                            </div>
+                            <span style="font-size: 11px; color: rgba(250,251,252,0.65); display: block; margin-top: 4px;">Mențiune virament: <em>Nume Prenume / CNP / Cotizație Filiala Sector 1</em></span>
+                        </div>
+                        <button onclick="openRegistrationModal()" class="btn-secondary" style="font-size: 11px; padding: 8px 16px;">Instrucțiuni Plată →</button>
+                    </div>
+                </div>
+
+                <!-- 6. Registrul Membrilor Autorizați UGR (Live Search & Filter) -->
+                <div id="m-directory-block" class="m-directory-box scroll-reveal reveal-up">
+                    <div class="m-directory-header">
+                        <div class="m-directory-header-text">
+                            <span class="scroll-reveal reveal-left m-tag-cyan">Evidență Acreditată</span>
+                            <h3 class="scroll-reveal reveal-left m-section-subheading">Registrul Membrilor Autorizați UGR</h3>
+                        </div>
+                        <div id="members-count-badge" class="scroll-reveal reveal-right m-count-badge">
+                            Se afișează <b>8</b> membri autorizați
+                        </div>
+                    </div>
+
+                    <!-- Filtre Live -->
+                    <div class="scroll-reveal reveal-up m-filters-row">
+                        <div style="flex: 1; min-width: 240px;">
+                            <input type="text" id="member-search-input" oninput="filterMembers()" onkeyup="filterMembers()" class="dark-filter-input" style="width: 100%;" placeholder="🔍 Caută după nume, serie autorizație sau ID...">
+                        </div>
+                        <div style="width: 220px;">
+                            <select id="member-county-select" onchange="filterMembers()" class="dark-filter-input" style="width: 100%;">
+                                <option value="toate">Toate filialele (41 județe)</option>
+                                <option value="București">București (Sector 1)</option>
+                                <option value="Cluj">Cluj</option>
+                                <option value="Iași">Iași</option>
+                                <option value="Timiș">Timiș</option>
+                                <option value="Constanța">Constanța</option>
+                                <option value="Chișinău">Chișinău (UTM)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="scroll-reveal reveal-up m-directory-table-wrap">
+                        <table class="dark-members-table">
+                            <thead>
+                                <tr>
+                                    <th>Nr. Legitimație</th>
+                                    <th>Nume &amp; Prenume</th>
+                                    <th>Filială / Județ</th>
+                                    <th>Autorizație ANCPI</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="members-table-body">
+                                <!-- Populat dinamic prin script.js cu table-row-animated -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 7. Formulare Oficiale Descărcabile (DOCX) -->
+                <div id="m-docs-block" class="m-docs-box scroll-reveal reveal-up">
+                    <div class="m-docs-header">
+                        <div class="m-docs-header-text">
+                            <span class="scroll-reveal reveal-left m-tag-gold">Resurse Oficiale</span>
+                            <h3 class="scroll-reveal reveal-left m-section-subheading" style="margin: 0;">Formulare Tipizate de Înscriere (Descărcare Gratuită)</h3>
+                        </div>
+                    </div>
+
+                    <div class="bento-grid m-docs-grid scroll-reveal reveal-up" id="documents-container">
+                        <!-- Populat dinamic prin data.js -->
+                    </div>
+                </div>
+
+                </div>
+        </section>
 
 
 
@@ -1072,26 +1105,216 @@
         <section id="view-contact" class="section-block section-dark view-section hidden">
             <div class="content-container">
                 
-                <!-- Secțiunea FAQ: Întrebări Frecvente -->
-                <div class="section-header" style="max-width: 800px; margin-bottom: 30px;">
-                    <div class="section-tag">Ghid de Răspunsuri Rapide</div>
-                    <h2 class="section-title">Întrebări Frecvente (FAQ)</h2>
-                    <p style="color: var(--ugr-text-muted); margin-top: 10px;">
-                        Răspunsuri oficiale la cele mai comune întrebări adresate secretariatului UGR și Filialei Sector 1.
+                <!-- 1. HEADER SECTION: CLAR, DEMN, EDITORIAL -->
+                <div class="faq-hero-header">
+                    <div class="faq-hero-kicker scroll-reveal reveal-up">
+                        GHID &amp; ASISTENȚĂ
+                    </div>
+                    <h1 class="faq-hero-title scroll-reveal reveal-up">Întrebări Frecvente &amp; Secretariat</h1>
+                    <p class="faq-hero-subtitle scroll-reveal reveal-up">
+                        Răspunsuri oficiale la întrebările membrilor, inginerilor geodezi și studenților privind înscrierea în UGR, spețele la BCPI Sector 1 și activitățile profesionale.
+                    </p>
+
+                    <!-- Bara de Căutare Clean -->
+                    <div class="faq-search-wrap scroll-reveal reveal-up">
+                        <span class="faq-search-icon" aria-hidden="true">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="11" cy="11" r="8"></circle>
+                                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                            </svg>
+                        </span>
+                        <input type="text" id="faq-search-input" class="faq-search-input" placeholder="Caută o întrebare sau un termen..." oninput="handleFaqSearch(this.value)" aria-label="Caută în întrebările frecvente">
+                        <button type="button" id="faq-search-clear" class="faq-search-clear" onclick="clearFaqSearch()" aria-label="Șterge căutarea" style="display: none;">✕</button>
+                    </div>
+
+                    <!-- Selector Categorii (Pills) -->
+                    <div class="faq-pills-wrap scroll-reveal reveal-up" role="tablist" aria-label="Filtrare categorii FAQ">
+                        <button type="button" class="faq-pill-btn active" data-category="all" onclick="filterFaqCategory('all', this)" role="tab" aria-selected="true">Toate (14)</button>
+                        <button type="button" class="faq-pill-btn" data-category="aderare" onclick="filterFaqCategory('aderare', this)" role="tab" aria-selected="false">Înscriere &amp; Cotizații</button>
+                        <button type="button" class="faq-pill-btn" data-category="bcpi" onclick="filterFaqCategory('bcpi', this)" role="tab" aria-selected="false">BCPI Sector 1 &amp; ANCPI</button>
+                        <button type="button" class="faq-pill-btn" data-category="studenti" onclick="filterFaqCategory('studenti', this)" role="tab" aria-selected="false">Studenți FIFIM USAMV</button>
+                        <button type="button" class="faq-pill-btn" data-category="evenimente" onclick="filterFaqCategory('evenimente', this)" role="tab" aria-selected="false">Evenimente &amp; SGR Chișinău</button>
+                    </div>
+                </div>
+
+                <!-- Contor Rezultate FAQ -->
+                <div id="faq-results-counter" class="faq-results-counter" role="status" aria-live="polite">
+                    <span class="faq-results-badge">
+                        Se afișează <strong>14 întrebări</strong>
+                    </span>
+                    <span style="opacity: 0.65;">Toate categoriile</span>
+                </div>
+
+                <!-- 2. CONTAINER ACORDEON FAQ -->
+                <div class="faq-grid" id="faq-accordion-container">
+                    <!-- Populat dinamic prin data.js & script.js -->
+                </div>
+
+                <!-- 3. GHID DE ORIENTARE: LOCAL VS CENTRAL -->
+                <div class="section-header" style="text-align: left; margin-top: 50px; margin-bottom: 22px;">
+                    <span style="font-family: var(--font-mono); font-size: 11px; color: var(--ugr-cyan); font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em;">Ghid de Orientare</span>
+                    <h3 style="font-size: 22px; margin-top: 4px; color: #fff; font-family: var(--font-display);">Unde vă adresați?</h3>
+                    <p style="color: var(--ugr-text-muted); font-size: 14px; margin-top: 4px; max-width: 720px;">
+                        Pentru a primi un răspuns rapid, verificați dacă speța dumneavoastră ține de competența teritorială a Filialei Sector 1 sau de nivelul național al Sediului Central UGR.
                     </p>
                 </div>
 
-                <div class="faq-grid" id="faq-accordion-container" style="margin-bottom: 60px;">
-                    <!-- Populat dinamic prin data.js -->
+                <div class="triaj-bento-grid">
+                    <!-- Filiala Sector 1 -->
+                    <div class="triaj-card triaj-card-local">
+                        <div>
+                            <div style="font-family: var(--font-mono); font-size: 11px; font-weight: 700; color: var(--ugr-cyan); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 8px;">Nivel Teritorial · Filiala Sector 1</div>
+                            <h4>Spețe Locale, BCPI Sector 1 &amp; FIFIM</h4>
+                            <ul class="triaj-list">
+                                <li>
+                                    <span class="triaj-bullet-cyan">•</span>
+                                    <span>Întârzieri sau sesizări tehnice privind dosarele depuse la <strong>BCPI Sector 1</strong> (e-Terra);</span>
+                                </li>
+                                <li>
+                                    <span class="triaj-bullet-cyan">•</span>
+                                    <span>Avize de urbanism și documentații topografice în raport cu <strong>Primăria Sectorului 1</strong>;</span>
+                                </li>
+                                <li>
+                                    <span class="triaj-bullet-cyan">•</span>
+                                    <span>Dosare de aderare pentru ingineri cu domiciliul sau sediul profesional în Sectorul 1;</span>
+                                </li>
+                                <li>
+                                    <span class="triaj-bullet-cyan">•</span>
+                                    <span>Activități studențești, workshopuri și stagii de practică la <strong>FIFIM USAMV București</strong>;</span>
+                                </li>
+                                <li>
+                                    <span class="triaj-bullet-cyan">•</span>
+                                    <span>Confirmarea plății cotizației anuale la nivel de filială.</span>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="triaj-actions">
+                            <button type="button" class="btn-copy-chip" onclick="copyToClipboard('0720336736', 'Telefon Filiala Sector 1', this)">
+                                0720 336 736
+                            </button>
+                            <button type="button" class="btn-copy-chip" onclick="copyToClipboard('filiala.ugr.s1@gmail.com', 'Email Filiala Sector 1', this)">
+                                filiala.ugr.s1@gmail.com
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Sediul Central UGR -->
+                    <div class="triaj-card triaj-card-central">
+                        <div>
+                            <div style="font-family: var(--font-mono); font-size: 11px; font-weight: 700; color: var(--ugr-hq-gold-bright); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 8px;">Nivel Național · Sediul Central UGR</div>
+                            <h4>Politici Naționale, ANCPI &amp; SGR</h4>
+                            <ul class="triaj-list">
+                                <li>
+                                    <span class="triaj-bullet-gold">•</span>
+                                    <span>Dialog legislativ național cu <strong>ANCPI</strong> (propuneri modificare Legea 7/1996, Ordin 600/2023);</span>
+                                </li>
+                                <li>
+                                    <span class="triaj-bullet-gold">•</span>
+                                    <span>Înscrieri și lucrări pentru <strong>Săptămâna Geodeziei Românești (SGR Chișinău)</strong>;</span>
+                                </li>
+                                <li>
+                                    <span class="triaj-bullet-gold">•</span>
+                                    <span>Reprezentare internațională în organizațiile <strong>FIG &amp; CLGE</strong>;</span>
+                                </li>
+                                <li>
+                                    <span class="triaj-bullet-gold">•</span>
+                                    <span>Gestionarea Registrului Național al Geodezilor din România.</span>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="triaj-actions">
+                            <a href="https://ugr.ro" target="_blank" rel="noopener noreferrer" class="btn-secondary" style="padding: 6px 12px; font-size: 11px;">Portal ugr.ro ↗</a>
+                            <button type="button" class="btn-copy-chip" style="color: #F5D77F; border-color: rgba(197, 160, 89, 0.35); background: rgba(197, 160, 89, 0.08);" onclick="copyToClipboard('office@ugr.ro', 'Email Sediul Central', this)">
+                                office@ugr.ro
+                            </button>
+                        </div>
+                    </div>
                 </div>
 
-                <!-- HUB SOCIAL MEDIA OFICIAL FILIALA SECTOR 1 -->
-                <div style="background: var(--ugr-navy-surface); border: 1px solid var(--ugr-border); border-radius: 12px; padding: 32px; margin-bottom: 50px;">
-                    <div class="section-header" style="margin-bottom: 16px;">
-                        <span style="font-family: var(--font-mono); font-size: 10px; color: var(--ugr-cyan); font-weight: 700; text-transform: uppercase;">Canale Oficiale de Comunicare</span>
-                        <h3 style="font-size: 20px; margin-top: 4px;">Canalele Oficiale Social Media — UGR Filiala Sector 1</h3>
-                        <p style="color: var(--ugr-text-muted); font-size: 13.5px; margin-top: 6px;">
-                            Urmărește canalele exclusive ale Filialei Sector 1 pentru inițiative universitare FIFIM, workshopuri profesionale și anunțuri operative ANCPI/e-Terra.
+                <!-- 4. DATE DE CONTACT & FORMULAR -->
+                <div class="contact-two-col-grid">
+                    
+                    <!-- Date de Contact & Sediul -->
+                    <div class="contact-info-card">
+                        <div>
+                            <h3 style="font-size: 19px; margin: 0 0 16px 0; color: #fff; font-family: var(--font-display);">Date de Contact &amp; Puncte de Întâlnire</h3>
+
+                            <!-- Filiala Sector 1 -->
+                            <div class="contact-point-block" style="margin-bottom: 18px; padding-bottom: 18px; border-bottom: 1px solid rgba(255,255,255,0.08);">
+                                <div style="font-size: 12px; font-family: var(--font-mono); color: var(--ugr-cyan); font-weight: 700; text-transform: uppercase; margin-bottom: 6px;">Secretariat Filiala Sector 1</div>
+                                <div style="font-size: 14px; line-height: 1.6; color: #FAFBFC;">
+                                    <strong>Adresă:</strong> FIFIM — USAMV București, Bulevardul Mărăști nr. 59, Sector 1<br>
+                                    <strong>Telefon:</strong> <a href="tel:0720336736" style="color: var(--ugr-cyan); text-decoration: none;">0720 336 736</a><br>
+                                    <strong>Email:</strong> <a href="mailto:filiala.ugr.s1@gmail.com" style="color: var(--ugr-cyan); text-decoration: none;">filiala.ugr.s1@gmail.com</a>
+                                </div>
+                            </div>
+
+                            <!-- Sediul Central -->
+                            <div class="contact-point-block" style="margin-bottom: 18px;">
+                                <div style="font-size: 12px; font-family: var(--font-mono); color: var(--ugr-hq-gold-bright); font-weight: 700; text-transform: uppercase; margin-bottom: 6px;">Sediul Central UGR (Palatul Geodeziei)</div>
+                                <div style="font-size: 14px; line-height: 1.6; color: rgba(250, 251, 252, 0.85);">
+                                    <strong>Adresă:</strong> Bulevardul Lacul Tei nr. 124, Sector 2, București<br>
+                                    <strong>Telefon:</strong> 0723 587 081 &nbsp;|&nbsp; <strong>Email:</strong> office@ugr.ro<br>
+                                    <strong>Cod Fiscal (CIF):</strong> 6480330
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Harta Integrată Simplă & Curată -->
+                        <div class="clean-map-wrap">
+                            <iframe title="Harta Sediului UGR" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2847.52205748069!2d26.122531815818295!3d44.463470707674745!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x40b1f8958a865b9d%3A0x1bff7cc2b83245c8!2sBulevardul+Lacul+Tei+124%2C+Bucure%C8%99ti!5e0!3m2!1sro!2sro" width="100%" height="190" style="border:0; border-radius: 8px; display: block;" allowfullscreen="" loading="lazy"></iframe>
+                        </div>
+                    </div>
+
+                    <!-- Formular de Contact Simplu & Elegant -->
+                    <div class="contact-glass-panel">
+                        <h3 style="font-size: 19px; margin: 0 0 6px 0; color: #fff; font-family: var(--font-display);">Trimite un Mesaj Secretariatului</h3>
+                        <p style="color: var(--ugr-text-muted); font-size: 13.5px; line-height: 1.5; margin-bottom: 20px;">
+                            Pentru întrebări, spețe profesionale la nivel de Sector 1 sau informații privind înscrierea în asociație.
+                        </p>
+
+                        <form onsubmit="handleContactSubmit(event)">
+                            <div class="form-field" style="margin-bottom: 14px;">
+                                <label for="contact-name" class="form-label">Nume &amp; Prenume / Companie</label>
+                                <input type="text" id="contact-name" class="form-input" placeholder="Ex: Ing. Popescu Ioan" required>
+                            </div>
+                            <div class="form-field" style="margin-bottom: 14px;">
+                                <label for="contact-email" class="form-label">Adresă de Email</label>
+                                <input type="email" id="contact-email" class="form-input" placeholder="adresa@exemplu.ro" required>
+                            </div>
+                            <div class="form-field" style="margin-bottom: 14px;">
+                                <label for="contact-topic" class="form-label">Subiect Solicitare</label>
+                                <select id="contact-topic" class="form-select">
+                                    <option value="bcpi">Speță Tehnică BCPI Sector 1 / e-Terra</option>
+                                    <option value="aderare">Aderare Membru / Cotizație</option>
+                                    <option value="studenti">Comunitate Studenți FIFIM USAMV</option>
+                                    <option value="evenimente">Evenimente Tehnice / SGR Chișinău</option>
+                                    <option value="altele">Întrebare Generală</option>
+                                </select>
+                            </div>
+                            <div class="form-field" style="margin-bottom: 18px;">
+                                <label for="contact-message" class="form-label">Mesaj</label>
+                                <textarea id="contact-message" rows="4" class="form-input" placeholder="Descrieți pe scurt speța dumneavoastră..." required></textarea>
+                            </div>
+                            
+                            <button type="submit" class="btn-membership" style="width: 100%; justify-content: center; padding: 12px 20px; font-size: 14px;">
+                                <span>Trimite Mesajul</span>
+                                <span class="btn-arrow" aria-hidden="true">→</span>
+                            </button>
+
+                            <div id="contact-status-msg" style="display: none; margin-top: 14px;"></div>
+                        </form>
+                    </div>
+
+                </div>
+
+                <!-- 5. HUB SOCIAL MEDIA OFICIAL FILIALA SECTOR 1 -->
+                <div style="background: rgba(6, 20, 36, 0.65); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 14px; padding: 28px 30px; margin-top: 44px; backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);">
+                    <div style="margin-bottom: 20px;">
+                        <span style="font-family: var(--font-mono); font-size: 11px; color: var(--ugr-cyan); font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em;">Canale Oficiale de Comunicare Rapidă</span>
+                        <h3 style="font-size: 20px; margin-top: 4px; color: #fff; font-family: var(--font-display);">Social Media &amp; Comunitate — UGR Filiala Sector 1</h3>
+                        <p style="color: var(--ugr-text-muted); font-size: 13.5px; margin-top: 6px; max-width: 720px;">
+                            Urmărește canalele exclusive ale Filialei Sector 1 pentru inițiative universitare FIFIM, workshopuri profesionale și anunțuri operative ANCPI / e-Terra.
                         </p>
                     </div>
 
@@ -1115,84 +1338,6 @@
                                 <span style="font-size: 11px; font-family: var(--font-mono); color: var(--ugr-cyan);">@filiala.sector1.ugr ↗</span>
                             </div>
                         </a>
-                    </div>
-                </div>
-
-                <!-- Ghid de Orientare: Unde Vă Adresați? (Local vs Central) -->
-                <div style="background: rgba(14,54,92,0.6); border: 1px solid var(--ugr-border); border-radius: 12px; padding: 24px; margin-bottom: 36px;">
-                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px;">
-                        <span style="font-family: var(--font-mono); font-size: 10px; color: var(--ugr-cyan); font-weight: 700; text-transform: uppercase;">Triaj Instituțional</span>
-                        <h4 style="font-size: 16px; margin: 0; color: #fff;">Ghid Rapid de Direcționare a Solicitărilor</h4>
-                    </div>
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px;">
-                        <div style="background: rgba(11,46,78,0.5); padding: 16px; border-radius: 8px; border-left: 3px solid var(--ugr-cyan);">
-                            <b style="color: var(--ugr-cyan); font-size: 13px; display: block; margin-bottom: 6px;">Contactați Filiala Sector 1 pentru:</b>
-                            <ul style="margin: 0; padding-left: 18px; font-size: 12px; color: rgba(250,251,252,0.85); line-height: 1.6;">
-                                <li>Spețe tehnice, întârzieri sau respingeri la <strong>BCPI Sector 1</strong>;</li>
-                                <li>Ridicări topografice și avize la <strong>Primăria Sectorului 1 (Urbanism)</strong>;</li>
-                                <li>Depunerea dosarelor de membru cu activitate în Sectorul 1;</li>
-                                <li>Plata cotizației anuale (cu mențiunea <em>„Cotizație Filiala Sector 1 / Nume / CNP”</em>).</li>
-                            </ul>
-                        </div>
-                        <div style="background: rgba(11,46,78,0.5); padding: 16px; border-radius: 8px; border-left: 3px solid var(--ugr-orange);">
-                            <b style="color: var(--ugr-orange); font-size: 13px; display: block; margin-bottom: 6px;">Contactați Sediul Central UGR pentru:</b>
-                            <ul style="margin: 0; padding-left: 18px; font-size: 12px; color: rgba(250,251,252,0.85); line-height: 1.6;">
-                                <li>Propuneri generale de modificare legislativă ANCPI (Legea 7/1996, Ord. 600/2023);</li>
-                                <li>Înscriere și detalii privind <strong>Săptămâna Geodeziei Românești (SGR Chișinău 11–14 Noiembrie)</strong>;</li>
-                                <li>Atestări internaționale și reprezentare europeană <strong>FIG & CLGE</strong>;</li>
-                                <li>Parteneriate academice și relația cu rectoratele (Facultatea de Geodezie UTCB).</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Formular Contact & Date Sediul Central -->
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 36px;" class="calc-form-grid">
-                    <div>
-                        <h3 style="font-size: 18px; margin-bottom: 14px; color: var(--ugr-cyan);">Secretariat & Date Instituționale</h3>
-                        <p style="margin-bottom: 12px; font-size: 13.5px;"><b>Adresă Sediul Central:</b> Bd. Lacul Tei nr. 124, Sector 2, București, România</p>
-                        <p style="margin-bottom: 12px; font-size: 13.5px;"><b>Telefon Secretariat:</b> 0723 587 081</p>
-                        <p style="margin-bottom: 12px; font-size: 13.5px;"><b>Email General:</b> office@ugr.ro</p>
-                        <p style="margin-bottom: 12px; font-size: 13.5px;"><b>Email Secretariat BEX:</b> secretar@ugr.ro</p>
-                        <p style="margin-bottom: 12px; font-size: 13.5px;"><b>CIF / Cod Fiscal:</b> 6480330</p>
-                        
-                        <div style="margin-top: 20px; border-radius: 8px; overflow: hidden; border: 1px solid var(--ugr-border);">
-                            <iframe title="Harta Sediului UGR" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2847.52205748069!2d26.122531815818295!3d44.463470707674745!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x40b1f8958a865b9d%3A0x1bff7cc2b83245c8!2sBulevardul+Lacul+Tei+124%2C+Bucure%C8%99ti!5e0!3m2!1sro!2sro" width="100%" height="200" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
-                        </div>
-                    </div>
-
-                    <div style="background: var(--ugr-navy-surface); padding: 28px; border-radius: 10px; border: 1px solid var(--ugr-cyan);">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-                            <h3 style="font-size: 18px; margin: 0; color: #fff;">UGR Filiala Sector 1 București</h3>
-                            <span style="padding: 2px 8px; background: rgba(0,229,255,0.15); color: var(--ugr-cyan); border-radius: 4px; font-size: 10px; font-family: var(--font-mono);">SECRETARIAT TERITORIAL</span>
-                        </div>
-                        
-                        <div style="background: rgba(11,46,78,0.5); padding: 14px; border-radius: 8px; margin-bottom: 18px; font-size: 13px; line-height: 1.6; border: 1px solid var(--ugr-border);">
-                            <div>🏛️ <strong>Punct de Întâlnire & Parteneriat Universitar:</strong> Facultatea de Îmbunătățiri Funciare și Ingineria Mediului (FIFIM) — USAMV București, Bd. Mărăști nr. 59, Sector 1</div>
-                            <div style="margin-top: 6px;">📞 <strong>Telefon Direct Filială:</strong> <a href="tel:0720336736" style="color: var(--ugr-cyan); font-weight: 700;">0720 336 736</a></div>
-                            <div style="margin-top: 4px;">📧 <strong>Email Oficial Filială:</strong> <a href="mailto:filiala.ugr.s1@gmail.com" style="color: var(--ugr-cyan); font-weight: 700;">filiala.ugr.s1@gmail.com</a></div>
-                            <div style="margin-top: 4px; font-size: 12px; color: var(--ugr-text-muted);">👥 <strong>Comunitate Academică:</strong> UGR Student Community by UGR Sector 1 (FIFIM - MTC)</div>
-                        </div>
-
-                        <h4 style="font-size: 15px; margin-bottom: 14px; color: var(--ugr-cyan);">Trimite o Solicitare către Filiala Sector 1</h4>
-                        <form onsubmit="handleContactSubmit(event)">
-                            <div class="form-field" style="margin-bottom: 14px;">
-                                <label for="contact-name" class="form-label">Nume & Prenume:</label>
-                                <input type="text" id="contact-name" class="form-input" placeholder="Ex: Popescu Ioan" required>
-                            </div>
-                            <div class="form-field" style="margin-bottom: 14px;">
-                                <label for="contact-email" class="form-label">Adresă de Email:</label>
-                                <input type="email" id="contact-email" class="form-input" placeholder="email@exemplu.ro" required>
-                            </div>
-                            <div class="form-field" style="margin-bottom: 16px;">
-                                <label for="contact-message" class="form-label">Mesaj / Solicitare Tehnică:</label>
-                                <textarea id="contact-message" rows="4" class="form-input" placeholder="Descrieți pe scurt speța dumneavoastră..." required></textarea>
-                            </div>
-                            <button type="submit" class="btn-membership" style="width: 100%; justify-content: center;">Trimite Mesajul →</button>
-                            <div id="contact-status-msg" style="display: none; margin-top: 12px; color: var(--ugr-cyan); font-family: var(--font-mono); font-size: 11px; text-align: center;">
-                                ✓ Solicitarea dumneavoastră a fost înregistrată cu succes în secretariatul Filialei Sector 1!
-                            </div>
-                        </form>
                     </div>
                 </div>
 
@@ -1230,6 +1375,7 @@
                         <li><a href="#evenimente">SGR Chișinău 11–14 Nov</a></li>
                         <li><a href="#membri">Registru Membri</a></li>
                         <li><a href="#contact">FAQ & Social Media</a></li>
+                        <li><a href="demos-faq.html" style="color: var(--ugr-cyan);">Showcase FAQ &amp; Contact ↗</a></li>
                     </ul>
                 </div>
                 <div class="footer-col">
