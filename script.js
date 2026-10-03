@@ -1971,6 +1971,19 @@ document.addEventListener('DOMContentLoaded', () => {
     renderDocuments();
     renderFaq();
 
+    // Sincronizare automată din fișierele editate de Panoul Admin (/admin/)
+    try {
+        fetch('content/members.json')
+            .then(res => res.ok ? res.json() : null)
+            .then(data => {
+                if (data && Array.isArray(data.members) && data.members.length > 0) {
+                    ugrData.membersList = data.members;
+                    renderMembersTable(data.members);
+                }
+            })
+            .catch(() => {});
+    } catch (_) {}
+
     window.addEventListener('hashchange', handleHashChange);
     handleHashChange();
 

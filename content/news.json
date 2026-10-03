@@ -1,0 +1,94 @@
+{
+  "news": [
+    {
+      "id": "news-sgr-chisinau",
+      "title": "Săptămâna Geodeziei Românești (SGR) — Chișinău (11–14 Noiembrie)",
+      "category": "Eveniment Internațional Major",
+      "date": "11–14 NOIEMBRIE",
+      "location": "UTM, CHIȘINĂU, REPUBLICA MOLDOVA",
+      "desc": "UGR și Universitatea Tehnică a Moldovei (UTM) organizează ediția internațională SGR la Chișinău. Congresul reunește experți ANCPI, ARFC, delegați FIG și CLGE pentru dezbateri pe tematica geodeziei moderne, scanării LiDAR și integrării europene a cadastrului.",
+      "actionUrl": "https://sgr.ugr.ro/indexr.php",
+      "actionText": "Vezi detalii & înscriere SGR ↗"
+    },
+    {
+      "id": "news-local-ocpi-s1",
+      "title": "Masă Rotundă de Lucru: Filiala Sector 1 & Conducerea BCPI Sector 1",
+      "category": "Consultare Tehnică Locală",
+      "date": "PROGRAM LUNAR FILIALĂ",
+      "location": "SEDIUL OCPI BUCUREȘTI / BCPI SECTOR 1",
+      "desc": "Sesiune de lucru consultativă dedicată geodezilor autorizați din Sectorul 1 București pentru uniformizarea procedurilor de recepție a planurilor de amplasament și rezolvarea necorelărilor tehnice din sistemul integrat e-Terra.",
+      "actionUrl": "#contact",
+      "actionText": "Transmite propuneri & spețe locale →"
+    },
+    {
+      "id": "news-bex-comunicat",
+      "title": "Comunicat privind Deciziile Biroului Executiv (BEX) UGR",
+      "category": "Comunicat Oficial BEX",
+      "date": "ACTUALIZARE 2026",
+      "location": "SEDIUL CENTRAL UGR, BUCUREȘTI",
+      "desc": "Biroul Executiv al Uniunii Geodezilor din România a adoptat rezoluțiile privind optimizarea fluxurilor de lucru cu ANCPI, normele metodologice pentru lucrările de cadastru sistematic și sprijinirea formării profesionale continue a geodezilor autorizați.",
+      "actionUrl": "https://www.ugr.ro/stiri/comunicat-privind-bex-ugr-din-21-mai-2026",
+      "actionText": "Citește comunicatul oficial ↗"
+    },
+    {
+      "id": "news-local-adunare-s1",
+      "title": "Adunarea Generală a Membrilor Filialei Sector 1 București",
+      "category": "Ședință Statutară Filială",
+      "date": "CONVOCARE TERITORIALĂ",
+      "location": "FACULTATEA DE GEODEZIE UTCB, BD. LACUL TEI 124",
+      "desc": "Întâlnirea anuală a comunității geodezilor din Sectorul 1: prezentarea raportului de activitate local, validarea calendarului de workshop-uri practice GNSS/LiDAR și primirea noilor absolvenți de la Facultatea de Geodezie UTCB.",
+      "actionUrl": "#contact",
+      "actionText": "Confirmă participarea la filială →"
+    },
+    {
+      "id": "news-student-community-fifim",
+      "title": "Ediția a II-a UGR Student Community by UGR Sector 1: GIS și baze de date spațiale",
+      "category": "Workshop Studențesc & Instruire",
+      "date": "8 IULIE 2026",
+      "location": "SALA DE CONSILIU FIFIM – USAMV (BD. MĂRĂȘTI NR. 59, SECTOR 1)",
+      "desc": "Întâlnirea comunității cu studenții și viitorii colegi în Sala de Consiliu FIFIM – USAMV București. Sesiuni practice de analiză și gestionare a informației spațiale, GIS și tranziția de la facultate la provocările din topografia inginerească de pe șantiere.",
+      "actionUrl": "https://www.instagram.com/filiala.sector1.ugr",
+      "actionText": "Vezi postarea pe Instagram ↗"
+    },
+    {
+      "id": "news-workshopuri-parteneriat-s1",
+      "title": "Premiul Filialei Sector 1 & Pachet de 18 Workshopuri Profesionale de Specialitate",
+      "category": "Formare Profesională Continuă",
+      "date": "IULIE 2026",
+      "location": "FIFIM USAMV & COMPANII PARTENERE SECTOR 1",
+      "desc": "La susținerea licențelor MTC la USAMV, Filiala Sector 1 a acordat premii de excelență și a lansat 18 workshopuri aplicate alături de partenerii KarmaCad Store (scanare laser 3D), SphereFix România și Control Survey SRL.",
+      "actionUrl": "https://www.instagram.com/filiala.sector1.ugr",
+      "actionText": "Vezi parteneriatele pe Instagram ↗"
+    },
+    {
+      "id": "news-comunicat-ancpi-eterra",
+      "title": "Comunicat Filiala Sector 1: Notificare ANCPI privind disponibilitatea sistemului e-Terra",
+      "category": "Notificare Operativă ANCPI",
+      "date": "14 IULIE 2026",
+      "location": "CANALE OFICIALE FILIALA SECTOR 1",
+      "desc": "Anunț operativ ANCPI transmis în timp real membrilor geodezi din Sectorul 1 privind disfuncționalitățile tehnice ale platformei e-Terra și calendarul de restabilire a serviciilor de cadastru și carte funciară.",
+      "actionUrl": "https://www.facebook.com/share/14xwxtFChmC/",
+      "actionText": "Citește anunțul pe Facebook ↗"
+    },
+    {
+      "id": "news-burse-sgr-chisinau",
+      "title": "Burse Complete UGR pentru Participare la Săptămâna Geodeziei Românești 2026 (Chișinău)",
+      "category": "Burse & Sprijin Tineri Geodezi",
+      "date": "15 IUNIE – 15 SEPTEMBRIE 2026",
+      "location": "FIFIM USAMV / CHIȘINĂU UTM",
+      "desc": "Șansă dedicată studenților de la Geodezie: UGR și Filiala Sector 1 oferă burse integrale ce acoperă taxa de participare, cazarea, mesele și transportul pentru conferința internațională SGR de la UTM Chișinău (11–14 Noiembrie).",
+      "actionUrl": "https://docs.google.com/forms/d/e/1FAIpQLSctDTm-Gxuph4yz2fJRiU2JOurBFgzBXriAUY6rbrtem5vrEQ/viewform?usp=header",
+      "actionText": "Formular Înscriere Bursă SGR ↗"
+    },
+    {
+      "id": "news-clge-tartu",
+      "title": "Delegația Oficială UGR la Adunarea Generală CLGE",
+      "category": "Reprezentare Europeană",
+      "date": "EVENIMENT EUROPEAN",
+      "location": "TARTU, ESTONIA",
+      "desc": "România a promovat armonizarea normelor de etică și bune practici în măsurătorile cadastrale la nivelul Consiliului European al Geodezilor (CLGE), susținând drepturile geodezilor autorizați din Europa Centrală și de Est.",
+      "actionUrl": "https://www.clge.eu",
+      "actionText": "Detalii for european ↗"
+    }
+  ]
+}

@@ -1,0 +1,68 @@
+{
+  "members": [
+    {
+      "id": "UGR-0012",
+      "name": "Andrei Popescu",
+      "judet": "București",
+      "auth": "Seria RO-B-F Nr. 0244",
+      "categorie": "Categoria A",
+      "status": "Activ"
+    },
+    {
+      "id": "UGR-0038",
+      "name": "Ioana Dumitrescu",
+      "judet": "București",
+      "auth": "Seria RO-B-F Nr. 0812",
+      "categorie": "Categoria B",
+      "status": "Activ"
+    },
+    {
+      "id": "UGR-0145",
+      "name": "Elena Munteanu",
+      "judet": "Cluj",
+      "auth": "Seria RO-CJ-F Nr. 1102",
+      "categorie": "Categoria A",
+      "status": "Activ"
+    },
+    {
+      "id": "UGR-0220",
+      "name": "Radu Ionescu",
+      "judet": "București",
+      "auth": "Seria RO-B-F Nr. 0519",
+      "categorie": "Categoria D",
+      "status": "Activ"
+    },
+    {
+      "id": "UGR-0312",
+      "name": "Vasile Lupu",
+      "judet": "Iași",
+      "auth": "Seria RO-IS-F Nr. 0984",
+      "categorie": "Categoria B",
+      "status": "Activ"
+    },
+    {
+      "id": "UGR-0402",
+      "name": "Dumitru Crișan",
+      "judet": "Timiș",
+      "auth": "Seria RO-TM-F Nr. 1290",
+      "categorie": "Categoria A",
+      "status": "Activ"
+    },
+    {
+      "id": "UGR-0589",
+      "name": "Mariana Marin",
+      "judet": "Constanța",
+      "auth": "Seria RO-CT-F Nr. 0451",
+      "categorie": "Categoria B",
+      "status": "Activ"
+    },
+    {
+      "id": "UGR-0614",
+      "name": "Alexandru Moldovan",
+      "judet": "Chișinău",
+      "auth": "Seria MD-CH-F Nr. 0115",
+      "categorie": "Categoria A",
+      "status": "Activ"
+    }
+  ]
+}

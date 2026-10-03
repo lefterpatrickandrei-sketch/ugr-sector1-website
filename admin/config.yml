@@ -1,0 +1,68 @@
+backend:
+  name: github
+  repo: lefterpatrickandrei-sketch/ugr-sector1-website
+  branch: main
+
+media_folder: "ugr-images"
+public_folder: "ugr-images"
+
+locale: "ro"
+
+collections:
+  - name: "members_section"
+    label: "Registrul Membrilor Autorizați"
+    files:
+      - name: "members"
+        label: "Lista Membrilor Activi"
+        file: "content/members.json"
+        description: "Adaugă, editează sau modifică membri autorizați UGR Sector 1."
+        fields:
+          - label: "Membri Înregistrați"
+            name: "members"
+            widget: "list"
+            summary: "{{fields.name}} — {{fields.auth}} ({{fields.judet}})"
+            fields:
+              - { label: "ID Membru", name: "id", widget: "string", default: "UGR-" }
+              - { label: "Nume și Prenume", name: "name", widget: "string" }
+              - { label: "Județ / Regiune", name: "judet", widget: "select", options: ["București", "Ilfov", "Cluj", "Timiș", "Iași", "Constanța", "Brașov", "Chișinău", "Alt Județ"] }
+              - { label: "Autorizație / Certificat ANCPI", name: "auth", widget: "string", hint: "Ex: Seria RO-B-F Nr. 0244" }
+              - { label: "Categorie Autorizare", name: "categorie", widget: "select", options: ["Categoria A", "Categoria B", "Categoria C", "Categoria D", "Categoria E"] }
+              - { label: "Status Membru", name: "status", widget: "select", options: ["Activ", "Inactiv", "Suspendat"], default: "Activ" }
+
+  - name: "news_section"
+    label: "Știri & Evenimente"
+    files:
+      - name: "news"
+        label: "Evenimente & Anunțuri Filială"
+        file: "content/news.json"
+        description: "Gestionează congresele, evenimentele academice și bursele SGR."
+        fields:
+          - label: "Evenimente Active"
+            name: "news"
+            widget: "list"
+            summary: "{{fields.title}} ({{fields.date}})"
+            fields:
+              - { label: "ID Unic", name: "id", widget: "string" }
+              - { label: "Titlu Eveniment", name: "title", widget: "string" }
+              - { label: "Categorie / Tag", name: "category", widget: "string" }
+              - { label: "Perioadă / Dată", name: "date", widget: "string" }
+              - { label: "Locație", name: "location", widget: "string" }
+              - { label: "Descriere / Detalii", name: "desc", widget: "text" }
+              - { label: "Link Înregistrare / Info", name: "actionUrl", widget: "string", required: false }
+              - { label: "Text Buton", name: "actionText", widget: "string", default: "Detalii & Înscriere ↗", required: false }
+
+  - name: "settings_section"
+    label: "Date de Contact & Conducere"
+    files:
+      - name: "organization"
+        label: "Contact Secretariat & Conducere"
+        file: "content/organization.json"
+        description: "Actualizează telefoanele, e-mailul și adresa oficială a filialei."
+        fields:
+          - { label: "Denumire Oficială", name: "name", widget: "string" }
+          - { label: "Email Oficial", name: "email", widget: "string" }
+          - { label: "Telefon Președinte", name: "phonePresident", widget: "string" }
+          - { label: "Telefon Secretar", name: "phoneSecretary", widget: "string" }
+          - { label: "Persoană Contact Cotizații", name: "cotizatiiContact", widget: "string" }
+          - { label: "Telefon Cotizații", name: "phoneCotizatii", widget: "string" }
+          - { label: "Adresă Catedră & Sediul Filialei", name: "academicCenterAddress", widget: "string" }
