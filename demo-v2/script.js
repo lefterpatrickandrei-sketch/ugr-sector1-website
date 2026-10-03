@@ -45,9 +45,11 @@ function navigateTo(viewId) {
     if (targetSection) {
         targetSection.classList.remove('hidden');
 
-        // Declanșează animația fluidă în cascadă pentru Hero la intrarea pe pagină (identic cu Home & Despre Noi)
+        // Declanșează animația fluidă în cascadă pentru Hero la intrarea pe pagină (identic cu Home, Despre Noi & Evenimente)
         if (isPageChange) {
-            const heroReveals = targetSection.querySelectorAll('.events-hero-v2 .scroll-reveal, .despre-hero-v2 .scroll-reveal');
+            const heroReveals = targetSection.querySelectorAll(
+                '.events-hero-v2 .scroll-reveal, .despre-hero-v2 .scroll-reveal, .membri-hero-v2 .scroll-reveal'
+            );
             if (heroReveals.length) {
                 heroReveals.forEach(el => el.classList.remove('is-visible'));
                 setTimeout(() => {
@@ -1030,39 +1032,67 @@ function formatDMS(deg, type) {
 // ═══════════════════════════════════════════════════════════════════════════
 
 function renderMembersTable(members) {
-    const tbody = document.getElementById('members-table-body');
-    if (!tbody) return;
+    if (!members) members = ugrData.membersList || [];
 
-    if (!members || members.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="5" style="padding: 24px; text-align: center; color: var(--ugr-text-muted);">Nu a fost găsit niciun membru conform criteriilor de căutare.</td></tr>`;
-        return;
-    }
+    const tableIds = [
+        'members-table-body',
+        'members-table-body-demo1',
+        'members-table-body-demo2',
+        'members-table-body-demo3',
+        'members-table-body-demo4',
+        'members-table-body-demo5'
+    ];
 
-    tbody.innerHTML = members.map((m, idx) => `
-        <tr class="table-row-animated" style="border-bottom: 1px solid rgba(11,46,78,0.08); animation-delay: ${idx * 28}ms;">
-            <td style="padding: 14px 16px; font-family: var(--font-mono); font-weight: 600; color: var(--ugr-accent);">${m.id}</td>
-            <td style="padding: 14px 16px; font-weight: 600; color: var(--ugr-text-main);">${m.name}</td>
-            <td style="padding: 14px 16px; color: var(--ugr-text-muted);">${m.judet}</td>
-            <td style="padding: 14px 16px; font-family: var(--font-mono); font-size: 12px; color: var(--ugr-text-main);">${m.auth}</td>
-            <td style="padding: 14px 16px;">
-                <span class="member-status-badge">
-                    <span class="status-live-dot"></span> ✓ ${m.status.toUpperCase()}
+    const emptyRow = `<tr><td colspan="5" style="padding: 24px; text-align: center; color: rgba(250,251,252,0.6);">Nu a fost găsit niciun membru conform criteriilor de căutare.</td></tr>`;
+
+    const rowsHtml = members.length === 0 ? emptyRow : members.map((m, idx) => `
+        <tr class="table-row-animated" style="border-bottom: 1px solid rgba(255,255,255,0.06); animation-delay: ${idx * 25}ms;">
+            <td style="padding: 13px 16px; font-family: var(--font-mono); font-weight: 600; color: #00E5FF;">${m.id}</td>
+            <td style="padding: 13px 16px; font-weight: 600; color: #FFFFFF;">${m.name}</td>
+            <td style="padding: 13px 16px; color: rgba(250,251,252,0.75);">${m.judet}</td>
+            <td style="padding: 13px 16px; font-family: var(--font-mono); font-size: 12px; color: rgba(250,251,252,0.85);">${m.auth}</td>
+            <td style="padding: 13px 16px;">
+                <span class="member-status-badge" style="background: rgba(16,185,129,0.15); color: #10B981; border: 1px solid rgba(16,185,129,0.3); padding: 3px 8px; border-radius: 4px; font-size: 11px; font-family: var(--font-mono); font-weight: 700; display: inline-flex; align-items: center; gap: 5px;">
+                    <span class="status-live-dot" style="width: 6px; height: 6px; border-radius: 50%; background: #10B981; box-shadow: 0 0 6px #10B981;"></span> ${m.status.toUpperCase()}
                 </span>
             </td>
         </tr>
     `).join('');
 
-    const countBadge = document.getElementById('members-count-badge');
-    if (countBadge) {
-        countBadge.innerHTML = `Se afișează <b>${members.length}</b> membri autorizați`;
-    }
+    tableIds.forEach(id => {
+        const tbody = document.getElementById(id);
+        if (tbody) tbody.innerHTML = rowsHtml;
+    });
+
+    const countBadges = [
+        'members-count-badge',
+        'm-demo1-count',
+        'm-demo2-count',
+        'm-demo3-count',
+        'm-demo4-count',
+        'm-demo5-count'
+    ];
+    countBadges.forEach(id => {
+        const badge = document.getElementById(id);
+        if (badge) badge.innerHTML = `Se afișează <b>${members.length}</b> membri autorizați`;
+    });
 }
 
-function filterMembers() {
-    const searchVal = (document.getElementById('member-search-input')?.value || '').toLowerCase().trim();
-    const countyVal = document.getElementById('member-county-select')?.value || 'toate';
+function filterMembers(sourcePrefix = '') {
+    let searchVal = '';
+    let countyVal = 'toate';
 
-    const filtered = ugrData.membersList.filter(m => {
+    const searchInput = document.getElementById(sourcePrefix ? `${sourcePrefix}-search` : 'member-search-input') 
+                     || document.getElementById('member-search-input')
+                     || document.querySelector('.m-dynamic-search');
+    const countySelect = document.getElementById(sourcePrefix ? `${sourcePrefix}-county` : 'member-county-select') 
+                      || document.getElementById('member-county-select')
+                      || document.querySelector('.m-dynamic-county');
+
+    if (searchInput) searchVal = searchInput.value.toLowerCase().trim();
+    if (countySelect) countyVal = countySelect.value;
+
+    const filtered = (ugrData.membersList || []).filter(m => {
         const matchesSearch = m.name.toLowerCase().includes(searchVal) || m.auth.toLowerCase().includes(searchVal) || m.id.toLowerCase().includes(searchVal);
         const matchesCounty = (countyVal === 'toate') || (m.judet === countyVal);
         return matchesSearch && matchesCounty;
@@ -1070,6 +1100,7 @@ function filterMembers() {
 
     renderMembersTable(filtered);
 }
+window.filterMembers = filterMembers;
 
 function filterEvents(scope, btn) {
     if (btn) {
@@ -1836,3 +1867,70 @@ window.switchDemo4Tab = function(tabId, btn) {
 
 
 
+
+// ═══════════════════════════════════════════════════════════════════
+// COMUTATOARE PENTRU CELE 5 DEMO-URI PAGINA MEMBRI
+// ═══════════════════════════════════════════════════════════════════
+window.switchMembersDemo = function(demoNum, btn) {
+    for (let i = 1; i <= 5; i++) {
+        const pane = document.getElementById('members-demo-' + i);
+        if (pane) {
+            if (i === demoNum) {
+                pane.classList.remove('hidden');
+                pane.style.opacity = '0';
+                pane.style.transform = 'translateY(8px)';
+                setTimeout(() => {
+                    pane.style.opacity = '1';
+                    pane.style.transform = 'translateY(0)';
+                }, 40);
+            } else {
+                pane.classList.add('hidden');
+            }
+        }
+    }
+    document.querySelectorAll('.members-demo-btn').forEach(b => b.classList.remove('active'));
+    if (btn) btn.classList.add('active');
+
+    // Trigger scroll reveal for newly visible elements
+    if (typeof initScrollReveal === 'function') {
+        setTimeout(() => initScrollReveal(), 60);
+    }
+};
+
+window.switchDemo2MembersTab = function(tabId, btn) {
+    document.querySelectorAll('.m-demo2-pane').forEach(p => p.classList.add('hidden'));
+    const target = document.getElementById('m-demo2-pane-' + tabId);
+    if (target) {
+        target.classList.remove('hidden');
+    }
+    document.querySelectorAll('.m-demo2-dock-btn').forEach(b => b.classList.remove('active'));
+    if (btn) btn.classList.add('active');
+};
+
+// Comutator pentru stilurile de animație compactă din Cadrul Membri
+window.setCardAnimMode = function(mode, btn) {
+    const card = document.getElementById('m-target-card');
+    const runner = document.getElementById('m-svg-runner');
+    const radar = document.getElementById('m-card-radar-box');
+    if (!card) return;
+
+    card.classList.remove('show-corners', 'show-shimmer');
+    if (runner) runner.style.opacity = '0';
+    if (radar) radar.style.display = 'none';
+
+    if (mode === 'combo') {
+        if (runner) runner.style.opacity = '1';
+        if (radar) radar.style.display = 'flex';
+    } else if (mode === 'laser') {
+        if (runner) runner.style.opacity = '1';
+    } else if (mode === 'radar') {
+        if (radar) radar.style.display = 'flex';
+    } else if (mode === 'corners') {
+        card.classList.add('show-corners');
+    } else if (mode === 'shimmer') {
+        card.classList.add('show-shimmer');
+    }
+
+    document.querySelectorAll('.card-anim-mini-btn').forEach(b => b.classList.remove('active'));
+    if (btn) btn.classList.add('active');
+};
