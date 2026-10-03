@@ -3,6 +3,9 @@ backend:
   repo: lefterpatrickandrei-sketch/ugr-sector1-website
   branch: main
 
+site_url: "https://lefterpatrickandrei-sketch.github.io/ugr-sector1-website/"
+display_url: "https://lefterpatrickandrei-sketch.github.io/ugr-sector1-website/"
+
 media_folder: "ugr-images"
 public_folder: "ugr-images"
 
