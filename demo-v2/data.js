@@ -22,7 +22,13 @@ const ugrData = {
         email: "filiala.ugr.s1@gmail.com",
         emailCentral: "office@ugr.ro",
         emailSecretar: "secretar@ugr.ro",
-        phone: "0720 336 736",
+        president: "Alexandru Dorin PĂUN",
+        phonePresident: "0726 390 774 / 0748 912 263",
+        secretary: "Andra Teodora VIȘAN",
+        phoneSecretary: "0764 572 874",
+        cotizatiiContact: "Camelia MATEI",
+        phoneCotizatii: "0722 684 104",
+        phone: "0726 390 774",
         phoneCentral: "0723 587 081",
         cif: "6480330",
         bankAccounts: [
@@ -144,7 +150,7 @@ const ugrData = {
             category: "aderare",
             tag: "HUB COMUNICARE",
             q: "Unde pot urmări noutățile operative și activitățile Filialei Sector 1?",
-            a: "Toate notificările operative ANCPI privind platforma e-Terra, evenimentele din cadrul UGR Student Community la FIFIM USAMV, workshopurile de specialitate și fotografiile de la întâlniri sunt publicate pe pagina oficială de Facebook (facebook.com/share/14xwxtFChmC/) și pe contul de Instagram (@filiala.sector1.ugr). Pentru solicitări directe: filiala.ugr.s1@gmail.com sau telefonic la 0720 336 736."
+            a: "Toate notificările operative ANCPI privind platforma e-Terra, evenimentele din cadrul UGR Student Community la FIFIM USAMV, workshopurile de specialitate și fotografiile de la întâlniri sunt publicate pe pagina oficială de Facebook (facebook.com/share/14xwxtFChmC/) și pe contul de Instagram (@filiala.sector1.ugr). Pentru solicitări directe: filiala.ugr.s1@gmail.com sau la telefoanele: Președinte 0726 390 774 / Secretar 0764 572 874."
         },
         {
             category: "bcpi",
@@ -358,6 +364,46 @@ const ugrData = {
             role: "Trezorier Național",
             image: "logo_geodez.png",
             desc: "Managementul financiar, transparența bugetară, gestiunea cotizațiilor și auditul operațiunilor asociației."
+        }
+    ],
+
+    // -------------------------------------------------------------------------
+    // Conducerea Executivă a Filialei Sector 1 București (Asociația Locală)
+    // -------------------------------------------------------------------------
+    branchLeadership: [
+        {
+            name: "Alexandru Dorin PĂUN",
+            role: "Președinte Filiala Sector 1",
+            phone: "0726 390 774 / 0748 912 263",
+            email: "filiala.ugr.s1@gmail.com",
+            desc: "Inginer geodez autorizat ANCPI, expert tehnic judiciar, coordonator teritorial al filialei."
+        },
+        {
+            name: "Andra Teodora VIȘAN",
+            role: "Secretar Filiala Sector 1",
+            phone: "0764 572 874",
+            email: "filiala.ugr.s1@gmail.com",
+            desc: "Inginer geodez, absolventă MTC FIFIM USAMV, coordonator secretariat și proiecte de tineret."
+        },
+        {
+            name: "Alexandru NELEPCU",
+            role: "Trezorier Filiala Sector 1",
+            desc: "Gestiune financiară și evidență bugetară locală a asociației."
+        },
+        {
+            name: "Ștefan Paul MATEI",
+            role: "Cenzor Filiala Sector 1",
+            desc: "Control financiar și verificare conformitate statutară."
+        },
+        {
+            name: "Nicoleta BOBÎRCEA",
+            role: "Membru Conducere",
+            desc: "Reprezentare profesională și coordonare grupuri de lucru."
+        },
+        {
+            name: "Radu Mihai NIȚĂ",
+            role: "Membru Conducere",
+            desc: "Relații instituționale și suport tehnic geodezic."
         }
     ],
 
