@@ -1,0 +1,26 @@
+{
+  "name": "UGR Filiala Sector 1 București",
+  "short_name": "UGR Sector 1",
+  "description": "Uniunea Geodezilor din România — Filiala Sector 1 București",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#061A2D",
+  "theme_color": "#061A2D",
+  "icons": [
+    {
+      "src": "logo_geodez.png",
+      "sizes": "192x192 512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "ugr-images/touch-icon-iphone-114.png",
+      "sizes": "114x114",
+      "type": "image/png"
+    },
+    {
+      "src": "ugr-images/touch-icon-ipad-144.png",
+      "sizes": "144x144",
+      "type": "image/png"
+    }
+  ]
+}
