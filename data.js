@@ -37,14 +37,9 @@ const ugrData = {
                 iban: "RO57 BRDE 426S V810 0757 4450",
                 currency: "RON",
                 purpose: "Cotizație UGR Filiala Sector 1 / Nume și CNP"
-            },
-            {
-                bank: "Banca Comercială Română (BCR)",
-                iban: "RO04 RNCB 0074 0104 7856 0001",
-                currency: "RON",
-                purpose: "Taxă înscriere & cotizație anuală"
             }
         ],
+        sgr2026FormUrl: "https://docs.google.com/forms/d/e/1FAIpQLSctDTm-Gxuph4yz2fJRiU2JOurBFgzBXriAUY6rbrtem5vrEQ/viewform?usp=header",
         social: {
             facebook: "https://www.facebook.com/share/14xwxtFChmC/",
             instagram: "https://www.instagram.com/filiala.sector1.ugr"
@@ -138,7 +133,7 @@ const ugrData = {
             category: "aderare",
             tag: "CONTURI & PLĂȚI",
             q: "Care sunt datele bancare oficiale pentru achitarea cotizației?",
-            a: "Plățile se efectuează în contul oficial UGR: RO57 BRDE 426S V810 0757 4450 (deschis la BRD Ag. Tei, Sector 2) sau RO04 RNCB 0074 0104 7856 0001 (BCR), menționând obligatoriu la detaliile plății: Nume Prenume, CNP și 'Cotizație Filiala Sector 1'."
+            a: "Plățile se efectuează în contul oficial UGR: RO57 BRDE 426S V810 0757 4450 (deschis la BRD Ag. Tei, Sector 2), menționând obligatoriu la detaliile plății: Nume Prenume, CNP și 'Cotizație Filiala Sector 1'."
         },
         {
             category: "aderare",
@@ -312,9 +307,9 @@ const ugrData = {
             desc: "Șansă dedicată studenților de la Geodezie: UGR și Filiala Sector 1 oferă burse integrale ce acoperă taxa de participare, cazarea, mesele și transportul pentru conferința internațională SGR de la UTM Chișinău (11–14 Noiembrie).",
             location: "FIFIM USAMV / CHIȘINĂU UTM",
             date: "15 IUNIE – 15 SEPTEMBRIE 2026",
-            source: { org: "Instagram @filiala.sector1.ugr", url: "https://www.instagram.com/filiala.sector1.ugr" },
+            source: { org: "Formular Oficial Înscriere Bursă SGR", url: "https://docs.google.com/forms/d/e/1FAIpQLSctDTm-Gxuph4yz2fJRiU2JOurBFgzBXriAUY6rbrtem5vrEQ/viewform?usp=header" },
             image: "ugr-images/ig_post_4.jpg",
-            actionText: "Detalii burse pe Instagram ↗"
+            actionText: "Formular Înscriere Bursă SGR ↗"
         },
         {
             id: "news-clge-tartu",
