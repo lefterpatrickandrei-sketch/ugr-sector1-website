@@ -1971,17 +1971,37 @@ document.addEventListener('DOMContentLoaded', () => {
     renderDocuments();
     renderFaq();
 
-    // Sincronizare automată din fișierele editate de Panoul Admin (/admin/)
+    // Sincronizare live în timp real din Sanity CMS Cloud (Project ID: 69fv2ww6)
     try {
-        fetch('content/members.json')
+        const sanityQuery = encodeURIComponent('*[_type == "member"] | order(memberId asc)');
+        const sanityUrl = `https://69fv2ww6.api.sanity.io/v2023-01-01/data/query/production?query=${sanityQuery}`;
+        fetch(sanityUrl)
             .then(res => res.ok ? res.json() : null)
             .then(data => {
-                if (data && Array.isArray(data.members) && data.members.length > 0) {
-                    ugrData.membersList = data.members;
-                    renderMembersTable(data.members);
+                if (data && Array.isArray(data.result) && data.result.length > 0) {
+                    const mapped = data.result.map(m => ({
+                        id: m.memberId || m._id,
+                        name: m.name,
+                        judet: m.judet,
+                        auth: m.auth,
+                        categorie: m.categorie || 'Categoria A',
+                        status: m.status || 'Activ'
+                    }));
+                    ugrData.membersList = mapped;
+                    renderMembersTable(mapped);
                 }
             })
-            .catch(() => {});
+            .catch(() => {
+                fetch('content/members.json')
+                    .then(r => r.ok ? r.json() : null)
+                    .then(d => {
+                        if (d && Array.isArray(d.members)) {
+                            ugrData.membersList = d.members;
+                            renderMembersTable(d.members);
+                        }
+                    })
+                    .catch(() => {});
+            });
     } catch (_) {}
 
     window.addEventListener('hashchange', handleHashChange);
