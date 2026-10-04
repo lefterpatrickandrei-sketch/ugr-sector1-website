@@ -1,79 +1,62 @@
-# Uniunea Geodezilor din România (UGR) — Filiala Sector 1
+# Uniunea Geodezilor din România (UGR) — Filiala Sector 1 București
 
-> [!IMPORTANT]  
-> **Status Proiect:** 🚀 **Demo V2 Este Acum Site-ul Oficial (Live în Rădăcina Repozitoriului)**.  
-> Platforma web modernizată oferă o structură instituțională completă, diferențiind forul național central de activitatea teritorială a Filialei Sector 1 București.  
-> GitHub Pages este configurat pe branch-ul `main`, folder `/ (root)` — deci `index.html` din rădăcină **este** site-ul live.
+Website-ul oficial și platforma digitală de gestiune a Filialei Sector 1 București a Uniunii Geodezilor din România (UGR).
 
-Acest repository conține codul sursă pentru website-ul oficial al Filialei Sector 1 a Uniunii Geodezilor din România.
+🌐 **Site Oficial Live:** **[https://lefterpatrickandrei-sketch.github.io/ugr-sector1-website/](https://lefterpatrickandrei-sketch.github.io/ugr-sector1-website/)**
 
 ---
 
-## 🌐 Previzualizare Live
+## 🏛️ Despre Platformă
 
-Pentru a vizualiza site-ul oficial și variantele de design anterioare, accesează linkurile de mai jos (servite prin GitHub Pages):
+Platforma digitală oficială asigură reprezentarea profesională a inginerilor geodezi, topografilor autorizați și cartografilor din Sectorul 1 București, oferind servicii dedicate comunității tehnice și un canal modern de comunicare instituțională cu ANCPI, OCPI București și administrația publică.
 
-| Versiune Website | Descriere Vizuală & Tehnică | 🌐 Previzualizare Live (GitHub Pages) |
-| :--- | :--- | :--- |
-| ⭐ **Site Oficial (Demo V2)** | 🚀 **Platformă Instituțională Completă**: Distincție clară UGR Național vs Filiala Sector 1, arhitectură modernă în 5 tab-uri, Calculator Stereo 70 integrat pe prima pagină, Galeria Foto oficială UGR Student Community & 18 Workshopuri, Hub Social Media exclusiv Facebook & Instagram, conformitate WCAG 2.2 AA. | **[Deschide Site-ul Oficial](https://lefterpatrickandrei-sketch.github.io/ugr-sector1-website/)** |
-| **Demo V2 (copie de arhivă)** | Identică cu site-ul oficial, păstrată în folderul `demo-v2/` pentru referință istorică. | [Deschide `/demo-v2/`](https://lefterpatrickandrei-sketch.github.io/ugr-sector1-website/demo-v2/index.html) |
-| **Propunerea 1** | **Tech-Precision Grid** (Temă Cyan/Portocaliu, hartă 3D de precizie cu tooltips pe hover, layout curat) | [Deschide Varianta 1](https://lefterpatrickandrei-sketch.github.io/ugr-sector1-website/ugr-variants/variant-1.html) |
-| **Propunerea 2** | **Vintage Brass/Editorial** (Temă Aurie/Terracotta, stil academic elegant, etichete pe hover) | [Deschide Varianta 2](https://lefterpatrickandrei-sketch.github.io/ugr-sector1-website/ugr-variants/variant-2.html) |
-| **Propunerea 3** | **Swiss Corporate/Clean** (Temă Crimson Red/Royal Blue, font modern geometric, etichete pe hover) | [Deschide Varianta 3](https://lefterpatrickandrei-sketch.github.io/ugr-sector1-website/ugr-variants/variant-3.html) |
+### Funcționalități Principale
 
-> [!NOTE]  
-> Pentru ca linkurile de mai sus să funcționeze, opțiunea **GitHub Pages** trebuie să fie activată în tab-ul *Settings -> Pages* al repository-ului tău (selectând branch-ul `main` ca sursă de deployment).
+* **Registru Public de Membri:** Listare dinamică a membrilor autorizați, sincronizată în timp real cu baza de date Supabase, ordonată alfabetic, cu filtrare după județ și căutare rapidă.
+* **Secțiune Știri & Noutăți:** Publicare dinamică a articolelor, comunicatelor profesionale și evenimentelor din domeniu.
+* **Formular de Aderare Online:** Înscriere în 3 pași cu validare completă de date, verificare consimțământ GDPR, protecție anti-spam Honeypot și salvare securizată a cererilor.
+* **Utilitar Tehnic Geodezic:** Calculator nativ pentru conversia coordonatelor **Stereo 70 ⇄ WGS84**, cu preseturi dedicate pentru Sectorul 1 și Sediul Central UGR.
+* **Cartografie & Telemetrie:** Hartă interactivă vectorizată cu polul regional București și repere geodezice locale.
+* **Conformitate GDPR & Confidențialitate:** Telemetrie anonimă fără cookies, fără colectare de adrese IP și fără stocare persistentă invazivă, documentată complet în [`confidentialitate.html`](confidentialitate.html).
 
 ---
 
-## 🌟 Detalii Tehnice & Arhitectură Demo V2
+## 🔐 Panou de Administrare Securizat (`/admin/panou.html`)
 
-Versiunea **Demo V2** reprezintă evoluția completă a platformei digitale, dezvoltată conform cerințelor operaționale ale comunității geodezilor din Sectorul 1 București:
+Platforma dispune de un panou administrativ intern dedicat Biroului Executiv al Filialei Sector 1, construit pe principiul **Zero-Trust**:
 
-### 1. Ierarhie & Distincție Instituțională
-* **UGR Național (Forul Central):** Înființat în 1990 la UTCB, persoană juridică de utilitate publică, membru titular FIG și CLGE, organizator al conferinței internaționale *Săptămâna Geodeziei Românești (SGR)* Chișinău (11–14 Noiembrie).
-* **UGR Filiala Sector 1 București (Structura Teritorială):** Reprezintă geodezii autorizați și companiile de profil din Sectorul 1, interfață tehnică directă cu OCPI București (BCPI Sector 1) și Primăria Sectorului 1, monitorizează infrastructura majoră din nordul Capitalei (Magistrala M6 de metrou 1 Mai–Otopeni, dezvoltările urbane Băneasa / Pipera).
-
-### 2. Canale Oficiale Social Media & Contact Direct
-* **Facebook Oficial Filiala Sector 1:** [Filiala Sector 1 UGR](https://www.facebook.com/share/14xwxtFChmC/) (comunitate, notificări operative ANCPI / e-Terra).
-* **Instagram Oficial Filiala Sector 1:** [@filiala.sector1.ugr](https://www.instagram.com/filiala.sector1.ugr) (proiectul *UGR Student Community*, workshopuri practice, viața de teren).
-* **Notă de conformitate:** Filiala Sector 1 **nu deține canale de YouTube sau LinkedIn**; acestea au fost complet eliminate din platformă.
-* **Telefon Direct:** `0726 390 774` | **Email:** `filiala.ugr.s1@gmail.com`
-* **Parteneriat Academic:** Facultatea de Îmbunătățiri Funciare și Ingineria Mediului (FIFIM) — USAMV București (Bulevardul Mărăști nr. 59, Sector 1).
-
-### 3. Utilitare Geodezice & Cartografie Integrată
-* **Calculator Stereo 70 ⇄ WGS84:** Integrat direct pe prima pagină ca utilitar tehnic, cu preseturi instantanee pentru *Sediul Central UGR (Lacul Tei 124)* și *Sector 1 (Piața Victoriei / Arcul de Triumf)*.
-* **Harta 2D Vectorială & Glob 3D WebGL:** Telemetrie dedicată Sector 1, repere RGLMB și stații de referință ROMPOS.
-* **Acordeon FAQ:** 8 întrebări frecvente conform procedurilor statutare de aderare și cotizații UGR.
-* **Galerie Foto Oficială:** Integrare imagini de înaltă rezoluție de la întâlnirile comunității studențești și decernarea premiilor de licență alături de partenerii tehnici (KarmaCad Store, SphereFix, Control Survey).
+* **Autentificare în 2 Pași (2FA):** Magic Link OTP pe email + verificare TOTP cu aplicație de autentificare (nivel de securitate **AAL2**).
+* **Securitate la Nivel de Rând (Row Level Security):** Toate operațiunile sunt protejate în PostgreSQL prin politici RLS stricte (`is_admin()`). Fără utilizarea rolului de `service_role` în frontend.
+* **Gestiune Cereri de Înscriere:** Vizualizare cereri noi, căutare și filtrare, salvare notițe interne Birou Executiv, schimbare status (*În așteptare*, *Aprobată*, *Respinsă*) și ștergere.
+* **Gestiune Registru Membri:** Adăugare membri noi, editare date, activare/suspendare și comutator rapid pentru vizibilitatea publică pe site.
+* **Gestiune Știri:** Creare și editare articole, validare strictă a adreselor de imagini, comutator Publicat / Ciornă și ștergere.
+* **Zero-Storage:** Fără salvarea credențialelor sau sesiunilor sensibile în `localStorage`.
 
 ---
 
-## 🗳️ Sondaj de Vot & Casetă de Sugestii (Live Poll & Customer Feedback)
+## 📁 Structura Tehnică a Repository-ului
 
-> [!TIP]
-> **Votare unică securizată:** Pentru a strânge feedback-ul tuturor vizitatorilor într-un mod centralizat, am creat un sondaj nativ pe GitHub.
-> 
-> * **Pasul 1:** Accesează link-ul de mai jos.
-> * **Pasul 2:** Votează varianta de design preferată în widget-ul din partea de sus a discuției.
-> * **Pasul 3:** Scrie direct în comentarii sugestiile tale pentru a adăuga idei noi pentru clienți.
-> 
-> 👉 **[APASĂ AICI PENTRU A VOTA ȘI A SCRIE SUGESTII](https://github.com/lefterpatrickandrei-sketch/ugr-sector1-website/discussions/1)** 👈
+```text
+├── index.html               # Pagina principală a site-ului oficial (servită de GitHub Pages)
+├── confidentialitate.html   # Politica oficială de confidențialitate și protecție GDPR
+├── script.js                # Logica frontend: Supabase client, formulare, calculator, hartă
+├── style.css                # Sistemul de design instituțional și stilurile vizuale
+├── data.js                  # Date structurate secundare (repere geodezice, FAQ)
+├── borders.js               # Coordonate vectoriale pentru harta Sector 1
+├── admin/
+│   ├── panou.html           # Panoul oficial securizat de administrare (AAL2 TOTP)
+│   └── index.html           # Punct de acces administrativ
+├── documente/               # Statutul UGR și formularele tip de înscriere
+└── ugr-images/              # Active grafice și imagini oficiale de arhivă
+```
 
 ---
 
-## 💡 Structura de Resurse
+## 📞 Contact Oficial Filiala Sector 1
 
-1. **Rădăcina repo-ului (site-ul live):**
-   * `index.html`, `style.css`, `script.js`, `data.js`, `borders.js` — nucleul platformei **Demo V2**, servit de GitHub Pages din branch-ul `main`, folder `/ (root)`.
-   * Pagini legate direct din `index.html`: `demos-faq.html`, `demos-calculator.html`, `demos-membri.html`.
-2. **Folderul `ugr-images/`:**
-   * Conține arhiva de imagini reale de pe site-ul oficial `ugr.ro` și postările oficiale ale Filialei Sector 1 de pe Facebook și Instagram.
-3. **Folderul `documente/`:**
-   * Conține documentele oficiale: Statutul UGR (PDF) și cererile de înscriere (persoane fizice / juridice).
-4. **Folderul `demo-v2/`:**
-   * Copie de arhivă a Demo V2, păstrată pentru comparare și rollback.
-5. **Folderul `ugr-variants/`:**
-   * Păstrează propunerile de design anterioare (Varianta 1, Varianta 2, Varianta 3) pentru referință istorică și comparație.
-6. **Folderul `backup/`:**
-   * Copii de siguranță ale versiunilor anterioare ale site-ului.
+* **Email:** [filiala.ugr.s1@gmail.com](mailto:filiala.ugr.s1@gmail.com)
+* **Telefon:** 0726 390 774
+* **Sediu / Parteneriat Academic:** Facultatea de Îmbunătățiri Funciare și Ingineria Mediului (FIFIM) — USAMV București (Bvd. Mărăști nr. 59, Sector 1)
+* **Canale Social Media Oficiale:**
+  * Facebook: [Filiala Sector 1 UGR](https://www.facebook.com/share/14xwxtFChmC/)
+  * Instagram: [@filiala.sector1.ugr](https://www.instagram.com/filiala.sector1.ugr)
