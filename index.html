@@ -94,6 +94,11 @@
                 <a href="#contact" class="nav-link" data-view="contact">FAQ & Contact</a>
             </nav>
 
+            <div class="live-status-pill desktop" id="header-live-badge" title="Vizitatori activi în timp real pe site (Supabase Realtime)">
+                <span class="live-dot" aria-hidden="true"></span>
+                <span id="live-visitors-count">1</span> <span style="opacity: 0.85;">online</span>
+            </div>
+
             <button onclick="openRegistrationModal()" class="btn-membership desktop" aria-haspopup="dialog">
                 Devino membru
             </button>
@@ -116,6 +121,10 @@
             <button onclick="openRegistrationModal(); closeMobileNav();" class="btn-membership" style="margin-top: 10px; width: 100%; justify-content: center;">
                 Devino membru UGR →
             </button>
+            <div class="live-status-pill" style="margin: 10px auto 4px auto; display: flex; width: fit-content;" title="Vizitatori conectați în direct">
+                <span class="live-dot" aria-hidden="true"></span>
+                <span id="mobile-live-visitors-count">1</span> <span style="opacity: 0.85;">vizitatori activi acum</span>
+            </div>
         </div>
     </header>
 
@@ -1588,6 +1597,8 @@
     <!-- ══════════════════════════════════════════════════════════════════
          SCRIPTOURI: Proj4.js, Three.js, Globe.gl, Date & Script Principal
          ══════════════════════════════════════════════════════════════════ -->
+    <!-- Supabase JS Client for Realtime & Full Stack Database -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.jsdelivr.net/npm/proj4@2.9.0/dist/proj4.js"></script>
     <script src="https://unpkg.com/three@0.146.0/build/three.min.js"></script>
     <script src="https://unpkg.com/globe.gl@2.28.3/dist/globe.gl.min.js"></script>

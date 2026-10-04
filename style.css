@@ -5767,3 +5767,42 @@ button {
     border-color: #00E5FF;
     box-shadow: 0 0 10px rgba(0, 229, 255, 0.25);
 }
+
+/* ══════════════════════════════════════════════════════════════════
+   LIVE VISITORS PRESENCE BADGE (SUPABASE REALTIME)
+   ══════════════════════════════════════════════════════════════════ */
+.live-status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    background: rgba(16, 185, 129, 0.08);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    padding: 6px 13px;
+    border-radius: 9999px;
+    font-size: 12px;
+    font-weight: 500;
+    color: #10B981;
+    font-family: var(--font-mono, monospace);
+    letter-spacing: -0.01em;
+    transition: all 0.25s ease;
+    backdrop-filter: blur(8px);
+}
+.live-status-pill:hover {
+    background: rgba(16, 185, 129, 0.15);
+    border-color: rgba(16, 185, 129, 0.5);
+    box-shadow: 0 0 12px rgba(16, 185, 129, 0.25);
+}
+.live-dot {
+    width: 7px;
+    height: 7px;
+    background-color: #10B981;
+    border-radius: 50%;
+    display: inline-block;
+    box-shadow: 0 0 8px #10B981;
+    animation: livePulse 2s infinite ease-in-out;
+}
+@keyframes livePulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.35); opacity: 0.55; }
+}
+

@@ -6,9 +6,81 @@
   <title>Panou Administrare — UGR Filiala Sector 1 București</title>
   <link rel="icon" type="image/png" href="../logo_geodez.png">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap">
+  <!-- Supabase Client for Live Presence & Database -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <!-- Sveltia CMS: Modern Git CMS with zero backend requirements and direct GitHub PAT authentication -->
   <script src="https://unpkg.com/@sveltia/cms/dist/sveltia-cms.js"></script>
+  <style>
+    #admin-live-badge {
+      position: fixed;
+      bottom: 14px;
+      right: 14px;
+      z-index: 999999;
+      background: rgba(15, 23, 42, 0.92);
+      color: #10B981;
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      padding: 7px 15px;
+      border-radius: 9999px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 12.5px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.45);
+      backdrop-filter: blur(8px);
+      user-select: none;
+      pointer-events: auto;
+    }
+    .admin-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #10B981;
+      box-shadow: 0 0 10px #10B981;
+      animation: adminPulse 2s infinite ease-in-out;
+    }
+    @keyframes adminPulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.35); opacity: 0.55; }
+    }
+  </style>
 </head>
 <body>
+  <div id="admin-live-badge" title="Număr de vizitatori activi conectați în timp real prin Supabase Realtime">
+    <span class="admin-dot"></span>
+    <span>Vizitatori activi pe site: <b id="admin-visitors-count" style="color: #ffffff; font-size: 13.5px;">1</b></span>
+  </div>
+
+  <script>
+    (function() {
+      const SUPABASE_URL = 'https://ckktzvzzklspqfclcsbu.supabase.co';
+      const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNra3R6dnp6a2xzcHFmY2xjc2J1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTExMDEzNjcsImV4cCI6MjEwNjY3NzM2N30.hrmXR_K-o6jWJ-ts-Opds_cGlU_qMamc6nRgAxArQzo';
+
+      function connectSupabasePresence() {
+        if (!window.supabase || !window.supabase.createClient) {
+          setTimeout(connectSupabasePresence, 600);
+          return;
+        }
+        try {
+          const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+          const channel = client.channel('ugr-live-visitors');
+          const syncCount = () => {
+            const state = channel.presenceState();
+            const count = Object.keys(state).length || 1;
+            const el = document.getElementById('admin-visitors-count');
+            if (el) el.textContent = count;
+          };
+          channel
+            .on('presence', { event: 'sync' }, syncCount)
+            .on('presence', { event: 'join' }, syncCount)
+            .on('presence', { event: 'leave' }, syncCount)
+            .subscribe();
+        } catch (e) {
+          console.warn('[Admin Supabase]', e);
+        }
+      }
+      connectSupabasePresence();
+    })();
+  </script>
 </body>
 </html>

@@ -2028,6 +2028,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     selectNode('bucuresti');
 
+    // Conectare la Supabase Realtime pentru monitorizarea vizitatorilor live
+    initSupabasePresence();
+
     // Verifică parametrul de URL pentru stilul butoanelor (?btn=a / ?btn=b sau ?btn=1 / ?btn=2)
     try {
         const urlParams = new URLSearchParams(window.location.search);
@@ -2488,3 +2491,78 @@ window.setCardAnimMode = function(mode, btn) {
     document.querySelectorAll('.card-anim-mini-btn').forEach(b => b.classList.remove('active'));
     if (btn) btn.classList.add('active');
 };
+
+// ═══════════════════════════════════════════════════════════════════════════
+// 11. SUPABASE REALTIME CLIENT & LIVE VISITORS PRESENCE TRACKER
+// ═══════════════════════════════════════════════════════════════════════════
+const SUPABASE_CONFIG = {
+    url: 'https://ckktzvzzklspqfclcsbu.supabase.co',
+    anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNra3R6dnp6a2xzcHFmY2xjc2J1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTExMDEzNjcsImV4cCI6MjEwNjY3NzM2N30.hrmXR_K-o6jWJ-ts-Opds_cGlU_qMamc6nRgAxArQzo'
+};
+
+let supabaseClient = null;
+
+function initSupabasePresence() {
+    if (typeof window.supabase === 'undefined' || !window.supabase.createClient) {
+        setTimeout(initSupabasePresence, 800);
+        return;
+    }
+
+    try {
+        if (!supabaseClient) {
+            supabaseClient = window.supabase.createClient(SUPABASE_CONFIG.url, SUPABASE_CONFIG.anonKey);
+        }
+
+        const visitorSessionId = 'u_' + Math.random().toString(36).substring(2, 9);
+        const presenceChannel = supabaseClient.channel('ugr-live-visitors', {
+            config: {
+                presence: {
+                    key: visitorSessionId
+                }
+            }
+        });
+
+        const syncPresenceCount = () => {
+            const state = presenceChannel.presenceState();
+            const count = Object.keys(state).length || 1;
+            updateLiveVisitorsUI(count);
+        };
+
+        presenceChannel
+            .on('presence', { event: 'sync' }, syncPresenceCount)
+            .on('presence', { event: 'join' }, syncPresenceCount)
+            .on('presence', { event: 'leave' }, syncPresenceCount)
+            .subscribe(async (status) => {
+                if (status === 'SUBSCRIBED') {
+                    await presenceChannel.track({
+                        online_at: new Date().toISOString(),
+                        view: appState.currentView || 'acasa'
+                    });
+                }
+            });
+
+        window.addEventListener('hashchange', () => {
+            if (presenceChannel && presenceChannel.state === 'joined') {
+                presenceChannel.track({
+                    online_at: new Date().toISOString(),
+                    view: window.location.hash || '#acasa'
+                }).catch(() => {});
+            }
+        });
+
+    } catch (err) {
+        console.warn('[Supabase Realtime] Presence tracking init:', err);
+    }
+}
+
+function updateLiveVisitorsUI(count) {
+    const headerCount = document.getElementById('live-visitors-count');
+    const mobileCount = document.getElementById('mobile-live-visitors-count');
+    const adminCount = document.getElementById('admin-visitors-count');
+
+    const formatted = Math.max(1, count);
+    if (headerCount) headerCount.textContent = formatted;
+    if (mobileCount) mobileCount.textContent = formatted;
+    if (adminCount) adminCount.textContent = formatted;
+}
+
