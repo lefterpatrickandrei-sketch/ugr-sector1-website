@@ -26,7 +26,7 @@
     <a href="#main-content" class="skip-link">Sari direct la conținutul principal</a>
 
     <!-- ══════════════════════════════════════════════════════════════════
-         HEADER INSTITUȚIONAL CU CONTOR VIZITATORI LIVE REALTIME
+         HEADER INSTITUȚIONAL
          ══════════════════════════════════════════════════════════════════ -->
     <header class="site-header" role="banner">
         <div class="header-container">
@@ -39,11 +39,6 @@
                 <a href="index.html" class="nav-link">← Înapoi la site-ul principal</a>
             </nav>
 
-            <!-- Contor vizitatori live sincronizat în timp real via Supabase Realtime -->
-            <div class="live-status-pill desktop" id="header-live-badge" title="Vizitatori activi în timp real pe site (Supabase Realtime)">
-                <span class="live-dot" aria-hidden="true"></span>
-                <span id="live-visitors-count">1</span> <span style="opacity: 0.85;">online</span>
-            </div>
 
             <a href="index.html" class="btn-membership desktop" style="text-decoration: none;">
                 Acasă
@@ -129,7 +124,7 @@
                             <li><code>form_trimis</code>: contorizează trimiterea cu succes a formularului.</li>
                         </ul>
                     </li>
-                    <li><strong>Contorul de prezență live (Realtime Presence):</strong> utilizează un ID generat aleator <em>exclusiv în memoria volatilă</em> JavaScript pentru sincronizarea numărului de utilizatori activi concomitent pe site, fără nicio stocare persistentă pe disc.</li>
+                    <li><strong>Contorul de prezență live (Realtime Presence):</strong> utilizează un ID generat aleator <em>exclusiv în memoria volatilă</em> JavaScript pentru sincronizarea numărului de utilizatori activi concomitent pe site, fără nicio stocare persistentă pe disc. Numărul de vizitatori activi este vizibil doar administratorilor site-ului; nu este afișat public.</li>
                 </ul>
 
                 <div style="background: rgba(0,229,255,0.06); border: 1px solid rgba(0,229,255,0.25); border-radius: 8px; padding: 14px 18px; font-size: 14px;">
@@ -268,39 +263,6 @@
         </div>
     </footer>
 
-    <!-- Supabase JS Client & Realtime Presence (ID aleator exclusiv în memorie volatilă) -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script>
-        (function() {
-            try {
-                if (typeof window.supabase === 'undefined' || !window.supabase.createClient) return;
-                const client = window.supabase.createClient(
-                    'https://ckktzvzzklspqfclcsbu.supabase.co',
-                    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNra3R6dnp6a2xzcHFmY2xjc2J1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTExMDEzNjcsImV4cCI6MjEwNjY3NzM2N30.hrmXR_K-o6jWJ-ts-Opds_cGlU_qMamc6nRgAxArQzo'
-                );
-                // ID aleator generat DOAR în memoria de execuție JavaScript (fără stocare în cookie-uri, sessionStorage sau localStorage)
-                const inMemoryVisitorId = 'mem_' + Math.random().toString(36).substring(2, 10);
-                const channel = client.channel('ugr-live-visitors', {
-                    config: { presence: { key: inMemoryVisitorId } }
-                });
-
-                channel.on('presence', { event: 'sync' }, () => {
-                    const state = channel.presenceState();
-                    const count = Object.keys(state).length || 1;
-                    const el = document.getElementById('live-visitors-count');
-                    if (el) el.textContent = Math.max(1, count);
-                });
-
-                channel.subscribe(async (status) => {
-                    if (status === 'SUBSCRIBED') {
-                        await channel.track({ online_at: new Date().toISOString() });
-                    }
-                });
-            } catch (err) {
-                // Silențios pentru a nu perturba afișarea paginii
-            }
-        })();
-    </script>
 
 </body>
 </html>

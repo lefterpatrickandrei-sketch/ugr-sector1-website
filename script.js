@@ -2681,24 +2681,14 @@ function initSupabasePresence() {
             }
         });
 
-        const syncPresenceCount = () => {
-            const state = presenceChannel.presenceState();
-            const count = Object.keys(state).length || 1;
-            updateLiveVisitorsUI(count);
-        };
-
-        presenceChannel
-            .on('presence', { event: 'sync' }, syncPresenceCount)
-            .on('presence', { event: 'join' }, syncPresenceCount)
-            .on('presence', { event: 'leave' }, syncPresenceCount)
-            .subscribe(async (status) => {
-                if (status === 'SUBSCRIBED') {
-                    await presenceChannel.track({
-                        online_at: new Date().toISOString(),
-                        view: appState.currentView || 'acasa'
-                    });
-                }
-            });
+        presenceChannel.subscribe(async (status) => {
+            if (status === 'SUBSCRIBED') {
+                await presenceChannel.track({
+                    online_at: new Date().toISOString(),
+                    view: appState.currentView || 'acasa'
+                });
+            }
+        });
 
         window.addEventListener('hashchange', () => {
             if (presenceChannel && presenceChannel.state === 'joined') {
@@ -2712,17 +2702,6 @@ function initSupabasePresence() {
     } catch (err) {
         console.warn('[Supabase Realtime] Presence tracking init:', err);
     }
-}
-
-function updateLiveVisitorsUI(count) {
-    const headerCount = document.getElementById('live-visitors-count');
-    const mobileCount = document.getElementById('mobile-live-visitors-count');
-    const adminCount = document.getElementById('admin-visitors-count');
-
-    const formatted = Math.max(1, count);
-    if (headerCount) headerCount.textContent = formatted;
-    if (mobileCount) mobileCount.textContent = formatted;
-    if (adminCount) adminCount.textContent = formatted;
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
