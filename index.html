@@ -1173,6 +1173,8 @@
                                 <!-- Populat dinamic prin script.js cu table-row-animated -->
                             </tbody>
                         </table>
+                        <!-- TODO-FINAL: scoate nota la importul registrului real -->
+                        <p class="members-demo-note" style="text-align: center; font-size: 12.5px; color: var(--ugr-text-muted); margin-top: 12px; margin-bottom: 4px; font-style: italic;">Date demonstrative: lista va fi înlocuită cu registrul real al membrilor.</p>
                     </div>
                 </div>
 
@@ -1519,7 +1521,7 @@
 
             <div class="footer-bottom">
                 <span>© 2026 Uniunea Geodezilor din România (UGR) — Filiala Sector 1 București.</span>
-                <span>Integritate Terestră · Viziune Spațială · SGR Chișinău 2026</span>
+                <span><a href="confidentialitate.html" style="color: inherit; text-decoration: underline;">Politică de confidențialitate</a> · Integritate Terestră · Viziune Spațială · SGR Chișinău 2026</span>
             </div>
         </div>
     </footer>
@@ -1559,21 +1561,40 @@
 
                 <!-- Pasul 2: Date Personale & Autorizație -->
                 <div id="modal-step-2" style="display: none;">
-                    <div class="form-field" style="margin-bottom: 12px;">
-                        <label for="reg-name" class="form-label" style="color: var(--ugr-text-main);">Nume și Prenume Complet:</label>
-                        <input type="text" id="reg-name" class="form-input" style="color: var(--ugr-text-main); background: #fff; border-color: rgba(11,46,78,0.2);" placeholder="Ex: Popescu Ion" required>
+                    <div class="form-field" style="margin-bottom: 11px;">
+                        <label for="reg-name" class="form-label" style="color: var(--ugr-text-main); font-weight: 600;">Nume și Prenume Complet *</label>
+                        <input type="text" id="reg-name" class="form-input" style="color: var(--ugr-text-main); background: #fff; border-color: rgba(11,46,78,0.2);" placeholder="Ex: Popescu Ion" required maxlength="120">
                     </div>
-                    <div class="form-field" style="margin-bottom: 12px;">
-                        <label for="reg-email" class="form-label" style="color: var(--ugr-text-main);">Adresă Email:</label>
-                        <input type="email" id="reg-email" class="form-input" style="color: var(--ugr-text-main); background: #fff; border-color: rgba(11,46,78,0.2);" placeholder="email@exemplu.ro" required>
+                    <div class="form-field" style="margin-bottom: 11px;">
+                        <label for="reg-email" class="form-label" style="color: var(--ugr-text-main); font-weight: 600;">Adresă Email *</label>
+                        <input type="email" id="reg-email" class="form-input" style="color: var(--ugr-text-main); background: #fff; border-color: rgba(11,46,78,0.2);" placeholder="email@exemplu.ro" required maxlength="254">
                     </div>
-                    <div class="form-field" style="margin-bottom: 12px;">
-                        <label for="reg-phone" class="form-label" style="color: var(--ugr-text-main);">Număr de Telefon:</label>
-                        <input type="tel" id="reg-phone" class="form-input" style="color: var(--ugr-text-main); background: #fff; border-color: rgba(11,46,78,0.2);" placeholder="07xx xxx xxx" required>
+                    <div class="form-field" style="margin-bottom: 11px;">
+                        <label for="reg-phone" class="form-label" style="color: var(--ugr-text-main); font-weight: 600;">Număr de Telefon *</label>
+                        <input type="tel" id="reg-phone" class="form-input" style="color: var(--ugr-text-main); background: #fff; border-color: rgba(11,46,78,0.2);" placeholder="07xx xxx xxx" required maxlength="20">
+                    </div>
+                    <div class="form-field" style="margin-bottom: 11px;">
+                        <label for="reg-county" class="form-label" style="color: var(--ugr-text-main); font-weight: 600;">Județ / Regiune *</label>
+                        <input type="text" id="reg-county" class="form-input" style="color: var(--ugr-text-main); background: #fff; border-color: rgba(11,46,78,0.2);" value="București" placeholder="Ex: București, Ilfov, Cluj..." required maxlength="60">
+                    </div>
+                    <div class="form-field" style="margin-bottom: 11px;">
+                        <label for="reg-cert" class="form-label" style="color: var(--ugr-text-main); font-weight: 600;">Certificat ANCPI (opțional)</label>
+                        <input type="text" id="reg-cert" class="form-input" style="color: var(--ugr-text-main); background: #fff; border-color: rgba(11,46,78,0.2);" placeholder="Ex: Seria RO-B-F Nr. 0244" maxlength="120">
+                    </div>
+                    <div class="form-field" style="margin-bottom: 8px;">
+                        <label for="reg-message" class="form-label" style="color: var(--ugr-text-main); font-weight: 600;">Mesaj / Mențiuni (opțional)</label>
+                        <textarea id="reg-message" class="form-input" style="color: var(--ugr-text-main); background: #fff; border-color: rgba(11,46,78,0.2); height: 56px; resize: vertical;" placeholder="Informații suplimentare despre activitatea profesională..." maxlength="2000"></textarea>
+                    </div>
+                    <!-- Honeypot anti-spam ascuns exclusiv din CSS (fara type=hidden) -->
+                    <div style="display: none !important; position: absolute; left: -9999px; opacity: 0; pointer-events: none;" aria-hidden="true">
+                        <label for="reg-hp">Website</label>
+                        <input type="text" id="reg-hp" name="organization_website_verify" autocomplete="off" tabindex="-1">
+                    </div>
+                    <div id="reg-step2-error" style="display: none; padding: 9px 12px; background: rgba(239,68,68,0.12); border: 1px solid #EF4444; border-radius: 6px; color: #B91C1C; font-size: 12px; text-align: center; margin-top: 8px;">
                     </div>
                 </div>
 
-                <!-- Pasul 3: Date Bancare Oficiale UGR -->
+                <!-- Pasul 3: Date Bancare & Consimțământ GDPR -->
                 <div id="modal-step-3" style="display: none;">
                     <h4 style="font-size: 15px; margin-bottom: 10px; color: var(--ugr-text-main);">Date Bancare Oficiale UGR (ugr.ro):</h4>
                     <div style="background: var(--ugr-paper); padding: 14px; border-radius: 8px; font-family: var(--font-mono); font-size: 12px; margin-bottom: 12px; border: 1px solid rgba(0,0,0,0.08);">
@@ -1581,8 +1602,22 @@
                         <b style="color: var(--ugr-accent); font-size: 13px;">RO57 BRDE 426S V810 0757 4450</b>
                         <p style="margin-top: 8px; font-size: 11px; color: var(--ugr-text-muted);">Mențiune obligatorie: Nume, CNP și 'Cotizație Filiala Sector 1'.</p>
                     </div>
-                    <div id="reg-success-banner" style="display: none; padding: 12px; background: rgba(16,185,129,0.15); border: 1px solid #10B981; border-radius: 6px; color: #065F46; font-size: 12.5px; text-align: center;">
-                        ✓ Cererea dumneavoastră a fost trimisă către Biroul Executiv! Veți primi confirmarea pe email.
+
+                    <!-- Checkbox obligatoriu de consimțământ GDPR -->
+                    <div style="margin-bottom: 14px; padding: 12px; background: rgba(11,46,78,0.04); border-radius: 6px; border: 1px solid rgba(11,46,78,0.12);">
+                        <label for="reg-gdpr" style="display: flex; align-items: flex-start; gap: 9px; cursor: pointer; font-size: 12px; color: var(--ugr-text-main); line-height: 1.45; user-select: none;">
+                            <input type="checkbox" id="reg-gdpr" style="margin-top: 2px; accent-color: var(--ugr-accent); width: 16px; height: 16px; cursor: pointer;" required>
+                            <span>Sunt de acord cu prelucrarea datelor mele personale în scopul evaluării cererii de înscriere, conform <a href="confidentialitate.html" target="_blank" style="color: var(--ugr-accent); text-decoration: underline; font-weight: 600;">Politicii de confidențialitate</a>.</span>
+                        </label>
+                    </div>
+
+                    <!-- Banner eroare -->
+                    <div id="reg-error-banner" style="display: none; padding: 11px 14px; background: rgba(239,68,68,0.12); border: 1px solid #EF4444; border-radius: 6px; color: #B91C1C; font-size: 12.5px; text-align: center; margin-bottom: 12px;">
+                    </div>
+
+                    <!-- Banner succes -->
+                    <div id="reg-success-banner" style="display: none; padding: 14px; background: rgba(16,185,129,0.15); border: 1px solid #10B981; border-radius: 6px; color: #065F46; font-size: 13px; text-align: center; font-weight: 600; line-height: 1.5;">
+                        ✓ Cererea dumneavoastră a fost trimisă către Biroul Executiv! Vă vom contacta în curând.
                     </div>
                 </div>
             </div>

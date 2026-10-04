@@ -1047,13 +1047,13 @@ function renderMembersTable(members) {
 
     const rowsHtml = members.length === 0 ? emptyRow : members.map((m, idx) => `
         <tr class="table-row-animated" style="border-bottom: 1px solid rgba(255,255,255,0.06); animation-delay: ${idx * 40}ms;">
-            <td style="padding: 13px 16px; font-family: var(--font-mono); font-weight: 600; color: #00E5FF;">${m.id}</td>
-            <td style="padding: 13px 16px; font-weight: 600; color: #FFFFFF;">${m.name}</td>
-            <td style="padding: 13px 16px; color: rgba(250,251,252,0.75);">${m.judet}</td>
-            <td style="padding: 13px 16px; font-family: var(--font-mono); font-size: 12px; color: rgba(250,251,252,0.85);">${m.auth}</td>
+            <td style="padding: 13px 16px; font-family: var(--font-mono); font-weight: 600; color: #00E5FF;">${escapeHtml(m.id)}</td>
+            <td style="padding: 13px 16px; font-weight: 600; color: #FFFFFF;">${escapeHtml(m.name)}</td>
+            <td style="padding: 13px 16px; color: rgba(250,251,252,0.75);">${escapeHtml(m.judet)}</td>
+            <td style="padding: 13px 16px; font-family: var(--font-mono); font-size: 12px; color: rgba(250,251,252,0.85);">${escapeHtml(m.auth)}</td>
             <td style="padding: 13px 16px;">
                 <span class="member-status-badge" style="background: rgba(16,185,129,0.15); color: #10B981; border: 1px solid rgba(16,185,129,0.3); padding: 3px 8px; border-radius: 4px; font-size: 11px; font-family: var(--font-mono); font-weight: 700; display: inline-flex; align-items: center; gap: 5px;">
-                    <span class="status-live-dot" style="width: 6px; height: 6px; border-radius: 50%; background: #10B981; box-shadow: 0 0 6px #10B981;"></span> ${m.status.toUpperCase()}
+                    <span class="status-live-dot" style="width: 6px; height: 6px; border-radius: 50%; background: #10B981; box-shadow: 0 0 6px #10B981;"></span> ${escapeHtml(m.status || 'activ').toUpperCase()}
                 </span>
             </td>
         </tr>
@@ -1133,23 +1133,23 @@ function renderNewsBento(filterScope = 'all') {
         return `
         <article class="bento-card ${borderClass}">
             <div class="bento-card-media">
-                <img src="${item.image}" alt="${item.title}" loading="lazy">
+                <img src="${escapeHtml(item.image)}" alt="${escapeHtml(item.title)}" loading="lazy">
             </div>
             <div class="bento-card-content">
                 <div class="bento-scope-badge ${badgeClass}">
                     <span class="${dotClass}"></span>
-                    <span>${item.scopeLabel || (isNational ? 'EVENIMENT NAȚIONAL UGR / FIG / CLGE' : 'ACTIVITATE LOCALĂ FILIALA SECTOR 1')}</span>
+                    <span>${escapeHtml(item.scopeLabel || (isNational ? 'EVENIMENT NAȚIONAL UGR / FIG / CLGE' : 'ACTIVITATE LOCALĂ FILIALA SECTOR 1'))}</span>
                 </div>
                 <div class="bento-meta">
-                    <span class="bento-cat-text">${item.category}</span>
-                    <span class="bento-date-text">${item.date}</span>
+                    <span class="bento-cat-text">${escapeHtml(item.category)}</span>
+                    <span class="bento-date-text">${escapeHtml(item.date)}</span>
                 </div>
-                <h3 class="bento-card-title">${item.title}</h3>
-                <p class="bento-card-desc">${item.desc}</p>
+                <h3 class="bento-card-title">${escapeHtml(item.title)}</h3>
+                <p class="bento-card-desc">${escapeHtml(item.desc)}</p>
                 <div class="bento-card-footer">
-                    <span class="bento-location">📍 ${item.location}</span>
-                    <a href="${item.source.url}" ${targetAttr} class="bento-action-link ${isNational ? 'link-gold' : 'link-cyan'}">
-                        ${item.actionText || 'Deschide detalii ↗'}
+                    <span class="bento-location">📍 ${escapeHtml(item.location)}</span>
+                    <a href="${escapeHtml(item.source.url)}" ${targetAttr} class="bento-action-link ${isNational ? 'link-gold' : 'link-cyan'}">
+                        ${escapeHtml(item.actionText || 'Deschide detalii ↗')}
                     </a>
                 </div>
             </div>
@@ -1209,16 +1209,6 @@ function renderDocuments() {
 let currentFaqCategory = 'all';
 let currentFaqSearch = '';
 
-// Memorie & persistență pentru voturile de utilitate FAQ
-let faqVotes = {};
-try {
-    const storedVotes = localStorage.getItem('ugr_faq_votes');
-    if (storedVotes) {
-        faqVotes = JSON.parse(storedVotes);
-    }
-} catch (e) {
-    faqVotes = {};
-}
 
 function removeDiacritics(str) {
     if (!str) return '';
@@ -1233,14 +1223,14 @@ function removeDiacritics(str) {
 }
 
 function escapeHtml(str) {
-    if (!str) return '';
-    return String(str).replace(/[&<>"']/g, s => ({
+    const s = String(str ?? '');
+    return s.replace(/[&<>"']/g, c => ({
         '&': '&amp;',
         '<': '&lt;',
         '>': '&gt;',
         '"': '&quot;',
         "'": '&#39;'
-    })[s]);
+    })[c]);
 }
 
 // Evidențiere termeni căutați în text (Highlighting prietenos cu diacriticele)
@@ -1741,6 +1731,8 @@ window.resetContactFormUI = resetContactFormUI;
 // 9. MODAL DE ÎNREGISTRARE MULTI-STEP (WCAG 2.2 AA COMPLIANT)
 // ═══════════════════════════════════════════════════════════════════════════
 
+let isSubmittingRegistration = false;
+
 function openRegistrationModal() {
     appState.lastFocusedElement = document.activeElement;
     const modal = document.getElementById('registration-modal');
@@ -1756,6 +1748,9 @@ function openRegistrationModal() {
     }
 
     document.addEventListener('keydown', handleModalKeydown);
+
+    // Telemetrie anonimă: eveniment 'form_deschis'
+    logTelemetryEvent('form_deschis');
 }
 
 function closeRegistrationModal() {
@@ -1765,20 +1760,64 @@ function closeRegistrationModal() {
     modal.classList.remove('active');
     document.removeEventListener('keydown', handleModalKeydown);
 
+    isSubmittingRegistration = false;
     appState.modalStep = 1;
-    const nameInput = document.getElementById('reg-name');
-    const emailInput = document.getElementById('reg-email');
-    const phoneInput = document.getElementById('reg-phone');
-    const banner = document.getElementById('reg-success-banner');
+    resetRegistrationForm();
+    hideRegistrationError();
 
-    if (nameInput) nameInput.value = '';
-    if (emailInput) emailInput.value = '';
-    if (phoneInput) phoneInput.value = '';
+    const banner = document.getElementById('reg-success-banner');
     if (banner) banner.style.display = 'none';
+
+    const btnNext = document.getElementById('btn-modal-next');
+    const btnBack = document.getElementById('btn-modal-back');
+    if (btnNext) {
+        btnNext.style.display = '';
+        btnNext.disabled = false;
+        btnNext.innerText = 'Continuă →';
+    }
+    if (btnBack) {
+        btnBack.style.display = '';
+        btnBack.disabled = true;
+    }
 
     if (appState.lastFocusedElement) {
         appState.lastFocusedElement.focus();
     }
+}
+
+function resetRegistrationForm() {
+    const fields = ['reg-name', 'reg-email', 'reg-phone', 'reg-cert', 'reg-message', 'reg-hp'];
+    fields.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = '';
+    });
+    const county = document.getElementById('reg-county');
+    if (county) county.value = 'București';
+    const gdpr = document.getElementById('reg-gdpr');
+    if (gdpr) gdpr.checked = false;
+}
+
+function showStep2Error(msg) {
+    const el = document.getElementById('reg-step2-error');
+    if (el) {
+        el.textContent = msg;
+        el.style.display = 'block';
+    }
+}
+
+function showRegistrationError(msg) {
+    const el = document.getElementById('reg-error-banner');
+    if (el) {
+        el.textContent = msg;
+        el.style.display = 'block';
+    }
+}
+
+function hideRegistrationError() {
+    const el2 = document.getElementById('reg-step2-error');
+    if (el2) el2.style.display = 'none';
+    const el3 = document.getElementById('reg-error-banner');
+    if (el3) el3.style.display = 'none';
 }
 
 function handleModalKeydown(event) {
@@ -1859,37 +1898,175 @@ function updateModalStepView() {
     }
 }
 
-function nextModalStep() {
+async function nextModalStep() {
+    if (isSubmittingRegistration) return;
+
+    const btnNext = document.getElementById('btn-modal-next');
+    const btnBack = document.getElementById('btn-modal-back');
+
     if (appState.modalStep === 1) {
         appState.modalStep = 2;
         updateModalStepView();
     } else if (appState.modalStep === 2) {
+        hideRegistrationError();
+
         const name = (document.getElementById('reg-name')?.value || '').trim();
         const email = (document.getElementById('reg-email')?.value || '').trim();
         const phone = (document.getElementById('reg-phone')?.value || '').trim();
+        const county = (document.getElementById('reg-county')?.value || '').trim();
+        const message = (document.getElementById('reg-message')?.value || '').trim();
 
-        if (!name || !email || !phone) {
-            alert("Vă rugăm să completați toate câmpurile obligatorii din Pasul 2.");
+        if (name.length < 2 || name.length > 120) {
+            showStep2Error("Vă rugăm să introduceți un nume complet valid (între 2 și 120 de caractere).");
             return;
         }
 
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(email)) {
-            alert("Vă rugăm să introduceți o adresă de email validă.");
+        if (!emailRegex.test(email) || email.length > 254) {
+            showStep2Error("Vă rugăm să introduceți o adresă de email validă (maxim 254 caractere).");
+            return;
+        }
+
+        const phoneClean = phone.replace(/[\s\-\.\(\)]/g, '');
+        if (phoneClean.length < 7 || phone.length > 20) {
+            showStep2Error("Vă rugăm să introduceți un număr de telefon valid (între 7 și 20 de caractere).");
+            return;
+        }
+
+        if (!county || county.length < 2) {
+            showStep2Error("Vă rugăm să completați județul.");
+            return;
+        }
+
+        if (county.length > 60) {
+            showStep2Error("Denumirea județului nu poate depăși 60 de caractere.");
+            return;
+        }
+
+        if (message.length > 2000) {
+            showStep2Error("Mesajul nu poate depăși 2000 de caractere.");
             return;
         }
 
         appState.modalStep = 3;
         updateModalStepView();
     } else if (appState.modalStep === 3) {
-        const banner = document.getElementById('reg-success-banner');
-        if (banner) {
-            banner.style.display = 'block';
+        hideRegistrationError();
+
+        // 1. Verificare consimtamant GDPR obligatoriu
+        const gdprChecked = document.getElementById('reg-gdpr')?.checked;
+        if (!gdprChecked) {
+            showRegistrationError("Pentru a trimite cererea, este obligatoriu să fiți de acord cu prelucrarea datelor personale conform Politicii de confidențialitate.");
+            return;
         }
-        setTimeout(() => {
-            closeRegistrationModal();
-        }, 3000);
+
+        // 2. Honeypot anti-spam
+        const hpVal = (document.getElementById('reg-hp')?.value || '').trim();
+        if (hpVal) {
+            // Comportament silentios pentru roboti
+            showRegistrationSuccess();
+            return;
+        }
+
+        // 3. Preluare si pregatire date
+        const name = (document.getElementById('reg-name')?.value || '').trim();
+        const email = (document.getElementById('reg-email')?.value || '').trim();
+        const phone = (document.getElementById('reg-phone')?.value || '').trim();
+        const county = (document.getElementById('reg-county')?.value || '').trim();
+        const cert = (document.getElementById('reg-cert')?.value || '').trim();
+        const message = (document.getElementById('reg-message')?.value || '').trim();
+
+        if (!county || county.length < 2) {
+            showRegistrationError("Vă rugăm să completați județul.");
+            return;
+        }
+
+        const tierMap = {
+            'fizica': 'Persoană Fizică',
+            'student': 'Membru Student',
+            'juridica': 'Persoană Juridică'
+        };
+        const categoryLabel = tierMap[appState.selectedTier] || 'Persoană Fizică';
+
+        // 4. Activare flag isSubmitting și dezactivare buton pentru a preveni dubla trimitere
+        isSubmittingRegistration = true;
+        if (btnNext) {
+            btnNext.disabled = true;
+            btnNext.innerText = 'Se trimite...';
+        }
+        if (btnBack) btnBack.disabled = true;
+
+        try {
+            const client = getSupabaseClient();
+            if (!client) {
+                throw new Error("Clientul Supabase nu este disponibil.");
+            }
+
+            // Inserare fara .select() conform regulilor Zero-Trust
+            const { error } = await client
+                .from('cereri_inscriere')
+                .insert([{
+                    nume_complet: name,
+                    email: email,
+                    telefon: phone,
+                    judet: county,
+                    certificat_ancpi: cert || null,
+                    categorie_dorita: categoryLabel,
+                    mesaj: message || null,
+                    consimtamant_gdpr: true
+                }]);
+
+            if (error) {
+                isSubmittingRegistration = false;
+                let errorMsg = "A apărut o problemă la trimiterea cererii. Te rugăm să încerci din nou.";
+                const errMsg = (error.message || '').toLowerCase();
+                const errDetails = (error.details || '').toLowerCase();
+                if (errMsg.includes('cerere_duplicata') || errDetails.includes('cerere_duplicata')) {
+                    errorMsg = "Am primit deja o cerere de pe această adresă de email. Te vom contacta în curând.";
+                } else if (errMsg.includes('prea_multe_cereri') || errDetails.includes('prea_multe_cereri')) {
+                    errorMsg = "Sistemul este momentan aglomerat. Te rugăm să încerci din nou peste câteva minute.";
+                }
+                showRegistrationError(errorMsg);
+                if (btnNext) {
+                    btnNext.disabled = false;
+                    btnNext.innerText = 'Finalizează înscrierea ✓';
+                }
+                if (btnBack) btnBack.disabled = false;
+                return;
+            }
+
+            // Trimitere reușită (fără eroare) -> Înregistrare eveniment 'form_trimis'
+            logTelemetryEvent('form_trimis');
+
+            // Trimitere reusita
+            showRegistrationSuccess();
+
+        } catch (err) {
+            isSubmittingRegistration = false;
+            showRegistrationError("A apărut o problemă de conexiune la trimiterea cererii. Te rugăm să încerci din nou.");
+            if (btnNext) {
+                btnNext.disabled = false;
+                btnNext.innerText = 'Finalizează înscrierea ✓';
+            }
+            if (btnBack) btnBack.disabled = false;
+        }
     }
+}
+
+function showRegistrationSuccess() {
+    isSubmittingRegistration = false;
+    hideRegistrationError();
+    const banner = document.getElementById('reg-success-banner');
+    if (banner) banner.style.display = 'block';
+
+    const btnNext = document.getElementById('btn-modal-next');
+    const btnBack = document.getElementById('btn-modal-back');
+    if (btnNext) btnNext.style.display = 'none';
+    if (btnBack) btnBack.style.display = 'none';
+
+    setTimeout(() => {
+        closeRegistrationModal();
+    }, 3500);
 }
 
 function prevModalStep() {
@@ -1972,40 +2149,10 @@ document.addEventListener('DOMContentLoaded', () => {
     renderFaq();
 
     // ═══════════════════════════════════════════════════════════════════════════
-    // Sincronizare automată date din Panoul de Administrare (content/*.json)
+    // Sincronizare date: Membri și Știri din Supabase (cu Fallback local)
     // ═══════════════════════════════════════════════════════════════════════════
-    // 1. Membri activi din Registru
-    fetch('content/members.json')
-        .then(r => r.ok ? r.json() : null)
-        .then(d => {
-            if (d && Array.isArray(d.members) && d.members.length > 0) {
-                ugrData.membersList = d.members;
-                renderMembersTable(d.members);
-            }
-        })
-        .catch(() => {});
-
-    // 2. Știri și Evenimente
-    fetch('content/news.json')
-        .then(r => r.ok ? r.json() : null)
-        .then(d => {
-            if (d && Array.isArray(d.news) && d.news.length > 0) {
-                ugrData.newsList = d.news.map(item => ({
-                    scope: item.scope || (item.category && item.category.toLowerCase().includes('local') ? 'local' : 'national'),
-                    scopeLabel: item.scopeLabel || (item.category && item.category.toLowerCase().includes('local') ? '[ACTIVITATE LOCALĂ FILIALA SECTOR 1]' : '[EVENIMENT NAȚIONAL UGR / FIG / CLGE]'),
-                    category: item.category || 'Eveniment Oficial',
-                    title: item.title,
-                    desc: item.desc,
-                    location: item.location || 'București',
-                    date: item.date || '2026',
-                    source: item.actionUrl ? { org: 'Link Detalii', url: item.actionUrl } : { org: 'Filiala Sector 1', url: '#contact' },
-                    image: item.image || 'ugr-images/united_1384.png',
-                    actionText: item.actionText || 'Detalii & Înscriere ↗'
-                }));
-                renderNewsBento();
-            }
-        })
-        .catch(() => {});
+    loadMembersFromSupabase();
+    loadNewsFromSupabase();
 
     // 3. Date Instituționale & Contact
     fetch('content/organization.json')
@@ -2030,6 +2177,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Conectare la Supabase Realtime pentru monitorizarea vizitatorilor live
     initSupabasePresence();
+
+    // Înregistrare anonimă a vizitei curente (Telemetrie GDPR)
+    logPageVisit();
 
     // Verifică parametrul de URL pentru stilul butoanelor (?btn=a / ?btn=b sau ?btn=1 / ?btn=2)
     try {
@@ -2493,7 +2643,7 @@ window.setCardAnimMode = function(mode, btn) {
 };
 
 // ═══════════════════════════════════════════════════════════════════════════
-// 11. SUPABASE REALTIME CLIENT & LIVE VISITORS PRESENCE TRACKER
+// 11. SUPABASE CLIENT, LIVE PRESENCE TRACKER & DATABASE LOADERS
 // ═══════════════════════════════════════════════════════════════════════════
 const SUPABASE_CONFIG = {
     url: 'https://ckktzvzzklspqfclcsbu.supabase.co',
@@ -2502,6 +2652,13 @@ const SUPABASE_CONFIG = {
 
 let supabaseClient = null;
 
+function getSupabaseClient() {
+    if (!supabaseClient && typeof window.supabase !== 'undefined' && window.supabase.createClient) {
+        supabaseClient = window.supabase.createClient(SUPABASE_CONFIG.url, SUPABASE_CONFIG.anonKey, { auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false } });
+    }
+    return supabaseClient;
+}
+
 function initSupabasePresence() {
     if (typeof window.supabase === 'undefined' || !window.supabase.createClient) {
         setTimeout(initSupabasePresence, 800);
@@ -2509,12 +2666,14 @@ function initSupabasePresence() {
     }
 
     try {
-        if (!supabaseClient) {
-            supabaseClient = window.supabase.createClient(SUPABASE_CONFIG.url, SUPABASE_CONFIG.anonKey);
+        const client = getSupabaseClient();
+        if (!client) {
+            setTimeout(initSupabasePresence, 800);
+            return;
         }
 
         const visitorSessionId = 'u_' + Math.random().toString(36).substring(2, 9);
-        const presenceChannel = supabaseClient.channel('ugr-live-visitors', {
+        const presenceChannel = client.channel('ugr-live-visitors', {
             config: {
                 presence: {
                     key: visitorSessionId
@@ -2565,4 +2724,252 @@ function updateLiveVisitorsUI(count) {
     if (mobileCount) mobileCount.textContent = formatted;
     if (adminCount) adminCount.textContent = formatted;
 }
+
+// ═══════════════════════════════════════════════════════════════════════════
+// 11.2 CITIRE MEMBRI & ȘTIRI DIN SUPABASE (CU FALLBACK LOCAL)
+// ═══════════════════════════════════════════════════════════════════════════
+
+async function loadMembersFromSupabase() {
+    const client = getSupabaseClient();
+    if (!client) {
+        // Fallback dacă clientul Supabase nu este încărcat
+        // TODO-FINAL: de scos la curățenie
+        fallbackLoadMembersJson();
+        return;
+    }
+
+    try {
+        const { data, error } = await client
+            .from('membri')
+            .select('id, nume, judet, serie_autorizatie, status')
+            .order('nume', { ascending: true });
+
+        if (error) {
+            // TODO-FINAL: de scos la curățenie
+            fallbackLoadMembersJson();
+            return;
+        }
+
+        const mappedMembers = (data || []).map(m => ({
+            id: m.id,
+            name: m.nume,
+            judet: m.judet,
+            auth: m.serie_autorizatie || '',
+            status: m.status
+        }));
+
+        ugrData.membersList = mappedMembers;
+        renderMembersTable(mappedMembers);
+    } catch (err) {
+        // TODO-FINAL: de scos la curățenie
+        fallbackLoadMembersJson();
+    }
+}
+
+function fallbackLoadMembersJson() {
+    // TODO-FINAL: de scos la curățenie
+    fetch('content/members.json')
+        .then(r => r.ok ? r.json() : null)
+        .then(d => {
+            if (d && Array.isArray(d.members) && d.members.length > 0) {
+                ugrData.membersList = d.members;
+                renderMembersTable(d.members);
+            }
+        })
+        .catch(() => {});
+}
+
+async function loadNewsFromSupabase() {
+    const client = getSupabaseClient();
+    if (!client) {
+        // Fallback dacă clientul Supabase nu este încărcat
+        // TODO-FINAL: de scos la curățenie
+        fallbackLoadNewsJson();
+        return;
+    }
+
+    try {
+        const { data, error } = await client
+            .from('stiri')
+            .select('id, titlu, continut, imagine_url, data_publicare')
+            .order('data_publicare', { ascending: false });
+
+        if (error || !data || data.length === 0) {
+            // Dacă tabela stiri este goală sau cererea dă eroare, afișăm știrile locale
+            // TODO-FINAL: de scos la curățenie
+            fallbackLoadNewsJson();
+            return;
+        }
+
+        ugrData.newsList = data.map(item => ({
+            scope: 'local',
+            scopeLabel: '[ACTIVITATE LOCALĂ FILIALA SECTOR 1]',
+            category: 'Eveniment Oficial',
+            title: item.titlu,
+            desc: item.continut,
+            location: 'București',
+            date: item.data_publicare ? formatNewsDate(item.data_publicare) : '2026',
+            source: { org: 'Filiala Sector 1', url: '#contact' },
+            image: item.imagine_url || 'ugr-images/united_1384.png',
+            actionText: 'Detalii ↗'
+        }));
+        renderNewsBento();
+    } catch (err) {
+        // TODO-FINAL: de scos la curățenie
+        fallbackLoadNewsJson();
+    }
+}
+
+function fallbackLoadNewsJson() {
+    // TODO-FINAL: de scos la curățenie
+    fetch('content/news.json')
+        .then(r => r.ok ? r.json() : null)
+        .then(d => {
+            if (d && Array.isArray(d.news) && d.news.length > 0) {
+                ugrData.newsList = d.news.map(item => ({
+                    scope: item.scope || (item.category && item.category.toLowerCase().includes('local') ? 'local' : 'national'),
+                    scopeLabel: item.scopeLabel || (item.category && item.category.toLowerCase().includes('local') ? '[ACTIVITATE LOCALĂ FILIALA SECTOR 1]' : '[EVENIMENT NAȚIONAL UGR / FIG / CLGE]'),
+                    category: item.category || 'Eveniment Oficial',
+                    title: item.title,
+                    desc: item.desc,
+                    location: item.location || 'București',
+                    date: item.date || '2026',
+                    source: item.actionUrl ? { org: 'Link Detalii', url: item.actionUrl } : { org: 'Filiala Sector 1', url: '#contact' },
+                    image: item.image || 'ugr-images/united_1384.png',
+                    actionText: item.actionText || 'Detalii & Înscriere ↗'
+                }));
+                renderNewsBento();
+            }
+        })
+        .catch(() => {});
+}
+
+function formatNewsDate(dateStr) {
+    try {
+        const d = new Date(dateStr);
+        if (isNaN(d.getTime())) return dateStr;
+        return d.toLocaleDateString('ro-RO', { day: 'numeric', month: 'long', year: 'numeric' });
+    } catch {
+        return dateStr;
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// 11.3 TELEMETRIE ANONIMĂ ȘI VIZITE (GDPR COMPLIANT)
+// ═══════════════════════════════════════════════════════════════════════════
+
+let visitLogged = false;
+let visitRetryCount = 0;
+
+let inMemorySessionId = null;
+
+function getSessionId() {
+    if (inMemorySessionId) return inMemorySessionId;
+    try {
+        const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+        let rand = '';
+        if (typeof crypto !== 'undefined' && crypto.getRandomValues) {
+            const bytes = new Uint8Array(24);
+            crypto.getRandomValues(bytes);
+            for (let i = 0; i < 24; i++) {
+                rand += chars[bytes[i] % chars.length];
+            }
+        } else {
+            for (let i = 0; i < 24; i++) {
+                rand += chars[Math.floor(Math.random() * chars.length)];
+            }
+        }
+        inMemorySessionId = 's_' + rand;
+        return inMemorySessionId;
+    } catch {
+        let randFallback = '';
+        const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+        for (let i = 0; i < 24; i++) {
+            randFallback += chars[Math.floor(Math.random() * chars.length)];
+        }
+        inMemorySessionId = 's_' + randFallback;
+        return inMemorySessionId;
+    }
+}
+
+function getCurrentPage() {
+    try {
+        const path = window.location.pathname || '/';
+        return path.substring(0, 200);
+    } catch {
+        return '/';
+    }
+}
+
+function getSanitizedReferrer() {
+    try {
+        if (!document.referrer) return null;
+        const refUrl = new URL(document.referrer);
+        const origin = refUrl.origin;
+        return origin ? origin.substring(0, 200) : null;
+    } catch {
+        return null;
+    }
+}
+
+function detectDeviceType() {
+    try {
+        const width = window.innerWidth || (typeof screen !== 'undefined' && screen.width) || 1024;
+        if (width < 768) return 'mobil';
+        if (width <= 1024) return 'tableta';
+        return 'desktop';
+    } catch {
+        return 'desktop';
+    }
+}
+
+function logPageVisit() {
+    if (visitLogged) return;
+    try {
+        const client = getSupabaseClient();
+        if (!client) {
+            if (visitRetryCount++ < 10) {
+                setTimeout(logPageVisit, 600);
+            }
+            return;
+        }
+        visitLogged = true;
+
+        const sesiune = getSessionId();
+        const pagina = getCurrentPage();
+        const referrer = getSanitizedReferrer();
+        const dispozitiv = detectDeviceType();
+
+        // Fire-and-forget: fără .select(), erorile nu afectează utilizatorul
+        client.from('vizite').insert([{
+            pagina: pagina,
+            referrer: referrer,
+            dispozitiv: dispozitiv,
+            sesiune: sesiune
+        }]).then(() => {}).catch(() => {});
+    } catch {
+        // Ignorăm orice eroare
+    }
+}
+
+function logTelemetryEvent(tipEveniment) {
+    try {
+        if (!tipEveniment || typeof tipEveniment !== 'string') return;
+        const client = getSupabaseClient();
+        if (!client) return;
+
+        const sesiune = getSessionId();
+        const pagina = getCurrentPage();
+
+        // Fire-and-forget: fără .select(), erorile nu afectează utilizatorul
+        client.from('evenimente').insert([{
+            tip: tipEveniment.substring(0, 50),
+            pagina: pagina,
+            sesiune: sesiune
+        }]).then(() => {}).catch(() => {});
+    } catch {
+        // Ignorăm orice eroare
+    }
+}
+
 
