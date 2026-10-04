@@ -51,6 +51,8 @@ collections:
               - { label: "Perioadă / Dată", name: "date", widget: "string" }
               - { label: "Locație", name: "location", widget: "string" }
               - { label: "Descriere / Detalii", name: "desc", widget: "text" }
+              - { label: "Imagine Eveniment", name: "image", widget: "image", required: false, default: "ugr-images/united_1384.png" }
+              - { label: "Anvergură / Tip", name: "scope", widget: "select", options: ["local", "national"], default: "local" }
               - { label: "Link Înregistrare / Info", name: "actionUrl", widget: "string", required: false }
               - { label: "Text Buton", name: "actionText", widget: "string", default: "Detalii & Înscriere ↗", required: false }
 

@@ -1971,38 +1971,57 @@ document.addEventListener('DOMContentLoaded', () => {
     renderDocuments();
     renderFaq();
 
-    // Sincronizare live în timp real din Sanity CMS Cloud (Project ID: 69fv2ww6)
-    try {
-        const sanityQuery = encodeURIComponent('*[_type == "member"] | order(memberId asc)');
-        const sanityUrl = `https://69fv2ww6.api.sanity.io/v2023-01-01/data/query/production?query=${sanityQuery}`;
-        fetch(sanityUrl)
-            .then(res => res.ok ? res.json() : null)
-            .then(data => {
-                if (data && Array.isArray(data.result) && data.result.length > 0) {
-                    const mapped = data.result.map(m => ({
-                        id: m.memberId || m._id,
-                        name: m.name,
-                        judet: m.judet,
-                        auth: m.auth,
-                        categorie: m.categorie || 'Categoria A',
-                        status: m.status || 'Activ'
-                    }));
-                    ugrData.membersList = mapped;
-                    renderMembersTable(mapped);
-                }
-            })
-            .catch(() => {
-                fetch('content/members.json')
-                    .then(r => r.ok ? r.json() : null)
-                    .then(d => {
-                        if (d && Array.isArray(d.members)) {
-                            ugrData.membersList = d.members;
-                            renderMembersTable(d.members);
-                        }
-                    })
-                    .catch(() => {});
-            });
-    } catch (_) {}
+    // ═══════════════════════════════════════════════════════════════════════════
+    // Sincronizare automată date din Panoul de Administrare (content/*.json)
+    // ═══════════════════════════════════════════════════════════════════════════
+    // 1. Membri activi din Registru
+    fetch('content/members.json')
+        .then(r => r.ok ? r.json() : null)
+        .then(d => {
+            if (d && Array.isArray(d.members) && d.members.length > 0) {
+                ugrData.membersList = d.members;
+                renderMembersTable(d.members);
+            }
+        })
+        .catch(() => {});
+
+    // 2. Știri și Evenimente
+    fetch('content/news.json')
+        .then(r => r.ok ? r.json() : null)
+        .then(d => {
+            if (d && Array.isArray(d.news) && d.news.length > 0) {
+                ugrData.newsList = d.news.map(item => ({
+                    scope: item.scope || (item.category && item.category.toLowerCase().includes('local') ? 'local' : 'national'),
+                    scopeLabel: item.scopeLabel || (item.category && item.category.toLowerCase().includes('local') ? '[ACTIVITATE LOCALĂ FILIALA SECTOR 1]' : '[EVENIMENT NAȚIONAL UGR / FIG / CLGE]'),
+                    category: item.category || 'Eveniment Oficial',
+                    title: item.title,
+                    desc: item.desc,
+                    location: item.location || 'București',
+                    date: item.date || '2026',
+                    source: item.actionUrl ? { org: 'Link Detalii', url: item.actionUrl } : { org: 'Filiala Sector 1', url: '#contact' },
+                    image: item.image || 'ugr-images/united_1384.png',
+                    actionText: item.actionText || 'Detalii & Înscriere ↗'
+                }));
+                renderNewsBento();
+            }
+        })
+        .catch(() => {});
+
+    // 3. Date Instituționale & Contact
+    fetch('content/organization.json')
+        .then(r => r.ok ? r.json() : null)
+        .then(d => {
+            if (d && typeof d === 'object') {
+                if (d.name) ugrData.organization.name = d.name;
+                if (d.email) ugrData.organization.email = d.email;
+                if (d.phonePresident) ugrData.organization.phonePresident = d.phonePresident;
+                if (d.phoneSecretary) ugrData.organization.phoneSecretary = d.phoneSecretary;
+                if (d.academicCenterAddress) ugrData.organization.academicCenterAddress = d.academicCenterAddress;
+                if (d.cotizatiiContact) ugrData.organization.cotizatiiContact = d.cotizatiiContact;
+                if (d.phoneCotizatii) ugrData.organization.phoneCotizatii = d.phoneCotizatii;
+            }
+        })
+        .catch(() => {});
 
     window.addEventListener('hashchange', handleHashChange);
     handleHashChange();
