@@ -904,6 +904,21 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- 3. STIRI DIN PANOUL CMS (Supabase) -->
+                <!-- Containerul 'news-bento-container' este tinta functiei
+                     renderNewsBento() din script.js. Fara el, stirile se citesc
+                     din baza de date dar nu au unde fi afisate. -->
+                <div class="events-news-section scroll-reveal reveal-left">
+                    <div class="events-tag-cyan">COMUNICATE &amp; ȘTIRI</div>
+                    <h3 class="events-section-title">Noutăți de la Filiala Sector 1</h3>
+                    <p class="events-section-sub">
+                        Mesajele oficiale publicate prin panoul administrativ. Ordonate de la cele mai recente.
+                    </p>
+                    <div class="bento-grid" id="news-bento-container">
+                        <!-- Cardurile sunt generate automat din script.js -->
+                    </div>
+                </div>
             </section></div>
 
         <!-- ================= 4. SECȚIUNE MEMBRI & ADEZIUNE (VARIANTA 4: MAGIC UI FINAL) ================= -->
