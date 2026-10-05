@@ -83,13 +83,24 @@ Panoul de administrare a fost proiectat conform standardelor internaționale de 
 ├── style.css                # Sistemul de design instituțional și stilurile vizuale
 ├── data.js                  # Date structurate secundare (repere geodezice, FAQ)
 ├── borders.js               # Coordonate vectoriale pentru harta Sector 1
+├── demos-faq.html           # Secțiunea FAQ & Contact (legată din index.html)
+├── demos-membri.html        # Registrul membrilor și procedura de aderare
+├── showcase/                # Calculatorul Stereo 70 + cele 5 variante de design
 ├── admin/
 │   ├── panou.html           # Panoul administrativ complet (CMS Studio v3.0, AAL2 TOTP, Telemetrie)
+│   ├── config.yml           # Configurare Sveltia Git CMS
 │   └── index.html           # Punct de acces administrativ și redirecționare securizată
+├── content/                 # Cache local JSON (membri, știri, organizație)
 ├── import_stiri.sql         # Script SQL pentru inițializarea și sincronizarea articolelor
 ├── documente/               # Statutul UGR și formularele tip de înscriere
-└── ugr-images/              # Active grafice și fotografii oficiale de arhivă
+├── ugr-images/              # Active grafice și fotografii oficiale de arhivă
+└── _archive/                # Istoric și experimente nepublicate (NU sunt servite)
 ```
+
+> **Notă despre `_archive/`** — conține versiuni anterioare ale site-ului (`demo-v2/`,
+> `ugr-variants/`, `backup/`) și scripturi de dezvoltare. Folderul este exclus din
+> `robots.txt` și nu este legat din nicio pagină publică. Nu modifica nimic acolo.
+> Vezi [`_archive/README.md`](_archive/README.md).
 
 ---
 
@@ -109,6 +120,7 @@ Panoul de administrare a fost proiectat conform standardelor internaționale de 
 3. Accesați în browser:
    * Portal Public: `http://localhost:8080/index.html`
    * Panou Administrativ: `http://localhost:8080/admin/panou.html`
+   * Calculator Stereo 70: `http://localhost:8080/showcase/demos-calculator.html`
 
 ---
 
