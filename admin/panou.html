@@ -5482,29 +5482,70 @@
                 }
 
                 try {
-                    // Dacă există deja știri în BD, întrebăm pentru confirmare
-                    if (allNewsData.length > 0) {
-                        const confirmSync = confirm(`Există deja ${allNewsData.length} articole în baza de date. Doriți să adăugați cele 9 comunicate oficiale din site?`);
-                        if (!confirmSync) {
-                            if (btnTrigger) {
-                                btnTrigger.disabled = false;
-                                btnTrigger.textContent = '📥 Sincronizează știri locale';
-                            }
-                            return;
-                        }
+                    // ─────────────────────────────────────────────────────
+                    // PROTECȚIE ANTI-DUPLICATE (2026-10-05)
+                    // ─────────────────────────────────────────────────────
+                    // Problema: inserarea era necondiționată, deci fiecare
+                    // apăsare a butonului adăuga încă 9 știri. Rezultatul a
+                    // fost 27 de rânduri din 9 știri distincte.
+                    //
+                    // Corectura: citim titlurile deja existente și inserăm
+                    // DOAR știrile care lipsesc. Butonul poate fi apăsat
+                    // de oricâte ori, fără să producă duplicate.
+                    // ─────────────────────────────────────────────────────
+                    const { data: existente, error: errRead } = await client
+                        .from('stiri')
+                        .select('titlu');
+
+                    if (errRead) {
+                        showToast('Eroare la citirea știrilor existente: ' + errRead.message, 'error');
+                        return;
                     }
 
-                    // Inserare cele 9 știri oficiale
+                    const titluriExistente = new Set(
+                        (existente || []).map(r => (r.titlu || '').trim().toLowerCase())
+                    );
+
+                    const deAdaugat = OFFICIAL_FALLBACK_NEWS.filter(
+                        n => !titluriExistente.has((n.titlu || '').trim().toLowerCase())
+                    );
+
+                    const dejaPrezente = OFFICIAL_FALLBACK_NEWS.length - deAdaugat.length;
+
+                    if (deAdaugat.length === 0) {
+                        showToast(
+                            `✓ Toate cele ${OFFICIAL_FALLBACK_NEWS.length} de știri oficiale există deja. Nimic de adăugat.`,
+                            'success',
+                            4000
+                        );
+                        await loadNews();
+                        return;
+                    }
+
+                    // Informăm userul exact ce urmează să se întâmple,
+                    // înainte de a scrie în baza de date.
+                    if (!confirm(
+                        `Se vor adăuga ${deAdaugat.length} știri noi.\n` +
+                        `Deja existente și păstrate: ${dejaPrezente}\n\n` +
+                        `Continuați?`
+                    )) {
+                        return;
+                    }
+
                     const { error } = await client
                         .from('stiri')
-                        .insert(OFFICIAL_FALLBACK_NEWS);
+                        .insert(deAdaugat);
 
                     if (error) {
                         showToast('Eroare la sincronizarea știrilor: ' + error.message, 'error');
                         return;
                     }
 
-                    showToast('✓ 9 știri oficiale au fost sincronizate cu succes în Supabase!', 'success', 5000);
+                    const msg = dejaPrezente > 0
+                        ? `✓ ${deAdaugat.length} știri adăugate. ${dejaPrezente} deja existente au fost sărite (fără duplicate).`
+                        : `✓ ${deAdaugat.length} știri oficiale sincronizate cu succes!`;
+
+                    showToast(msg, 'success', 5000);
                     await loadNews();
                 } catch (err) {
                     showToast('Eroare de conexiune la sincronizarea știrilor.', 'error');
