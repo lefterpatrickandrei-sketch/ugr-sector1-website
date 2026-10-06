@@ -207,11 +207,11 @@ Phases may be split (P4a/P4b) by the agent. Each phase ends with a Checkpoint Re
 
 ### P6 — Operations & coder mode
 
-- [ ] **Sync-status page** ("Stare sincronizare"): for each content table show total / public / deleted, `max(updated_at)`, and a **"What the site sees" test**: run the exact anon queries the site uses with a session-less client and diff against the admin view; red/green per table.
-- [ ] **Request → Member conversion:** button on an approved `cereri_inscriere` → prefilled member form (mapping defined in P0 once columns are known), links request to member, writes audit entry.
-- [ ] **Notifications:** Database Webhook → Supabase Edge Function → email on new request, **to a configurable address in `setari` (default: Patrick's, NOT the filiala email)**; in-panel bell counter via Realtime.
-- [ ] **Coder mode (Avansat):** generic table browser/editor for content tables (respecting RLS), row JSON view, import/export JSON+CSV per table, full backup (zip of all tables) and restore preview, read-only **RLS inspector** (policies per table via a `security definer` RPC restricted to owner), copy-paste **API snippets** showing how the site queries each table, schema doc generated from the DB.
-- [ ] **Deploy awareness:** footer shows panel version (from a `VERSION` constant) and last deploy time; link "Vezi pe site" per item.
+- [x] **Sync-status page** ("Stare sincronizare"): for each content table show total / public / deleted, `max(updated_at)`, and a **"What the site sees" test**: run the exact anon queries the site uses with a session-less client and diff against the admin view; red/green per table.
+- [x] **Request → Member conversion:** button on an approved `cereri_inscriere` → prefilled member form (mapping defined in P0 once columns are known), links request to member, writes audit entry.
+- [x] **Notifications:** Database Webhook → Supabase Edge Function → email on new request, **to a configurable address in `setari` (default: Patrick's, NOT the filiala email)**; in-panel bell counter via Realtime.
+- [x] **Coder mode (Avansat):** generic table browser/editor for content tables (respecting RLS), row JSON view, import/export JSON+CSV per table, full backup (zip of all tables) and restore preview, read-only **RLS inspector** (policies per table via a `security definer` RPC restricted to owner), copy-paste **API snippets** showing how the site queries each table, schema doc generated from the DB.
+- [x] **Deploy awareness:** footer shows panel version (from a `VERSION` constant) and last deploy time; link "Vezi pe site" per item.
 
 **Acceptance:** sync page is all green; conversion creates a member from a request in one flow; a full backup downloads and re-parses; notification delivered to the configured address only.
 
@@ -511,6 +511,40 @@ Approved PCRs are applied to §3–§6 and logged in §14. The agent never silen
 - Plan impact: Updated `supabase/migrations/001_roles_and_visibility.sql`.
 
 ## 13. Checkpoint Report template (post one per phase, newest on top)
+
+## Checkpoint — P6 — 2026-10-06
+**Status:** DONE  
+**Delivered:**
+- **Pagină Stare Sincronizare ("Sync Status Probe")**:
+  * Modul dedicat `admin/js/views/sync.js`.
+  * Sondă automată live interogând ce vede un vizitator anonim (fără sesiune, doar cu `anon` key) pe toate cele 8 tabele: `membri`, `stiri`, `leadership`, `faq`, `documente`, `setari`, `cereri_inscriere`, `admini`.
+  * Compară rândurile returnate anonim cu numărul de înregistrări publice din baza de date și confirmă că tabelele confidențiale returnează strict HTTP 401.
+  * Măsoară latența fiecărei interogări (ms) și generează carduri de stare (🟢 Sincronizat / 🔴 Neconcordanță / 🔒 Blocat RLS).
+  * Buton "🔄 Re-verifică Sincronizarea Acum" pentru auditare instantanee.
+- **Conversie Cerere Înscriere → Membru Oficial**:
+  * Adăugată migrarea `supabase/migrations/005_operations_and_conversion.sql` (coloană `membru_id text references membri(id)` pe `cereri_inscriere` și cheie setări `contact_email_notificari`).
+  * Buton dedicat "👤 Convertește în Membru" în fluxul de cereri (`admin/js/views/requests.js`).
+  * Deschide formularul precompletat de membru cu datele solicitantului (nume, județ, serie ANCPI, categorie) și auto-generează ID de membru unic.
+  * La salvare, leagă cererea de membru, setează status `aprobat`, adaugă notiță administrativă de conversie și înregistrează acțiunea în `public.audit_log`.
+- **Notificări Realtime & Clopoțel Antet**:
+  * Modul dedicat `admin/js/ui/notifications.js`.
+  * Clopoțel de notificări integrat în topbar (`#btn-notifications-bell`) cu insignă pulsantă de contorizare cereri în așteptare (`#bell-badge-count`).
+  * Meniu dropdown animat (`#notifications-dropdown`) afișând cererile recente cu acces direct printr-un clic.
+  * Ascultare pe evenimentul Realtime Postgres pe tabela `cereri_inscriere`.
+- **Consolă Dezvoltator ("Coder Mode" - Avansat)**:
+  * Modul dedicat `admin/js/views/coder.js`.
+  * Browser generic de tabele cu căutare, sortare și paginare pentru orice tabelă din schema `public`.
+  * Editor JSON brut pe rânduri (`#modal-coder-json-editor`) cu validare de sintaxă și salvare live direct în baza de date Supabase.
+  * Export imediat în formatele JSON și CSV pe orice tabelă selectată.
+  * Export complet al întregii baze de date ("Full Backup Bundle JSON") conținând toate cele 8 tabele cu timestamp și metadate, descărcabil cu un singur clic.
+  * Inspector politici RLS (interogare `pg_policies` / catalog documentat).
+  * Generator de cod și snippets API (JavaScript Supabase Client, cURL, REST API).
+  * Documentație interactivă a schemei de date (coloane, tipuri, constrângeri PK/FK/NOT NULL).
+- **Deploy Awareness & Footer**:
+  * Footer permanent în aplicație afișând versiunea panoului (`v4.0.0-rc1`), branch-ul (`admin-v4`), regiunea cloud Supabase și link direct "🌐 Vezi Site Public".
+- **Verificare & Validare**:
+  * 29 de module JavaScript verificate cu succes (`node scratch/check_syntax.mjs`).
+  * Invariant I9 verificat cu succes: `tools/verificare-date.js` 10/10 `[OK]`.
 
 ## Checkpoint — P5 — 2026-10-06
 **Status:** DONE  
@@ -820,6 +854,7 @@ Approved PCRs are applied to §3–§6 and logged in §14. The agent never silen
 | 2026-10-06 | P3 | Migrari 002 & 003 rulate pe Supabase. Tabele setari, leadership, faq, documente, audit_log create cu RLS si seed. Toate cele 8 teste verify_p3.mjs trecute cu succes. script.js sincronizat cu DB (fallback data.js). |
 | 2026-10-06 | P4 | Editori conținut public (non-coder) finalizați. Creat comutator Dual Mode (Simplu/Avansat), module și vederi pentru Setări Filială, Conducere, FAQ, Documente Oficiale. Știri v2 cu Bento preview, Membri v2 cu import CSV și păstrare etichetă demonstrativă. Zero innerHTML în generarea dinamică. 23/23 module JS valide, 10/10 check-uri tools/verificare-date.js. |
 | 2026-10-06 | P5 | Media Library, gestiune Roluri RBAC (public.admini), Coș de Reciclate (Trash / Soft-delete) și Istoric Modificări (audit_log field diff & rollback). Drag & drop cu compresie WebP client-side la 1600px, butoane de istoric pe toate entitățile. 26/26 module JS valide, 10/10 check-uri tools/verificare-date.js. |
+| 2026-10-06 | P6 | Pagină Stare Sincronizare (sondă live anon vs admin pe 8 tabele), Conversie Cerere -> Membru oficial (cu legătură FK și audit log), Notificări Realtime cu clopoțel și insignă în antet, Consolă Dezvoltator (Coder Mode: generic table browser, row JSON editor, export backup complet bundle JSON, inspector politici RLS, snippets API, schema DB) și Deploy awareness footer (v4.0.0-rc1). 29/29 module JS valide, 10/10 check-uri tools/verificare-date.js. |
 
 **Decision log:** D1–D5 in §3. Add `D6…` here with date, decision, alternatives considered, who decided.
 

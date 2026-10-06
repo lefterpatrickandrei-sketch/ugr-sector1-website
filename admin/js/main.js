@@ -105,6 +105,18 @@ import {
     openItemHistoryModal,
     closeItemHistoryModal
 } from './views/history.js';
+import { loadSyncStatus } from './views/sync.js';
+import {
+    loadCoderView,
+    loadCoderTableData,
+    openCoderJsonEditorModal,
+    closeCoderJsonEditorModal,
+    handleSaveCoderJson,
+    exportCurrentTableJson,
+    exportCurrentTableCsv,
+    handleExportFullBackup
+} from './views/coder.js';
+import { initNotifications, updateNotificationBadge } from './ui/notifications.js';
 import { initUiMode } from './ui/mode.js';
 import {
     updateBulkActionsBar,
@@ -152,6 +164,7 @@ registerPaletteActions({
     handleSyncDefaultNews,
     exportMembersToCsv,
     exportRequestsToCsv,
+    handleExportFullBackup,
     openMediaPickerModal,
     openAdminProfileModal,
     handleSignOut
@@ -799,6 +812,61 @@ document.addEventListener('DOMContentLoaded', () => {
         else if (table === 'setari') loadSettings();
     });
 
+    // ─── P6: NOTIFICĂRI & REALTIME BELL ──────────────────────────────
+    initNotifications();
+
+    // ─── P6: SYNC STATUS ─────────────────────────────────────────────
+    const btnRefreshSync = document.getElementById('btn-refresh-sync');
+    if (btnRefreshSync) {
+        btnRefreshSync.addEventListener('click', loadSyncStatus);
+    }
+
+    // ─── P6: CODER MODE & DEV TOOLS ──────────────────────────────────
+    const coderTableSelect = document.getElementById('coder-table-select');
+    if (coderTableSelect) {
+        coderTableSelect.addEventListener('change', (e) => {
+            loadCoderTableData(e.target.value);
+        });
+    }
+
+    const btnRefreshCoderTable = document.getElementById('btn-refresh-coder-table');
+    if (btnRefreshCoderTable) {
+        btnRefreshCoderTable.addEventListener('click', () => {
+            const tbl = coderTableSelect ? coderTableSelect.value : 'membri';
+            loadCoderTableData(tbl);
+        });
+    }
+
+    const btnCoderExportJson = document.getElementById('btn-coder-export-json');
+    if (btnCoderExportJson) {
+        btnCoderExportJson.addEventListener('click', exportCurrentTableJson);
+    }
+
+    const btnCoderExportCsv = document.getElementById('btn-coder-export-csv');
+    if (btnCoderExportCsv) {
+        btnCoderExportCsv.addEventListener('click', exportCurrentTableCsv);
+    }
+
+    const btnExportFullBackup = document.getElementById('btn-export-full-backup');
+    if (btnExportFullBackup) {
+        btnExportFullBackup.addEventListener('click', handleExportFullBackup);
+    }
+
+    const modalCoderJsonClose = document.getElementById('modal-coder-json-close');
+    if (modalCoderJsonClose) {
+        modalCoderJsonClose.addEventListener('click', closeCoderJsonEditorModal);
+    }
+
+    const modalCoderJsonCancel = document.getElementById('modal-coder-json-cancel');
+    if (modalCoderJsonCancel) {
+        modalCoderJsonCancel.addEventListener('click', closeCoderJsonEditorModal);
+    }
+
+    const btnSaveCoderJson = document.getElementById('btn-save-coder-json');
+    if (btnSaveCoderJson) {
+        btnSaveCoderJson.addEventListener('click', handleSaveCoderJson);
+    }
+
     // Tastatură globală (Ctrl+K, Escape)
     window.addEventListener('keydown', (e) => {
         if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
@@ -825,6 +893,7 @@ document.addEventListener('DOMContentLoaded', () => {
             closePurgeModal();
             closeAddAdminModal();
             closeItemHistoryModal();
+            closeCoderJsonEditorModal();
         }
     });
 

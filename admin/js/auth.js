@@ -16,6 +16,8 @@ import { loadFaq } from './views/faq.js';
 import { loadDocuments } from './views/documents.js';
 import { loadTrash } from './views/trash.js';
 import { loadAdmins } from './views/roles.js';
+import { loadSyncStatus } from './views/sync.js';
+import { loadCoderView } from './views/coder.js';
 
 export function getPanelRedirectUrl() {
     if (window.location.protocol.startsWith('http')) {
@@ -73,7 +75,9 @@ export function switchView(viewName) {
         faq: document.getElementById('view-faq'),
         documents: document.getElementById('view-documents'),
         trash: document.getElementById('view-trash'),
-        roles: document.getElementById('view-roles')
+        roles: document.getElementById('view-roles'),
+        sync: document.getElementById('view-sync'),
+        coder: document.getElementById('view-coder')
     };
 
     Object.keys(viewPanels).forEach(k => {
@@ -94,7 +98,9 @@ export function switchView(viewName) {
         faq: 'Întrebări Frecvente',
         documents: 'Documente Oficiale',
         trash: 'Coș de Reciclate',
-        roles: 'Roluri & Acces (RBAC)'
+        roles: 'Roluri & Acces (RBAC)',
+        sync: 'Stare Sincronizare',
+        coder: 'Consolă Dezvoltator (Avansat)'
     };
     if (breadcrumbCurrentLabel) {
         breadcrumbCurrentLabel.textContent = labels[viewName] || 'Panou';
@@ -126,6 +132,10 @@ export function switchView(viewName) {
         loadTrash();
     } else if (viewName === 'roles') {
         loadAdmins();
+    } else if (viewName === 'sync') {
+        loadSyncStatus();
+    } else if (viewName === 'coder') {
+        loadCoderView();
     }
 
     updateBulkActionsBar();

@@ -2464,3 +2464,458 @@
             font-family: 'Space Mono', monospace;
             font-size: 11.5px;
         }
+
+        /* ─── P6: NOTIFICATIONS BELL & DROPDOWN ─────────────────────── */
+        .notifications-bell-wrap {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .btn-bell-toggle {
+            position: relative;
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid var(--border-subtle);
+            color: var(--text-main);
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-bell-toggle:hover {
+            border-color: var(--cyan);
+            color: var(--cyan);
+            background: rgba(0, 242, 254, 0.1);
+        }
+
+        .bell-badge {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            background: #ef4444;
+            color: #ffffff;
+            font-size: 10px;
+            font-weight: 700;
+            min-width: 18px;
+            height: 18px;
+            padding: 0 4px;
+            border-radius: 10px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 8px rgba(239, 68, 68, 0.6);
+            animation: pulseBadge 2s infinite;
+        }
+
+        @keyframes pulseBadge {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.15); }
+        }
+
+        .notifications-dropdown {
+            position: absolute;
+            top: calc(100% + 10px);
+            right: 0;
+            width: 340px;
+            background: #061124;
+            border: 1px solid var(--border-strong);
+            border-radius: 14px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), 0 0 20px var(--cyan-glow);
+            z-index: 1000;
+            overflow: hidden;
+            animation: notifFadeIn 0.2s ease-out;
+        }
+
+        @keyframes notifFadeIn {
+            from { opacity: 0; transform: translateY(-8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .notifications-dropdown-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border-subtle);
+            background: rgba(8, 24, 48, 0.7);
+        }
+
+        .notif-dropdown-title {
+            font-weight: 600;
+            font-size: 13.5px;
+            color: #ffffff;
+        }
+
+        .notifications-list {
+            max-height: 320px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .notif-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 12px 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            transition: background 0.15s ease;
+        }
+
+        .notif-item:hover {
+            background: rgba(0, 242, 254, 0.05);
+        }
+
+        .notif-item-icon {
+            font-size: 18px;
+            margin-top: 2px;
+        }
+
+        .notif-item-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .notif-item-title {
+            font-size: 12.5px;
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 2px;
+        }
+
+        .notif-item-desc {
+            font-size: 12px;
+            color: var(--text-muted);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .notif-item-time {
+            font-size: 11px;
+            color: var(--text-subtle);
+            margin-top: 4px;
+        }
+
+        .notifications-dropdown-footer {
+            padding: 10px 16px;
+            text-align: center;
+            background: rgba(8, 24, 48, 0.5);
+            border-top: 1px solid var(--border-subtle);
+        }
+
+        .notif-empty-state {
+            padding: 28px 16px;
+            text-align: center;
+        }
+
+        /* ─── P6: SYNC STATUS HERO & GRID ───────────────────────────── */
+        .sync-hero-card {
+            display: flex;
+            align-items: flex-start;
+            gap: 20px;
+            padding: 24px;
+            border-radius: 14px;
+            border: 1px solid var(--border-subtle);
+            background: var(--bg-card);
+            margin-bottom: 24px;
+        }
+
+        .sync-hero-card.status-all-green {
+            border-color: rgba(16, 185, 129, 0.4);
+            background: linear-gradient(135deg, rgba(6, 17, 36, 0.95), rgba(16, 185, 129, 0.08));
+        }
+
+        .sync-hero-card.status-warning {
+            border-color: rgba(245, 158, 11, 0.4);
+            background: linear-gradient(135deg, rgba(6, 17, 36, 0.95), rgba(245, 158, 11, 0.08));
+        }
+
+        .sync-hero-icon {
+            font-size: 40px;
+            line-height: 1;
+        }
+
+        .sync-hero-content {
+            flex: 1;
+        }
+
+        .sync-hero-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #ffffff;
+            margin: 0 0 6px;
+        }
+
+        .sync-hero-desc {
+            font-size: 13.5px;
+            color: var(--text-muted);
+            margin: 0 0 16px;
+            line-height: 1.5;
+        }
+
+        .sync-hero-stats {
+            display: flex;
+            gap: 24px;
+            flex-wrap: wrap;
+        }
+
+        .sync-stat-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sync-stat-item .stat-num {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--cyan);
+            font-family: 'Space Mono', monospace;
+        }
+
+        .sync-stat-item .stat-label {
+            font-size: 11.5px;
+            color: var(--text-subtle);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .sync-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+            gap: 16px;
+        }
+
+        .sync-table-card {
+            padding: 20px;
+            border-radius: 12px;
+            background: var(--bg-card);
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .sync-table-card.border-success {
+            border: 1px solid rgba(16, 185, 129, 0.35);
+        }
+
+        .sync-table-card.border-danger {
+            border: 1px solid rgba(239, 68, 68, 0.45);
+        }
+
+        .sync-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .sync-card-title-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .sync-table-name {
+            font-size: 15px;
+            font-weight: 700;
+            color: #ffffff;
+            margin: 0;
+        }
+
+        .sync-metrics-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px 14px;
+            background: rgba(3, 11, 23, 0.5);
+            padding: 12px 14px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .sync-metric {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12.5px;
+        }
+
+        .sync-metric .metric-label {
+            color: var(--text-muted);
+        }
+
+        .sync-metric .metric-val {
+            font-family: 'Space Mono', monospace;
+            font-weight: 600;
+        }
+
+        .sync-probe-details {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            font-size: 12px;
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
+
+        .sync-probe-details .probe-icon {
+            font-weight: bold;
+            color: var(--cyan);
+        }
+
+        .sync-card-footer {
+            font-size: 11px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding-top: 8px;
+        }
+
+        /* ─── P6: CODER MODE & DEV TOOLS ────────────────────────────── */
+        .badge-coder {
+            background: rgba(168, 85, 247, 0.15);
+            color: #c084fc;
+            border: 1px solid rgba(168, 85, 247, 0.4);
+            font-size: 10px;
+            font-weight: 700;
+            padding: 2px 6px;
+            border-radius: 6px;
+        }
+
+        .coder-nav-tabs {
+            display: flex;
+            gap: 8px;
+            border-bottom: 1px solid var(--border-subtle);
+            margin-bottom: 20px;
+            overflow-x: auto;
+            padding-bottom: 2px;
+        }
+
+        .coder-tab-btn {
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid transparent;
+            color: var(--text-muted);
+            padding: 10px 16px;
+            font-size: 13.5px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .coder-tab-btn:hover {
+            color: #ffffff;
+        }
+
+        .coder-tab-btn.active {
+            color: var(--cyan);
+            border-bottom-color: var(--cyan);
+        }
+
+        .coder-toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+            background: rgba(8, 24, 48, 0.4);
+            padding: 12px 16px;
+            border-radius: 10px;
+            border: 1px solid var(--border-subtle);
+        }
+
+        .coder-toolbar-left, .coder-toolbar-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .coder-grid-table th, .coder-grid-table td {
+            font-size: 12px;
+            padding: 8px 12px;
+            white-space: nowrap;
+        }
+
+        .snippet-card, .schema-card {
+            margin-bottom: 16px;
+            padding: 20px;
+            border-radius: 12px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+        }
+
+        .snippet-title, .schema-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: #ffffff;
+            margin: 0 0 6px;
+        }
+
+        .snippet-code-block {
+            background: #030a16;
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            padding: 14px;
+            overflow-x: auto;
+            font-family: 'Space Mono', monospace;
+            font-size: 12px;
+            color: #38bdf8;
+            margin: 10px 0;
+            line-height: 1.5;
+        }
+
+        /* ─── P6: DEPLOY AWARENESS FOOTER ───────────────────────────── */
+        .cms-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 24px;
+            border-top: 1px solid var(--border-subtle);
+            background: rgba(6, 17, 36, 0.85);
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: auto;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .footer-left, .footer-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .version-badge {
+            font-family: 'Space Mono', monospace;
+            font-weight: 700;
+            font-size: 11px;
+            background: rgba(0, 242, 254, 0.12);
+            color: var(--cyan);
+            border: 1px solid rgba(0, 242, 254, 0.35);
+            padding: 2px 8px;
+            border-radius: 6px;
+        }
+
+        .branch-badge {
+            font-family: 'Space Mono', monospace;
+            font-size: 11px;
+            color: var(--text-subtle);
+            background: rgba(255, 255, 255, 0.05);
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        .footer-site-link {
+            color: var(--cyan);
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.15s ease;
+        }
+
+        .footer-site-link:hover {
+            color: #ffffff;
+            text-decoration: underline;
+        }

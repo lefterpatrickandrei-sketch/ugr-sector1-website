@@ -202,6 +202,13 @@
                     </div>
                 </button>
 
+                <button type="button" class="nav-link" data-view="sync">
+                    <div class="nav-link-content">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+                        <span>Stare Sincronizare</span>
+                    </div>
+                </button>
+
                 <button type="button" class="nav-link" data-view="trash">
                     <div class="nav-link-content">
                         <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
@@ -215,6 +222,14 @@
                         <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
                         <span>Roluri & Acces</span>
                     </div>
+                </button>
+
+                <button type="button" class="nav-link advanced-only" data-view="coder">
+                    <div class="nav-link-content">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+                        <span>Consolă Dezvoltator</span>
+                    </div>
+                    <span class="nav-badge-pill badge-coder">DEV</span>
                 </button>
             </nav>
 
@@ -270,10 +285,29 @@
 
                     <!-- INDICATOR REALTIME PREZENȚĂ -->
                     <div class="presence-pill">
-
                         <span class="admin-pulse-dot offline" id="topbar-live-dot" aria-hidden="true"></span>
                         <span id="topbar-live-count">—</span>
                         <span>vizitatori live</span>
+                    </div>
+
+                    <!-- CLOPOTEL NOTIFICĂRI REALTIME -->
+                    <div class="notifications-bell-wrap" id="notifications-bell-wrap">
+                        <button type="button" class="btn-bell-toggle" id="btn-notifications-bell" aria-label="Notificări" title="Notificări și cereri noi">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                            <span class="bell-badge" id="bell-badge-count" style="display: none;">0</span>
+                        </button>
+                        <div class="notifications-dropdown" id="notifications-dropdown" style="display: none;">
+                            <div class="notifications-dropdown-header">
+                                <span class="notif-dropdown-title">Notificări Recente</span>
+                                <span class="badge-tech" id="notif-dropdown-status">Realtime activ</span>
+                            </div>
+                            <div class="notifications-list" id="notifications-dropdown-list">
+                                <!-- Dynamic notifications -->
+                            </div>
+                            <div class="notifications-dropdown-footer">
+                                <button type="button" class="btn-link" id="btn-view-all-notifications">Mergi la Cereri Înscriere →</button>
+                            </div>
+                        </div>
                     </div>
 
                     <a href="../index.html" class="btn btn-secondary btn-sm" target="_blank" rel="noopener">
@@ -1166,9 +1200,132 @@
                         </table>
                     </div>
                 </section>
+
+                <!-- ══════════════════════════════════════════════════════════
+                     VEDERE 12: STARE SINCRONIZARE (SYNC STATUS PROBE)
+                     ══════════════════════════════════════════════════════════ -->
+                <section id="view-sync" class="view-panel">
+                    <div class="view-header">
+                        <div>
+                            <h2 class="view-header-title">Stare Sincronizare Site & Bază de Date</h2>
+                            <p class="view-header-desc">Sondă live automată: verifică ce vede un vizitator anonim pe site vs datele din Supabase.</p>
+                        </div>
+                        <div class="view-header-actions">
+                            <button type="button" id="btn-refresh-sync" class="btn btn-primary">🔄 Re-verifică Sincronizarea Acum</button>
+                        </div>
+                    </div>
+
+                    <div id="sync-summary-card"></div>
+                    <div id="sync-results-container" style="margin-top: 24px;"></div>
+                </section>
+
+                <!-- ══════════════════════════════════════════════════════════
+                     VEDERE 13: CONSOLĂ DEZVOLTATOR (CODER MODE - AVANSAT)
+                     ══════════════════════════════════════════════════════════ -->
+                <section id="view-coder" class="view-panel">
+                    <div class="view-header">
+                        <div>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <h2 class="view-header-title">Consolă Dezvoltator & Operațiuni</h2>
+                                <span class="badge-tech badge-coder">Mod Avansat</span>
+                            </div>
+                            <p class="view-header-desc">Browser generic de tabele, editor JSON brut, backup complet și inspecție politici de securitate RLS.</p>
+                        </div>
+                        <div class="view-header-actions">
+                            <button type="button" id="btn-export-full-backup" class="btn btn-primary">💾 Descarcă Backup Complet (Bundle JSON)</button>
+                        </div>
+                    </div>
+
+                    <div class="coder-nav-tabs">
+                        <button type="button" class="coder-tab-btn active" data-coder-tab="browser">📊 Browser Tabele & JSON</button>
+                        <button type="button" class="coder-tab-btn" data-coder-tab="rls">🛡️ Inspector Politici RLS</button>
+                        <button type="button" class="coder-tab-btn" data-coder-tab="snippets">📋 Snippets API</button>
+                        <button type="button" class="coder-tab-btn" data-coder-tab="schema">📖 Documentație Schemă DB</button>
+                    </div>
+
+                    <!-- Panel: Browser Tabele & JSON -->
+                    <div id="coder-panel-browser" class="coder-tab-panel" style="display: block;">
+                        <div class="coder-toolbar">
+                            <div class="coder-toolbar-left">
+                                <label for="coder-table-select" class="form-label" style="margin: 0;">Tabelă activă:</label>
+                                <select id="coder-table-select" class="form-select" style="width: auto; min-width: 220px;">
+                                    <option value="membri">public.membri (Registru)</option>
+                                    <option value="stiri">public.stiri (Comunicate)</option>
+                                    <option value="leadership">public.leadership (Conducere)</option>
+                                    <option value="faq">public.faq (Întrebări frecvente)</option>
+                                    <option value="documente">public.documente (Oficiale)</option>
+                                    <option value="setari">public.setari (Configurare)</option>
+                                    <option value="cereri_inscriere">public.cereri_inscriere (Confidențial)</option>
+                                    <option value="audit_log">public.audit_log (Jurnal istoric)</option>
+                                </select>
+                                <button type="button" id="btn-refresh-coder-table" class="btn btn-secondary btn-sm">↻ Reîncarcă</button>
+                            </div>
+                            <div class="coder-toolbar-right">
+                                <button type="button" id="btn-coder-export-json" class="btn btn-secondary btn-sm">Exportă JSON</button>
+                                <button type="button" id="btn-coder-export-csv" class="btn btn-secondary btn-sm">Exportă CSV</button>
+                            </div>
+                        </div>
+
+                        <div id="coder-table-container" style="margin-top: 16px;"></div>
+                    </div>
+
+                    <!-- Panel: Inspector Politici RLS -->
+                    <div id="coder-panel-rls" class="coder-tab-panel" style="display: none;">
+                        <div style="margin-bottom: 16px;">
+                            <p class="text-subtle">Politicile PostgreSQL Row Level Security (RLS) active pe schema <code>public</code>. Filtrează strict accesul clienților anonimi și administratorilor.</p>
+                        </div>
+                        <div id="coder-rls-container"></div>
+                    </div>
+
+                    <!-- Panel: Snippets API -->
+                    <div id="coder-panel-snippets" class="coder-tab-panel" style="display: none;">
+                        <div id="coder-snippets-container"></div>
+                    </div>
+
+                    <!-- Panel: Documentație Schemă DB -->
+                    <div id="coder-panel-schema" class="coder-tab-panel" style="display: none;">
+                        <div id="coder-schema-container"></div>
+                    </div>
+                </section>
             </div>
 
+            <!-- FOOTER DEPLOY AWARENESS & STATUS -->
+            <footer class="cms-footer" id="cms-footer">
+                <div class="footer-left">
+                    <span class="version-badge">v4.0.0-rc1</span>
+                    <span class="branch-badge">branch: admin-v4</span>
+                    <span class="text-subtle">• Supabase Cloud (Frankfurt EU)</span>
+                </div>
+                <div class="footer-right">
+                    <span class="text-subtle">Filiala UGR Sector 1 București</span>
+                    <a href="../index.html" class="footer-site-link" id="footer-live-link" target="_blank" rel="noopener">🌐 Vezi Site Public</a>
+                </div>
+            </footer>
+
         </main>
+    </div>
+
+    <!-- MODAL: EDITOR ROW JSON (CODER MODE) -->
+    <div id="modal-coder-json-editor" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-coder-json-title">
+        <div class="modal-box" style="max-width: 720px;">
+            <div class="modal-header">
+                <h3 id="modal-coder-json-title" class="modal-title">Editor JSON Brut</h3>
+                <button type="button" id="modal-coder-json-close" class="modal-close-btn" aria-label="Închide">✕</button>
+            </div>
+            <div class="modal-body">
+                <p class="text-subtle" style="margin-bottom: 12px; font-size: 13px;">
+                    Modifică proprietățile direct în JSON. La salvare, câmpurile vor fi actualizate în baza de date cu respectarea constrângerilor și politicilor RLS.
+                </p>
+                <div class="form-group">
+                    <textarea id="coder-json-textarea" class="form-textarea font-mono" style="min-height: 320px; font-size: 12.5px; line-height: 1.5; tab-size: 2;" spellcheck="false"></textarea>
+                </div>
+                <div id="coder-json-feedback" style="margin-top: 8px; font-size: 13px;"></div>
+            </div>
+            <div class="modal-footer" style="display: flex; justify-content: flex-end; gap: 10px;">
+                <button type="button" id="modal-coder-json-cancel" class="btn btn-secondary">Anulează</button>
+                <button type="button" id="btn-save-coder-json" class="btn btn-primary">Salvează Modificările în DB</button>
+            </div>
+        </div>
     </div>
 
     <!-- ══════════════════════════════════════════════════════════════════

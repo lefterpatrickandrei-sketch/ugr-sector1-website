@@ -13,6 +13,7 @@ import { el, clearElement } from '../lib/dom.js';
 import { openItemHistoryModal } from './history.js';
 
 let editingMemberId = null;
+let convertingRequest = null;
 let currentFilteredMembers = [];
 let pendingCsvImportRows = [];
 
@@ -320,6 +321,43 @@ export function openAddMemberModal() {
     if (memberInputId) memberInputId.focus();
 }
 
+export function openConvertMemberModal(req) {
+    editingMemberId = null;
+    convertingRequest = req;
+
+    const modalMember = document.getElementById('modal-member');
+    const modalMemberTitle = document.getElementById('modal-member-title');
+    const memberInputId = document.getElementById('member-input-id');
+    const memberInputNume = document.getElementById('member-input-nume');
+    const memberInputJudet = document.getElementById('member-input-judet');
+    const memberInputSerie = document.getElementById('member-input-serie');
+    const memberInputCategorie = document.getElementById('member-input-categorie');
+    const memberInputStatus = document.getElementById('member-input-status');
+    const memberInputPublic = document.getElementById('member-input-public');
+
+    if (!modalMember) return;
+    if (modalMemberTitle) modalMemberTitle.textContent = `Conversie Cerere: ${req.nume_complet || 'Solicitant'}`;
+
+    // Auto-generare ID registru (ex: UGR-B-XXXX)
+    const randomSuffix = Math.floor(1000 + Math.random() * 9000);
+    const suggestedId = `UGR-B-${randomSuffix}`;
+
+    if (memberInputId) {
+        memberInputId.value = suggestedId;
+        memberInputId.disabled = false;
+    }
+    if (memberInputNume) memberInputNume.value = req.nume_complet || '';
+    if (memberInputJudet) memberInputJudet.value = req.judet || 'București';
+    if (memberInputSerie) memberInputSerie.value = req.certificat_ancpi || '';
+    if (memberInputCategorie) memberInputCategorie.value = req.categorie_dorita || 'Categoria A';
+    if (memberInputStatus) memberInputStatus.value = 'activ';
+    if (memberInputPublic) memberInputPublic.checked = true;
+
+    updateCharCounters();
+    modalMember.classList.add('active');
+    if (memberInputId) memberInputId.focus();
+}
+
 export function openEditMemberModal(m) {
     editingMemberId = m.id;
     const modalMember = document.getElementById('modal-member');
@@ -354,6 +392,7 @@ export function closeMemberModal() {
     const modalMember = document.getElementById('modal-member');
     if (modalMember) modalMember.classList.remove('active');
     editingMemberId = null;
+    convertingRequest = null;
 }
 
 export async function handleSaveMember() {
@@ -435,6 +474,51 @@ export async function handleSaveMember() {
                 return;
             }
             showToast(`Membrul «${numeVal}» (${idVal}) a fost adăugat!`, 'success');
+
+            // Dacă s-a efectuat dintr-o cerere de înscriere, finalizează conversia
+            if (convertingRequest) {
+                try {
+                    const reqId = convertingRequest.id;
+                    const adminEmail = state.currentAdmin?.email || 'admin';
+                    const nowIso = new Date().toISOString();
+                    const noteAdd = `[CONVERSIE CERERE] Înregistrat în registrul oficial cu ID: ${idVal} la data ${new Date().toLocaleString('ro-RO')} de către ${adminEmail}.`;
+                    const updatedNotes = convertingRequest.notite_interne 
+                        ? `${convertingRequest.notite_interne}\n\n${noteAdd}`
+                        : noteAdd;
+
+                    await client
+                        .from('cereri_inscriere')
+                        .update({
+                            status: 'aprobat',
+                            membru_id: idVal,
+                            notite_interne: updatedNotes,
+                            procesat_la: nowIso,
+                            procesat_de: adminEmail
+                        })
+                        .eq('id', reqId);
+
+                    await client
+                        .from('audit_log')
+                        .insert([{
+                            tabel: 'cereri_inscriere',
+                            actiune: 'CONVERSIE_MEMBRU',
+                            record_id: String(reqId),
+                            admin_email: adminEmail,
+                            date_noi: {
+                                membru_id: idVal,
+                                nume: numeVal,
+                                serie: serieVal
+                            }
+                        }]);
+
+                    showToast(`Cererea a fost convertită cu succes în membru activ (${idVal})!`, 'success');
+                    window.dispatchEvent(new CustomEvent('ugr:request-converted', { detail: { requestId: reqId, memberId: idVal } }));
+                } catch (errConv) {
+                    console.warn('Eroare la actualizarea cererii convertite:', errConv);
+                } finally {
+                    convertingRequest = null;
+                }
+            }
         }
 
         closeMemberModal();

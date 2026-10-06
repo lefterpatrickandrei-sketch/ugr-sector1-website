@@ -8,6 +8,7 @@ import { showToast, setBannerFeedback, clearBannerFeedback } from '../ui/toast.j
 import { formatStatusLabel, formatDateTimeRo } from '../lib/format.js';
 import { renderPaginationControls } from '../ui/pagination.js';
 import { updateBulkActionsBar } from '../ui/bulkbar.js';
+import { openConvertMemberModal } from './members.js';
 
 let currentFilteredRequests = [];
 
@@ -331,6 +332,24 @@ export function renderRequestsList(items, totalCount) {
         }
         statusGroup.appendChild(btnReject);
 
+        // Buton conversie în membru oficial
+        const btnConvert = document.createElement('button');
+        btnConvert.type = 'button';
+        btnConvert.className = 'btn btn-primary btn-sm';
+        btnConvert.textContent = '👤 Convertește în Membru';
+        btnConvert.title = 'Generează fișă de membru în registru din această cerere';
+        if (item.membru_id) {
+            btnConvert.textContent = `✓ Membru (${item.membru_id})`;
+            btnConvert.className = 'btn btn-secondary btn-sm';
+            btnConvert.disabled = true;
+            btnConvert.title = `Cererea a fost deja convertită în membrul ${item.membru_id}`;
+        } else {
+            btnConvert.addEventListener('click', () => {
+                openConvertMemberModal(item);
+            });
+        }
+        statusGroup.appendChild(btnConvert);
+
         actionsBar.appendChild(statusGroup);
 
         const btnDelete = document.createElement('button');
@@ -450,9 +469,14 @@ export function initRealtimeRequestsListener() {
                 const nouNume = payload.new ? payload.new.nume_complet : 'un nou solicitant';
                 showToast(`📋 Cerere nouă de înscriere primită de la: ${nouNume}!`, 'info', 6000);
                 loadRequests();
+                window.dispatchEvent(new CustomEvent('ugr:notification-new-request', { detail: payload.new }));
             })
             .subscribe();
     } catch (e) {
         // Silențios dacă realtime nu este activ
     }
+
+    window.addEventListener('ugr:request-converted', () => {
+        loadRequests();
+    });
 }
