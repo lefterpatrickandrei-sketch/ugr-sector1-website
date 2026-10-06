@@ -70,6 +70,7 @@ export function renderCommandPaletteResults(query) {
 
     const sysCommands = [
         { title: "Panou General (Overview)", desc: "Comută la tabloul de bord cu indicatori KPI", icon: "📊", action: () => commandActions.switchView?.('overview') },
+        { title: "Editor Pagini Site Public", desc: "Personalizează textele, secțiunile și butoanele celor 5 pagini", icon: "🌐", action: () => commandActions.switchView?.('pages') },
         { title: "Cereri de Înscriere", desc: "Gestionează dosarele candidaților noi", icon: "📋", action: () => commandActions.switchView?.('requests') },
         { title: "Registru Membri UGR", desc: "Vizualizează și filtrează specialiștii autorizați", icon: "👥", action: () => commandActions.switchView?.('members') },
         { title: "Știri & Comunicate", desc: "Publică și gestionează articolele filialei", icon: "📰", action: () => commandActions.switchView?.('news') },

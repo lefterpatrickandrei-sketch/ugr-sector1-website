@@ -2966,9 +2966,13 @@ async function loadContentFromSupabase() {
                 if (item.cheie === 'telemetrie_sector1' && item.valoare && typeof item.valoare === 'object') {
                     Object.assign(ugrData.sector1Telemetry, item.valoare);
                 }
+                if (item.cheie && item.cheie.startsWith('pagina_') && item.valoare && typeof item.valoare === 'object') {
+                    applyCustomPageData(item.cheie, item.valoare);
+                }
             });
         }
     } catch (e) {}
+
 
     // 2. LEADERSHIP BEX NAȚIONAL & FILIALA SECTOR 1
     try {
@@ -3041,6 +3045,79 @@ async function loadContentFromSupabase() {
         }
     } catch (e) {}
 }
+
+function applyCustomPageData(cheie, val) {
+    if (!val || typeof val !== 'object') return;
+    try {
+        if (cheie === 'pagina_acasa') {
+            const kicker = document.querySelector('#view-acasa .hero-kicker');
+            if (kicker && val.heroKicker) kicker.textContent = val.heroKicker;
+            const title = document.querySelector('#view-acasa .hero-title');
+            if (title && val.heroTitle) title.textContent = val.heroTitle;
+            const sub = document.querySelector('#view-acasa .hero-subtitle') || document.querySelector('#view-acasa .hero-desc');
+            if (sub && val.heroSubtitle) sub.textContent = val.heroSubtitle;
+            const btnPrimary = document.getElementById('hero-btn-membership');
+            if (btnPrimary && val.heroBtnPrimaryText) btnPrimary.textContent = val.heroBtnPrimaryText;
+            const btnSecondary = document.getElementById('hero-btn-secondary');
+            if (btnSecondary) {
+                if (val.heroBtnSecondaryText) btnSecondary.textContent = val.heroBtnSecondaryText;
+                if (val.heroBtnSecondaryLink) btnSecondary.href = val.heroBtnSecondaryLink;
+            }
+            const mapTitle = document.querySelector('.map-section-title');
+            if (mapTitle && val.mapTitle) mapTitle.textContent = val.mapTitle;
+            const mapDesc = document.querySelector('.map-section-desc');
+            if (mapDesc && val.mapDesc) mapDesc.textContent = val.mapDesc;
+        } else if (cheie === 'pagina_despre') {
+            const kicker = document.querySelector('#view-despre .despre-tag-gold');
+            if (kicker && val.heroKicker) kicker.textContent = val.heroKicker;
+            const title = document.querySelector('#view-despre .despre-hero-title');
+            if (title && val.heroTitle) title.textContent = val.heroTitle;
+            const sub = document.querySelector('#view-despre .despre-hero-sub');
+            if (sub && val.heroIntro) sub.textContent = val.heroIntro;
+            if (Array.isArray(val.timeline) && val.timeline.length > 0) {
+                const timelineItems = document.querySelectorAll('#view-despre .timeline-item-v2');
+                val.timeline.forEach((item, idx) => {
+                    if (timelineItems[idx]) {
+                        const yearEl = timelineItems[idx].querySelector('.timeline-badge-year');
+                        const titleEl = timelineItems[idx].querySelector('.timeline-card-title');
+                        const descEl = timelineItems[idx].querySelector('.timeline-card-desc');
+                        if (yearEl && item.an) yearEl.textContent = item.an;
+                        if (titleEl && item.titlu) titleEl.textContent = item.titlu;
+                        if (descEl && item.desc) descEl.textContent = item.desc;
+                    }
+                });
+            }
+        } else if (cheie === 'pagina_evenimente') {
+            const kicker = document.querySelector('#view-evenimente .events-tag-gold');
+            if (kicker && val.heroKicker) kicker.textContent = val.heroKicker;
+            const title = document.querySelector('#view-evenimente .events-hero-title');
+            if (title && val.heroTitle) title.textContent = val.heroTitle;
+            const sub = document.querySelector('#view-evenimente .events-hero-sub');
+            if (sub && val.heroSubtitle) sub.textContent = val.heroSubtitle;
+        } else if (cheie === 'pagina_membri') {
+            const kicker = document.querySelector('#view-membri .membri-tag-gold');
+            if (kicker && val.heroKicker) kicker.textContent = val.heroKicker;
+            const title = document.querySelector('#view-membri .membri-main-title');
+            if (title && val.heroTitle) title.textContent = val.heroTitle;
+            const cardTitle = document.querySelector('#view-membri .m-demo4-card-title');
+            if (cardTitle && val.cardTitle) cardTitle.textContent = val.cardTitle;
+            const cardDesc = document.querySelector('#view-membri .m-demo4-desc');
+            if (cardDesc && val.cardDesc) cardDesc.textContent = val.cardDesc;
+            const mechTitle = document.querySelector('#view-membri .m-block-title');
+            if (mechTitle && val.mechanismTitle) mechTitle.textContent = val.mechanismTitle;
+        } else if (cheie === 'pagina_contact') {
+            const kicker = document.querySelector('#view-contact .faq-hero-kicker');
+            if (kicker && val.heroKicker) kicker.textContent = val.heroKicker;
+            const title = document.querySelector('#view-contact .faq-hero-title');
+            if (title && val.heroTitle) title.textContent = val.heroTitle;
+            const sub = document.querySelector('#view-contact .faq-hero-subtitle');
+            if (sub && val.heroSubtitle) sub.textContent = val.heroSubtitle;
+        }
+    } catch (e) {
+        console.warn('[CustomPageData] Error applying:', e);
+    }
+}
+
 
 
 function fallbackLoadNewsJson() {

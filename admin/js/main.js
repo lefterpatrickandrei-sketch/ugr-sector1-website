@@ -63,6 +63,8 @@ import {
     handleSaveSettings,
     setDirty
 } from './views/settings.js';
+import { initPagesView } from './views/pages.js';
+
 import {
     loadLeadership,
     renderLeadershipLists,
@@ -178,6 +180,7 @@ registerPaletteActions({
 function bootAdminApp() {
     // Mod de Lucru (Simplu / Avansat)
     initUiMode();
+    initPagesView();
 
     // Navigație Sidebar
     const navLinks = document.querySelectorAll('.nav-link');

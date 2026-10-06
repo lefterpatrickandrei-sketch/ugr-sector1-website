@@ -71,5 +71,10 @@ export const state = {
     trashFilterType: 'toate',
     trashSearchQuery: '',
     remoteMediaAssets: [],
-    mediaActiveTab: 'all'
+    mediaActiveTab: 'all',
+
+    // Pages View State
+    pagesActiveTab: 'acasa',
+    pagesData: {},
+    pagesDirty: false
 };

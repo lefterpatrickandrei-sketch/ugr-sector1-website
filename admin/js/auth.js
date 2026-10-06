@@ -18,6 +18,7 @@ import { loadTrash } from './views/trash.js';
 import { loadAdmins } from './views/roles.js';
 import { loadSyncStatus } from './views/sync.js';
 import { loadCoderView } from './views/coder.js';
+import { loadPagesData } from './views/pages.js';
 
 export function getPanelRedirectUrl() {
     if (window.location.protocol.startsWith('http')) {
@@ -77,7 +78,8 @@ export function switchView(viewName) {
         trash: document.getElementById('view-trash'),
         roles: document.getElementById('view-roles'),
         sync: document.getElementById('view-sync'),
-        coder: document.getElementById('view-coder')
+        coder: document.getElementById('view-coder'),
+        pages: document.getElementById('view-pages')
     };
 
     Object.keys(viewPanels).forEach(k => {
@@ -100,7 +102,8 @@ export function switchView(viewName) {
         trash: 'Coș de Reciclate',
         roles: 'Roluri & Acces (RBAC)',
         sync: 'Stare Sincronizare',
-        coder: 'Consolă Dezvoltator (Avansat)'
+        coder: 'Consolă Dezvoltator (Avansat)',
+        pages: 'Editor Pagini Site Public'
     };
     if (breadcrumbCurrentLabel) {
         breadcrumbCurrentLabel.textContent = labels[viewName] || 'Panou';
@@ -136,6 +139,8 @@ export function switchView(viewName) {
         loadSyncStatus();
     } else if (viewName === 'coder') {
         loadCoderView();
+    } else if (viewName === 'pages') {
+        loadPagesData();
     }
 
     updateBulkActionsBar();
