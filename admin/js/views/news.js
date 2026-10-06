@@ -790,6 +790,7 @@ export async function handleSaveNews() {
             imagine_url: imagineVal || null,
             continut: continutVal || null,
             publicat: publicatVal,
+            status: publicatVal ? 'publicat' : 'ciorna',
             categorie: getVal('news-input-categorie') || 'Eveniment Oficial',
             scope: getVal('news-input-scope') || 'local',
             locatie: getVal('news-input-locatie') || 'București',
