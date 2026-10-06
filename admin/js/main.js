@@ -171,7 +171,7 @@ registerPaletteActions({
 });
 
 // 2. Inițializare ascultători DOM
-document.addEventListener('DOMContentLoaded', () => {
+function bootAdminApp() {
     // Mod de Lucru (Simplu / Avansat)
     initUiMode();
 
@@ -204,6 +204,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const adminEmailInput = document.getElementById('admin-email');
     const mfaEnrollInput = document.getElementById('mfa-enroll-input');
     const mfaVerifyInput = document.getElementById('mfa-verify-input');
+
+    const formLogin = document.getElementById('form-login');
+    if (formLogin) {
+        formLogin.addEventListener('submit', (e) => {
+            e.preventDefault();
+            handleSendOtp();
+        });
+    }
 
     if (btnSendOtp) btnSendOtp.addEventListener('click', handleSendOtp);
     if (btnVerifyEnroll) btnVerifyEnroll.addEventListener('click', handleVerifyEnroll);
@@ -908,4 +916,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Boot evaluare sesiune
     evaluateAuthState();
-});
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', bootAdminApp);
+} else {
+    bootAdminApp();
+}

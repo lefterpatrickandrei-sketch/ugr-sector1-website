@@ -160,21 +160,25 @@ export async function handleSendOtp() {
 
     try {
         const redirectUrl = getPanelRedirectUrl();
-        await client.auth.signInWithOtp({
+        const { error } = await client.auth.signInWithOtp({
             email: email,
             options: {
                 shouldCreateUser: false,
                 emailRedirectTo: redirectUrl
             }
         });
+        if (error) {
+            setBannerFeedback(loginFeedback, 'Eroare: ' + (error.message || 'Verificați adresa sau încercați din nou.'), 'error');
+            return;
+        }
+        setBannerFeedback(loginFeedback, 'Linkul de conectare a fost trimis! Verificați inbox-ul (și folderul Spam).', 'info');
     } catch (err) {
-        // Silențios pentru securitate
+        setBannerFeedback(loginFeedback, 'Eroare de comunicare cu serverul.', 'error');
     } finally {
         if (btnSendOtp) {
             btnSendOtp.disabled = false;
             btnSendOtp.textContent = 'Trimite link de autentificare';
         }
-        setBannerFeedback(loginFeedback, 'Dacă adresa este autorizată, vei primi un link de acces pe email.', 'info');
     }
 }
 
