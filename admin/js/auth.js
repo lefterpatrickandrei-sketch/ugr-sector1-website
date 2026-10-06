@@ -182,6 +182,70 @@ export async function handleSendOtp() {
     }
 }
 
+export function toggleAuthMethod() {
+    const groupPassword = document.getElementById('group-admin-password');
+    const btnSendOtp = document.getElementById('btn-send-otp');
+    const btnLoginPassword = document.getElementById('btn-login-password');
+    const btnToggle = document.getElementById('btn-toggle-auth-method');
+    const loginFeedback = document.getElementById('login-feedback');
+    clearBannerFeedback(loginFeedback);
+
+    const isPasswordMode = groupPassword && groupPassword.style.display !== 'none';
+    if (isPasswordMode) {
+        // Comută pe Magic Link
+        if (groupPassword) groupPassword.style.display = 'none';
+        if (btnSendOtp) btnSendOtp.style.display = 'block';
+        if (btnLoginPassword) btnLoginPassword.style.display = 'none';
+        if (btnToggle) btnToggle.textContent = 'Prefer conectarea cu parolă';
+    } else {
+        // Comută pe Parolă
+        if (groupPassword) groupPassword.style.display = 'block';
+        if (btnSendOtp) btnSendOtp.style.display = 'none';
+        if (btnLoginPassword) btnLoginPassword.style.display = 'block';
+        if (btnToggle) btnToggle.textContent = 'Prefer conectarea cu link pe email (Magic Link)';
+    }
+}
+
+export async function handleLoginWithPassword() {
+    const adminEmailInput = document.getElementById('admin-email');
+    const adminPasswordInput = document.getElementById('admin-password');
+    const btnLoginPassword = document.getElementById('btn-login-password');
+    const loginFeedback = document.getElementById('login-feedback');
+
+    const email = adminEmailInput ? adminEmailInput.value.trim() : '';
+    const password = adminPasswordInput ? adminPasswordInput.value : '';
+
+    if (!email || !password) {
+        setBannerFeedback(loginFeedback, 'Introduceți emailul și parola.', 'error');
+        return;
+    }
+
+    if (btnLoginPassword) {
+        btnLoginPassword.disabled = true;
+        btnLoginPassword.textContent = 'Se verifică...';
+    }
+    clearBannerFeedback(loginFeedback);
+
+    try {
+        const { error } = await client.auth.signInWithPassword({
+            email,
+            password
+        });
+        if (error) {
+            setBannerFeedback(loginFeedback, 'Eroare: ' + (error.message || 'Credențiale incorecte.'), 'error');
+            return;
+        }
+        await evaluateAuthState();
+    } catch (err) {
+        setBannerFeedback(loginFeedback, 'Eroare de comunicare cu serverul.', 'error');
+    } finally {
+        if (btnLoginPassword) {
+            btnLoginPassword.disabled = false;
+            btnLoginPassword.textContent = 'Conectează-te cu parolă';
+        }
+    }
+}
+
 export async function startTotpEnrollment() {
     const enrollFeedback = document.getElementById('enroll-feedback');
     const mfaEnrollInput = document.getElementById('mfa-enroll-input');

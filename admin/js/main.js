@@ -12,6 +12,8 @@ import {
     showCmsDashboard,
     switchView,
     handleSendOtp,
+    toggleAuthMethod,
+    handleLoginWithPassword,
     handleVerifyEnroll,
     handleVerifyTotp,
     evaluateAuthState,
@@ -194,6 +196,8 @@ function bootAdminApp() {
 
     // Autentificare & MFA
     const btnSendOtp = document.getElementById('btn-send-otp');
+    const btnLoginPassword = document.getElementById('btn-login-password');
+    const btnToggleAuthMethod = document.getElementById('btn-toggle-auth-method');
     const btnVerifyEnroll = document.getElementById('btn-verify-enroll');
     const btnCancelEnroll = document.getElementById('btn-cancel-enroll');
     const btnVerifyCode = document.getElementById('btn-verify-code');
@@ -202,6 +206,7 @@ function bootAdminApp() {
     const btnTopbarSignout = document.getElementById('btn-topbar-signout');
     const btnUnauthReturn = document.getElementById('btn-unauth-return');
     const adminEmailInput = document.getElementById('admin-email');
+    const adminPasswordInput = document.getElementById('admin-password');
     const mfaEnrollInput = document.getElementById('mfa-enroll-input');
     const mfaVerifyInput = document.getElementById('mfa-verify-input');
 
@@ -209,11 +214,18 @@ function bootAdminApp() {
     if (formLogin) {
         formLogin.addEventListener('submit', (e) => {
             e.preventDefault();
-            handleSendOtp();
+            const groupPassword = document.getElementById('group-admin-password');
+            if (groupPassword && groupPassword.style.display !== 'none') {
+                handleLoginWithPassword();
+            } else {
+                handleSendOtp();
+            }
         });
     }
 
+    if (btnToggleAuthMethod) btnToggleAuthMethod.addEventListener('click', toggleAuthMethod);
     if (btnSendOtp) btnSendOtp.addEventListener('click', handleSendOtp);
+    if (btnLoginPassword) btnLoginPassword.addEventListener('click', handleLoginWithPassword);
     if (btnVerifyEnroll) btnVerifyEnroll.addEventListener('click', handleVerifyEnroll);
     if (btnCancelEnroll) btnCancelEnroll.addEventListener('click', handleSignOut);
     if (btnVerifyCode) btnVerifyCode.addEventListener('click', handleVerifyTotp);
@@ -224,7 +236,19 @@ function bootAdminApp() {
 
     if (adminEmailInput) {
         adminEmailInput.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') handleSendOtp();
+            if (e.key === 'Enter') {
+                const groupPassword = document.getElementById('group-admin-password');
+                if (groupPassword && groupPassword.style.display !== 'none') {
+                    if (adminPasswordInput) adminPasswordInput.focus();
+                } else {
+                    handleSendOtp();
+                }
+            }
+        });
+    }
+    if (adminPasswordInput) {
+        adminPasswordInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') handleLoginWithPassword();
         });
     }
     if (mfaEnrollInput) {

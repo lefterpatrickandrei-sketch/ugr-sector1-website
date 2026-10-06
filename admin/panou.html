@@ -37,9 +37,23 @@
                         <label for="admin-email" class="form-label">Email administrator</label>
                         <input type="email" id="admin-email" class="form-input" placeholder="admin@ugr.ro" autocomplete="email" required>
                     </div>
+                    <div class="form-group" id="group-admin-password" style="display: none; margin-top: 14px;">
+                        <label for="admin-password" class="form-label">Parolă administrator</label>
+                        <input type="password" id="admin-password" class="form-input" placeholder="••••••••" autocomplete="current-password">
+                    </div>
+
                     <button type="submit" id="btn-send-otp" class="btn btn-primary" style="width: 100%;">
                         Trimite link de autentificare
                     </button>
+                    <button type="button" id="btn-login-password" class="btn btn-primary" style="width: 100%; display: none;">
+                        Conectează-te cu parolă
+                    </button>
+
+                    <div style="text-align: center; margin-top: 14px;">
+                        <button type="button" id="btn-toggle-auth-method" style="background: none; border: none; color: var(--cyan); font-size: 13px; cursor: pointer; text-decoration: underline;">
+                            Prefer conectarea cu parolă
+                        </button>
+                    </div>
                 </form>
 
                 <div id="login-feedback" class="feedback-banner" role="status"></div>
