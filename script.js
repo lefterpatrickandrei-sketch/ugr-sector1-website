@@ -2720,7 +2720,8 @@ async function loadMembersFromSupabase() {
     try {
         const { data, error } = await client
             .from('membri')
-            .select('id, nume, judet, serie_autorizatie, status')
+            .select('id, nume, judet, serie_autorizatie, categorie, status, afisare_publica')
+            .eq('afisare_publica', true)
             .order('nume', { ascending: true });
 
         if (error) {
@@ -2734,6 +2735,7 @@ async function loadMembersFromSupabase() {
             name: m.nume,
             judet: m.judet,
             auth: m.serie_autorizatie || '',
+            category: m.categorie || '',
             status: m.status
         }));
 
@@ -2770,7 +2772,8 @@ async function loadNewsFromSupabase() {
     try {
         const { data, error } = await client
             .from('stiri')
-            .select('id, titlu, continut, imagine_url, data_publicare')
+            .select('id, titlu, continut, imagine_url, data_publicare, publicat')
+            .eq('publicat', true)
             .order('data_publicare', { ascending: false });
 
         if (error || !data || data.length === 0) {

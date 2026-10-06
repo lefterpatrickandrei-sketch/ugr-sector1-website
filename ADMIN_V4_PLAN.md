@@ -78,7 +78,7 @@
 | Phase | Name | Status | Depends on |
 |---|---|---|---|
 | P0 | Audit & baseline (read-only on prod) | DONE | — |
-| P1 | Security & visibility sync (RLS + site filters) | TODO | P0 |
+| P1 | Security & visibility sync (RLS + site filters) | IN-PROGRESS | P0 |
 | P2 | Modularize `panou.html` (no behaviour change) | TODO | P1 |
 | P3 | Data model: new tables, migrations, seed from `data.js`/`content/*.json` | TODO | P1 |
 | P4 | Editors: Settings, Leadership, FAQ, Documents, News/Members v2 | TODO | P2, P3 |
@@ -129,15 +129,15 @@ Phases may be split (P4a/P4b) by the agent. Each phase ends with a Checkpoint Re
 
 **Goal:** the public site shows exactly what the admin marks public, enforced by the database.
 
-- [ ] Migration `001_roles_and_visibility.sql` (draft in §7.1, adapt to P0 findings).
-- [ ] Add `rol` to `admini`; create `admin_rol()`; keep `is_admin()` working.
-- [ ] RLS: anon `SELECT` only where `afisare_publica = true` (membri) / `publicat = true and data_publicare <= current_date` (stiri), excluding `deleted_at is not null` once P3 adds it. Admin policies by role.
-- [ ] `script.js`: add the same filters client-side (defence in depth) and select the extra columns needed.
-- [ ] Test **inside a transaction that is rolled back**: insert hidden member/draft news, assert anon sees 0 of them, rollback. Paste result in report.
+- [x] Migration `supabase/migrations/001_roles_and_visibility.sql` created (adapted to PR-001 `user_id` and PR-002 `publicat`).
+- [x] Rollback migration `supabase/migrations/001_roles_and_visibility_rollback.sql` created (I7).
+- [x] Add `rol` to `admini`; create `admin_rol()`; keep `is_admin()` working; assign `owner` to Patrick (`lefterpatrickandrei@gmail.com`).
+- [x] `script.js`: add the same filters client-side (defence in depth: `afisare_publica = true` on membri, `publicat = true` on stiri) and select extra columns (`categorie`, `publicat`, `afisare_publica`).
+- [ ] Run `001_roles_and_visibility.sql` in Supabase SQL Editor (pending Patrick execution).
+- [ ] Automated verification test: assert anon sees 8/8 public members and 9/9 published news; assert hidden rows are blocked by RLS.
 
-**Acceptance:** anon cannot read hidden rows (proved by query); admin still sees all; site renders identical content for currently public rows; viewer role cannot write (proved by query).
-**Rollback:** `001_rollback.sql` restores previous policies (captured in P0).
-**Adapt triggers:** if `admini` lacks a clean uid link → create `admini.user_id uuid references auth.users` and backfill (Problem Record).
+**Acceptance:** anon cannot read hidden rows (proved by query); admin still sees all; site renders identical content for currently public rows; viewer role cannot write (proved by query).  
+**Rollback:** `001_roles_and_visibility_rollback.sql` restores previous policies.
 
 ### P2 — Modularize `panou.html` (no behaviour change)
 
@@ -427,11 +427,11 @@ create policy media_delete on storage.objects for delete to authenticated
 | ID | Question | Answer | Date |
 |---|---|---|---|
 | Q1 | Is branch `faza2-supabase` merged/stale? Base `admin-v4` on `main` or on it? | Merged into `main` at commit `4bd6280` via `faza3-admin`. `admin-v4` is cut from `main`. | 2026-10-06 |
-| Q2 | Which admins/roles exist now (names → owner/editor/viewer)? | | |
-| Q3 | Which notification email should receive new-request alerts? (not the filiala email) | | |
-| Q4 | Retention for personal data in `cereri_inscriere` and `audit_log` (e.g. 12 months)? | | |
+| Q2 | Which admins/roles exist now (names → owner/editor/viewer)? | `lefterpatrickandrei@gmail.com` → `owner` (Patrick). Auth: Magic link + TOTP (AAL2). | 2026-10-06 |
+| Q3 | Which notification email should receive new-request alerts? (not the filiala email) | `lefterpatrickandrei@gmail.com` | 2026-10-06 |
+| Q4 | Retention for personal data in `cereri_inscriere` and `audit_log` (e.g. 12 months)? | 5 zile lucrătoare (5 working days). | 2026-10-06 |
 | Q5 | D6 proposal: keep a generated `content/*.json` snapshot as emergency fallback if Supabase is down? | | |
-| Q6 | Which of the 8 demo members get `demonstrativ = true`? (assumed: all 8) | | |
+| Q6 | Which of the 8 demo members get `demonstrativ = true`? (assumed: all 8) | Toți cei 8 membri existenți (`UGR-0012` .. `UGR-0614`). | 2026-10-06 |
 
 ## 11. Adaptation protocol (how this plan changes over time)
 
@@ -485,6 +485,18 @@ Approved PCRs are applied to §3–§6 and logged in §14. The agent never silen
 - Rollback: n/a
 - Plan impact: Adapted `§7.1` SQL draft to `where user_id = auth.uid()`.
 - Lesson learned (→ §15): Always check client-side queries in `panou.html` when verifying backend schema assumptions.
+
+### PR-002 — Flagship news item (SGR Chișinău) date vs scheduled publish policy        status: CLOSED
+- Phase/task: P1 / Stiri RLS policy & client filters
+- Symptom: If policy or client strictly enforces `data_publicare <= current_date`, the flagship announcement "SGR Chișinău" is hidden until November 11.
+- Evidence: In Supabase `stiri`, SGR Chișinău (`7f1fe055-a839-40fd-8039-fd5d95a16ed1`) has `data_publicare: "2026-11-11"` because the event date was originally entered as `data_publicare`. `formatNewsDate` displays this as "11 noiembrie 2026" on the card.
+- Root-cause: Conflation between event date and publication date in the legacy data schema.
+- Options:
+  - A) In P1, filter and policy enforce `publicat = true` (guaranteeing drafts are hidden), and formal decoupling of event date vs publication schedule is implemented in P3 (`002_content_tables.sql`).
+  - B) Change `data_publicare` in DB to today: changes public card label from "11 noiembrie 2026" to today's date, altering user-facing content.
+- Chosen + why: Option A. Adheres to Invariant I9 (site must keep working at every checkpoint, no items left missing).
+- Rollback: n/a
+- Plan impact: In `001_roles_and_visibility.sql`, anon policy for stiri uses `publicat = true`. Separate scheduled publish will use dedicated timestamp in P3/P4.
 
 ## 13. Checkpoint Report template (post one per phase, newest on top)
 
