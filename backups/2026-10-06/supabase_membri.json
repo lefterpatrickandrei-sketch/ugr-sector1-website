@@ -1,0 +1,90 @@
+[
+  {
+    "id": "UGR-0012",
+    "nume": "Andrei Popescu",
+    "judet": "București",
+    "serie_autorizatie": "Seria RO-B-F Nr. 0244",
+    "categorie": "Categoria A",
+    "status": "activ",
+    "afisare_publica": true,
+    "created_at": "2026-10-04T11:07:08.563444+00:00",
+    "updated_at": "2026-10-04T11:07:08.563444+00:00"
+  },
+  {
+    "id": "UGR-0038",
+    "nume": "Ioana Dumitrescu",
+    "judet": "București",
+    "serie_autorizatie": "Seria RO-B-F Nr. 0812",
+    "categorie": "Categoria B",
+    "status": "activ",
+    "afisare_publica": true,
+    "created_at": "2026-10-04T11:07:08.563444+00:00",
+    "updated_at": "2026-10-04T11:07:08.563444+00:00"
+  },
+  {
+    "id": "UGR-0145",
+    "nume": "Elena Munteanu",
+    "judet": "Cluj",
+    "serie_autorizatie": "Seria RO-CJ-F Nr. 1102",
+    "categorie": "Categoria A",
+    "status": "activ",
+    "afisare_publica": true,
+    "created_at": "2026-10-04T11:07:08.563444+00:00",
+    "updated_at": "2026-10-04T11:07:08.563444+00:00"
+  },
+  {
+    "id": "UGR-0220",
+    "nume": "Radu Ionescu",
+    "judet": "București",
+    "serie_autorizatie": "Seria RO-B-F Nr. 0519",
+    "categorie": "Categoria D",
+    "status": "activ",
+    "afisare_publica": true,
+    "created_at": "2026-10-04T11:07:08.563444+00:00",
+    "updated_at": "2026-10-04T11:07:08.563444+00:00"
+  },
+  {
+    "id": "UGR-0312",
+    "nume": "Vasile Lupu",
+    "judet": "Iași",
+    "serie_autorizatie": "Seria RO-IS-F Nr. 0984",
+    "categorie": "Categoria B",
+    "status": "activ",
+    "afisare_publica": true,
+    "created_at": "2026-10-04T11:07:08.563444+00:00",
+    "updated_at": "2026-10-04T11:07:08.563444+00:00"
+  },
+  {
+    "id": "UGR-0402",
+    "nume": "Dumitru Crișan",
+    "judet": "Timiș",
+    "serie_autorizatie": "Seria RO-TM-F Nr. 1290",
+    "categorie": "Categoria A",
+    "status": "activ",
+    "afisare_publica": true,
+    "created_at": "2026-10-04T11:07:08.563444+00:00",
+    "updated_at": "2026-10-04T11:07:08.563444+00:00"
+  },
+  {
+    "id": "UGR-0589",
+    "nume": "Mariana Marin",
+    "judet": "Constanța",
+    "serie_autorizatie": "Seria RO-CT-F Nr. 0451",
+    "categorie": "Categoria B",
+    "status": "activ",
+    "afisare_publica": true,
+    "created_at": "2026-10-04T11:07:08.563444+00:00",
+    "updated_at": "2026-10-04T11:07:08.563444+00:00"
+  },
+  {
+    "id": "UGR-0614",
+    "nume": "Alexandru Moldovan",
+    "judet": "Chișinău",
+    "serie_autorizatie": "Seria MD-CH-F Nr. 0115",
+    "categorie": "Categoria A",
+    "status": "activ",
+    "afisare_publica": true,
+    "created_at": "2026-10-04T11:07:08.563444+00:00",
+    "updated_at": "2026-10-04T11:07:08.563444+00:00"
+  }
+]

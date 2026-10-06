@@ -1,0 +1,92 @@
+[
+  {
+    "id": "7f1fe055-a839-40fd-8039-fd5d95a16ed1",
+    "titlu": "Săptămâna Geodeziei Românești (SGR) — Chișinău (11–14 Noiembrie)",
+    "continut": "UGR și Universitatea Tehnică a Moldovei (UTM) organizează ediția internațională SGR la Chișinău. Congresul reunește experți ANCPI, ARFC, delegați FIG și CLGE pentru dezbateri pe tematica geodeziei moderne, scanării LiDAR și integrării europene a cadastrului.",
+    "imagine_url": "ugr-images/united_1384.png",
+    "data_publicare": "2026-11-11",
+    "publicat": true,
+    "created_at": "2026-10-04T16:01:03.147162+00:00",
+    "updated_at": "2026-10-04T16:01:03.147162+00:00"
+  },
+  {
+    "id": "34973062-555a-4357-8f8a-cadc4aa8797a",
+    "titlu": "Masă Rotundă de Lucru: Filiala Sector 1 & Conducerea BCPI Sector 1",
+    "continut": "Sesiune de lucru consultativă dedicată geodezilor autorizați din Sectorul 1 București pentru uniformizarea procedurilor de recepție a planurilor de amplasament și rezolvarea necorelărilor tehnice din sistemul integrat e-Terra.",
+    "imagine_url": "ugr-images/united_1384.png",
+    "data_publicare": "2026-09-15",
+    "publicat": true,
+    "created_at": "2026-10-04T16:01:03.147162+00:00",
+    "updated_at": "2026-10-04T16:01:03.147162+00:00"
+  },
+  {
+    "id": "f8bb6a45-7b00-4568-bf62-198957e3e658",
+    "titlu": "Comunicat privind Deciziile Biroului Executiv (BEX) UGR",
+    "continut": "Biroul Executiv al Uniunii Geodezilor din România a adoptat rezoluțiile privind optimizarea fluxurilor de lucru cu ANCPI, normele metodologice pentru lucrările de cadastru sistematic și sprijinirea formării profesionale continue a geodezilor autorizați.",
+    "imagine_url": "ugr-images/united_1384.png",
+    "data_publicare": "2026-05-21",
+    "publicat": true,
+    "created_at": "2026-10-04T16:01:03.147162+00:00",
+    "updated_at": "2026-10-04T16:01:03.147162+00:00"
+  },
+  {
+    "id": "dc00637d-21f4-4903-9070-e7dbc0c2a0d6",
+    "titlu": "Adunarea Generală a Membrilor Filialei Sector 1 București",
+    "continut": "Întâlnirea anuală a comunității geodezilor din Sectorul 1: prezentarea raportului de activitate local, validarea calendarului de workshop-uri practice GNSS/LiDAR și primirea noilor absolvenți de la Facultatea de Geodezie UTCB.",
+    "imagine_url": "ugr-images/united_1384.png",
+    "data_publicare": "2026-04-10",
+    "publicat": true,
+    "created_at": "2026-10-04T16:01:03.147162+00:00",
+    "updated_at": "2026-10-04T16:01:03.147162+00:00"
+  },
+  {
+    "id": "a3c2f4cd-c3b1-42cc-b5b3-aa66628f2ebf",
+    "titlu": "Ediția a II-a UGR Student Community by UGR Sector 1: GIS și baze de date spațiale",
+    "continut": "Întâlnirea comunității cu studenții și viitorii colegi în Sala de Consiliu FIFIM – USAMV București. Sesiuni practice de analiză și gestionare a informației spațiale, GIS și tranziția de la facultate la provocările din topografia inginerească de pe șantiere.",
+    "imagine_url": "ugr-images/united_1384.png",
+    "data_publicare": "2026-07-08",
+    "publicat": true,
+    "created_at": "2026-10-04T16:01:03.147162+00:00",
+    "updated_at": "2026-10-04T16:01:03.147162+00:00"
+  },
+  {
+    "id": "b34587e6-21f1-4ff8-a1e2-e5cb1b7fff56",
+    "titlu": "Premiul Filialei Sector 1 & Pachet de 18 Workshopuri Profesionale de Specialitate",
+    "continut": "La susținerea licențelor MTC la USAMV, Filiala Sector 1 a acordat premii de excelență și a lansat 18 workshopuri aplicate alături de partenerii KarmaCad Store (scanare laser 3D), SphereFix România și Control Survey SRL.",
+    "imagine_url": "ugr-images/united_1384.png",
+    "data_publicare": "2026-07-10",
+    "publicat": true,
+    "created_at": "2026-10-04T16:01:03.147162+00:00",
+    "updated_at": "2026-10-04T16:01:03.147162+00:00"
+  },
+  {
+    "id": "f7bfd2f9-e5b8-4ed0-8e60-4e84f84033d9",
+    "titlu": "Comunicat Filiala Sector 1: Notificare ANCPI privind disponibilitatea sistemului e-Terra",
+    "continut": "Anunț operativ ANCPI transmis în timp real membrilor geodezi din Sectorul 1 privind disfuncționalitățile tehnice ale platformei e-Terra și calendarul de restabilire a serviciilor de cadastru și carte funciară.",
+    "imagine_url": "ugr-images/united_1384.png",
+    "data_publicare": "2026-07-14",
+    "publicat": true,
+    "created_at": "2026-10-04T16:01:03.147162+00:00",
+    "updated_at": "2026-10-04T16:01:03.147162+00:00"
+  },
+  {
+    "id": "64004d83-a0f0-4889-a132-107483902c0b",
+    "titlu": "Burse Complete UGR pentru Participare la Săptămâna Geodeziei Românești 2026 (Chișinău)",
+    "continut": "Șansă dedicată studenților de la Geodezie: UGR și Filiala Sector 1 oferă burse integrale ce acoperă taxa de participare, cazarea, mesele și transportul pentru conferința internațională SGR de la UTM Chișinău (11–14 Noiembrie).",
+    "imagine_url": "ugr-images/united_1384.png",
+    "data_publicare": "2026-06-15",
+    "publicat": true,
+    "created_at": "2026-10-04T16:01:03.147162+00:00",
+    "updated_at": "2026-10-04T16:01:03.147162+00:00"
+  },
+  {
+    "id": "b4fafe86-fa94-4166-97a2-e08c995debec",
+    "titlu": "Delegația Oficială UGR la Adunarea Generală CLGE",
+    "continut": "România a promovat armonizarea normelor de etică și bune practici în măsurătorile cadastrale la nivelul Consiliului European al Geodezilor (CLGE), susținând drepturile geodezilor autorizați din Europa Centrală și de Est.",
+    "imagine_url": "ugr-images/united_1384.png",
+    "data_publicare": "2026-05-05",
+    "publicat": true,
+    "created_at": "2026-10-04T16:01:03.147162+00:00",
+    "updated_at": "2026-10-04T16:01:03.147162+00:00"
+  }
+]
