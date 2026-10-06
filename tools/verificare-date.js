@@ -12,11 +12,12 @@
  * distruge diacriticele (PĂUN -> PAUN) si produce false-negative-uri.
  * -------------------------------------------------------------------------
  */
-"use strict";
+import fs from "node:fs";
+import path from "node:path";
+import vm from "node:vm";
+import { fileURLToPath } from "node:url";
 
-const fs = require("fs");
-const path = require("path");
-
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, "..");
 const read = (f) => fs.readFileSync(path.join(ROOT, f), "utf8");
 const exists = (f) => fs.existsSync(path.join(ROOT, f));
@@ -95,7 +96,7 @@ check("3. Sintaxa JS valida (script.js / data.js / borders.js)", () => {
   for (const f of ["script.js", "data.js", "borders.js"]) {
     if (!exists(f)) continue;
     try {
-      new (require("vm").Script)(read(f), { filename: f });
+      new vm.Script(read(f), { filename: f });
     } catch (e) {
       bad.push(f + ": " + e.message);
     }

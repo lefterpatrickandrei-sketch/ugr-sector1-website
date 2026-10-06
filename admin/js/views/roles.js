@@ -143,12 +143,21 @@ export function renderAdminsList() {
                 const toggleBtn = el('button', {
                     type: 'button',
                     className: `btn btn-sm ${admin.activ ? 'btn-secondary' : 'btn-primary'}`,
-                    style: { padding: '4px 8px', fontSize: '11px' },
+                    style: { padding: '4px 8px', fontSize: '11px', marginRight: '6px' },
                     onClick: () => handleToggleAdminActive(admin.id, !admin.activ)
                 }, [admin.activ ? 'Dezactivează' : 'Activează']);
 
+                const deleteBtn = el('button', {
+                    type: 'button',
+                    className: 'btn btn-sm btn-danger',
+                    style: { padding: '4px 8px', fontSize: '11px' },
+                    title: 'Elimină administrator',
+                    onClick: () => handleDeleteAdmin(admin.id, admin.email)
+                }, ['🗑️']);
+
                 actionsCell.appendChild(roleSelect);
                 actionsCell.appendChild(toggleBtn);
+                actionsCell.appendChild(deleteBtn);
             } else {
                 actionsCell.appendChild(el('span', { style: { fontSize: '12px', color: 'var(--cyan)' } }, ['(Contul tău)']));
             }
@@ -164,6 +173,26 @@ export function renderAdminsList() {
 
         tbody.appendChild(tr);
     });
+}
+
+export async function handleDeleteAdmin(adminId, adminEmail) {
+    if (!window.confirm(`Sigur doriți să eliminați drepturile administrative pentru contul «${adminEmail}»?`)) {
+        return;
+    }
+
+    try {
+        const { error } = await client
+            .from('admini')
+            .delete()
+            .eq('id', adminId);
+
+        if (error) throw error;
+
+        showToast(`Administratorul «${adminEmail}» a fost eliminat.`, 'info');
+        await loadAdmins();
+    } catch (err) {
+        showToast(`Eroare la eliminarea administratorului: ${err.message}`, 'error');
+    }
 }
 
 export async function handleUpdateAdminRole(adminId, newRole) {
@@ -236,7 +265,12 @@ export async function handleSaveNewAdmin(e) {
                 activ: true
             }]);
 
-        if (error) throw error;
+        if (error) {
+            if (error.message && error.message.includes('user_id') && error.message.includes('not-null')) {
+                throw new Error('Coloana user_id din PostgreSQL necesită aplicarea migrării 007 (ALTER TABLE admini ALTER COLUMN user_id DROP NOT NULL).');
+            }
+            throw error;
+        }
 
         showToast(`Administratorul «${email}» (${rol}) a fost înregistrat cu succes!`, 'success');
         closeAddAdminModal();

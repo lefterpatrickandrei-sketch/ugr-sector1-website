@@ -496,27 +496,21 @@
                             <h3 style="font-size: 16px; font-weight: 700; color: #ffffff; margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
                                 🚀 Zona Hero Principală & Butoane CTA
                             </h3>
-                            <div class="form-grid-2col">
-                                <div class="form-group">
-                                    <label for="page-acasa-hero-kicker" class="form-label">Kicker / Etichetă Antet</label>
-                                    <input type="text" id="page-acasa-hero-kicker" class="form-input">
-                                </div>
-                                <div class="form-group">
-                                    <label for="page-acasa-hero-title" class="form-label">Titlu Principal H1</label>
-                                    <input type="text" id="page-acasa-hero-title" class="form-input">
-                                </div>
+                            <div class="form-group">
+                                <label for="page-acasa-hero-title" class="form-label">Titlu Principal H1</label>
+                                <input type="text" id="page-acasa-hero-title" class="form-input">
                             </div>
                             <div class="form-group">
-                                <label for="page-acasa-hero-subtitle" class="form-label">Subtitlu / Paragraf Introductiv</label>
-                                <textarea id="page-acasa-hero-subtitle" class="form-textarea" style="min-height: 70px;"></textarea>
+                                <label for="page-acasa-hero-lead" class="form-label">Paragraf Lead Hero (Capsulă)</label>
+                                <textarea id="page-acasa-hero-lead" class="form-textarea" style="min-height: 80px;"></textarea>
                             </div>
                             <div class="form-grid-3col">
                                 <div class="form-group">
-                                    <label for="page-acasa-hero-btn-primary" class="form-label">Text Buton Principal (CTA)</label>
+                                    <label for="page-acasa-hero-btn-primary" class="form-label">Text Buton Principal (Înscriere)</label>
                                     <input type="text" id="page-acasa-hero-btn-primary" class="form-input">
                                 </div>
                                 <div class="form-group">
-                                    <label for="page-acasa-hero-btn-secondary" class="form-label">Text Buton Secundar</label>
+                                    <label for="page-acasa-hero-btn-secondary" class="form-label">Text Buton Secundar (SGR)</label>
                                     <input type="text" id="page-acasa-hero-btn-secondary" class="form-input">
                                 </div>
                                 <div class="form-group">
@@ -526,50 +520,101 @@
                             </div>
                         </div>
 
-                        <!-- CARD 2: HARTA & REȚEA -->
+                        <!-- CARD 2: SPATIAL HUD & HARTA -->
                         <div class="cms-card" style="margin-bottom: 20px;">
                             <h3 style="font-size: 16px; font-weight: 700; color: #ffffff; margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
-                                🗺️ Secțiunea Hartă Geodezică & Rețea Tehnică
+                                🗺️ Panou Interactiv Spatial HUD & Rețea Geodezică
                             </h3>
                             <div class="form-grid-2col">
                                 <div class="form-group">
-                                    <label for="page-acasa-map-title" class="form-label">Titlu Secțiune Hartă</label>
-                                    <input type="text" id="page-acasa-map-title" class="form-input">
+                                    <label for="page-acasa-spatial-badge" class="form-label">Etichetă Nod Activ (Badge)</label>
+                                    <input type="text" id="page-acasa-spatial-badge" class="form-input">
                                 </div>
                                 <div class="form-group">
-                                    <label for="page-acasa-map-desc" class="form-label">Descriere Rețea Geodezică</label>
-                                    <input type="text" id="page-acasa-map-desc" class="form-input">
+                                    <label for="page-acasa-spatial-coords" class="form-label">Coordonate Scurte Nod</label>
+                                    <input type="text" id="page-acasa-spatial-coords" class="form-input">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="page-acasa-spatial-desc" class="form-label">Descriere Nod Strategic (Drawer HUD)</label>
+                                <textarea id="page-acasa-spatial-desc" class="form-textarea" style="min-height: 60px;"></textarea>
+                            </div>
+                        </div>
+
+                        <!-- CARD 3: MISIUNEA NOASTRĂ & CIFRE CHEIE (1-LA-1) -->
+                        <div class="cms-card" style="margin-bottom: 20px;">
+                            <h3 style="font-size: 16px; font-weight: 700; color: #ffffff; margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
+                                🏛️ Secțiunea Misiunea Noastră & Cifre Cheie
+                            </h3>
+                            <div class="form-grid-2col">
+                                <div class="form-group">
+                                    <label for="page-acasa-mission-kicker" class="form-label">Kicker / Etichetă Misiune</label>
+                                    <input type="text" id="page-acasa-mission-kicker" class="form-input">
+                                </div>
+                                <div class="form-group">
+                                    <label for="page-acasa-mission-title" class="form-label">Titlu Misiune H2</label>
+                                    <input type="text" id="page-acasa-mission-title" class="form-input">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="page-acasa-mission-paragraph" class="form-label">Paragraf Misiune & Principii</label>
+                                <textarea id="page-acasa-mission-paragraph" class="form-textarea" style="min-height: 70px;"></textarea>
+                            </div>
+                            <div style="margin-top: 14px;">
+                                <h4 style="font-size: 13px; font-weight: 700; color: var(--cyan); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.05em;">Grilă Cele 4 Statistici / Cifre Cheie</h4>
+                                <div class="form-grid-2col">
+                                    <div class="form-group" style="background: rgba(3, 11, 23, 0.5); padding: 10px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.06);">
+                                        <label for="page-acasa-stat1-num" class="form-label">Statistica 1 — Cifră</label>
+                                        <input type="text" id="page-acasa-stat1-num" class="form-input" style="font-family: 'Space Mono'; font-weight: 700; color: var(--cyan); margin-bottom: 6px;">
+                                        <label for="page-acasa-stat1-label" class="form-label">Statistica 1 — Etichetă</label>
+                                        <input type="text" id="page-acasa-stat1-label" class="form-input">
+                                    </div>
+                                    <div class="form-group" style="background: rgba(3, 11, 23, 0.5); padding: 10px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.06);">
+                                        <label for="page-acasa-stat2-num" class="form-label">Statistica 2 — Cifră</label>
+                                        <input type="text" id="page-acasa-stat2-num" class="form-input" style="font-family: 'Space Mono'; font-weight: 700; color: var(--cyan); margin-bottom: 6px;">
+                                        <label for="page-acasa-stat2-label" class="form-label">Statistica 2 — Etichetă</label>
+                                        <input type="text" id="page-acasa-stat2-label" class="form-input">
+                                    </div>
+                                    <div class="form-group" style="background: rgba(3, 11, 23, 0.5); padding: 10px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.06);">
+                                        <label for="page-acasa-stat3-num" class="form-label">Statistica 3 — Cifră</label>
+                                        <input type="text" id="page-acasa-stat3-num" class="form-input" style="font-family: 'Space Mono'; font-weight: 700; color: var(--cyan); margin-bottom: 6px;">
+                                        <label for="page-acasa-stat3-label" class="form-label">Statistica 3 — Etichetă</label>
+                                        <input type="text" id="page-acasa-stat3-label" class="form-input">
+                                    </div>
+                                    <div class="form-group" style="background: rgba(3, 11, 23, 0.5); padding: 10px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.06);">
+                                        <label for="page-acasa-stat4-num" class="form-label">Statistica 4 — Cifră</label>
+                                        <input type="text" id="page-acasa-stat4-num" class="form-input" style="font-family: 'Space Mono'; font-weight: 700; color: var(--cyan); margin-bottom: 6px;">
+                                        <label for="page-acasa-stat4-label" class="form-label">Statistica 4 — Etichetă</label>
+                                        <input type="text" id="page-acasa-stat4-label" class="form-input">
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- CARD 3: PILONI MISIUNE -->
+                        <!-- CARD 4: BANNER CTA -->
                         <div class="cms-card" style="margin-bottom: 20px;">
                             <h3 style="font-size: 16px; font-weight: 700; color: #ffffff; margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
-                                🏛️ Pilonii Misiunii & Valorile Filialei
+                                📢 Banner CTA Final de Pagină
                             </h3>
-                            <div class="form-grid-3col">
+                            <div class="form-grid-2col">
                                 <div class="form-group">
-                                    <label for="page-acasa-pillar1-title" class="form-label">Pilon 1 — Titlu</label>
-                                    <input type="text" id="page-acasa-pillar1-title" class="form-input">
-                                    <textarea id="page-acasa-pillar1-desc" class="form-textarea" style="min-height: 60px; margin-top: 6px;"></textarea>
+                                    <label for="page-acasa-cta-title" class="form-label">Titlu Banner CTA</label>
+                                    <input type="text" id="page-acasa-cta-title" class="form-input">
                                 </div>
                                 <div class="form-group">
-                                    <label for="page-acasa-pillar2-title" class="form-label">Pilon 2 — Titlu</label>
-                                    <input type="text" id="page-acasa-pillar2-title" class="form-input">
-                                    <textarea id="page-acasa-pillar2-desc" class="form-textarea" style="min-height: 60px; margin-top: 6px;"></textarea>
+                                    <label for="page-acasa-cta-btn" class="form-label">Text Buton Formular Aderare</label>
+                                    <input type="text" id="page-acasa-cta-btn" class="form-input">
                                 </div>
-                                <div class="form-group">
-                                    <label for="page-acasa-pillar3-title" class="form-label">Pilon 3 — Titlu</label>
-                                    <input type="text" id="page-acasa-pillar3-title" class="form-input">
-                                    <textarea id="page-acasa-pillar3-desc" class="form-textarea" style="min-height: 60px; margin-top: 6px;"></textarea>
-                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="page-acasa-cta-subtitle" class="form-label">Subtitlu Banner CTA</label>
+                                <textarea id="page-acasa-cta-subtitle" class="form-textarea" style="min-height: 50px;"></textarea>
                             </div>
                         </div>
                     </div>
 
                     <!-- ──────────────────────────────────────────────────────────
-                         TAB 2: PAGINA DESPRE NOI
+                         TAB 2: PAGINA DESPRE NOI (1-LA-1 CU SITE-UL)
                          ────────────────────────────────────────────────────────── -->
                     <div id="tab-page-despre" class="page-tab-panel">
                         <!-- CARD 1: HERO -->
@@ -579,7 +624,7 @@
                             </h3>
                             <div class="form-grid-2col">
                                 <div class="form-group">
-                                    <label for="page-despre-hero-kicker" class="form-label">Kicker / Etichetă</label>
+                                    <label for="page-despre-hero-kicker" class="form-label">Etichetă / Tag Gold</label>
                                     <input type="text" id="page-despre-hero-kicker" class="form-input">
                                 </div>
                                 <div class="form-group">
@@ -588,8 +633,8 @@
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label for="page-despre-hero-intro" class="form-label">Paragraf Introductiv & Istoric</label>
-                                <textarea id="page-despre-hero-intro" class="form-textarea" style="min-height: 80px;"></textarea>
+                                <label for="page-despre-hero-intro" class="form-label">Subtitlu / Paragraf Introductiv</label>
+                                <textarea id="page-despre-hero-intro" class="form-textarea" style="min-height: 70px;"></textarea>
                             </div>
                         </div>
 
@@ -603,26 +648,86 @@
                             </div>
                         </div>
 
-                        <!-- CARD 3: OBIECTIVE STRATEGICE -->
+                        <!-- CARD 3: OBIECTIVE STRATEGICE & CALLOUT (1-LA-1 REAL) -->
                         <div class="cms-card" style="margin-bottom: 20px;">
                             <h3 style="font-size: 16px; font-weight: 700; color: #ffffff; margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
-                                🎯 Obiective Strategice & Viziune
+                                🎯 Obiectivele Uniunii (Statut și Misiune — 1-la-1)
+                            </h3>
+                            <div class="form-grid-2col">
+                                <div class="form-group">
+                                    <label for="page-despre-obj-tag" class="form-label">Etichetă Secțiune (Tag Cyan)</label>
+                                    <input type="text" id="page-despre-obj-tag" class="form-input">
+                                </div>
+                                <div class="form-group">
+                                    <label for="page-despre-obj-title" class="form-label">Titlu Secțiune H2</label>
+                                    <input type="text" id="page-despre-obj-title" class="form-input">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="page-despre-obj-callout" class="form-label">Callout Cadru Statutar & Sediu Central</label>
+                                <textarea id="page-despre-obj-callout" class="form-textarea" style="min-height: 60px;"></textarea>
+                            </div>
+                            
+                            <h4 style="font-size: 13px; font-weight: 700; color: var(--cyan); margin: 16px 0 10px 0; text-transform: uppercase; letter-spacing: 0.05em;">Cele 7 Obiective Numerotate</h4>
+                            <div style="display: flex; flex-direction: column; gap: 10px;">
+                                <div class="form-group" style="margin-bottom: 0;">
+                                    <label for="page-despre-obj-1" class="form-label">Obiectivul 01</label>
+                                    <input type="text" id="page-despre-obj-1" class="form-input">
+                                </div>
+                                <div class="form-group" style="margin-bottom: 0;">
+                                    <label for="page-despre-obj-2" class="form-label">Obiectivul 02</label>
+                                    <input type="text" id="page-despre-obj-2" class="form-input">
+                                </div>
+                                <div class="form-group" style="margin-bottom: 0;">
+                                    <label for="page-despre-obj-3" class="form-label">Obiectivul 03</label>
+                                    <input type="text" id="page-despre-obj-3" class="form-input">
+                                </div>
+                                <div class="form-group" style="margin-bottom: 0;">
+                                    <label for="page-despre-obj-4" class="form-label">Obiectivul 04</label>
+                                    <input type="text" id="page-despre-obj-4" class="form-input">
+                                </div>
+                                <div class="form-group" style="margin-bottom: 0;">
+                                    <label for="page-despre-obj-5" class="form-label">Obiectivul 05</label>
+                                    <input type="text" id="page-despre-obj-5" class="form-input">
+                                </div>
+                                <div class="form-group" style="margin-bottom: 0;">
+                                    <label for="page-despre-obj-6" class="form-label">Obiectivul 06</label>
+                                    <input type="text" id="page-despre-obj-6" class="form-input">
+                                </div>
+                                <div class="form-group" style="margin-bottom: 0;">
+                                    <label for="page-despre-obj-7" class="form-label">Obiectivul 07</label>
+                                    <input type="text" id="page-despre-obj-7" class="form-input">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- CARD 4: STATUTUL OFICIAL (DOCUMENT OFICIAL) -->
+                        <div class="cms-card" style="margin-bottom: 20px;">
+                            <h3 style="font-size: 16px; font-weight: 700; color: #ffffff; margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
+                                📄 Statutul Oficial (Card Descărcare PDF)
                             </h3>
                             <div class="form-grid-3col">
                                 <div class="form-group">
-                                    <label for="page-despre-obj1-title" class="form-label">Obiectiv 1 — Titlu</label>
-                                    <input type="text" id="page-despre-obj1-title" class="form-input">
-                                    <textarea id="page-despre-obj1-desc" class="form-textarea" style="min-height: 60px; margin-top: 6px;"></textarea>
+                                    <label for="page-despre-statut-tag" class="form-label">Etichetă Tag</label>
+                                    <input type="text" id="page-despre-statut-tag" class="form-input">
                                 </div>
                                 <div class="form-group">
-                                    <label for="page-despre-obj2-title" class="form-label">Obiectiv 2 — Titlu</label>
-                                    <input type="text" id="page-despre-obj2-title" class="form-input">
-                                    <textarea id="page-despre-obj2-desc" class="form-textarea" style="min-height: 60px; margin-top: 6px;"></textarea>
+                                    <label for="page-despre-statut-title" class="form-label">Titlu Statut Card</label>
+                                    <input type="text" id="page-despre-statut-title" class="form-input">
                                 </div>
                                 <div class="form-group">
-                                    <label for="page-despre-obj3-title" class="form-label">Obiectiv 3 — Titlu</label>
-                                    <input type="text" id="page-despre-obj3-title" class="form-input">
-                                    <textarea id="page-despre-obj3-desc" class="form-textarea" style="min-height: 60px; margin-top: 6px;"></textarea>
+                                    <label for="page-despre-statut-sub" class="form-label">Subtitlu / Dată Aprobare</label>
+                                    <input type="text" id="page-despre-statut-sub" class="form-input">
+                                </div>
+                            </div>
+                            <div class="form-grid-2col">
+                                <div class="form-group">
+                                    <label for="page-despre-statut-btn" class="form-label">Text Buton Descărcare</label>
+                                    <input type="text" id="page-despre-statut-btn" class="form-input">
+                                </div>
+                                <div class="form-group">
+                                    <label for="page-despre-statut-pdf" class="form-label">Cale / URL Fișier PDF</label>
+                                    <input type="text" id="page-despre-statut-pdf" class="form-input">
                                 </div>
                             </div>
                         </div>
@@ -651,7 +756,7 @@
                             </h3>
                             <div class="form-grid-2col">
                                 <div class="form-group">
-                                    <label for="page-ev-hero-kicker" class="form-label">Kicker / Etichetă</label>
+                                    <label for="page-ev-hero-kicker" class="form-label">Etichetă / Tag Gold</label>
                                     <input type="text" id="page-ev-hero-kicker" class="form-input">
                                 </div>
                                 <div class="form-group">
@@ -665,10 +770,31 @@
                             </div>
                         </div>
 
-                        <!-- CARD 2: JALOANE EVENIMENTE -->
+                        <!-- CARD 2: ANTET AXĂ TEMPORALĂ -->
                         <div class="cms-card" style="margin-bottom: 20px;">
                             <h3 style="font-size: 16px; font-weight: 700; color: #ffffff; margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
-                                📌 Calendarul Evenimentelor & Jaloanelor Tehnice
+                                ⏳ Antet Axă Temporală Geodezică
+                            </h3>
+                            <div class="form-grid-2col">
+                                <div class="form-group">
+                                    <label for="page-ev-axis-tag" class="form-label">Etichetă Axă (Tag Cyan)</label>
+                                    <input type="text" id="page-ev-axis-tag" class="form-input">
+                                </div>
+                                <div class="form-group">
+                                    <label for="page-ev-axis-title" class="form-label">Titlu Axă H2</label>
+                                    <input type="text" id="page-ev-axis-title" class="form-input">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="page-ev-axis-sub" class="form-label">Subtitlu Axă Temporală</label>
+                                <textarea id="page-ev-axis-sub" class="form-textarea" style="min-height: 50px;"></textarea>
+                            </div>
+                        </div>
+
+                        <!-- CARD 3: JALOANE EVENIMENTE -->
+                        <div class="cms-card" style="margin-bottom: 20px;">
+                            <h3 style="font-size: 16px; font-weight: 700; color: #ffffff; margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
+                                📌 Calendarul celor 6 Evenimente & Jaloane Tehnice
                             </h3>
                             <div id="pages-ev-nodes-container">
                                 <!-- Generat dinamic din pages.js -->
@@ -695,33 +821,41 @@
                         <!-- CARD 1: HERO & MAGIC UI CARD -->
                         <div class="cms-card" style="margin-bottom: 20px;">
                             <h3 style="font-size: 16px; font-weight: 700; color: #ffffff; margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
-                                👤 Antet Pagina & Card Magic UI Înscriere
+                                👤 Antet Pagină & Card Neon Magic UI Înscriere
                             </h3>
                             <div class="form-grid-2col">
                                 <div class="form-group">
-                                    <label for="page-membri-hero-kicker" class="form-label">Kicker / Etichetă</label>
+                                    <label for="page-membri-hero-kicker" class="form-label">Etichetă Header (Tag Gold)</label>
                                     <input type="text" id="page-membri-hero-kicker" class="form-input">
                                 </div>
                                 <div class="form-group">
-                                    <label for="page-membri-hero-title" class="form-label">Titlu Pagina H1</label>
+                                    <label for="page-membri-hero-title" class="form-label">Titlu Pagină H1</label>
                                     <input type="text" id="page-membri-hero-title" class="form-input">
                                 </div>
                             </div>
+                            <div class="form-group">
+                                <label for="page-membri-hero-subtitle" class="form-label">Subtitlu Antet Pagină</label>
+                                <textarea id="page-membri-hero-subtitle" class="form-textarea" style="min-height: 50px;"></textarea>
+                            </div>
                             <div class="form-grid-2col">
+                                <div class="form-group">
+                                    <label for="page-membri-card-kicker" class="form-label">Kicker Card Neon</label>
+                                    <input type="text" id="page-membri-card-kicker" class="form-input">
+                                </div>
                                 <div class="form-group">
                                     <label for="page-membri-card-title" class="form-label">Titlu Card Neon Aderare</label>
                                     <input type="text" id="page-membri-card-title" class="form-input">
                                 </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="page-membri-card-desc" class="form-label">Descriere Card Neon</label>
+                                <textarea id="page-membri-card-desc" class="form-textarea" style="min-height: 60px;"></textarea>
+                            </div>
+                            <div class="form-grid-3col">
                                 <div class="form-group">
                                     <label for="page-membri-card-btn-primary" class="form-label">Text Buton Înscriere</label>
                                     <input type="text" id="page-membri-card-btn-primary" class="form-input">
                                 </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="page-membri-card-desc" class="form-label">Descriere Card Aderare</label>
-                                <textarea id="page-membri-card-desc" class="form-textarea" style="min-height: 60px;"></textarea>
-                            </div>
-                            <div class="form-grid-2col">
                                 <div class="form-group">
                                     <label for="page-membri-card-btn-secondary" class="form-label">Text Buton Ghid Oficial</label>
                                     <input type="text" id="page-membri-card-btn-secondary" class="form-input">
@@ -736,15 +870,41 @@
                         <!-- CARD 2: MECANISM STATUTAR -->
                         <div class="cms-card" style="margin-bottom: 20px;">
                             <h3 style="font-size: 16px; font-weight: 700; color: #ffffff; margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
-                                📜 Mecanism Statutar & Apartenență
+                                📜 Mecanism Statutar & Apartenență (Înscriere Locală)
                             </h3>
-                            <div class="form-group">
-                                <label for="page-membri-mech-title" class="form-label">Titlu Mecanism</label>
-                                <input type="text" id="page-membri-mech-title" class="form-input">
+                            <div class="form-grid-2col">
+                                <div class="form-group">
+                                    <label for="page-membri-mech-kicker" class="form-label">Kicker Mecanism</label>
+                                    <input type="text" id="page-membri-mech-kicker" class="form-input">
+                                </div>
+                                <div class="form-group">
+                                    <label for="page-membri-mech-title" class="form-label">Titlu Mecanism</label>
+                                    <input type="text" id="page-membri-mech-title" class="form-input">
+                                </div>
                             </div>
                             <div class="form-group">
                                 <label for="page-membri-mech-desc" class="form-label">Descriere Mecanism Statutar</label>
                                 <textarea id="page-membri-mech-desc" class="form-textarea" style="min-height: 70px;"></textarea>
+                            </div>
+                            <div class="form-grid-3col" style="margin-top: 10px;">
+                                <div class="form-group" style="background: rgba(3, 11, 23, 0.5); padding: 10px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.06);">
+                                    <label for="page-membri-mech-p1-title" class="form-label">Punct 1 — Titlu</label>
+                                    <input type="text" id="page-membri-mech-p1-title" class="form-input" style="margin-bottom: 6px;">
+                                    <label for="page-membri-mech-p1-desc" class="form-label">Punct 1 — Descriere</label>
+                                    <textarea id="page-membri-mech-p1-desc" class="form-textarea" style="min-height: 50px;"></textarea>
+                                </div>
+                                <div class="form-group" style="background: rgba(3, 11, 23, 0.5); padding: 10px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.06);">
+                                    <label for="page-membri-mech-p2-title" class="form-label">Punct 2 — Titlu</label>
+                                    <input type="text" id="page-membri-mech-p2-title" class="form-input" style="margin-bottom: 6px;">
+                                    <label for="page-membri-mech-p2-desc" class="form-label">Punct 2 — Descriere</label>
+                                    <textarea id="page-membri-mech-p2-desc" class="form-textarea" style="min-height: 50px;"></textarea>
+                                </div>
+                                <div class="form-group" style="background: rgba(3, 11, 23, 0.5); padding: 10px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.06);">
+                                    <label for="page-membri-mech-p3-title" class="form-label">Punct 3 — Titlu</label>
+                                    <input type="text" id="page-membri-mech-p3-title" class="form-input" style="margin-bottom: 6px;">
+                                    <label for="page-membri-mech-p3-desc" class="form-label">Punct 3 — Descriere</label>
+                                    <textarea id="page-membri-mech-p3-desc" class="form-textarea" style="min-height: 50px;"></textarea>
+                                </div>
                             </div>
                         </div>
 
@@ -753,6 +913,16 @@
                             <h3 style="font-size: 16px; font-weight: 700; color: #ffffff; margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
                                 🔢 Procedura Oficială de Aderare în 4 Pași
                             </h3>
+                            <div class="form-grid-2col" style="margin-bottom: 12px;">
+                                <div class="form-group">
+                                    <label for="page-membri-steps-tag" class="form-label">Etichetă Secțiune (Tag Cyan)</label>
+                                    <input type="text" id="page-membri-steps-tag" class="form-input">
+                                </div>
+                                <div class="form-group">
+                                    <label for="page-membri-steps-title" class="form-label">Titlu Secțiune Pași</label>
+                                    <input type="text" id="page-membri-steps-title" class="form-input">
+                                </div>
+                            </div>
                             <div class="form-grid-2col">
                                 <div class="form-group">
                                     <label for="page-membri-step1-title" class="form-label">Pas 1 — Titlu</label>
@@ -777,23 +947,62 @@
                             </div>
                         </div>
 
-                        <!-- CARD 4: COTIZAȚII -->
+                        <!-- CARD 4: COTIZAȚII & DATE BANCARE -->
                         <div class="cms-card" style="margin-bottom: 20px;">
                             <h3 style="font-size: 16px; font-weight: 700; color: #ffffff; margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
-                                💳 Grilă Cotizații & Categorii de Membri
+                                💳 Grilă Cotizații & Date Bancare Oficiale
                             </h3>
+                            <div class="form-grid-2col" style="margin-bottom: 12px;">
+                                <div class="form-group">
+                                    <label for="page-membri-fees-tag" class="form-label">Etichetă Grilă (Tag Gold)</label>
+                                    <input type="text" id="page-membri-fees-tag" class="form-input">
+                                </div>
+                                <div class="form-group">
+                                    <label for="page-membri-fees-title" class="form-label">Titlu Secțiune Cotizații</label>
+                                    <input type="text" id="page-membri-fees-title" class="form-input">
+                                </div>
+                            </div>
                             <div class="form-grid-3col">
+                                <div class="form-group" style="background: rgba(3, 11, 23, 0.5); padding: 10px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.06);">
+                                    <h5 style="color: #fff; margin-bottom: 8px;">Membru Titular</h5>
+                                    <label for="page-membri-fee-titular-tax" class="form-label">Taxă Înscriere</label>
+                                    <input type="text" id="page-membri-fee-titular-tax" class="form-input" style="margin-bottom: 6px;">
+                                    <label for="page-membri-fee-titular-annual" class="form-label">Cotizație Anuală</label>
+                                    <input type="text" id="page-membri-fee-titular-annual" class="form-input" style="margin-bottom: 6px;">
+                                    <label for="page-membri-fee-titular-desc" class="form-label">Beneficii</label>
+                                    <textarea id="page-membri-fee-titular-desc" class="form-textarea" style="min-height: 50px;"></textarea>
+                                </div>
+                                <div class="form-group" style="background: rgba(3, 11, 23, 0.5); padding: 10px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.06);">
+                                    <h5 style="color: #fff; margin-bottom: 8px;">Membru Student</h5>
+                                    <label for="page-membri-fee-student-tax" class="form-label">Taxă Înscriere</label>
+                                    <input type="text" id="page-membri-fee-student-tax" class="form-input" style="margin-bottom: 6px;">
+                                    <label for="page-membri-fee-student-annual" class="form-label">Cotizație Anuală</label>
+                                    <input type="text" id="page-membri-fee-student-annual" class="form-input" style="margin-bottom: 6px;">
+                                    <label for="page-membri-fee-student-desc" class="form-label">Beneficii</label>
+                                    <textarea id="page-membri-fee-student-desc" class="form-textarea" style="min-height: 50px;"></textarea>
+                                </div>
+                                <div class="form-group" style="background: rgba(3, 11, 23, 0.5); padding: 10px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.06);">
+                                    <h5 style="color: #fff; margin-bottom: 8px;">Membru Firmă</h5>
+                                    <label for="page-membri-fee-firma-tax" class="form-label">Taxă Înscriere</label>
+                                    <input type="text" id="page-membri-fee-firma-tax" class="form-input" style="margin-bottom: 6px;">
+                                    <label for="page-membri-fee-firma-annual" class="form-label">Cotizație Anuală</label>
+                                    <input type="text" id="page-membri-fee-firma-annual" class="form-input" style="margin-bottom: 6px;">
+                                    <label for="page-membri-fee-firma-desc" class="form-label">Beneficii</label>
+                                    <textarea id="page-membri-fee-firma-desc" class="form-textarea" style="min-height: 50px;"></textarea>
+                                </div>
+                            </div>
+                            <div class="form-grid-3col" style="margin-top: 14px;">
                                 <div class="form-group">
-                                    <label for="page-membri-fee-fizica" class="form-label">Cotizație Pers. Fizică</label>
-                                    <input type="text" id="page-membri-fee-fizica" class="form-input">
+                                    <label for="page-membri-bank-name" class="form-label">Bancă & Agenție</label>
+                                    <input type="text" id="page-membri-bank-name" class="form-input">
                                 </div>
                                 <div class="form-group">
-                                    <label for="page-membri-fee-student" class="form-label">Cotizație Student / Masterand</label>
-                                    <input type="text" id="page-membri-fee-student" class="form-input">
+                                    <label for="page-membri-bank-iban" class="form-label">Cont IBAN</label>
+                                    <input type="text" id="page-membri-bank-iban" class="form-input" style="font-family: 'Space Mono'; font-weight: 700; color: var(--cyan);">
                                 </div>
                                 <div class="form-group">
-                                    <label for="page-membri-fee-juridica" class="form-label">Cotizație Pers. Juridică</label>
-                                    <input type="text" id="page-membri-fee-juridica" class="form-input">
+                                    <label for="page-membri-bank-purpose" class="form-label">Mențiune Virament</label>
+                                    <input type="text" id="page-membri-bank-purpose" class="form-input">
                                 </div>
                             </div>
                         </div>
@@ -829,16 +1038,22 @@
                             <h3 style="font-size: 16px; font-weight: 700; color: #ffffff; margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
                                 🧭 Ghid de Triaj & Orientare („Unde vă adresați?”)
                             </h3>
+                            <div class="form-grid-2col" style="margin-bottom: 12px;">
+                                <div class="form-group">
+                                    <label for="page-contact-triage-heading" class="form-label">Titlu Secțiune Ghid</label>
+                                    <input type="text" id="page-contact-triage-heading" class="form-input">
+                                </div>
+                                <div class="form-group">
+                                    <label for="page-contact-triage-sub" class="form-label">Subtitlu Secțiune Ghid</label>
+                                    <input type="text" id="page-contact-triage-sub" class="form-input">
+                                </div>
+                            </div>
                             <div class="form-grid-2col">
                                 <div style="background: rgba(3, 11, 23, 0.6); border: 1px solid rgba(0, 229, 255, 0.2); border-radius: 8px; padding: 14px;">
                                     <h4 style="font-size: 14px; font-weight: 700; color: var(--cyan); margin-bottom: 10px;">Card Filiala Sector 1 (Spețe Locale)</h4>
                                     <div class="form-group">
                                         <label for="page-contact-triage-local-title" class="form-label">Titlu Card</label>
                                         <input type="text" id="page-contact-triage-local-title" class="form-input">
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="page-contact-triage-local-desc" class="form-label">Descriere Competențe Locale</label>
-                                        <textarea id="page-contact-triage-local-desc" class="form-textarea" style="min-height: 60px;"></textarea>
                                     </div>
                                     <div class="form-grid-2col">
                                         <div class="form-group">
@@ -858,10 +1073,6 @@
                                         <label for="page-contact-triage-central-title" class="form-label">Titlu Card</label>
                                         <input type="text" id="page-contact-triage-central-title" class="form-input">
                                     </div>
-                                    <div class="form-group">
-                                        <label for="page-contact-triage-central-desc" class="form-label">Descriere Competențe Naționale</label>
-                                        <textarea id="page-contact-triage-central-desc" class="form-textarea" style="min-height: 60px;"></textarea>
-                                    </div>
                                     <div class="form-grid-2col">
                                         <div class="form-group">
                                             <label for="page-contact-triage-central-phone" class="form-label">Telefon Central</label>
@@ -876,10 +1087,10 @@
                             </div>
                         </div>
 
-                        <!-- CARD 3: SEDII, TELEFOANE & DATE BANCARE -->
+                        <!-- CARD 3: SEDII & TELEFOANE -->
                         <div class="cms-card" style="margin-bottom: 20px;">
                             <h3 style="font-size: 16px; font-weight: 700; color: #ffffff; margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
-                                📍 Puncte de Întâlnire, Telefoane Directe & Cont Bancar
+                                📍 Puncte de Întâlnire, Telefoane Directe & Sediul Central
                             </h3>
                             <div class="form-grid-2col">
                                 <div class="form-group">
@@ -887,8 +1098,8 @@
                                     <input type="text" id="page-contact-addr-academic" class="form-input">
                                 </div>
                                 <div class="form-group">
-                                    <label for="page-contact-addr-central" class="form-label">Sediul Central UGR</label>
-                                    <input type="text" id="page-contact-addr-central" class="form-input">
+                                    <label for="page-contact-email-local" class="form-label">Email Filială</label>
+                                    <input type="text" id="page-contact-email-local" class="form-input">
                                 </div>
                             </div>
                             <div class="form-grid-3col">
@@ -901,22 +1112,22 @@
                                     <input type="text" id="page-contact-phone-sec" class="form-input">
                                 </div>
                                 <div class="form-group">
-                                    <label for="page-contact-phone-cot" class="form-label">Telefon Gestiune Cotizații</label>
+                                    <label for="page-contact-phone-cot" class="form-label">Telefon Cotizații</label>
                                     <input type="text" id="page-contact-phone-cot" class="form-input">
                                 </div>
                             </div>
-                            <div class="form-grid-3col">
+                            <div class="form-grid-3col" style="margin-top: 10px;">
                                 <div class="form-group">
-                                    <label for="page-contact-bank-name" class="form-label">Bancă & Agenție</label>
-                                    <input type="text" id="page-contact-bank-name" class="form-input">
+                                    <label for="page-contact-addr-central" class="form-label">Adresă Sediul Central</label>
+                                    <input type="text" id="page-contact-addr-central" class="form-input">
                                 </div>
                                 <div class="form-group">
-                                    <label for="page-contact-bank-iban" class="form-label">Cont IBAN (RON)</label>
-                                    <input type="text" id="page-contact-bank-iban" class="form-input" style="font-family: 'Space Mono', monospace; font-weight: 700; color: var(--cyan);">
+                                    <label for="page-contact-central-phone" class="form-label">Telefon Sediul Central</label>
+                                    <input type="text" id="page-contact-central-phone" class="form-input">
                                 </div>
                                 <div class="form-group">
-                                    <label for="page-contact-bank-purpose" class="form-label">Explicație Plată</label>
-                                    <input type="text" id="page-contact-bank-purpose" class="form-input">
+                                    <label for="page-contact-central-email" class="form-label">Email Sediul Central</label>
+                                    <input type="text" id="page-contact-central-email" class="form-input">
                                 </div>
                             </div>
                         </div>

@@ -387,11 +387,52 @@ export async function verifyAdminStatus(user) {
     const sidebarAvatar = document.getElementById('sidebar-avatar');
 
     try {
-        const { data: adminRecord, error: adminErr } = await client
+        let { data: adminRecord, error: adminErr } = await client
             .from('admini')
-            .select('user_id, email, rol, activ')
+            .select('id, user_id, email, rol, activ')
             .eq('user_id', user.id)
             .maybeSingle();
+
+        // Dacă nu s-a găsit după user_id, verificăm dacă este un admin invitat
+        if (!adminRecord) {
+            // 1. Încercăm funcția RPC securizată claim_admin_invite
+            try {
+                const { data: claimData, error: claimErr } = await client.rpc('claim_admin_invite');
+                if (!claimErr && claimData && claimData.success) {
+                    adminRecord = {
+                        id: claimData.id,
+                        user_id: claimData.user_id,
+                        email: claimData.email,
+                        rol: claimData.rol,
+                        activ: claimData.activ
+                    };
+                }
+            } catch (rpcErr) {
+                // RPC poate să nu existe încă dacă migrarea 007 nu a fost rulată
+            }
+
+            // 2. Fallback direct prin verificare email și update RLS
+            if (!adminRecord && user.email) {
+                const normalizedEmail = user.email.trim().toLowerCase();
+                const { data: invitedRecord } = await client
+                    .from('admini')
+                    .select('id, user_id, email, rol, activ')
+                    .ilike('email', normalizedEmail)
+                    .maybeSingle();
+
+                if (invitedRecord && invitedRecord.activ) {
+                    if (!invitedRecord.user_id || invitedRecord.user_id !== user.id) {
+                        try {
+                            await client
+                                .from('admini')
+                                .update({ user_id: user.id })
+                                .eq('id', invitedRecord.id);
+                        } catch (e) {}
+                    }
+                    adminRecord = { ...invitedRecord, user_id: user.id };
+                }
+            }
+        }
 
         if (adminErr || !adminRecord || !adminRecord.activ) {
             await client.auth.signOut();

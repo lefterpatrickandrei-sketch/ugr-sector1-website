@@ -3050,30 +3050,73 @@ function applyCustomPageData(cheie, val) {
     if (!val || typeof val !== 'object') return;
     try {
         if (cheie === 'pagina_acasa') {
-            const kicker = document.querySelector('#view-acasa .hero-kicker');
-            if (kicker && val.heroKicker) kicker.textContent = val.heroKicker;
+            // 1. Hero
             const title = document.querySelector('#view-acasa .hero-title');
             if (title && val.heroTitle) title.textContent = val.heroTitle;
-            const sub = document.querySelector('#view-acasa .hero-subtitle') || document.querySelector('#view-acasa .hero-desc');
-            if (sub && val.heroSubtitle) sub.textContent = val.heroSubtitle;
-            const btnPrimary = document.getElementById('hero-btn-membership');
+            const lead = document.querySelector('#view-acasa .hero-lead');
+            if (lead && val.heroLead) lead.textContent = val.heroLead;
+            const btnPrimary = document.querySelector('#hero-btn-membership span:first-child') || document.getElementById('hero-btn-membership');
             if (btnPrimary && val.heroBtnPrimaryText) btnPrimary.textContent = val.heroBtnPrimaryText;
-            const btnSecondary = document.getElementById('hero-btn-secondary');
-            if (btnSecondary) {
-                if (val.heroBtnSecondaryText) btnSecondary.textContent = val.heroBtnSecondaryText;
-                if (val.heroBtnSecondaryLink) btnSecondary.href = val.heroBtnSecondaryLink;
+            const btnSecondary = document.querySelector('#hero-btn-secondary span:first-child') || document.getElementById('hero-btn-secondary');
+            if (btnSecondary && val.heroBtnSecondaryText) btnSecondary.textContent = val.heroBtnSecondaryText;
+            const btnSecLink = document.getElementById('hero-btn-secondary');
+            if (btnSecLink && val.heroBtnSecondaryLink) btnSecLink.setAttribute('href', val.heroBtnSecondaryLink);
+
+            // 2. Spatial HUD
+            const badge = document.getElementById('spatial-node-badge');
+            if (badge && val.spatialBadge) badge.textContent = val.spatialBadge;
+            const coords = document.getElementById('spatial-node-coords-short');
+            if (coords && val.spatialCoords) coords.textContent = val.spatialCoords;
+            const desc = document.getElementById('spatial-node-desc');
+            if (desc && val.spatialDesc) desc.textContent = val.spatialDesc;
+
+            // 3. Misiunea noastră & Cifre cheie
+            const kicker = document.querySelector('#view-acasa .mission-kicker');
+            if (kicker && val.missionKicker) kicker.textContent = val.missionKicker;
+            const missionTitle = document.querySelector('#view-acasa .mission-title');
+            if (missionTitle && val.missionTitle) missionTitle.textContent = val.missionTitle;
+            const missionPara = document.querySelector('#view-acasa .mission-paragraph');
+            if (missionPara && val.missionParagraph) missionPara.textContent = val.missionParagraph;
+
+            const statBlocks = document.querySelectorAll('#home-mission-stats-grid .stat-block');
+            if (statBlocks && statBlocks.length >= 4) {
+                const sData = [
+                    { num: val.stat1Num, label: val.stat1Label },
+                    { num: val.stat2Num, label: val.stat2Label },
+                    { num: val.stat3Num, label: val.stat3Label },
+                    { num: val.stat4Num, label: val.stat4Label }
+                ];
+                sData.forEach((sd, idx) => {
+                    if (statBlocks[idx]) {
+                        const numEl = statBlocks[idx].querySelector('.stat-number');
+                        const labelEl = statBlocks[idx].querySelector('.stat-label');
+                        if (numEl && sd.num) numEl.textContent = sd.num;
+                        if (labelEl && sd.label) {
+                            labelEl.textContent = sd.label;
+                            labelEl.setAttribute('data-text', sd.label);
+                        }
+                    }
+                });
             }
-            const mapTitle = document.querySelector('.map-section-title');
-            if (mapTitle && val.mapTitle) mapTitle.textContent = val.mapTitle;
-            const mapDesc = document.querySelector('.map-section-desc');
-            if (mapDesc && val.mapDesc) mapDesc.textContent = val.mapDesc;
+
+            // 4. Banner CTA
+            const ctaTitle = document.querySelector('#view-acasa .cta-banner-title');
+            if (ctaTitle && val.ctaTitle) ctaTitle.textContent = val.ctaTitle;
+            const ctaSub = document.querySelector('#view-acasa .cta-banner-subtitle');
+            if (ctaSub && val.ctaSubtitle) ctaSub.textContent = val.ctaSubtitle;
+            const ctaBtn = document.querySelector('#view-acasa .cta-banner-btn');
+            if (ctaBtn && val.ctaBtnText) ctaBtn.textContent = val.ctaBtnText;
+
         } else if (cheie === 'pagina_despre') {
+            // 1. Hero
             const kicker = document.querySelector('#view-despre .despre-tag-gold');
             if (kicker && val.heroKicker) kicker.textContent = val.heroKicker;
             const title = document.querySelector('#view-despre .despre-hero-title');
             if (title && val.heroTitle) title.textContent = val.heroTitle;
             const sub = document.querySelector('#view-despre .despre-hero-sub');
             if (sub && val.heroIntro) sub.textContent = val.heroIntro;
+
+            // 2. Timeline
             if (Array.isArray(val.timeline) && val.timeline.length > 0) {
                 const timelineItems = document.querySelectorAll('#view-despre .timeline-item-v2');
                 val.timeline.forEach((item, idx) => {
@@ -3087,31 +3130,185 @@ function applyCustomPageData(cheie, val) {
                     }
                 });
             }
+
+            // 3. Obiectivele Uniunii (Statut și Misiune — 1-la-1)
+            const objTag = document.querySelector('#obiective .despre-tag-cyan');
+            if (objTag && val.objTag) objTag.textContent = val.objTag;
+            const objTitle = document.querySelector('#obiective .despre-section-title');
+            if (objTitle && val.objTitle) objTitle.textContent = val.objTitle;
+            const objCallout = document.querySelector('#obiective .obiective-hq-callout');
+            if (objCallout && val.objCallout) objCallout.textContent = val.objCallout;
+
+            const objItems = document.querySelectorAll('#obiective .obiective-grid-v2 .obiective-item-v2 .obiective-text');
+            const objectivesList = [val.obj1, val.obj2, val.obj3, val.obj4, val.obj5, val.obj6, val.obj7];
+            objectivesList.forEach((objText, idx) => {
+                if (objItems[idx] && objText) {
+                    objItems[idx].textContent = objText;
+                }
+            });
+
+            // 4. Statut Oficial
+            const statutTag = document.querySelector('#view-despre .despre-statut-section .despre-tag-gold');
+            if (statutTag && val.statutTag) statutTag.textContent = val.statutTag;
+            const statutTitle = document.querySelector('#view-despre .statut-card-title');
+            if (statutTitle && val.statutTitle) statutTitle.textContent = val.statutTitle;
+            const statutSub = document.querySelector('#view-despre .statut-card-sub');
+            if (statutSub && val.statutSub) statutSub.textContent = val.statutSub;
+            const statutBtn = document.querySelector('#view-despre .btn-statut-download span:first-child');
+            if (statutBtn && val.statutBtnText) statutBtn.textContent = val.statutBtnText;
+            const statutLink = document.querySelector('#view-despre .btn-statut-download');
+            if (statutLink && val.statutPdfUrl) statutLink.setAttribute('href', val.statutPdfUrl);
+
         } else if (cheie === 'pagina_evenimente') {
+            // 1. Hero
             const kicker = document.querySelector('#view-evenimente .events-tag-gold');
             if (kicker && val.heroKicker) kicker.textContent = val.heroKicker;
             const title = document.querySelector('#view-evenimente .events-hero-title');
             if (title && val.heroTitle) title.textContent = val.heroTitle;
             const sub = document.querySelector('#view-evenimente .events-hero-sub');
             if (sub && val.heroSubtitle) sub.textContent = val.heroSubtitle;
+
+            // 2. Axă Temporală
+            const axisTag = document.querySelector('#view-evenimente .events-tag-cyan');
+            if (axisTag && val.axisTag) axisTag.textContent = val.axisTag;
+            const axisTitle = document.querySelector('#view-evenimente .events-section-title');
+            if (axisTitle && val.axisTitle) axisTitle.textContent = val.axisTitle;
+            const axisSub = document.querySelector('#view-evenimente .events-section-sub');
+            if (axisSub && val.axisSub) axisSub.textContent = val.axisSub;
+
+            // 3. Jaloane Evenimente
+            if (Array.isArray(val.events) && val.events.length > 0) {
+                const eventNodes = document.querySelectorAll('#view-evenimente .events-timeline-item');
+                val.events.forEach((ev, idx) => {
+                    if (eventNodes[idx]) {
+                        const dateEl = eventNodes[idx].querySelector('.events-badge-date');
+                        const scopeEl = eventNodes[idx].querySelector('.events-badge-scope');
+                        const titleEl = eventNodes[idx].querySelector('.events-node-title');
+                        const descEl = eventNodes[idx].querySelector('.events-node-desc');
+                        if (dateEl && ev.data) dateEl.textContent = ev.data;
+                        if (scopeEl && ev.scope) scopeEl.textContent = ev.scope;
+                        if (titleEl && ev.titlu) titleEl.textContent = ev.titlu;
+                        if (descEl && ev.desc) descEl.textContent = ev.desc;
+                    }
+                });
+            }
+
         } else if (cheie === 'pagina_membri') {
-            const kicker = document.querySelector('#view-membri .membri-tag-gold');
+            // 1. Header
+            const kicker = document.querySelector('#view-membri .membri-tag-gold span:first-child');
             if (kicker && val.heroKicker) kicker.textContent = val.heroKicker;
             const title = document.querySelector('#view-membri .membri-main-title');
             if (title && val.heroTitle) title.textContent = val.heroTitle;
+            const sub = document.querySelector('#view-membri .membri-main-sub');
+            if (sub && val.heroSubtitle) sub.textContent = val.heroSubtitle;
+
+            // 2. Card Beam
+            const cardKicker = document.querySelector('#view-membri .m-demo4-kicker span:first-child');
+            if (cardKicker && val.cardKicker) cardKicker.textContent = val.cardKicker;
             const cardTitle = document.querySelector('#view-membri .m-demo4-card-title');
             if (cardTitle && val.cardTitle) cardTitle.textContent = val.cardTitle;
-            const cardDesc = document.querySelector('#view-membri .m-demo4-desc');
+            const cardDesc = document.querySelector('#view-membri .m-demo4-card-sub');
             if (cardDesc && val.cardDesc) cardDesc.textContent = val.cardDesc;
-            const mechTitle = document.querySelector('#view-membri .m-block-title');
+            const cardBtn1 = document.querySelector('#view-membri .m-demo4-actions .btn-membership span:first-child');
+            if (cardBtn1 && val.cardBtnPrimaryText) cardBtn1.textContent = val.cardBtnPrimaryText;
+            const cardBtn2 = document.querySelector('#view-membri .m-demo4-actions .btn-secondary span:first-child');
+            if (cardBtn2 && val.cardBtnSecondaryText) cardBtn2.textContent = val.cardBtnSecondaryText;
+            const cardBtn2Link = document.querySelector('#view-membri .m-demo4-actions .btn-secondary');
+            if (cardBtn2Link && val.cardBtnSecondaryLink) cardBtn2Link.setAttribute('href', val.cardBtnSecondaryLink);
+
+            // 3. Mecanism Statutar
+            const mechKicker = document.querySelector('#m-apartenenta-block .m-kicker-badge');
+            if (mechKicker && val.mechKicker) mechKicker.textContent = val.mechKicker;
+            const mechTitle = document.querySelector('#m-apartenenta-block .m-block-title');
             if (mechTitle && val.mechanismTitle) mechTitle.textContent = val.mechanismTitle;
+            const mechDesc = document.querySelector('#m-apartenenta-block .m-block-desc');
+            if (mechDesc && val.mechanismDesc) mechDesc.textContent = val.mechanismDesc;
+
+            const mechPoints = document.querySelectorAll('#m-apartenenta-block .m-step-card-mini');
+            if (mechPoints && mechPoints.length >= 3) {
+                if (val.mechP1Title && mechPoints[0].querySelector('b')) mechPoints[0].querySelector('b').textContent = val.mechP1Title;
+                if (val.mechP1Desc && mechPoints[0].querySelector('span')) mechPoints[0].querySelector('span').textContent = val.mechP1Desc;
+                if (val.mechP2Title && mechPoints[1].querySelector('b')) mechPoints[1].querySelector('b').textContent = val.mechP2Title;
+                if (val.mechP2Desc && mechPoints[1].querySelector('span')) mechPoints[1].querySelector('span').textContent = val.mechP2Desc;
+                if (val.mechP3Title && mechPoints[2].querySelector('b')) mechPoints[2].querySelector('b').textContent = val.mechP3Title;
+                if (val.mechP3Desc && mechPoints[2].querySelector('span')) mechPoints[2].querySelector('span').textContent = val.mechP3Desc;
+            }
+
+            // 4. Procedura în 4 Pași
+            const stepsTag = document.querySelector('#m-procedura-block .m-tag-cyan');
+            if (stepsTag && val.stepsTag) stepsTag.textContent = val.stepsTag;
+            const stepsTitle = document.querySelector('#m-procedura-block .m-section-subheading');
+            if (stepsTitle && val.stepsTitle) stepsTitle.textContent = val.stepsTitle;
+
+            const pasiCards = document.querySelectorAll('#m-procedura-block .m-pasi-card');
+            if (pasiCards && pasiCards.length >= 4) {
+                const stepData = [
+                    { t: val.step1Title, d: val.step1Desc },
+                    { t: val.step2Title, d: val.step2Desc },
+                    { t: val.step3Title, d: val.step3Desc },
+                    { t: val.step4Title, d: val.step4Desc }
+                ];
+                stepData.forEach((sd, idx) => {
+                    if (pasiCards[idx]) {
+                        const titleEl = pasiCards[idx].querySelector('b');
+                        const descEl = pasiCards[idx].querySelector('p');
+                        if (titleEl && sd.t) titleEl.textContent = sd.t;
+                        if (descEl && sd.d) descEl.textContent = sd.d;
+                    }
+                });
+            }
+
+            // 5. Grilă Cotizații
+            const feesTag = document.querySelector('#m-cotizatii-block .m-tag-gold');
+            if (feesTag && val.feesTag) feesTag.textContent = val.feesTag;
+            const feesTitle = document.querySelector('#m-cotizatii-block .m-section-subheading');
+            if (feesTitle && val.feesTitle) feesTitle.textContent = val.feesTitle;
+
+            const feeRows = document.querySelectorAll('#m-cotizatii-block .dark-members-table tbody tr');
+            if (feeRows && feeRows.length >= 3) {
+                if (val.feeTitularTax && feeRows[0].children[1]) feeRows[0].children[1].textContent = val.feeTitularTax;
+                if (val.feeTitularAnnual && feeRows[0].children[2]) feeRows[0].children[2].textContent = val.feeTitularAnnual;
+                if (val.feeTitularDesc && feeRows[0].children[3]) feeRows[0].children[3].textContent = val.feeTitularDesc;
+
+                if (val.feeStudentTax && feeRows[1].children[1]) feeRows[1].children[1].textContent = val.feeStudentTax;
+                if (val.feeStudentAnnual && feeRows[1].children[2]) feeRows[1].children[2].textContent = val.feeStudentAnnual;
+                if (val.feeStudentDesc && feeRows[1].children[3]) feeRows[1].children[3].textContent = val.feeStudentDesc;
+
+                if (val.feeFirmaTax && feeRows[2].children[1]) feeRows[2].children[1].textContent = val.feeFirmaTax;
+                if (val.feeFirmaAnnual && feeRows[2].children[2]) feeRows[2].children[2].textContent = val.feeFirmaAnnual;
+                if (val.feeFirmaDesc && feeRows[2].children[3]) feeRows[2].children[3].textContent = val.feeFirmaDesc;
+            }
+
+            const bankIban = document.querySelector('#m-cotizatii-block .m-cotizatii-bank b');
+            if (bankIban && val.bankIban) bankIban.textContent = val.bankIban;
+            const bankPurpose = document.querySelector('#m-cotizatii-block .m-cotizatii-bank em');
+            if (bankPurpose && val.bankPurpose) bankPurpose.textContent = val.bankPurpose;
+
         } else if (cheie === 'pagina_contact') {
+            // 1. Hero
             const kicker = document.querySelector('#view-contact .faq-hero-kicker');
             if (kicker && val.heroKicker) kicker.textContent = val.heroKicker;
             const title = document.querySelector('#view-contact .faq-hero-title');
             if (title && val.heroTitle) title.textContent = val.heroTitle;
             const sub = document.querySelector('#view-contact .faq-hero-subtitle');
             if (sub && val.heroSubtitle) sub.textContent = val.heroSubtitle;
+
+            // 2. Triaj
+            const triageHeading = document.querySelector('#view-contact .section-header h3');
+            if (triageHeading && val.triageHeading) triageHeading.textContent = val.triageHeading;
+            const triageSub = document.querySelector('#view-contact .section-header p');
+            if (triageSub && val.triageSub) triageSub.textContent = val.triageSub;
+
+            const triageLocalTitle = document.querySelector('#view-contact .triaj-card-local h4');
+            if (triageLocalTitle && val.triageLocalTitle) triageLocalTitle.textContent = val.triageLocalTitle;
+            const triageCentralTitle = document.querySelector('#view-contact .triaj-card-central h4');
+            if (triageCentralTitle && val.triageCentralTitle) triageCentralTitle.textContent = val.triageCentralTitle;
+
+            // 3. Formular
+            const formTitle = document.querySelector('#view-contact .contact-glass-panel h3');
+            if (formTitle && val.formTitle) formTitle.textContent = val.formTitle;
+            const formDesc = document.querySelector('#view-contact .contact-glass-panel p');
+            if (formDesc && val.formDesc) formDesc.textContent = val.formDesc;
         }
     } catch (e) {
         console.warn('[CustomPageData] Error applying:', e);
