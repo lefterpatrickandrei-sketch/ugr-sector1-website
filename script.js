@@ -1156,6 +1156,61 @@ function renderNewsBento(filterScope = 'all') {
         </article>
         `;
     }).join('');
+    renderEventsTimeline();
+}
+
+function renderEventsTimeline() {
+    const axis = document.querySelector('.events-timeline-axis');
+    if (!axis || !ugrData.newsList || ugrData.newsList.length === 0) return;
+
+    axis.innerHTML = ugrData.newsList.map(item => {
+        const isNational = item.scope === 'national';
+        const pinClass = isNational ? 'pin-gold' : '';
+        const cardClass = isNational ? 'card-gold' : '';
+        const badgeDateClass = isNational ? 'badge-gold' : '';
+        const badgeScopeClass = isNational ? 'badge-gold-scope' : '';
+        const linkClass = isNational ? 'link-gold' : '';
+        const dateText = item.date || '2026';
+        const scopeText = isNational ? 'CONGRES ANUAL NAȚIONAL & INTERNAȚIONAL' : (item.category ? item.category.toUpperCase() : 'ACTIVITATE LOCALĂ FILIALA SECTOR 1');
+
+        let actionsHtml = '';
+        if (item.source && item.source.url) {
+            const isExternal = item.source.url.startsWith('http');
+            const targetAttr = isExternal ? 'target="_blank" rel="noopener noreferrer"' : '';
+            actionsHtml = `
+                <div class="events-node-actions" style="display: flex; gap: 14px; flex-wrap: wrap;">
+                    <a href="${escapeHtml(item.source.url)}" ${targetAttr} class="events-action-link ${linkClass}">
+                        <span>${escapeHtml(item.actionText || 'Detalii')}</span>
+                        <span class="action-arrow">↗</span>
+                    </a>
+                </div>
+            `;
+        }
+
+        return `
+            <div class="events-timeline-item scroll-reveal reveal-left is-visible">
+                <div class="events-node-pin ${pinClass}"></div>
+                <div class="events-node-card ${cardClass}">
+                    <div class="events-node-flex">
+                        <div class="events-node-thumb">
+                            <img src="${escapeHtml(item.image)}" alt="${escapeHtml(item.title)}" loading="lazy">
+                        </div>
+                        <div class="events-node-body">
+                            <div class="events-node-meta">
+                                <span class="events-badge-date ${badgeDateClass}">${isNational ? '★ ' : ''}${escapeHtml(dateText)}</span>
+                                <span class="events-badge-scope ${badgeScopeClass}">${escapeHtml(scopeText)}</span>
+                            </div>
+                            <h3 class="events-node-title">${escapeHtml(item.title)}</h3>
+                            <p class="events-node-desc">
+                                ${escapeHtml(item.desc)}
+                            </p>
+                            ${actionsHtml}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }).join('');
 }
 
 function renderLeadership() {

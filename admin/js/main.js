@@ -425,6 +425,13 @@ function bootAdminApp() {
     if (btnOpenAddNews) btnOpenAddNews.addEventListener('click', openAddNewsModal);
     if (btnCloseNewsModal) btnCloseNewsModal.addEventListener('click', closeNewsModal);
     if (btnCancelNewsModal) btnCancelNewsModal.addEventListener('click', closeNewsModal);
+    const formNews = document.getElementById('form-news');
+    if (formNews) {
+        formNews.addEventListener('submit', (e) => {
+            e.preventDefault();
+            handleSaveNews();
+        });
+    }
     if (btnSaveNews) btnSaveNews.addEventListener('click', handleSaveNews);
     if (btnSyncNewsAction) btnSyncNewsAction.addEventListener('click', () => handleSyncDefaultNews(btnSyncNewsAction));
     if (btnClosePreviewModal) btnClosePreviewModal.addEventListener('click', closePreviewNewsModal);
