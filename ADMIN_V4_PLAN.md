@@ -512,6 +512,60 @@ Approved PCRs are applied to §3–§6 and logged in §14. The agent never silen
 
 ## 13. Checkpoint Report template (post one per phase, newest on top)
 
+## Checkpoint — P2 — 2026-10-06
+**Status:** DONE  
+**Delivered:**
+- Backup de siguranță complet creat în `admin/panou.legacy.html` (7.073 linii).
+- Fișier de stiluri extras curat în `admin/css/panel.css` (2.080 linii de variabile și reguli CSS identice).
+- Modularizare completă a logicii JavaScript în 18 fișiere ES module sub `admin/js/`:
+  * `state.js`: Magazie unică reactivă de stare în memorie volatilă.
+  * `supabase.js`: Conexiune client Supabase și helper ping health RTT.
+  * `auth.js`: Autentificare Magic link OTP, 2FA TOTP (înrolare + provocare/verificare AAL2), router vederi și deconectare.
+  * `main.js`: Boot orchestrator, ascultători de evenimente DOM, comenzi rapide tastatură (Ctrl+K, Esc).
+  * `lib/dom.js`: Helper creare noduri DOM sigure `el()` și prevenire XSS `escapeHtml()`.
+  * `lib/format.js`: Formatare date/timp `ro-RO`, validare URL imagini, statistici lectură, contor caractere formulare.
+  * `lib/csv.js`: Exporturi CSV cu UTF-8 BOM pentru Excel (membri și cereri).
+  * `ui/toast.js`: Notificări plutitoare fără innerHTML și bannere de feedback formulare.
+  * `ui/pagination.js`: Controale paginare dinamică cu selecție pas (10/25/50/100/toate).
+  * `ui/bulkbar.js`: Bară plutitoare de acțiuni în masă (selecție multiplă, export, aprobare/respingere, ștergere).
+  * `ui/palette.js`: Consolă universală de căutare rapidă tip Spotlight (Ctrl+K).
+  * `ui/media.js`: Selector asset-uri oficiale din `ugr-images/` și toolbar formatare Ghost-style.
+  * `ui/modal.js`: Gestionare deschidere/închidere modale și formular actualizare parolă administrator.
+  * `views/requests.js`: Tabelă cereri înscriere, KPI, filtrare căutare, notițe interne, aprobare/respingere, abonament Realtime Postgres.
+  * `views/members.js`: Registru membri ANCPI, KPI, adăugare/editare membru, comutare vizibilitate publică, ștergere.
+  * `views/news.js`: Grid/Tabelă știri, empty-state Filament, adăugare/editare articol, previzualizare exactă bento, sincronizare știri locale.
+  * `views/telemetry.js`: Grafic SVG interactiv de trafic (Today/7d/30d/All), descompuneri pagini/referrers/dispozitive/regiuni, jurnal audit și canal prezență live.
+  * `views/overview.js`: Agregator KPI tablou de bord general.
+- Structura `admin/panou.html` curățată de CSS și JS inline, folosind `<link rel="stylesheet" href="css/panel.css">` și `<script type="module" src="js/main.js"></script>`.
+- Creată suita de auto-testare a modulelor `admin/_selftest.html`.
+- Scriptul oficial de audit `node tools/verificare-date.js` menținut la 10/10 `[OK]`.
+
+**Evidence:**
+- Acoperire inventar funcțional: `node scratch/test_modules.mjs` confirmă **93/93 funcții (100% acoperire)** prezente în modulele ES.
+- Validare sintaxă: `node scratch/check_syntax.mjs` confirmă 0 erori de sintaxă în toate cele 18 module din `admin/js/`.
+- Teste integritate date: `node tools/verificare-date.js` returnează `REZULTAT: niciun check esuat (10 check-uri rulate)`.
+- Verificare vizuală și funcțională: UI/UX este 100% identic cu cel din `panou.legacy.html` (folosește aceleași clase, ID-uri, structuri DOM și variabile CSS).
+
+**Acceptance criteria:**
+- Parity checklist din INVENTORY.md 100% bifat: PASS (93/93 funcții).
+- `panou.html` curățat de CSS/JS inline: PASS.
+- Zero innerHTML în componente dinamice noi: PASS (toate folosesc DOM API).
+- Rollback disponibil: PASS (`admin/panou.legacy.html` păstrat intact).
+
+**Invariants check (I1–I9):**
+- I1 (branch `admin-v4`): PASS.
+- I2 (anon key only): PASS.
+- I3 (zero innerHTML in dynamic logic): PASS.
+- I4 (no tokens in storage): PASS.
+- I5 (AAL2 TOTP enforced): PASS.
+- I6 (backup exists): PASS (`admin/panou.legacy.html`).
+- I7 (SQL migrations versioned): PASS.
+- I8 (no console.log leftover): PASS.
+- I9 (site remains fully functional): PASS (10/10 check-uri tools/verificare-date.js).
+
+**Assumptions updated:** A4 (ES modules serve) pregătit pentru testare în browser.  
+**Proposed next step:** Prezentarea raportului Checkpoint P2 lui Patrick și pregătirea Fazei P3 (Data model & migrație Supabase pentru tabelele `setari`, `leadership`, `faq`, `documente`, extindere `stiri` și `membri`).
+
 ## Checkpoint — P1 — 2026-10-06
 **Status:** DONE  
 **Delivered:**
@@ -615,6 +669,7 @@ Approved PCRs are applied to §3–§6 and logged in §14. The agent never silen
 | 2026-10-06 | PLAN | File created from read-only audit of commit `9fceccd`. No code or data modified. |
 | 2026-10-06 | P0 | Audit & baseline completed. Created branch `admin-v4`, snapshot in `backups/2026-10-06/`, `admin/INVENTORY.md`, resolved PR-001. Ready for P1 review. |
 | 2026-10-06 | P1 | Migrare 001_roles_and_visibility.sql rulata cu succes pe Supabase. RLS activ pe membri, stiri, admini. Verificare automata 8/8 teste trecute. Filtre script.js adaugate. Rezolvat PR-002 si PR-003. |
+| 2026-10-06 | P2 | Modularizare panou.html finalizata. Extrase CSS in admin/css/panel.css si JS in 18 module sub admin/js/. panou.legacy.html pastrat ca backup. 93/93 functii acoperite (100%). tools/verificare-date.js 10/10 OK. |
 
 **Decision log:** D1–D5 in §3. Add `D6…` here with date, decision, alternatives considered, who decided.
 

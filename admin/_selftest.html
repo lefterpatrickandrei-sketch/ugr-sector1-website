@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="ro">
+<head>
+    <meta charset="utf-8">
+    <title>UGR CMS Admin v4 — Self-Test Suite</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace;
+            background: #030814;
+            color: #f8fafc;
+            padding: 30px;
+            line-height: 1.6;
+        }
+        h1 { color: #00e5ff; margin-bottom: 8px; }
+        .summary { margin-bottom: 24px; color: #94a3b8; font-size: 15px; }
+        .test-list { list-style: none; padding: 0; }
+        .test-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 16px;
+            margin-bottom: 8px;
+            background: rgba(8, 24, 48, 0.7);
+            border: 1px solid rgba(0, 229, 255, 0.2);
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        .test-item.pass { border-color: rgba(16, 185, 129, 0.4); }
+        .test-item.fail { border-color: rgba(239, 68, 68, 0.4); }
+        .badge {
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-weight: 700;
+            font-size: 12px;
+        }
+        .badge.pass { background: rgba(16, 185, 129, 0.2); color: #10b981; }
+        .badge.fail { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
+        #overall-status {
+            display: inline-block;
+            margin-top: 16px;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: 700;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+    <h1>UGR Admin v4 — ES Module Self-Test</h1>
+    <div class="summary">Verifică încărcarea modulelor native ES, lipsa erorilor de sintaxă și integritatea funcțiilor de bază.</div>
+
+    <ul id="test-list" class="test-list"></ul>
+    <div id="overall-status">Se rulează testele...</div>
+
+    <script type="module">
+        const results = [];
+        const testList = document.getElementById('test-list');
+        const overallStatus = document.getElementById('overall-status');
+
+        function assert(name, condition, errorMsg = '') {
+            results.push({ name, pass: Boolean(condition), errorMsg });
+            const li = document.createElement('li');
+            li.className = 'test-item ' + (condition ? 'pass' : 'fail');
+            
+            const badge = document.createElement('span');
+            badge.className = 'badge ' + (condition ? 'pass' : 'fail');
+            badge.textContent = condition ? 'PASS' : 'FAIL';
+            li.appendChild(badge);
+
+            const label = document.createElement('span');
+            label.textContent = name + (condition ? '' : ` (${errorMsg})`);
+            li.appendChild(label);
+
+            testList.appendChild(li);
+        }
+
+        try {
+            // Test 1: Import state
+            const { state } = await import('./js/state.js');
+            assert('Module: state.js import', state && typeof state === 'object');
+            assert('State: default properties present', state.currentActiveView === 'overview' && Array.isArray(state.allMembersData));
+
+            // Test 2: Import supabase client
+            const { client, SUPABASE_CONFIG } = await import('./js/supabase.js');
+            assert('Module: supabase.js import', client && typeof client.from === 'function');
+            assert('Supabase: config integrity', SUPABASE_CONFIG.url && SUPABASE_CONFIG.anonKey);
+
+            // Test 3: Import DOM lib
+            const { el, escapeHtml } = await import('./js/lib/dom.js');
+            assert('Module: lib/dom.js import', typeof el === 'function' && typeof escapeHtml === 'function');
+            assert('DOM: escapeHtml prevents XSS', escapeHtml('<script>alert(1)</script>') === '&lt;script&gt;alert(1)&lt;/script&gt;');
+
+            // Test 4: Import format lib
+            const { formatStatusLabel, formatDateTimeRo, formatDateOnlyRo, isValidImageUrl, updateReadingStats, updateCharCounters } = await import('./js/lib/format.js');
+            assert('Module: lib/format.js import', typeof formatStatusLabel === 'function' && typeof updateCharCounters === 'function');
+            assert('Format: status labels', formatStatusLabel('in_asteptare') === 'În așteptare' && formatStatusLabel('aprobat') === 'Aprobată');
+            assert('Format: image url validator', isValidImageUrl('https://example.com/pic.png') && isValidImageUrl('ugr-images/united_1384.png') && !isValidImageUrl('http://insecure.com'));
+
+            // Test 5: Import CSV lib
+            const { exportArrayToCsv, exportMembersToCsv, exportRequestsToCsv } = await import('./js/lib/csv.js');
+            assert('Module: lib/csv.js import', typeof exportArrayToCsv === 'function');
+
+            // Test 6: Import UI toast
+            const { showToast, setBannerFeedback, clearBannerFeedback } = await import('./js/ui/toast.js');
+            assert('Module: ui/toast.js import', typeof showToast === 'function');
+
+            // Test 7: Import UI pagination
+            const { renderPaginationControls } = await import('./js/ui/pagination.js');
+            assert('Module: ui/pagination.js import', typeof renderPaginationControls === 'function');
+
+            // Test 8: Import UI bulkbar
+            const { updateBulkActionsBar, clearAllBulkSelections, registerBulkReloadCallbacks } = await import('./js/ui/bulkbar.js');
+            assert('Module: ui/bulkbar.js import', typeof updateBulkActionsBar === 'function' && typeof registerBulkReloadCallbacks === 'function');
+
+            // Test 9: Import UI palette
+            const { openCommandPalette, closeCommandPalette, renderCommandPaletteResults, registerPaletteActions } = await import('./js/ui/palette.js');
+            assert('Module: ui/palette.js import', typeof openCommandPalette === 'function' && typeof registerPaletteActions === 'function');
+
+            // Test 10: Import UI media
+            const { openMediaPickerModal, closeMediaPickerModal, renderMediaPickerGrid, applyFormatting } = await import('./js/ui/media.js');
+            assert('Module: ui/media.js import', typeof openMediaPickerModal === 'function' && typeof applyFormatting === 'function');
+
+            // Test 11: Import UI modal
+            const { openAdminProfileModal, closeAdminProfileModal, handleUpdatePassword } = await import('./js/ui/modal.js');
+            assert('Module: ui/modal.js import', typeof openAdminProfileModal === 'function');
+
+            // Test 12: Import Views
+            const reqMod = await import('./js/views/requests.js');
+            assert('Module: views/requests.js import', typeof reqMod.loadRequests === 'function' && typeof reqMod.handleSetRequestStatus === 'function');
+
+            const memMod = await import('./js/views/members.js');
+            assert('Module: views/members.js import', typeof memMod.loadMembers === 'function' && typeof memMod.handleToggleMemberVisibility === 'function');
+
+            const newsMod = await import('./js/views/news.js');
+            assert('Module: views/news.js import', typeof newsMod.loadNews === 'function' && typeof newsMod.handleToggleNewsPublish === 'function');
+            assert('News: fallback array intact (9 items)', Array.isArray(newsMod.OFFICIAL_FALLBACK_NEWS) && newsMod.OFFICIAL_FALLBACK_NEWS.length === 9);
+
+            const telMod = await import('./js/views/telemetry.js');
+            assert('Module: views/telemetry.js import', typeof telMod.loadTelemetryData === 'function' && typeof telMod.renderTrafficChart === 'function');
+
+            const overMod = await import('./js/views/overview.js');
+            assert('Module: views/overview.js import', typeof overMod.updateOverviewKpi === 'function');
+
+            // Test 13: Import Auth
+            const authMod = await import('./js/auth.js');
+            assert('Module: auth.js import', typeof authMod.handleSendOtp === 'function' && typeof authMod.evaluateAuthState === 'function');
+
+            const allPass = results.every(r => r.pass);
+            if (allPass) {
+                overallStatus.style.background = 'rgba(16, 185, 129, 0.2)';
+                overallStatus.style.color = '#10b981';
+                overallStatus.textContent = `✓ Toate cele ${results.length} verificări au trecut cu succes (0 erori)!`;
+            } else {
+                overallStatus.style.background = 'rgba(239, 68, 68, 0.2)';
+                overallStatus.style.color = '#ef4444';
+                overallStatus.textContent = '✗ Au existat eșecuri la verificarea modulelor!';
+            }
+        } catch (globalErr) {
+            assert('Global Exception', false, globalErr.message);
+            overallStatus.style.background = 'rgba(239, 68, 68, 0.2)';
+            overallStatus.style.color = '#ef4444';
+            overallStatus.textContent = '✗ Eroare critică: ' + globalErr.message;
+        }
+    </script>
+</body>
+</html>
