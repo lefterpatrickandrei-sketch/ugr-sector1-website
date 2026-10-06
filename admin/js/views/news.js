@@ -627,6 +627,8 @@ export function openEditNewsModal(item) {
     const newsInputPublicat = document.getElementById('news-input-publicat');
 
     if (!modalNews) return;
+    const fb = document.getElementById('modal-news-feedback');
+    if (fb) { fb.style.display = 'none'; fb.textContent = ''; }
     if (modalNewsTitle) modalNewsTitle.textContent = `Editează știre: ${item.titlu || ''}`;
     if (newsInputTitlu) newsInputTitlu.value = item.titlu || '';
     if (newsInputData) newsInputData.value = item.data_publicare ? item.data_publicare.split('T')[0] : '';
@@ -804,6 +806,12 @@ export async function handleSaveNews() {
 
             if (error) {
                 showToast('Eroare: ' + error.message, 'error');
+                const fb = document.getElementById('modal-news-feedback');
+                if (fb) {
+                    fb.style.display = 'block';
+                    fb.className = 'feedback-banner error';
+                    fb.textContent = 'Eroare la salvare: ' + error.message;
+                }
                 return;
             }
             showToast('Știrea a fost actualizată!', 'success');
@@ -814,6 +822,12 @@ export async function handleSaveNews() {
 
             if (error) {
                 showToast('Eroare: ' + error.message, 'error');
+                const fb = document.getElementById('modal-news-feedback');
+                if (fb) {
+                    fb.style.display = 'block';
+                    fb.className = 'feedback-banner error';
+                    fb.textContent = 'Eroare la salvare: ' + error.message;
+                }
                 return;
             }
             showToast('Știrea a fost publicată cu succes!', 'success');

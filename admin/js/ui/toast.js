@@ -3,7 +3,7 @@
  */
 
 export function showToast(message, type = 'info', duration = 4000) {
-    const toastContainer = document.getElementById('cms-toast-container');
+    const toastContainer = document.getElementById('cms-toast-container') || document.getElementById('toast-container');
     if (!toastContainer) return;
 
     const toast = document.createElement('div');
