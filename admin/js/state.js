@@ -9,16 +9,26 @@ export const state = {
     isEvaluatingSession: false,
     currentActiveView: 'overview',
     
+    // UI Mode ('simplu' | 'avansat')
+    uiMode: localStorage.getItem('ugr_ui_mode') || 'simplu',
+
     // Data collections
     allRequestsData: [],
     allMembersData: [],
     allNewsData: [],
     telemetryVisitsData: [],
+    allSettingsData: {},
+    allLeadershipData: [],
+    allFaqData: [],
+    allDocumentsData: [],
     
     // Bulk selections
     selectedRequestIds: new Set(),
     selectedMemberIds: new Set(),
     selectedNewsIds: new Set(),
+    selectedLeadershipIds: new Set(),
+    selectedFaqIds: new Set(),
+    selectedDocumentIds: new Set(),
     
     // Pagination & filters
     requestsPage: 1,
@@ -39,6 +49,15 @@ export const state = {
     newsSearchQuery: '',
     newsViewMode: 'grid', // 'grid' or 'table'
     
+    leadershipFilterGroup: 'toate', // 'toate' | 'filiala' | 'central'
+    leadershipSearchQuery: '',
+
+    faqFilterCategory: 'toate',
+    faqSearchQuery: '',
+
+    documentsFilterType: 'toate',
+    documentsSearchQuery: '',
+
     // Telemetry range
     currentTelemetryRange: '7d',
     

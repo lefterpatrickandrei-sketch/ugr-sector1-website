@@ -29,7 +29,11 @@ import {
     openAddMemberModal,
     openEditMemberModal,
     closeMemberModal,
-    handleSaveMember
+    handleSaveMember,
+    openCsvImportModal,
+    closeCsvImportModal,
+    handleProcessCsvPreview,
+    handleCommitCsvImport
 } from './views/members.js';
 import {
     loadNews,
@@ -49,6 +53,37 @@ import {
     renderTrafficChart,
     renderAuditTrail
 } from './views/telemetry.js';
+import {
+    loadSettings,
+    renderSettingsForm,
+    handleSaveSettings,
+    setDirty
+} from './views/settings.js';
+import {
+    loadLeadership,
+    renderLeadershipLists,
+    openAddLeaderModal,
+    openEditLeaderModal,
+    closeLeaderModal,
+    handleSaveLeader
+} from './views/leadership.js';
+import {
+    loadFaq,
+    renderFaqList,
+    openAddFaqModal,
+    openEditFaqModal,
+    closeFaqModal,
+    handleSaveFaq
+} from './views/faq.js';
+import {
+    loadDocuments,
+    renderDocumentsList,
+    openAddDocModal,
+    openEditDocModal,
+    closeDocModal,
+    handleSaveDoc
+} from './views/documents.js';
+import { initUiMode } from './ui/mode.js';
 import {
     updateBulkActionsBar,
     clearAllBulkSelections,
@@ -84,8 +119,12 @@ registerPaletteActions({
     switchView,
     openAddMemberModal,
     openEditMemberModal,
+    openCsvImportModal,
     openAddNewsModal,
     openPreviewNewsModal,
+    openAddLeaderModal,
+    openAddFaqModal,
+    openAddDocModal,
     handleSyncDefaultNews,
     exportMembersToCsv,
     exportRequestsToCsv,
@@ -96,6 +135,9 @@ registerPaletteActions({
 
 // 2. Inițializare ascultători DOM
 document.addEventListener('DOMContentLoaded', () => {
+    // Mod de Lucru (Simplu / Avansat)
+    initUiMode();
+
     // Navigație Sidebar
     const navLinks = document.querySelectorAll('.nav-link');
     navLinks.forEach(link => {
@@ -224,6 +266,36 @@ document.addEventListener('DOMContentLoaded', () => {
     if (modalMember) {
         modalMember.addEventListener('click', (e) => {
             if (e.target === modalMember) closeMemberModal();
+        });
+    }
+
+    // Membri: Import CSV în masă
+    const btnOpenImportCsv = document.getElementById('btn-open-import-csv');
+    const btnCloseCsvModal = document.getElementById('btn-close-csv-modal');
+    const btnCancelCsvImport = document.getElementById('btn-cancel-csv-import');
+    const btnCommitCsvImport = document.getElementById('btn-commit-csv-import');
+    const csvFileInput = document.getElementById('csv-file-input');
+    const modalCsvImport = document.getElementById('modal-csv-import');
+
+    if (btnOpenImportCsv) btnOpenImportCsv.addEventListener('click', openCsvImportModal);
+    if (btnCloseCsvModal) btnCloseCsvModal.addEventListener('click', closeCsvImportModal);
+    if (btnCancelCsvImport) btnCancelCsvImport.addEventListener('click', closeCsvImportModal);
+    if (btnCommitCsvImport) btnCommitCsvImport.addEventListener('click', handleCommitCsvImport);
+    if (modalCsvImport) {
+        modalCsvImport.addEventListener('click', (e) => {
+            if (e.target === modalCsvImport) closeCsvImportModal();
+        });
+    }
+    if (csvFileInput) {
+        csvFileInput.addEventListener('change', (e) => {
+            const file = e.target.files?.[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (evt) => {
+                    handleProcessCsvPreview(evt.target?.result || '');
+                };
+                reader.readAsText(file, 'UTF-8');
+            }
         });
     }
 
@@ -483,6 +555,104 @@ document.addEventListener('DOMContentLoaded', () => {
     const auditFilterSelect = document.getElementById('telemetry-audit-filter');
     if (auditFilterSelect) auditFilterSelect.addEventListener('change', renderAuditTrail);
 
+    // Setări Filială (public.setari)
+    const btnRefreshSettings = document.getElementById('btn-refresh-settings');
+    const btnSaveSettings = document.getElementById('btn-save-settings');
+    const btnStickySaveSettings = document.getElementById('btn-sticky-save-settings');
+    const btnCancelSettingsChanges = document.getElementById('btn-cancel-settings-changes');
+
+    if (btnRefreshSettings) btnRefreshSettings.addEventListener('click', loadSettings);
+    if (btnSaveSettings) btnSaveSettings.addEventListener('click', handleSaveSettings);
+    if (btnStickySaveSettings) btnStickySaveSettings.addEventListener('click', handleSaveSettings);
+    if (btnCancelSettingsChanges) btnCancelSettingsChanges.addEventListener('click', () => {
+        renderSettingsForm();
+        setDirty(false);
+    });
+
+    const settingsInputs = document.querySelectorAll('#view-settings input, #view-settings textarea');
+    settingsInputs.forEach(input => {
+        input.addEventListener('input', () => setDirty(true));
+    });
+
+    // Conducere (public.leadership)
+    const btnRefreshLeadership = document.getElementById('btn-refresh-leadership');
+    const btnAddLeader = document.getElementById('btn-add-leader');
+    const btnCloseLeaderModal = document.getElementById('btn-close-leader-modal');
+    const btnCancelLeaderModal = document.getElementById('btn-cancel-leader-modal');
+    const btnSaveLeader = document.getElementById('btn-save-leader');
+    const modalLeader = document.getElementById('modal-leader');
+
+    if (btnRefreshLeadership) btnRefreshLeadership.addEventListener('click', loadLeadership);
+    if (btnAddLeader) btnAddLeader.addEventListener('click', openAddLeaderModal);
+    if (btnCloseLeaderModal) btnCloseLeaderModal.addEventListener('click', closeLeaderModal);
+    if (btnCancelLeaderModal) btnCancelLeaderModal.addEventListener('click', closeLeaderModal);
+    if (btnSaveLeader) btnSaveLeader.addEventListener('click', handleSaveLeader);
+    if (modalLeader) {
+        modalLeader.addEventListener('click', (e) => {
+            if (e.target === modalLeader) closeLeaderModal();
+        });
+    }
+
+    // Întrebări Frecvente (public.faq)
+    const btnRefreshFaq = document.getElementById('btn-refresh-faq');
+    const btnAddFaq = document.getElementById('btn-add-faq');
+    const btnCloseFaqModal = document.getElementById('btn-close-faq-modal');
+    const btnCancelFaqModal = document.getElementById('btn-cancel-faq-modal');
+    const btnSaveFaq = document.getElementById('btn-save-faq');
+    const modalFaq = document.getElementById('modal-faq');
+    const faqSearchInput = document.getElementById('faq-search-input');
+
+    if (btnRefreshFaq) btnRefreshFaq.addEventListener('click', loadFaq);
+    if (btnAddFaq) btnAddFaq.addEventListener('click', openAddFaqModal);
+    if (btnCloseFaqModal) btnCloseFaqModal.addEventListener('click', closeFaqModal);
+    if (btnCancelFaqModal) btnCancelFaqModal.addEventListener('click', closeFaqModal);
+    if (btnSaveFaq) btnSaveFaq.addEventListener('click', handleSaveFaq);
+    if (modalFaq) {
+        modalFaq.addEventListener('click', (e) => {
+            if (e.target === modalFaq) closeFaqModal();
+        });
+    }
+    if (faqSearchInput) {
+        faqSearchInput.addEventListener('input', (e) => {
+            state.faqSearchQuery = e.target.value;
+            renderFaqList();
+        });
+    }
+    document.querySelectorAll('.filter-pill[data-faq-cat]').forEach(pill => {
+        pill.addEventListener('click', () => {
+            document.querySelectorAll('.filter-pill[data-faq-cat]').forEach(p => p.classList.remove('active'));
+            pill.classList.add('active');
+            state.faqFilterCategory = pill.getAttribute('data-faq-cat') || 'toate';
+            renderFaqList();
+        });
+    });
+
+    // Documente Oficiale (public.documente)
+    const btnRefreshDocuments = document.getElementById('btn-refresh-documents');
+    const btnAddDocument = document.getElementById('btn-add-document');
+    const btnCloseDocModal = document.getElementById('btn-close-doc-modal');
+    const btnCancelDocModal = document.getElementById('btn-cancel-doc-modal');
+    const btnSaveDoc = document.getElementById('btn-save-doc');
+    const modalDoc = document.getElementById('modal-doc');
+    const documentsSearchInput = document.getElementById('documents-search-input');
+
+    if (btnRefreshDocuments) btnRefreshDocuments.addEventListener('click', loadDocuments);
+    if (btnAddDocument) btnAddDocument.addEventListener('click', openAddDocModal);
+    if (btnCloseDocModal) btnCloseDocModal.addEventListener('click', closeDocModal);
+    if (btnCancelDocModal) btnCancelDocModal.addEventListener('click', closeDocModal);
+    if (btnSaveDoc) btnSaveDoc.addEventListener('click', handleSaveDoc);
+    if (modalDoc) {
+        modalDoc.addEventListener('click', (e) => {
+            if (e.target === modalDoc) closeDocModal();
+        });
+    }
+    if (documentsSearchInput) {
+        documentsSearchInput.addEventListener('input', (e) => {
+            state.documentsSearchQuery = e.target.value;
+            renderDocumentsList();
+        });
+    }
+
     // Tastatură globală (Ctrl+K, Escape)
     window.addEventListener('keydown', (e) => {
         if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
@@ -502,6 +672,10 @@ document.addEventListener('DOMContentLoaded', () => {
             closeCommandPalette();
             closeMediaPickerModal();
             closeAdminProfileModal();
+            closeLeaderModal();
+            closeFaqModal();
+            closeDocModal();
+            closeCsvImportModal();
         }
     });
 

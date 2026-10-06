@@ -8,9 +8,13 @@ import { showToast, setBannerFeedback, clearBannerFeedback } from '../ui/toast.j
 import { formatStatusLabel, updateCharCounters } from '../lib/format.js';
 import { renderPaginationControls } from '../ui/pagination.js';
 import { updateBulkActionsBar } from '../ui/bulkbar.js';
+import { parseCsv } from '../lib/csv.js';
+import { el, clearElement } from '../lib/dom.js';
 
 let editingMemberId = null;
 let currentFilteredMembers = [];
+let pendingCsvImportRows = [];
+
 
 export async function loadMembers() {
     const membersFeedback = document.getElementById('members-feedback');
@@ -25,8 +29,10 @@ export async function loadMembers() {
     try {
         const { data, error } = await client
             .from('membri')
-            .select('id, nume, judet, serie_autorizatie, categorie, status, afisare_publica, created_at, updated_at')
+            .select('id, nume, judet, serie_autorizatie, categorie, status, afisare_publica, demonstrativ, created_at, updated_at')
+            .is('deleted_at', null)
             .order('nume', { ascending: true });
+
 
         if (error) {
             setBannerFeedback(membersFeedback, 'Eroare la citirea membrilor: ' + error.message, 'error');
@@ -182,7 +188,18 @@ export function renderMembersTable(items, totalCount) {
         tdNume.style.fontWeight = '600';
         tdNume.style.color = '#ffffff';
         tdNume.textContent = m.nume;
+
+        if (m.demonstrativ) {
+            const demoBadge = document.createElement('span');
+            demoBadge.className = 'badge-tech';
+            demoBadge.style.color = '#f59e0b';
+            demoBadge.style.borderColor = 'rgba(245, 158, 11, 0.4)';
+            demoBadge.style.marginLeft = '8px';
+            demoBadge.textContent = 'Date demonstrative';
+            tdNume.appendChild(demoBadge);
+        }
         tr.appendChild(tdNume);
+
 
         // Județ
         const tdJudet = document.createElement('td');
@@ -460,7 +477,7 @@ export async function handleDeleteMember(memberId, btn) {
     try {
         const { error } = await client
             .from('membri')
-            .delete()
+            .update({ deleted_at: new Date().toISOString() })
             .eq('id', memberId);
 
         if (error) {
@@ -468,7 +485,7 @@ export async function handleDeleteMember(memberId, btn) {
             return;
         }
 
-        showToast('Membrul a fost eliminat din registru.', 'success');
+        showToast('Membrul a fost mutat în arhivă (soft delete).', 'success');
         await loadMembers();
     } catch (err) {
         showToast('Eroare de conexiune la ștergerea membrului.', 'error');
@@ -478,3 +495,164 @@ export async function handleDeleteMember(memberId, btn) {
         }
     }
 }
+
+export function openCsvImportModal() {
+    pendingCsvImportRows = [];
+    const modal = document.getElementById('modal-csv-import');
+    const previewContainer = document.getElementById('csv-import-preview');
+    const input = document.getElementById('csv-file-input');
+    const btnCommit = document.getElementById('btn-commit-csv-import');
+
+    if (previewContainer) clearElement(previewContainer);
+    if (input) input.value = '';
+    if (btnCommit) btnCommit.disabled = true;
+    if (modal) modal.classList.add('active');
+}
+
+export function closeCsvImportModal() {
+    const modal = document.getElementById('modal-csv-import');
+    if (modal) modal.classList.remove('active');
+    pendingCsvImportRows = [];
+}
+
+export function handleProcessCsvPreview(fileContent) {
+    const previewContainer = document.getElementById('csv-import-preview');
+    const btnCommit = document.getElementById('btn-commit-csv-import');
+    if (!previewContainer) return;
+
+    clearElement(previewContainer);
+    pendingCsvImportRows = [];
+
+    const parsed = parseCsv(fileContent);
+    if (!parsed || parsed.length < 2) {
+        previewContainer.appendChild(el('p', { className: 'text-error' }, ['Fișierul CSV este gol sau nu conține rânduri de date.']));
+        if (btnCommit) btnCommit.disabled = true;
+        return;
+    }
+
+    const headers = parsed[0].map(h => h.toLowerCase());
+    const idIdx = headers.findIndex(h => h.includes('id'));
+    const numeIdx = headers.findIndex(h => h.includes('nume'));
+    const judetIdx = headers.findIndex(h => h.includes('judet') || h.includes('județ'));
+    const serieIdx = headers.findIndex(h => h.includes('serie') || h.includes('ancpi'));
+    const catIdx = headers.findIndex(h => h.includes('cat'));
+    const statusIdx = headers.findIndex(h => h.includes('stat'));
+    const pubIdx = headers.findIndex(h => h.includes('pub') || h.includes('afis') || h.includes('afiș'));
+
+    if (idIdx === -1 || numeIdx === -1) {
+        previewContainer.appendChild(el('p', { className: 'text-error' }, ['Fișierul CSV trebuie să conțină coloanele obligatorii "ID" și "Nume".']));
+        if (btnCommit) btnCommit.disabled = true;
+        return;
+    }
+
+    const existingIds = new Set(state.allMembersData.map(m => m.id));
+    const dataRows = parsed.slice(1);
+    const validRows = [];
+    let duplicateCount = 0;
+
+    const table = el('table', { className: 'table-cms' });
+    const thead = el('thead', {}, [
+        el('tr', {}, [
+            el('th', {}, ['ID']),
+            el('th', {}, ['Nume']),
+            el('th', {}, ['Județ']),
+            el('th', {}, ['Serie ANCPI']),
+            el('th', {}, ['Categorie']),
+            el('th', {}, ['Validare'])
+        ])
+    ]);
+    const tbody = el('tbody');
+
+    dataRows.forEach(row => {
+        const id = (row[idIdx] || '').trim();
+        const nume = (row[numeIdx] || '').trim();
+        if (!id || !nume) return;
+
+        const judet = judetIdx >= 0 ? (row[judetIdx] || '').trim() : 'București';
+        const serie = serieIdx >= 0 ? (row[serieIdx] || '').trim() : '';
+        const categorie = catIdx >= 0 ? (row[catIdx] || '').trim() : 'Categoria B';
+        const status = statusIdx >= 0 ? (row[statusIdx] || 'activ').trim() : 'activ';
+        const isPublic = pubIdx >= 0 ? !row[pubIdx].toLowerCase().includes('nu') : true;
+
+        const isDup = existingIds.has(id);
+        if (isDup) duplicateCount++;
+
+        const tr = el('tr', { className: isDup ? 'row-warning' : '' }, [
+            el('td', { style: { fontFamily: 'Space Mono', color: isDup ? 'var(--warning)' : 'var(--cyan)' } }, [id]),
+            el('td', { style: { fontWeight: '600' } }, [nume]),
+            el('td', {}, [judet]),
+            el('td', {}, [serie || '—']),
+            el('td', {}, [categorie || '—']),
+            el('td', {}, [
+                el('span', { className: `badge-pill ${isDup ? 'badge-warning' : 'badge-success'}` }, [
+                    isDup ? '⚠️ ID existent (se va ignora)' : '✓ Valid'
+                ])
+            ])
+        ]);
+        tbody.appendChild(tr);
+
+        if (!isDup) {
+            validRows.push({
+                id,
+                nume,
+                judet,
+                serie_autorizatie: serie || null,
+                categorie: categorie || 'Categoria B',
+                status: status || 'activ',
+                afisare_publica: isPublic,
+                demonstrativ: false
+            });
+        }
+    });
+
+    table.appendChild(thead);
+    table.appendChild(tbody);
+
+    const summary = el('div', { className: 'csv-summary-box', style: { marginBottom: '16px' } }, [
+        el('strong', {}, [`Găsite ${dataRows.length} înregistrări în CSV. `]),
+        el('span', { style: { color: 'var(--success)' } }, [`${validRows.length} noi de importat. `]),
+        duplicateCount > 0 ? el('span', { style: { color: 'var(--warning)' } }, [`${duplicateCount} duplicate detectate.`]) : null
+    ]);
+
+    previewContainer.appendChild(summary);
+    previewContainer.appendChild(table);
+
+    pendingCsvImportRows = validRows;
+    if (btnCommit) {
+        btnCommit.disabled = validRows.length === 0;
+        btnCommit.textContent = `Importă ${validRows.length} membri noi`;
+    }
+}
+
+export async function handleCommitCsvImport() {
+    if (!pendingCsvImportRows || pendingCsvImportRows.length === 0) {
+        showToast('Nu există membri noi de importat.', 'warning');
+        return;
+    }
+
+    const btnCommit = document.getElementById('btn-commit-csv-import');
+    if (btnCommit) {
+        btnCommit.disabled = true;
+        btnCommit.textContent = 'Se importă...';
+    }
+
+    try {
+        const { error } = await client
+            .from('membri')
+            .insert(pendingCsvImportRows);
+
+        if (error) throw error;
+
+        showToast(`Au fost importați cu succes ${pendingCsvImportRows.length} membri!`, 'success');
+        closeCsvImportModal();
+        await loadMembers();
+    } catch (err) {
+        showToast(`Eroare la importul CSV: ${err.message}`, 'error');
+    } finally {
+        if (btnCommit) {
+            btnCommit.disabled = false;
+            btnCommit.textContent = 'Confirmă Importul';
+        }
+    }
+}
+

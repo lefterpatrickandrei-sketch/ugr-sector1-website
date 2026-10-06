@@ -9,6 +9,8 @@ import { formatDateOnlyRo, isValidImageUrl, updateReadingStats, updateCharCounte
 import { renderPaginationControls } from '../ui/pagination.js';
 import { updateBulkActionsBar } from '../ui/bulkbar.js';
 import { updateNewsImageLivePreview } from '../ui/media.js';
+import { renderMarkdownLite, clearElement } from '../lib/dom.js';
+
 
 export const OFFICIAL_FALLBACK_NEWS = [
     {
@@ -131,8 +133,10 @@ export async function loadNews() {
     try {
         const { data, error } = await client
             .from('stiri')
-            .select('id, titlu, continut, imagine_url, data_publicare, publicat, created_at, updated_at')
+            .select('id, titlu, continut, imagine_url, data_publicare, publicat, categorie, scope, locatie, link_actiune, text_buton, slug, created_at, updated_at')
+            .is('deleted_at', null)
             .order('data_publicare', { ascending: false });
+
 
         if (error) {
             setBannerFeedback(newsFeedback, 'Eroare la citirea știrilor: ' + error.message, 'error');
@@ -577,6 +581,17 @@ export function openAddNewsModal() {
     if (newsInputContinut) newsInputContinut.value = '';
     if (newsInputPublicat) newsInputPublicat.checked = true;
 
+    const setInput = (id, val) => {
+        const input = document.getElementById(id);
+        if (input) input.value = val;
+    };
+    setInput('news-input-categorie', 'Eveniment Oficial');
+    setInput('news-input-scope', 'local');
+    setInput('news-input-locatie', 'București');
+    setInput('news-input-link-actiune', '');
+    setInput('news-input-text-buton', 'Detalii ↗');
+    setInput('news-input-slug', '');
+
     updateNewsImageLivePreview('', '');
     updateReadingStats();
     updateCharCounters();
@@ -601,6 +616,17 @@ export function openEditNewsModal(item) {
     if (newsInputImagine) newsInputImagine.value = item.imagine_url || '';
     if (newsInputContinut) newsInputContinut.value = item.continut || '';
     if (newsInputPublicat) newsInputPublicat.checked = !!item.publicat;
+
+    const setInput = (id, val) => {
+        const input = document.getElementById(id);
+        if (input) input.value = val || '';
+    };
+    setInput('news-input-categorie', item.categorie || 'Eveniment Oficial');
+    setInput('news-input-scope', item.scope || 'local');
+    setInput('news-input-locatie', item.locatie || 'București');
+    setInput('news-input-link-actiune', item.link_actiune || '');
+    setInput('news-input-text-buton', item.text_buton || 'Detalii ↗');
+    setInput('news-input-slug', item.slug || '');
 
     updateNewsImageLivePreview(item.imagine_url || '', item.titlu || '');
     updateReadingStats();
@@ -627,12 +653,34 @@ export function openPreviewNewsModal(item) {
     if (!modalPreviewNews) return;
 
     if (modalPreviewTitle) modalPreviewTitle.textContent = item.titlu || 'Fără titlu';
+    
+    // Status & Scope
+    const isScheduled = item.data_publicare && item.data_publicare > new Date().toISOString().split('T')[0];
     if (previewBadgeStatus) {
-        previewBadgeStatus.className = 'status-badge ' + (item.publicat ? 'publicat' : 'ciorna');
-        previewBadgeStatus.textContent = item.publicat ? 'Publicat pe site' : 'Ciornă privată';
+        clearElement(previewBadgeStatus);
+        const statusSpan = document.createElement('span');
+        statusSpan.className = 'status-badge ' + (isScheduled ? 'badge-warning' : (item.publicat ? 'publicat' : 'ciorna'));
+        statusSpan.textContent = isScheduled ? '⏳ Programat' : (item.publicat ? '✓ Publicat pe site' : 'Ciornă privată');
+        previewBadgeStatus.appendChild(statusSpan);
+
+        if (item.scope) {
+            const scopeSpan = document.createElement('span');
+            scopeSpan.className = 'badge-tech';
+            scopeSpan.style.marginLeft = '8px';
+            scopeSpan.textContent = item.scope === 'national' ? '🇷🇴 Național' : '📍 Local';
+            previewBadgeStatus.appendChild(scopeSpan);
+        }
+        if (item.categorie) {
+            const catSpan = document.createElement('span');
+            catSpan.className = 'badge-pill';
+            catSpan.style.marginLeft = '6px';
+            catSpan.textContent = item.categorie;
+            previewBadgeStatus.appendChild(catSpan);
+        }
     }
+
     if (previewDateText) {
-        previewDateText.textContent = 'Data articolului: ' + formatDateOnlyRo(item.data_publicare);
+        previewDateText.textContent = 'Data articolului: ' + formatDateOnlyRo(item.data_publicare) + (item.locatie ? ` | Locație: ${item.locatie}` : '');
     }
 
     if (previewImageWrap && previewImageEl) {
@@ -646,7 +694,30 @@ export function openPreviewNewsModal(item) {
     }
 
     if (previewContentBox) {
-        previewContentBox.textContent = item.continut || 'Fără conținut textual.';
+        clearElement(previewContentBox);
+        if (item.continut) {
+            previewContentBox.appendChild(renderMarkdownLite(item.continut));
+        } else {
+            const p = document.createElement('p');
+            p.className = 'text-muted';
+            p.textContent = 'Fără conținut textual.';
+            previewContentBox.appendChild(p);
+        }
+
+        if (item.link_actiune) {
+            const actBox = document.createElement('div');
+            actBox.style.marginTop = '20px';
+            actBox.style.paddingTop = '16px';
+            actBox.style.borderTop = '1px solid var(--border-subtle)';
+            const btnLink = document.createElement('a');
+            btnLink.href = item.link_actiune;
+            btnLink.target = '_blank';
+            btnLink.rel = 'noopener noreferrer';
+            btnLink.className = 'btn btn-primary btn-sm';
+            btnLink.textContent = item.text_buton || 'Detalii ↗';
+            actBox.appendChild(btnLink);
+            previewContentBox.appendChild(actBox);
+        }
     }
 
     modalPreviewNews.classList.add('active');
@@ -664,6 +735,8 @@ export async function handleSaveNews() {
     const newsInputImagine = document.getElementById('news-input-imagine');
     const newsInputContinut = document.getElementById('news-input-continut');
     const newsInputPublicat = document.getElementById('news-input-publicat');
+
+    const getVal = (id) => document.getElementById(id)?.value.trim() || '';
 
     const titluVal = newsInputTitlu ? newsInputTitlu.value.trim() : '';
     const dataVal = newsInputData ? newsInputData.value : '';
@@ -697,7 +770,13 @@ export async function handleSaveNews() {
             data_publicare: dataVal || new Date().toISOString().split('T')[0],
             imagine_url: imagineVal || null,
             continut: continutVal || null,
-            publicat: publicatVal
+            publicat: publicatVal,
+            categorie: getVal('news-input-categorie') || 'Eveniment Oficial',
+            scope: getVal('news-input-scope') || 'local',
+            locatie: getVal('news-input-locatie') || 'București',
+            link_actiune: getVal('news-input-link-actiune') || null,
+            text_buton: getVal('news-input-text-buton') || 'Detalii ↗',
+            slug: getVal('news-input-slug') || null
         };
 
         if (editingNewsId) {
@@ -772,7 +851,7 @@ export async function handleDeleteNews(newsId, btn) {
     try {
         const { error } = await client
             .from('stiri')
-            .delete()
+            .update({ deleted_at: new Date().toISOString() })
             .eq('id', newsId);
 
         if (error) {
@@ -780,7 +859,7 @@ export async function handleDeleteNews(newsId, btn) {
             return;
         }
 
-        showToast('Știrea a fost ștearsă definitiv.', 'success');
+        showToast('Știrea a fost ștearsă (mutată în arhivă).', 'success');
         await loadNews();
     } catch (err) {
         showToast('Eroare de conexiune la ștergerea știrii.', 'error');
@@ -790,3 +869,4 @@ export async function handleDeleteNews(newsId, btn) {
         }
     }
 }
+

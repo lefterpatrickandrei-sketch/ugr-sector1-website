@@ -10,6 +10,10 @@ import { loadRequests, initRealtimeRequestsListener } from './views/requests.js'
 import { loadMembers } from './views/members.js';
 import { loadNews } from './views/news.js';
 import { loadVisitsStats, loadTelemetryData, pingSupabaseHealth, initAdminLivePresence } from './views/telemetry.js';
+import { loadSettings } from './views/settings.js';
+import { loadLeadership } from './views/leadership.js';
+import { loadFaq } from './views/faq.js';
+import { loadDocuments } from './views/documents.js';
 
 export function getPanelRedirectUrl() {
     if (window.location.protocol.startsWith('http')) {
@@ -61,7 +65,11 @@ export function switchView(viewName) {
         requests: document.getElementById('view-requests'),
         members: document.getElementById('view-members'),
         news: document.getElementById('view-news'),
-        telemetry: document.getElementById('view-telemetry')
+        telemetry: document.getElementById('view-telemetry'),
+        settings: document.getElementById('view-settings'),
+        leadership: document.getElementById('view-leadership'),
+        faq: document.getElementById('view-faq'),
+        documents: document.getElementById('view-documents')
     };
 
     Object.keys(viewPanels).forEach(k => {
@@ -76,7 +84,11 @@ export function switchView(viewName) {
         requests: 'Cereri Înscriere',
         members: 'Registru Membri',
         news: 'Știri & Noutăți',
-        telemetry: 'Telemetrie & Audit'
+        telemetry: 'Telemetrie & Audit',
+        settings: 'Setări Filială',
+        leadership: 'Conducere & Echipă',
+        faq: 'Întrebări Frecvente',
+        documents: 'Documente Oficiale'
     };
     if (breadcrumbCurrentLabel) {
         breadcrumbCurrentLabel.textContent = labels[viewName] || 'Panou';
@@ -96,6 +108,14 @@ export function switchView(viewName) {
     } else if (viewName === 'telemetry') {
         loadTelemetryData();
         pingSupabaseHealth();
+    } else if (viewName === 'settings' && !state.allSettingsData.organizatie) {
+        loadSettings();
+    } else if (viewName === 'leadership' && state.allLeadershipData.length === 0) {
+        loadLeadership();
+    } else if (viewName === 'faq' && state.allFaqData.length === 0) {
+        loadFaq();
+    } else if (viewName === 'documents' && state.allDocumentsData.length === 0) {
+        loadDocuments();
     }
 
     updateBulkActionsBar();

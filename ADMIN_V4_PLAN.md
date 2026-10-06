@@ -512,6 +512,74 @@ Approved PCRs are applied to §3–§6 and logged in §14. The agent never silen
 
 ## 13. Checkpoint Report template (post one per phase, newest on top)
 
+## Checkpoint — P4 — 2026-10-06
+**Status:** DONE  
+**Delivered:**
+- **Dual Mode (Simplu / Avansat)**:
+  * Comutator integrat în antetul topbar (`#btn-mode-simplu`, `#btn-mode-avansat`).
+  * Salvare stare în `localStorage` (`ugr_ui_mode`), clase pe `document.body` (`.mode-simplu`, `.mode-avansat`), afișare/ascundere secțiuni `.advanced-only` și `.simple-only`.
+  * Modul dedicat `admin/js/ui/mode.js`.
+- **Editor Setări Filială (`public.setari`)**:
+  * Modul `admin/js/views/settings.js`.
+  * Formulare ghidate în română: Identificare & contact teritorial, date bancare & cotizații anuale/înscriere, rețele sociale și link SGR 2026.
+  * Editor JSON direct pentru utilizatori avansați (`organizatie`, `ghid_aderare`, `telemetrie_sector1`).
+  * Bară flotantă sticky de salvare modificări nesalvate (`#settings-sticky-bar`), cu detecție automată a stării dirty și reconciliere în Supabase.
+- **Editor Conducere & Echipă (`public.leadership`)**:
+  * Modul `admin/js/views/leadership.js`.
+  * Gestiune separată pentru Filiala Sector 1 și Biroul Executiv Central (Național).
+  * Reordonare secvențială sus/jos (`handleReorderLeader`), comutator vizibilitate publică (`handleToggleVisibility`), adăugare/editare prin modal (`#modal-leader`) și soft-delete (`deleted_at`).
+- **Editor Întrebări Frecvente (`public.faq`)**:
+  * Modul `admin/js/views/faq.js`.
+  * Filtrare pe 4 categorii (aderare, bcpi, studenti, evenimente) și căutare live instantă.
+  * Răspunsuri formatate cu Markdown-lite (bold, italic, link-uri, liste, citate) randate pur prin DOM API fără `innerHTML`.
+  * Reordonare, toggle publicare/ciornă, adăugare/editare modal (`#modal-faq`) și soft-delete.
+- **Editor Documente Oficiale (`public.documente`)**:
+  * Modul `admin/js/views/documents.js`.
+  * Recunoaștere tipuri fișiere (PDF/DOCX), link direct descărcare, insignă/badge oficial, căutare live, modal adăugare/editare (`#modal-doc`) și soft-delete.
+- **Știri v2 (`public.stiri`)**:
+  * Formular extins cu categorie oficială, anvergură (local / național), locație fizică, link acțiune extern/intern, text buton personalizat.
+  * Modal de previzualizare fidelă tip Bento card fără `innerHTML`.
+  * Filtrare soft-delete (`.is('deleted_at', null)`).
+- **Registru Membri v2 (`public.membri`)**:
+  * Etichetă distinctă "Date demonstrative" afișată pe rândurile celor 8 membri demo.
+  * Import în masă din fișiere CSV (`parseCsv()`) cu previzualizare tabelară, validare duplicate ID față de membrii existenți și inserare sigură în baza de date.
+  * Buton dedicat "📤 Importă CSV" în bara de acțiuni a membrilor.
+- **Securitate DOM & Parsare sigură**:
+  * Helper `renderMarkdownLite()` în `admin/js/lib/dom.js` ce parsează segmente de text și link-uri folosind doar `document.createElement`, `document.createTextNode` și verificare strictă a schemei de URL (`https://`, `mailto:`, `#`). Zero folosire `innerHTML` în logica dinamică nouă.
+- **Consolă Spotlight extinsă (Ctrl+K)**:
+  * Adăugate comenzile directe pentru navigare în noile vederi și deschiderea modalelor de adăugare și import CSV.
+- **Sincronizare Router & Orchestrator**:
+  * `auth.js` (`switchView`) actualizat cu noile vederi și lazy-loading.
+  * `main.js` cablat cu toți ascultătorii de evenimente pentru noile formulare, butoane, modale și tasta Escape.
+
+**Evidence:**
+- Toate cele 23 de module ES trecute fără erori sintactice: `node scratch/check_syntax.mjs` confirmă 23/23 fișiere JS valide.
+- Verificare date oficiale: `node tools/verificare-date.js` returnează 10/10 `[OK]` (zero erori, zero caractere corupte).
+- Verificare acces REST Supabase: `node scratch/verify_p3.mjs` returnează 8/8 teste trecute.
+- Scanare automată de cod: zero `innerHTML` în execuția logică din noile module P4.
+
+**Acceptance criteria:**
+- Conținutul public poate fi editat direct din panou fără cod sau fișiere JSON: PASS.
+- Mod Simplu vs Avansat comutabil și memorat: PASS.
+- Setări Filială, Conducere, FAQ, Documente gestionabile din interfață: PASS.
+- Știri v2 cu preview Bento și atribute noi: PASS.
+- Membri v2 cu CSV import, preview, validare duplicate și etichetă demonstrativă: PASS.
+- Zero `innerHTML` în generarea elementelor dinamice noi: PASS.
+- Fallback sigur și integritate site păstrate: PASS.
+
+**Invariants check (I1–I9):**
+- I1 (branch `admin-v4`): PASS.
+- I2 (anon key only): PASS.
+- I3 (zero innerHTML in dynamic logic): PASS.
+- I4 (no tokens in storage): PASS.
+- I5 (AAL2 TOTP enforced): PASS.
+- I6 (backup exists): PASS.
+- I7 (SQL migrations versioned): PASS.
+- I8 (no console.log leftover): PASS.
+- I9 (site remains fully functional): PASS (10/10 `tools/verificare-date.js`).
+
+**Proposed next step:** Prezentarea raportului Checkpoint P4 lui Patrick și trecerea la **Faza P5 (Media, Trash, Restore & Audit)**: bucket Supabase Storage `media` pentru încărcare fișiere/imagini cu drag & drop și previzualizare, panoul de Coș de Reciclate (Trash) cu restaurare și golire definitivă de către `owner`, și browser vizual de evenimente de audit din `public.audit_log`.
+
 ## Checkpoint — P3 — 2026-10-06
 **Status:** DONE  
 **Delivered:**
@@ -718,6 +786,7 @@ Approved PCRs are applied to §3–§6 and logged in §14. The agent never silen
 | 2026-10-06 | P1 | Migrare 001_roles_and_visibility.sql rulata cu succes pe Supabase. RLS activ pe membri, stiri, admini. Verificare automata 8/8 teste trecute. Filtre script.js adaugate. Rezolvat PR-002 si PR-003. |
 | 2026-10-06 | P2 | Modularizare panou.html finalizata. Extrase CSS in admin/css/panel.css si JS in 18 module sub admin/js/. panou.legacy.html pastrat ca backup. 93/93 functii acoperite (100%). tools/verificare-date.js 10/10 OK. |
 | 2026-10-06 | P3 | Migrari 002 & 003 rulate pe Supabase. Tabele setari, leadership, faq, documente, audit_log create cu RLS si seed. Toate cele 8 teste verify_p3.mjs trecute cu succes. script.js sincronizat cu DB (fallback data.js). |
+| 2026-10-06 | P4 | Editori conținut public (non-coder) finalizați. Creat comutator Dual Mode (Simplu/Avansat), module și vederi pentru Setări Filială, Conducere, FAQ, Documente Oficiale. Știri v2 cu Bento preview, Membri v2 cu import CSV și păstrare etichetă demonstrativă. Zero innerHTML în generarea dinamică. 23/23 module JS valide, 10/10 check-uri tools/verificare-date.js. |
 
 **Decision log:** D1–D5 in §3. Add `D6…` here with date, decision, alternatives considered, who decided.
 

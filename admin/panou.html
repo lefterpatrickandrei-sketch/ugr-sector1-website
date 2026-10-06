@@ -162,7 +162,38 @@
                     <span id="badge-nav-news" class="nav-badge-pill">0</span>
                 </button>
 
+                <span class="nav-category-title">Conținut Public</span>
+
+                <button type="button" class="nav-link" data-view="settings">
+                    <div class="nav-link-content">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                        <span>Setări Filială</span>
+                    </div>
+                </button>
+
+                <button type="button" class="nav-link" data-view="leadership">
+                    <div class="nav-link-content">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                        <span>Conducere</span>
+                    </div>
+                </button>
+
+                <button type="button" class="nav-link" data-view="faq">
+                    <div class="nav-link-content">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                        <span>Întrebări Frecvente</span>
+                    </div>
+                </button>
+
+                <button type="button" class="nav-link" data-view="documents">
+                    <div class="nav-link-content">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                        <span>Documente</span>
+                    </div>
+                </button>
+
                 <span class="nav-category-title">Sistem & Audit</span>
+
 
                 <button type="button" class="nav-link" data-view="telemetry">
                     <div class="nav-link-content">
@@ -216,8 +247,15 @@
                 </div>
 
                 <div class="topbar-right">
+                    <!-- COMUTATOR MOD DE LUCRU (SIMPLU / AVANSAT) -->
+                    <div class="mode-switch-pill" id="mode-switch-container" role="group" aria-label="Comutator Mod Lucru">
+                        <button type="button" class="btn-mode-toggle active" id="btn-mode-simplu" title="Mod Simplu (Ghidat)">Simplu</button>
+                        <button type="button" class="btn-mode-toggle" id="btn-mode-avansat" title="Mod Avansat (Tehnic / JSON)">Avansat</button>
+                    </div>
+
                     <!-- INDICATOR REALTIME PREZENȚĂ -->
                     <div class="presence-pill">
+
                         <span class="admin-pulse-dot offline" id="topbar-live-dot" aria-hidden="true"></span>
                         <span id="topbar-live-count">—</span>
                         <span>vizitatori live</span>
@@ -406,6 +444,9 @@
                         <div class="view-actions-group">
                             <button type="button" id="btn-open-add-member" class="btn btn-primary btn-sm">
                                 + Adaugă membru nou
+                            </button>
+                            <button type="button" id="btn-open-import-csv" class="btn btn-secondary btn-sm" title="Importă membri în masă dintr-un fișier CSV">
+                                📤 Importă CSV
                             </button>
                             <button type="button" id="btn-export-members-csv" class="btn btn-secondary btn-sm">
                                 📥 Exportă CSV (Excel)
@@ -779,7 +820,258 @@
                     </div>
                 </section>
 
+                <!-- ══════════════════════════════════════════════════════════
+                     VEDERE 6: SETĂRI FILIALĂ (PUBLIC.SETARI)
+                     ══════════════════════════════════════════════════════════ -->
+                <section id="view-settings" class="view-panel">
+                    <div class="view-header">
+                        <div>
+                            <h2 class="view-header-title">Setări Filială & Conținut Global</h2>
+                            <p class="view-header-desc">Configurarea datelor oficiale de contact, cont bancar, cotizații și ghid de adeziune.</p>
+                        </div>
+                        <div class="view-header-actions">
+                            <button type="button" id="btn-refresh-settings" class="btn btn-secondary">↻ Reîmprospătează</button>
+                            <button type="button" id="btn-save-settings" class="btn btn-primary">💾 Salvează Setările Filialei</button>
+                        </div>
+                    </div>
+
+                    <div id="settings-feedback" class="banner-feedback" style="display: none;"></div>
+
+                    <!-- CARD 1: IDENTIFICARE & CONTACT -->
+                    <div class="cms-card" style="margin-bottom: 20px;">
+                        <h3 style="font-size: 16px; font-weight: 700; color: #ffffff; margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
+                            🏛️ Date de Identificare & Contact Teritorial
+                        </h3>
+                        <div class="form-grid-2col">
+                            <div class="form-group">
+                                <label for="cfg-org-branch" class="form-label">Denumire Filială</label>
+                                <input type="text" id="cfg-org-branch" class="form-input">
+                            </div>
+                            <div class="form-group">
+                                <label for="cfg-org-name" class="form-label">Organizație Tutelară</label>
+                                <input type="text" id="cfg-org-name" class="form-input">
+                            </div>
+                            <div class="form-group">
+                                <label for="cfg-org-cif" class="form-label">CIF / Cod Fiscal</label>
+                                <input type="text" id="cfg-org-cif" class="form-input">
+                            </div>
+                            <div class="form-group">
+                                <label for="cfg-org-email" class="form-label">Email Oficial Filială</label>
+                                <input type="email" id="cfg-org-email" class="form-input">
+                            </div>
+                            <div class="form-group">
+                                <label for="cfg-org-address" class="form-label">Adresă Sediu Central Național</label>
+                                <input type="text" id="cfg-org-address" class="form-input">
+                            </div>
+                            <div class="form-group">
+                                <label for="cfg-org-academic-address" class="form-label">Adresă Centru Academic (FIFIM USAMV)</label>
+                                <input type="text" id="cfg-org-academic-address" class="form-input">
+                            </div>
+                        </div>
+
+                        <div class="form-grid-3col" style="margin-top: 12px;">
+                            <div class="form-group">
+                                <label for="cfg-phone-president" class="form-label">Telefon Președinte</label>
+                                <input type="text" id="cfg-phone-president" class="form-input">
+                            </div>
+                            <div class="form-group">
+                                <label for="cfg-phone-secretary" class="form-label">Telefon Secretar</label>
+                                <input type="text" id="cfg-phone-secretary" class="form-input">
+                            </div>
+                            <div class="form-group">
+                                <label for="cfg-phone-cotizatii" class="form-label">Telefon Gestiune Cotizații</label>
+                                <input type="text" id="cfg-phone-cotizatii" class="form-input">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- CARD 2: DATE BANCARE & COTIZAȚIE -->
+                    <div class="cms-card" style="margin-bottom: 20px;">
+                        <h3 style="font-size: 16px; font-weight: 700; color: #ffffff; margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
+                            💳 Cont Bancar Oficial & Plăți
+                        </h3>
+                        <div class="form-grid-3col">
+                            <div class="form-group">
+                                <label for="cfg-bank-name" class="form-label">Bancă & Agenție</label>
+                                <input type="text" id="cfg-bank-name" class="form-input">
+                            </div>
+                            <div class="form-group">
+                                <label for="cfg-bank-iban" class="form-label">Cont IBAN (RON)</label>
+                                <input type="text" id="cfg-bank-iban" class="form-input" style="font-family: 'Space Mono', monospace; font-weight: 700; color: var(--cyan);">
+                            </div>
+                            <div class="form-group">
+                                <label for="cfg-bank-purpose" class="form-label">Detalii / Explicație Plată</label>
+                                <input type="text" id="cfg-bank-purpose" class="form-input">
+                            </div>
+                        </div>
+
+                        <div class="form-grid-3col" style="margin-top: 12px;">
+                            <div class="form-group">
+                                <label for="cfg-fee-fizica-annual" class="form-label">Cotizație Pers. Fizică</label>
+                                <input type="text" id="cfg-fee-fizica-annual" class="form-input">
+                            </div>
+                            <div class="form-group">
+                                <label for="cfg-fee-student-annual" class="form-label">Cotizație Student</label>
+                                <input type="text" id="cfg-fee-student-annual" class="form-input">
+                            </div>
+                            <div class="form-group">
+                                <label for="cfg-fee-juridica-annual" class="form-label">Cotizație Pers. Juridică</label>
+                                <input type="text" id="cfg-fee-juridica-annual" class="form-input">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- CARD 3: SOCIAL MEDIA & PORTAL SGR -->
+                    <div class="cms-card" style="margin-bottom: 20px;">
+                        <h3 style="font-size: 16px; font-weight: 700; color: #ffffff; margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
+                            🌐 Link-uri Social Media & Portal SGR 2026
+                        </h3>
+                        <div class="form-grid-3col">
+                            <div class="form-group">
+                                <label for="cfg-social-fb" class="form-label">Pagină Facebook</label>
+                                <input type="url" id="cfg-social-fb" class="form-input">
+                            </div>
+                            <div class="form-group">
+                                <label for="cfg-social-ig" class="form-label">Cont Instagram</label>
+                                <input type="url" id="cfg-social-ig" class="form-input">
+                            </div>
+                            <div class="form-group">
+                                <label for="cfg-sgr-form-url" class="form-label">Link Formular Înscriere SGR</label>
+                                <input type="url" id="cfg-sgr-form-url" class="form-input">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- CARD 4: EDITOR JSON AVANSAT (VIZIBIL DOAR ÎN MOD AVANSAT) -->
+                    <div class="cms-card advanced-only" style="margin-bottom: 20px; display: none;">
+                        <h3 style="font-size: 16px; font-weight: 700; color: var(--cyan); margin-bottom: 8px; display: flex; align-items: center; gap: 8px;">
+                            ⚙️ Editor JSON Direct (Mod Avansat)
+                        </h3>
+                        <p style="font-size: 12.5px; color: var(--text-muted); margin-bottom: 16px;">
+                            Editare granulară a obiectelor JSON stocate în <code>public.setari</code>. Datele sunt validate sintactic înainte de commit.
+                        </p>
+                        <div class="form-group" style="margin-bottom: 16px;">
+                            <label for="cfg-json-organizatie" class="form-label"><code>setari.organizatie</code></label>
+                            <textarea id="cfg-json-organizatie" class="form-textarea" style="font-family: 'Space Mono', monospace; font-size: 12px; min-height: 180px;"></textarea>
+                        </div>
+                        <div class="form-group" style="margin-bottom: 16px;">
+                            <label for="cfg-json-ghid" class="form-label"><code>setari.ghid_aderare</code></label>
+                            <textarea id="cfg-json-ghid" class="form-textarea" style="font-family: 'Space Mono', monospace; font-size: 12px; min-height: 140px;"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="cfg-json-telemetrie" class="form-label"><code>setari.telemetrie_sector1</code></label>
+                            <textarea id="cfg-json-telemetrie" class="form-textarea" style="font-family: 'Space Mono', monospace; font-size: 12px; min-height: 140px;"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- BARA FLOTANTĂ MODIFICĂRI NESALVATE -->
+                    <div id="settings-sticky-bar" class="sticky-save-bar">
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <span style="font-size: 18px;">⚠️</span>
+                            <div>
+                                <div style="font-size: 13.5px; font-weight: 700; color: #ffffff;">Modificări nesalvate în setările filialei</div>
+                                <div style="font-size: 12px; color: var(--text-muted);">Apăsați salvare pentru a aplica noile valori pe site-ul public.</div>
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 10px;">
+                            <button type="button" id="btn-cancel-settings-changes" class="btn btn-secondary btn-sm">Anulează</button>
+                            <button type="button" id="btn-sticky-save-settings" class="btn btn-primary btn-sm">💾 Salvează acum</button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ══════════════════════════════════════════════════════════
+                     VEDERE 7: CONDUCERE (LEADERSHIP)
+                     ══════════════════════════════════════════════════════════ -->
+                <section id="view-leadership" class="view-panel">
+                    <div class="view-header">
+                        <div>
+                            <h2 class="view-header-title">Conducere Filială & Națională</h2>
+                            <p class="view-header-desc">Administrarea Biroului Executiv Central și a conducerii Filialei Sector 1 București.</p>
+                        </div>
+                        <div class="view-header-actions">
+                            <button type="button" id="btn-refresh-leadership" class="btn btn-secondary">↻ Reîmprospătează</button>
+                            <button type="button" id="btn-add-leader" class="btn btn-primary">➕ Adaugă Membru Conducere</button>
+                        </div>
+                    </div>
+
+                    <div style="margin-bottom: 28px;">
+                        <h3 style="font-size: 16px; font-weight: 700; color: #ffffff; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+                            📍 Conducerea Filialei Sector 1 București
+                        </h3>
+                        <div id="leadership-list-filiala">
+                            <!-- Populat dinamic -->
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 style="font-size: 16px; font-weight: 700; color: #ffffff; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+                            🇷🇴 Biroul Executiv Național UGR (Central)
+                        </h3>
+                        <div id="leadership-list-central">
+                            <!-- Populat dinamic -->
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ══════════════════════════════════════════════════════════
+                     VEDERE 8: ÎNTREBĂRI FRECVENTE (FAQ)
+                     ══════════════════════════════════════════════════════════ -->
+                <section id="view-faq" class="view-panel">
+                    <div class="view-header">
+                        <div>
+                            <h2 class="view-header-title">Întrebări Frecvente & Ghiduri</h2>
+                            <p class="view-header-desc">Secțiunea de asistență pentru membri, proceduri BCPI, studenți și congrese.</p>
+                        </div>
+                        <div class="view-header-actions">
+                            <button type="button" id="btn-refresh-faq" class="btn btn-secondary">↻ Reîmprospătează</button>
+                            <button type="button" id="btn-add-faq" class="btn btn-primary">➕ Adaugă Întrebare</button>
+                        </div>
+                    </div>
+
+                    <!-- FILTRE CATEGORII -->
+                    <div class="filter-pills-bar" id="faq-category-pills">
+                        <button type="button" class="filter-pill active" data-faq-cat="toate">Toate Întrebările</button>
+                        <button type="button" class="filter-pill" data-faq-cat="aderare">Înscriere & Cotizații</button>
+                        <button type="button" class="filter-pill" data-faq-cat="bcpi">BCPI & Cadastru</button>
+                        <button type="button" class="filter-pill" data-faq-cat="studenti">Studenți FIFIM</button>
+                        <button type="button" class="filter-pill" data-faq-cat="evenimente">Evenimente & SGR</button>
+                    </div>
+
+                    <div style="margin-bottom: 16px;">
+                        <input type="text" id="faq-search-input" class="form-input" placeholder="Caută în întrebări și răspunsuri...">
+                    </div>
+
+                    <div id="faq-items-list">
+                        <!-- Populat dinamic -->
+                    </div>
+                </section>
+
+                <!-- ══════════════════════════════════════════════════════════
+                     VEDERE 9: DOCUMENTE OFICIALE
+                     ══════════════════════════════════════════════════════════ -->
+                <section id="view-documents" class="view-panel">
+                    <div class="view-header">
+                        <div>
+                            <h2 class="view-header-title">Documente & Formulare Tipizate</h2>
+                            <p class="view-header-desc">Gestiunea cererilor de adeziune, statutului oficial și documentelor descărcabile.</p>
+                        </div>
+                        <div class="view-header-actions">
+                            <button type="button" id="btn-refresh-documents" class="btn btn-secondary">↻ Reîmprospătează</button>
+                            <button type="button" id="btn-add-document" class="btn btn-primary">➕ Adaugă Document</button>
+                        </div>
+                    </div>
+
+                    <div style="margin-bottom: 16px;">
+                        <input type="text" id="documents-search-input" class="form-input" placeholder="Caută după titlu sau tip document...">
+                    </div>
+
+                    <div id="documents-items-list">
+                        <!-- Populat dinamic -->
+                    </div>
+                </section>
             </div>
+
         </main>
     </div>
 
@@ -912,8 +1204,52 @@
                     </div>
                 </div>
 
+                <div class="form-grid-2col">
+                    <div class="form-group">
+                        <label for="news-input-categorie" class="form-label">Categorie Articol</label>
+                        <select id="news-input-categorie" class="form-select">
+                            <option value="Eveniment Oficial">Eveniment Oficial</option>
+                            <option value="Eveniment Internațional Major">Eveniment Internațional Major</option>
+                            <option value="Consultare Tehnică Locală">Consultare Tehnică Locală</option>
+                            <option value="Comunicat Oficial BEX">Comunicat Oficial BEX</option>
+                            <option value="Ședință Statutară Filială">Ședință Statutară Filială</option>
+                            <option value="Workshop Studențesc & Instruire">Workshop Studențesc & Instruire</option>
+                            <option value="Formare Profesională Continuă">Formare Profesională Continuă</option>
+                            <option value="Notificare Operativă ANCPI">Notificare Operativă ANCPI</option>
+                            <option value="Burse & Sprijin Tineri Geodezi">Burse & Sprijin Tineri Geodezi</option>
+                            <option value="Reprezentare Europeană">Reprezentare Europeană</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="news-input-scope" class="form-label">Anvergură (Scope)</label>
+                        <select id="news-input-scope" class="form-select">
+                            <option value="local">📍 Local (Sector 1 / București)</option>
+                            <option value="national">🇷🇴 Național / Internațional</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-grid-3col">
+                    <div class="form-group">
+                        <label for="news-input-locatie" class="form-label">Locație</label>
+                        <input type="text" id="news-input-locatie" class="form-input" placeholder="ex: FIFIM USAMV, București">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="news-input-link-actiune" class="form-label">Link Acțiune</label>
+                        <input type="text" id="news-input-link-actiune" class="form-input" placeholder="https://... sau #contact">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="news-input-text-buton" class="form-label">Text Buton</label>
+                        <input type="text" id="news-input-text-buton" class="form-input" placeholder="ex: Detalii ↗">
+                    </div>
+                </div>
+
                 <div class="form-group">
                     <label for="news-input-continut" class="form-label">Conținut articol</label>
+
                     <!-- TOOLBAR FORMATARE GHOST / TIPTAP STYLE -->
                     <div class="formatting-toolbar">
                         <button type="button" class="fmt-btn" data-fmt="bold" title="Îngroșat (**text**)"><strong>B</strong></button>
@@ -1046,9 +1382,233 @@
     </div>
 
     <!-- ══════════════════════════════════════════════════════════════════
+         MODAL: ADĂUGARE / EDITARE MEMBRU CONDUCERE (LEADERSHIP)
+         ══════════════════════════════════════════════════════════════════ -->
+    <div id="modal-leader" class="drawer-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-leader-title">
+        <div class="drawer-box" style="max-width: 580px;">
+            <div class="drawer-header">
+                <h3 id="modal-leader-title" class="drawer-title">Adaugă membru conducere</h3>
+                <button type="button" id="btn-close-leader-modal" class="drawer-close-btn" aria-label="Închide">✕</button>
+            </div>
+
+            <form id="form-leader" onsubmit="return false;">
+                <div class="form-grid-2col">
+                    <div class="form-group">
+                        <label for="leader-grup" class="form-label">Grup Conducere</label>
+                        <select id="leader-grup" class="form-select" required>
+                            <option value="filiala">Filiala Sector 1 București</option>
+                            <option value="central">Biroul Executiv Central (Național)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="leader-ordine" class="form-label">Ordine afișare (număr)</label>
+                        <input type="number" id="leader-ordine" class="form-input" value="0">
+                    </div>
+                </div>
+
+                <div class="form-grid-2col">
+                    <div class="form-group">
+                        <label for="leader-nume" class="form-label">Nume complet (obligatoriu)</label>
+                        <input type="text" id="leader-nume" class="form-input" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="leader-functie" class="form-label">Funcție oficială (obligatoriu)</label>
+                        <input type="text" id="leader-functie" class="form-input" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="leader-descriere" class="form-label">Descriere / Responsabilități</label>
+                    <textarea id="leader-descriere" class="form-textarea" style="min-height: 80px;"></textarea>
+                </div>
+
+                <div class="form-grid-2col">
+                    <div class="form-group">
+                        <label for="leader-telefon" class="form-label">Telefon contact</label>
+                        <input type="text" id="leader-telefon" class="form-input">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="leader-email" class="form-label">Email contact</label>
+                        <input type="email" id="leader-email" class="form-input">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="leader-foto" class="form-label">URL Fotografie / Avatar</label>
+                    <input type="text" id="leader-foto" class="form-input" placeholder="logo_geodez.png sau https://...">
+                </div>
+
+                <div class="form-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="leader-afisare" checked>
+                        <span>Afișează public pe site</span>
+                    </label>
+                </div>
+
+                <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 24px;">
+                    <button type="button" id="btn-cancel-leader-modal" class="btn btn-secondary">Anulează</button>
+                    <button type="submit" id="btn-save-leader" class="btn btn-primary">Salvează membru</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════════════
+         MODAL: ADĂUGARE / EDITARE ÎNTREBARE FRECVENTĂ (FAQ)
+         ══════════════════════════════════════════════════════════════════ -->
+    <div id="modal-faq" class="drawer-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-faq-title">
+        <div class="drawer-box" style="max-width: 600px;">
+            <div class="drawer-header">
+                <h3 id="modal-faq-title" class="drawer-title">Adaugă Întrebare Frecventă</h3>
+                <button type="button" id="btn-close-faq-modal" class="drawer-close-btn" aria-label="Închide">✕</button>
+            </div>
+
+            <form id="form-faq" onsubmit="return false;">
+                <div class="form-grid-2col">
+                    <div class="form-group">
+                        <label for="faq-categorie" class="form-label">Categorie</label>
+                        <select id="faq-categorie" class="form-select" required>
+                            <option value="aderare">Înscriere & Cotizații</option>
+                            <option value="bcpi">BCPI & Cadastru</option>
+                            <option value="studenti">Studenți FIFIM</option>
+                            <option value="evenimente">Evenimente & SGR</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="faq-ordine" class="form-label">Ordine (număr)</label>
+                        <input type="number" id="faq-ordine" class="form-input" value="0">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="faq-tag" class="form-label">Etichetă / Tag tematic (ex: STATUT & COTIZAȚII)</label>
+                    <input type="text" id="faq-tag" class="form-input">
+                </div>
+
+                <div class="form-group">
+                    <label for="faq-intrebare" class="form-label">Întrebare (obligatoriu)</label>
+                    <input type="text" id="faq-intrebare" class="form-input" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="faq-raspuns" class="form-label">Răspuns detaliat (suportă **bold**, *italic*, link-uri)</label>
+                    <textarea id="faq-raspuns" class="form-textarea" style="min-height: 120px;" required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="faq-publicat" checked>
+                        <span>Publică imediat în secțiunea FAQ a site-ului</span>
+                    </label>
+                </div>
+
+                <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 24px;">
+                    <button type="button" id="btn-cancel-faq-modal" class="btn btn-secondary">Anulează</button>
+                    <button type="submit" id="btn-save-faq" class="btn btn-primary">Salvează întrebare</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════════════
+         MODAL: ADĂUGARE / EDITARE DOCUMENT OFICIAL
+         ══════════════════════════════════════════════════════════════════ -->
+    <div id="modal-doc" class="drawer-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-doc-title">
+        <div class="drawer-box" style="max-width: 580px;">
+            <div class="drawer-header">
+                <h3 id="modal-doc-title" class="drawer-title">Adaugă Document Oficial</h3>
+                <button type="button" id="btn-close-doc-modal" class="drawer-close-btn" aria-label="Închide">✕</button>
+            </div>
+
+            <form id="form-doc" onsubmit="return false;">
+                <div class="form-group">
+                    <label for="doc-titlu" class="form-label">Titlu Document (obligatoriu)</label>
+                    <input type="text" id="doc-titlu" class="form-input" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="doc-descriere" class="form-label">Descriere document</label>
+                    <textarea id="doc-descriere" class="form-textarea" style="min-height: 80px;"></textarea>
+                </div>
+
+                <div class="form-grid-2col">
+                    <div class="form-group">
+                        <label for="doc-tip" class="form-label">Tip / Format fișier</label>
+                        <input type="text" id="doc-tip" class="form-input" placeholder="ex: DOCX (Word) sau PDF">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="doc-badge" class="form-label">Badge vizual (opțional)</label>
+                        <input type="text" id="doc-badge" class="form-input" placeholder="ex: Sector 1 Oficial">
+                    </div>
+                </div>
+
+                <div class="form-grid-2col">
+                    <div class="form-group">
+                        <label for="doc-fisier-url" class="form-label">Cale / URL fișier (obligatoriu)</label>
+                        <input type="text" id="doc-fisier-url" class="form-input" placeholder="documente/cerere.docx" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="doc-ordine" class="form-label">Ordine (număr)</label>
+                        <input type="number" id="doc-ordine" class="form-input" value="0">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="doc-publicat" checked>
+                        <span>Publică imediat în pagina de descărcare</span>
+                    </label>
+                </div>
+
+                <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 24px;">
+                    <button type="button" id="btn-cancel-doc-modal" class="btn btn-secondary">Anulează</button>
+                    <button type="submit" id="btn-save-doc" class="btn btn-primary">Salvează document</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════════════
+         MODAL: IMPORT CSV MEMBRI (CU PREVIEW & VALIDARE)
+         ══════════════════════════════════════════════════════════════════ -->
+    <div id="modal-csv-import" class="drawer-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-csv-import-title">
+        <div class="drawer-box" style="max-width: 780px;">
+            <div class="drawer-header">
+                <div>
+                    <h3 id="modal-csv-import-title" class="drawer-title">Import Membri din fișier CSV</h3>
+                    <p style="font-size: 12.5px; color: var(--text-muted); margin-top: 2px;">
+                        Selectați fișierul CSV (cu coloanele <code>ID</code>, <code>Nume</code>, <code>Județ</code>, <code>Serie ANCPI</code>). Datele vor fi validate înainte de salvare.
+                    </p>
+                </div>
+                <button type="button" id="btn-close-csv-modal" class="drawer-close-btn" aria-label="Închide">✕</button>
+            </div>
+
+            <div style="margin-bottom: 20px;">
+                <input type="file" id="csv-file-input" accept=".csv,text/csv" class="form-input" style="padding: 10px;">
+            </div>
+
+            <div id="csv-import-preview" style="max-height: 380px; overflow-y: auto; margin-bottom: 20px;">
+                <!-- Populat dinamic la selectare fișier -->
+            </div>
+
+            <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                <button type="button" id="btn-cancel-csv-import" class="btn btn-secondary">Închide</button>
+                <button type="button" id="btn-commit-csv-import" class="btn btn-primary" disabled>Confirmă Importul</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════════════
          MODAL: SETĂRI PROFIL ADMINISTRATOR & SECURITATE (AAL2 MFA)
          ══════════════════════════════════════════════════════════════════ -->
     <div id="modal-admin-profile" class="drawer-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-profile-title">
+
         <div class="drawer-box" style="max-width: 520px;">
             <div class="drawer-header">
                 <div>
