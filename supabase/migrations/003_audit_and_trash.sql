@@ -28,6 +28,8 @@ create policy audit_read on public.audit_log
 -- Blocare explicită a oricărei scrieri directe (doar trigger-ul SECURITY DEFINER poate scrie)
 revoke all on public.audit_log from anon;
 revoke insert, update, delete on public.audit_log from authenticated;
+grant select on public.audit_log to authenticated;
+
 
 -- 2. FUNCȚIE TRIGGER GENERICĂ PENTRU JURNALIZARE MODIFICĂRI
 create or replace function public.audit_trigger()

@@ -235,3 +235,15 @@ drop policy if exists membri_citire_anonim on public.membri;
 create policy membri_citire_anonim on public.membri
     for select to anon
     using (afisare_publica = true and deleted_at is null);
+
+-- 9. DREPTURI EXPLICITE DE ACCES (GRANTS POSTGREST)
+grant select on public.setari to anon, authenticated;
+grant select on public.leadership to anon, authenticated;
+grant select on public.faq to anon, authenticated;
+grant select on public.documente to anon, authenticated;
+
+grant insert, update, delete on public.setari to authenticated;
+grant insert, update, delete on public.leadership to authenticated;
+grant insert, update, delete on public.faq to authenticated;
+grant insert, update, delete on public.documente to authenticated;
+

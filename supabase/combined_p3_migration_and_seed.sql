@@ -242,6 +242,17 @@ create policy membri_citire_anonim on public.membri
     for select to anon
     using (afisare_publica = true and deleted_at is null);
 
+-- 9. DREPTURI EXPLICITE DE ACCES (GRANTS POSTGREST)
+grant select on public.setari to anon, authenticated;
+grant select on public.leadership to anon, authenticated;
+grant select on public.faq to anon, authenticated;
+grant select on public.documente to anon, authenticated;
+
+grant insert, update, delete on public.setari to authenticated;
+grant insert, update, delete on public.leadership to authenticated;
+grant insert, update, delete on public.faq to authenticated;
+grant insert, update, delete on public.documente to authenticated;
+
 
 -- >>>>> PARTEA 2: MIGRARE 003 (JURNAL AUDIT & TRASH) <<<<<
 -- ============================================================================
@@ -274,6 +285,8 @@ create policy audit_read on public.audit_log
 -- Blocare explicită a oricărei scrieri directe (doar trigger-ul SECURITY DEFINER poate scrie)
 revoke all on public.audit_log from anon;
 revoke insert, update, delete on public.audit_log from authenticated;
+grant select on public.audit_log to authenticated;
+
 
 -- 2. FUNCȚIE TRIGGER GENERICĂ PENTRU JURNALIZARE MODIFICĂRI
 create or replace function public.audit_trigger()
