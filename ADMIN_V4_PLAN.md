@@ -498,6 +498,17 @@ Approved PCRs are applied to §3–§6 and logged in §14. The agent never silen
 - Rollback: n/a
 - Plan impact: In `001_roles_and_visibility.sql`, anon policy for stiri uses `publicat = true`. Separate scheduled publish will use dedicated timestamp in P3/P4.
 
+### PR-003 — Existing admini_rol_check constraint blocked owner role        status: CLOSED
+- Phase/task: P1 / Migration 001 execution
+- Symptom: PostgreSQL Error 23514: `new row for relation "admini" violates check constraint "admini_rol_check"` on `lefterpatrickandrei@gmail.com`.
+- Evidence: Supabase SQL Editor screenshot showed DETAIL: `(0654a8ee-0b03-4fe8-896e-a0d627aec21e, lefterpatrickandrei@gmail.com, owner, t, ...)`.
+- Root-cause: The `admini` table already had a pre-existing CHECK constraint named `admini_rol_check` that restricted values to legacy roles without `'owner'`.
+- Options:
+  - A) Drop the existing constraint with `ALTER TABLE public.admini DROP CONSTRAINT IF EXISTS admini_rol_check;` before recreating it with `('owner', 'editor', 'viewer', 'admin')`.
+- Chosen + why: Option A. Cleanly updates the constraint to accept all desired roles without data loss.
+- Rollback: `001_roles_and_visibility_rollback.sql`
+- Plan impact: Updated `supabase/migrations/001_roles_and_visibility.sql`.
+
 ## 13. Checkpoint Report template (post one per phase, newest on top)
 
 ## Checkpoint — P0 — 2026-10-06

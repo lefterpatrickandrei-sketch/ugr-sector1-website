@@ -8,13 +8,20 @@
 
 BEGIN;
 
--- 1. EXTINDERE TABELA PUBLIC.ADMINI CU COLOANA DE ROL
+-- 1. ACTUALIZARE CONSTRAINT ROL IN PUBLIC.ADMINI
+-- Eliminam constraint-ul vechi daca exista deja
 ALTER TABLE public.admini
-  ADD COLUMN IF NOT EXISTS rol TEXT NOT NULL DEFAULT 'editor'
-  CHECK (rol IN ('owner', 'editor', 'viewer'));
+  DROP CONSTRAINT IF EXISTS admini_rol_check;
+
+ALTER TABLE public.admini
+  ADD COLUMN IF NOT EXISTS rol TEXT NOT NULL DEFAULT 'editor';
 
 ALTER TABLE public.admini
   ADD COLUMN IF NOT EXISTS activ BOOLEAN NOT NULL DEFAULT true;
+
+-- Reatasam constraint-ul actualizat care include 'owner'
+ALTER TABLE public.admini
+  ADD CONSTRAINT admini_rol_check CHECK (rol IN ('owner', 'editor', 'viewer', 'admin'));
 
 -- Asigurare rol 'owner' pentru administratorul principal
 UPDATE public.admini
