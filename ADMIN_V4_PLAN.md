@@ -491,7 +491,7 @@ Approved PCRs are applied to §3–§6 and logged in §14. The agent never silen
 ## Checkpoint — P0 — 2026-10-06
 **Status:** DONE  
 **Delivered:**
-- Branch `admin-v4` created from `main`.
+- Branch `admin-v4` created from `main` (commit `c69ace8`).
 - Read-only audit of Supabase public REST API: `membri` (8 rows), `stiri` (9 rows), `cereri_inscriere` (401), `vizite` (401), `evenimente` (401), `admini` (401), storage buckets (empty `[]`).
 - Safety backup snapshot committed to `backups/2026-10-06/` (`supabase_membri.json`, `supabase_stiri.json`, local content JSONs, `data.js`, `metadata.json`).
 - Complete functional inventory created in `admin/INVENTORY.md` covering all 93 functions, 5 views, 6 modals, and Supabase operations.
