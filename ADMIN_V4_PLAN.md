@@ -512,6 +512,53 @@ Approved PCRs are applied to §3–§6 and logged in §14. The agent never silen
 
 ## 13. Checkpoint Report template (post one per phase, newest on top)
 
+## Checkpoint — P3 — 2026-10-06
+**Status:** DONE  
+**Delivered:**
+- Migrare SQL `002_content_tables.sql` creată, versionată și executată pe Supabase cu tabelele `setari`, `leadership`, `faq`, `documente`, extindere `stiri` (categorie, scope, locatie, text_buton, link_actiune, slug, deleted_at) și `membri` (demonstrativ, deleted_at), triggeri automați `handle_updated_at()`, politici RLS și grant-uri PostgREST (`anon`, `authenticated`).
+- Migrare rollback `002_content_tables_rollback.sql` creată.
+- Migrare SQL `003_audit_and_trash.sql` creată, versionată și executată pe Supabase cu tabela `audit_log`, funcție trigger `public.audit_trigger()`, RLS de protecție administrativă și triggeri de auditare automată pe toate tabelele de conținut și admin.
+- Migrare rollback `003_audit_and_trash_rollback.sql` creată.
+- Script patch de privilegii `002b_grant_permissions.sql` creat și executat.
+- Script seed idempotent `supabase/seed/seed_from_repo.sql` și pachetul combinat `supabase/combined_p3_migration_and_seed.sql` create și executate cu succes pe Supabase.
+- Toți cei 8 membri existenți marcați cu `demonstrativ = true` (conform cerinței din plan și §10 Q6).
+- Știrile existente îmbogățite cu atribute complete (scope local/național, categorii, locații, butoane de acțiune).
+- Actualizat `script.js` cu funcția `loadContentFromSupabase()` pentru a citi dinamic `setari`, `leadership`, `faq`, `documente` din Supabase, menținând fallback securizat la `data.js` în caz de offline/eroare.
+- Verificator automatizat `scratch/verify_p3.mjs` și test de compatibilitate `scratch/test_site_fetch.mjs`.
+
+**Evidence:**
+- Rulare migrație și seed în Supabase SQL Editor: `Success. No rows returned` (confirmat prin screenshot).
+- Rulare `node scratch/verify_p3.mjs` (8/8 teste trecute cu succes):
+  * `[PASS] 1. Citire anonimă public.setari`: Returnat 3 rânduri setări (`organizatie`, `ghid_aderare`, `telemetrie_sector1`).
+  * `[PASS] 2. Blocare scriere anonimă în public.setari`: HTTP 401 (blocat corect de RLS/grants).
+  * `[PASS] 3. Citire anonimă public.leadership`: Returnat 11 lideri publici (5 central, 6 filială).
+  * `[PASS] 4. Blocare scriere anonimă în public.leadership`: HTTP 401 (blocat corect de RLS/grants).
+  * `[PASS] 5. Citire anonimă public.faq`: Returnat 14 întrebări frecvente oficiale.
+  * `[PASS] 6. Citire anonimă public.documente`: Returnat 3 documente oficiale.
+  * `[PASS] 7. Verificare membri demonstrativ flag`: Găsit toți cei 8 membri cu flag `demonstrativ = true`.
+  * `[PASS] 8. Blocare totală acces anonim la public.audit_log`: HTTP 401 (blocat corect, accesibil doar la admini).
+- Rulare `node scratch/test_site_fetch.mjs`: Compatibilitate completă cu structura de date consumată de `script.js`.
+- Rulare `node tools/verificare-date.js`: 10/10 `[OK]` (niciun check eșuat, zero caractere U+FFFD, IBAN/telefon/conducere intacte).
+
+**Acceptance criteria:**
+- All content in Supabase tables: PASS (`setari`, `leadership`, `faq`, `documente`, `membri`, `stiri`).
+- Public site reads from Supabase with fallback to repo data: PASS (`loadContentFromSupabase()` integrat în `script.js`).
+- Seed idempotent: PASS (`ON CONFLICT` / `WHERE NOT EXISTS`).
+- Zero data loss: PASS (toate datele existente sunt păstrate și îmbogățite).
+
+**Invariants check (I1–I9):**
+- I1 (branch `admin-v4`): PASS.
+- I2 (anon key only): PASS.
+- I3 (zero innerHTML în dinamic logic): PASS.
+- I4 (no tokens in storage): PASS.
+- I5 (AAL2 TOTP enforced): PASS.
+- I6 (backup exists): PASS.
+- I7 (SQL migrations versioned): PASS (`002`, `002b`, `003` + rollbacks).
+- I8 (no console.log leftover): PASS.
+- I9 (site remains fully functional): PASS (10/10 check-uri `tools/verificare-date.js`).
+
+**Proposed next step:** Trecerea la **Faza P4 (Editors — Non-coder core)**: construirea formularelor ghidate de editare pentru Setări Filială, Conducere (Leadership), Întrebări Frecvente (FAQ) și Documente Oficiale, adăugarea comutatorului mod Simplu / Avansat în antetul panoului și implementarea preview-ului live.
+
 ## Checkpoint — P2 — 2026-10-06
 **Status:** DONE  
 **Delivered:**
@@ -670,6 +717,7 @@ Approved PCRs are applied to §3–§6 and logged in §14. The agent never silen
 | 2026-10-06 | P0 | Audit & baseline completed. Created branch `admin-v4`, snapshot in `backups/2026-10-06/`, `admin/INVENTORY.md`, resolved PR-001. Ready for P1 review. |
 | 2026-10-06 | P1 | Migrare 001_roles_and_visibility.sql rulata cu succes pe Supabase. RLS activ pe membri, stiri, admini. Verificare automata 8/8 teste trecute. Filtre script.js adaugate. Rezolvat PR-002 si PR-003. |
 | 2026-10-06 | P2 | Modularizare panou.html finalizata. Extrase CSS in admin/css/panel.css si JS in 18 module sub admin/js/. panou.legacy.html pastrat ca backup. 93/93 functii acoperite (100%). tools/verificare-date.js 10/10 OK. |
+| 2026-10-06 | P3 | Migrari 002 & 003 rulate pe Supabase. Tabele setari, leadership, faq, documente, audit_log create cu RLS si seed. Toate cele 8 teste verify_p3.mjs trecute cu succes. script.js sincronizat cu DB (fallback data.js). |
 
 **Decision log:** D1–D5 in §3. Add `D6…` here with date, decision, alternatives considered, who decided.
 
