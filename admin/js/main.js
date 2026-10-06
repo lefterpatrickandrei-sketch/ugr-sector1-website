@@ -47,7 +47,8 @@ import {
     openPreviewNewsModal,
     closePreviewNewsModal,
     handleSaveNews,
-    handleSyncDefaultNews
+    handleSyncDefaultNews,
+    setupNewsCategoryControls
 } from './views/news.js';
 import {
     loadTelemetryData,
@@ -454,6 +455,8 @@ function bootAdminApp() {
             if (e.target === modalPreviewNews) closePreviewNewsModal();
         });
     }
+
+    setupNewsCategoryControls();
 
     // Scurtături Panou General (Overview)
     const btnQuickSyncNews = document.getElementById('btn-quick-sync-news');

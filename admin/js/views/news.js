@@ -19,62 +19,107 @@ export const OFFICIAL_FALLBACK_NEWS = [
         continut: "UGR și Universitatea Tehnică a Moldovei (UTM) organizează ediția internațională SGR la Chișinău. Congresul reunește experți ANCPI, ARFC, delegați FIG și CLGE pentru dezbateri pe tematica geodeziei moderne, scanării LiDAR și integrării europene a cadastrului.",
         imagine_url: "ugr-images/united_1384.png",
         data_publicare: "2026-11-11",
+        scope: "international",
+        categorie: "Eveniment Internațional Major",
+        locatie: "UTM, Chișinău",
+        link_actiune: "https://sgr.ugr.ro/indexr.php",
+        text_buton: "Înscriere & Detalii SGR ↗",
         publicat: true
     },
     {
         titlu: "Masă Rotundă de Lucru: Filiala Sector 1 & Conducerea BCPI Sector 1",
         continut: "Sesiune de lucru consultativă dedicată geodezilor autorizați din Sectorul 1 București pentru uniformizarea procedurilor de recepție a planurilor de amplasament și rezolvarea necorelărilor tehnice din sistemul integrat e-Terra.",
-        imagine_url: "ugr-images/united_1384.png",
+        imagine_url: "ugr-images/ig_post_5.jpg",
         data_publicare: "2026-09-15",
+        scope: "institutional",
+        categorie: "Consultare Tehnică Locală",
+        locatie: "Sediu OCPI București",
+        link_actiune: "https://www.facebook.com/share/1C3GXdASYW/",
+        text_buton: "Urmărește noutățile ↗",
         publicat: true
     },
     {
         titlu: "Comunicat privind Deciziile Biroului Executiv (BEX) UGR",
         continut: "Biroul Executiv al Uniunii Geodezilor din România a adoptat rezoluțiile privind optimizarea fluxurilor de lucru cu ANCPI, normele metodologice pentru lucrările de cadastru sistematic și sprijinirea formării profesionale continue a geodezilor autorizați.",
-        imagine_url: "ugr-images/united_1384.png",
+        imagine_url: "ugr-images/6a16e8a299426Comunicat-in-urma-sedintei-BEX-UGR-din-21.05.2026_Page_1.png",
         data_publicare: "2026-05-21",
+        scope: "national",
+        categorie: "Comunicat Oficial BEX",
+        locatie: "Sediul Central UGR",
+        link_actiune: "https://www.ugr.ro/stiri/comunicat-privind-bex-ugr-din-21-mai-2026",
+        text_buton: "Citește Comunicatul ↗",
         publicat: true
     },
     {
         titlu: "Adunarea Generală a Membrilor Filialei Sector 1 București",
         continut: "Întâlnirea anuală a comunității geodezilor din Sectorul 1: prezentarea raportului de activitate local, validarea calendarului de workshop-uri practice GNSS/LiDAR și primirea noilor absolvenți de la Facultatea de Geodezie UTCB.",
-        imagine_url: "ugr-images/united_1384.png",
+        imagine_url: "ugr-images/ISP8061.png",
         data_publicare: "2026-04-10",
+        scope: "local",
+        categorie: "Ședință Statutară Filială",
+        locatie: "Facultatea de Geodezie UTCB",
+        link_actiune: "#contact",
+        text_buton: "Confirmă participarea →",
         publicat: true
     },
     {
         titlu: "Ediția a II-a UGR Student Community by UGR Sector 1: GIS și baze de date spațiale",
         continut: "Întâlnirea comunității cu studenții și viitorii colegi în Sala de Consiliu FIFIM – USAMV București. Sesiuni practice de analiză și gestionare a informației spațiale, GIS și tranziția de la facultate la provocările din topografia inginerească de pe șantiere.",
-        imagine_url: "ugr-images/united_1384.png",
+        imagine_url: "ugr-images/ugr_student_community_meeting.jpg",
         data_publicare: "2026-07-08",
+        scope: "academic",
+        categorie: "Workshop Studențesc & Instruire",
+        locatie: "Sala Consiliu FIFIM USAMV",
+        link_actiune: "https://www.instagram.com/filiala.sector1.ugr",
+        text_buton: "Postare Instagram ↗",
         publicat: true
     },
     {
         titlu: "Premiul Filialei Sector 1 & Pachet de 18 Workshopuri Profesionale de Specialitate",
         continut: "La susținerea licențelor MTC la USAMV, Filiala Sector 1 a acordat premii de excelență și a lansat 18 workshopuri aplicate alături de partenerii KarmaCad Store (scanare laser 3D), SphereFix România și Control Survey SRL.",
-        imagine_url: "ugr-images/united_1384.png",
+        imagine_url: "ugr-images/ig_post_3.jpg",
         data_publicare: "2026-07-10",
+        scope: "parteneriat",
+        categorie: "Formare Profesională Continuă",
+        locatie: "FIFIM USAMV",
+        link_actiune: "https://www.instagram.com/filiala.sector1.ugr",
+        text_buton: "Vezi parteneriatele ↗",
         publicat: true
     },
     {
         titlu: "Comunicat Filiala Sector 1: Notificare ANCPI privind disponibilitatea sistemului e-Terra",
         continut: "Anunț operativ ANCPI transmis în timp real membrilor geodezi din Sectorul 1 privind disfuncționalitățile tehnice ale platformei e-Terra și calendarul de restabilire a serviciilor de cadastru și carte funciară.",
-        imagine_url: "ugr-images/united_1384.png",
+        imagine_url: "ugr-images/ancpi.png",
         data_publicare: "2026-07-14",
+        scope: "institutional",
+        categorie: "Notificare Operativă ANCPI",
+        locatie: "Canale Oficiale Sector 1",
+        link_actiune: "https://www.facebook.com/share/14xwxtFChmC/",
+        text_buton: "Citește pe Facebook ↗",
         publicat: true
     },
     {
         titlu: "Burse Complete UGR pentru Participare la Săptămâna Geodeziei Românești 2026 (Chișinău)",
         continut: "Șansă dedicată studenților de la Geodezie: UGR și Filiala Sector 1 oferă burse integrale ce acoperă taxa de participare, cazarea, mesele și transportul pentru conferința internațională SGR de la UTM Chișinău (11–14 Noiembrie).",
-        imagine_url: "ugr-images/united_1384.png",
+        imagine_url: "ugr-images/6a2fcf1057a4cPoster-Bursa-SGR-2026.png",
         data_publicare: "2026-06-15",
+        scope: "academic",
+        categorie: "Burse & Sprijin Tineri Geodezi",
+        locatie: "FIFIM USAMV / UTM Chișinău",
+        link_actiune: "https://docs.google.com/forms/d/e/1FAIpQLSctDTm-Gxuph4yz2fJRiU2JOurBFgzBXriAUY6rbrtem5vrEQ/viewform?usp=header",
+        text_buton: "Înscriere Bursă SGR ↗",
         publicat: true
     },
     {
         titlu: "Delegația Oficială UGR la Adunarea Generală CLGE",
         continut: "România a promovat armonizarea normelor de etică și bune practici în măsurătorile cadastrale la nivelul Consiliului European al Geodezilor (CLGE), susținând drepturile geodezilor autorizați din Europa Centrală și de Est.",
-        imagine_url: "ugr-images/united_1384.png",
+        imagine_url: "ugr-images/6a0c30e4559d8Board-CLGE-Tartu-mai-2026.png",
         data_publicare: "2026-05-05",
+        scope: "international",
+        categorie: "Reprezentare Europeană",
+        locatie: "Tartu, Estonia",
+        link_actiune: "https://www.clge.eu",
+        text_buton: "Portal Oficial CLGE ↗",
         publicat: true
     }
 ];
@@ -602,6 +647,14 @@ export function openAddNewsModal() {
         const input = document.getElementById(id);
         if (input) input.value = val;
     };
+    
+    const wrapSelectCat = document.getElementById('wrap-select-cat');
+    const wrapCustomCat = document.getElementById('wrap-custom-cat');
+    const inputCustomCat = document.getElementById('news-input-categorie-custom');
+    if (wrapSelectCat) wrapSelectCat.style.display = 'block';
+    if (wrapCustomCat) wrapCustomCat.style.display = 'none';
+    if (inputCustomCat) inputCustomCat.value = '';
+
     setInput('news-input-categorie', 'Eveniment Oficial');
     setInput('news-input-scope', 'local');
     setInput('news-input-locatie', 'București');
@@ -640,7 +693,36 @@ export function openEditNewsModal(item) {
         const input = document.getElementById(id);
         if (input) input.value = val || '';
     };
-    setInput('news-input-categorie', item.categorie || 'Eveniment Oficial');
+
+    // Suport categorii presetate sau personalizate
+    const wrapSelectCat = document.getElementById('wrap-select-cat');
+    const wrapCustomCat = document.getElementById('wrap-custom-cat');
+    const inputCustomCat = document.getElementById('news-input-categorie-custom');
+    const selectCat = document.getElementById('news-input-categorie');
+    const catVal = item.categorie || 'Eveniment Oficial';
+
+    let isPreset = false;
+    if (selectCat) {
+        for (let opt of selectCat.options) {
+            if (opt.value === catVal) {
+                isPreset = true;
+                break;
+            }
+        }
+    }
+
+    if (isPreset) {
+        if (wrapSelectCat) wrapSelectCat.style.display = 'block';
+        if (wrapCustomCat) wrapCustomCat.style.display = 'none';
+        if (selectCat) selectCat.value = catVal;
+        if (inputCustomCat) inputCustomCat.value = '';
+    } else {
+        if (wrapSelectCat) wrapSelectCat.style.display = 'none';
+        if (wrapCustomCat) wrapCustomCat.style.display = 'block';
+        if (selectCat) selectCat.value = '__custom__';
+        if (inputCustomCat) inputCustomCat.value = catVal;
+    }
+
     setInput('news-input-scope', item.scope || 'local');
     setInput('news-input-locatie', item.locatie || 'București');
     setInput('news-input-link-actiune', item.link_actiune || '');
@@ -686,7 +768,15 @@ export function openPreviewNewsModal(item) {
             const scopeSpan = document.createElement('span');
             scopeSpan.className = 'badge-tech';
             scopeSpan.style.marginLeft = '8px';
-            scopeSpan.textContent = item.scope === 'national' ? '🇷🇴 Național' : '📍 Local';
+            const scopeLabels = {
+                'national': '🇷🇴 Național',
+                'international': '🌍 Internațional',
+                'academic': '🎓 Academic',
+                'parteneriat': '🤝 Parteneriat',
+                'institutional': '🏛️ Instituțional',
+                'local': '📍 Local'
+            };
+            scopeSpan.textContent = scopeLabels[item.scope] || `📍 ${item.scope}`;
             previewBadgeStatus.appendChild(scopeSpan);
         }
         if (item.categorie) {
@@ -763,6 +853,16 @@ export async function handleSaveNews() {
     const continutVal = newsInputContinut ? newsInputContinut.value.trim() : '';
     const publicatVal = newsInputPublicat ? newsInputPublicat.checked : true;
 
+    // Detectare categorie personalizată sau selectată
+    let categorieVal = getVal('news-input-categorie');
+    const wrapCustomCat = document.getElementById('wrap-custom-cat');
+    const inputCustomCat = document.getElementById('news-input-categorie-custom');
+    if (wrapCustomCat && wrapCustomCat.style.display !== 'none' && inputCustomCat && inputCustomCat.value.trim()) {
+        categorieVal = inputCustomCat.value.trim();
+    } else if (categorieVal === '__custom__') {
+        categorieVal = (inputCustomCat && inputCustomCat.value.trim()) || 'Eveniment Oficial';
+    }
+
     if (!titluVal || titluVal.length < 3 || titluVal.length > 200) {
         showToast('Titlul trebuie să aibă între 3 și 200 de caractere.', 'error');
         return;
@@ -791,12 +891,11 @@ export async function handleSaveNews() {
             continut: continutVal || null,
             publicat: publicatVal,
             status: publicatVal ? 'publicat' : 'ciorna',
-            categorie: getVal('news-input-categorie') || 'Eveniment Oficial',
+            categorie: categorieVal || 'Eveniment Oficial',
             scope: getVal('news-input-scope') || 'local',
             locatie: getVal('news-input-locatie') || 'București',
             link_actiune: getVal('news-input-link-actiune') || null,
             text_buton: getVal('news-input-text-buton') || 'Detalii ↗',
-            slug: getVal('news-input-slug') || null
         };
 
         if (editingNewsId) {
@@ -901,4 +1000,46 @@ export async function handleDeleteNews(newsId, btn) {
         }
     }
 }
+
+export function setupNewsCategoryControls() {
+    const btnToggleCustomCat = document.getElementById('btn-toggle-custom-cat');
+    const btnCancelCustomCat = document.getElementById('btn-cancel-custom-cat');
+    const selectCat = document.getElementById('news-input-categorie');
+    const wrapSelectCat = document.getElementById('wrap-select-cat');
+    const wrapCustomCat = document.getElementById('wrap-custom-cat');
+    const inputCustomCat = document.getElementById('news-input-categorie-custom');
+
+    if (btnToggleCustomCat) {
+        btnToggleCustomCat.addEventListener('click', () => {
+            if (wrapSelectCat) wrapSelectCat.style.display = 'none';
+            if (wrapCustomCat) wrapCustomCat.style.display = 'block';
+            if (inputCustomCat) {
+                inputCustomCat.focus();
+            }
+        });
+    }
+
+    if (btnCancelCustomCat) {
+        btnCancelCustomCat.addEventListener('click', () => {
+            if (wrapCustomCat) wrapCustomCat.style.display = 'none';
+            if (wrapSelectCat) wrapSelectCat.style.display = 'block';
+            if (selectCat) {
+                selectCat.value = 'Eveniment Oficial';
+            }
+        });
+    }
+
+    if (selectCat) {
+        selectCat.addEventListener('change', () => {
+            if (selectCat.value === '__custom__') {
+                if (wrapSelectCat) wrapSelectCat.style.display = 'none';
+                if (wrapCustomCat) wrapCustomCat.style.display = 'block';
+                if (inputCustomCat) {
+                    inputCustomCat.focus();
+                }
+            }
+        });
+    }
+}
+
 

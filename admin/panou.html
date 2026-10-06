@@ -1475,26 +1475,46 @@
 
                 <div class="form-grid-2col">
                     <div class="form-group">
-                        <label for="news-input-categorie" class="form-label">Categorie Articol</label>
-                        <select id="news-input-categorie" class="form-select">
-                            <option value="Eveniment Oficial">Eveniment Oficial</option>
-                            <option value="Eveniment Internațional Major">Eveniment Internațional Major</option>
-                            <option value="Consultare Tehnică Locală">Consultare Tehnică Locală</option>
-                            <option value="Comunicat Oficial BEX">Comunicat Oficial BEX</option>
-                            <option value="Ședință Statutară Filială">Ședință Statutară Filială</option>
-                            <option value="Workshop Studențesc & Instruire">Workshop Studențesc & Instruire</option>
-                            <option value="Formare Profesională Continuă">Formare Profesională Continuă</option>
-                            <option value="Notificare Operativă ANCPI">Notificare Operativă ANCPI</option>
-                            <option value="Burse & Sprijin Tineri Geodezi">Burse & Sprijin Tineri Geodezi</option>
-                            <option value="Reprezentare Europeană">Reprezentare Europeană</option>
-                        </select>
+                        <label for="news-input-categorie" class="form-label">
+                            <span>Categorie Articol</span>
+                            <button type="button" id="btn-toggle-custom-cat" class="btn-link" style="font-size: 11.5px; color: var(--cyan); text-decoration: underline; background: none; border: none; cursor: pointer; padding: 0;">+ Categorie manuală</button>
+                        </label>
+                        <div id="wrap-select-cat">
+                            <select id="news-input-categorie" class="form-select">
+                                <option value="Eveniment Oficial">Eveniment Oficial</option>
+                                <option value="Eveniment Internațional Major">Eveniment Internațional Major</option>
+                                <option value="Consultare Tehnică Locală">Consultare Tehnică Locală</option>
+                                <option value="Comunicat Oficial BEX">Comunicat Oficial BEX</option>
+                                <option value="Ședință Statutară Filială">Ședință Statutară Filială</option>
+                                <option value="Workshop Studențesc & Instruire">Workshop Studențesc & Instruire</option>
+                                <option value="Formare Profesională Continuă">Formare Profesională Continuă</option>
+                                <option value="Notificare Operativă ANCPI">Notificare Operativă ANCPI</option>
+                                <option value="Burse & Sprijin Tineri Geodezi">Burse & Sprijin Tineri Geodezi</option>
+                                <option value="Reprezentare Europeană">Reprezentare Europeană</option>
+                                <option value="Parteneriat Tehnologic & Industrie">Parteneriat Tehnologic & Industrie</option>
+                                <option value="Cadastru Sistematic & GIS">Cadastru Sistematic & GIS</option>
+                                <option value="Legislație & Norme Tehnice">Legislație & Norme Tehnice</option>
+                                <option value="Gală & Premiere de Excelență">Gală & Premiere de Excelență</option>
+                                <option value="__custom__">➕ Altă categorie personalizată...</option>
+                            </select>
+                        </div>
+                        <div id="wrap-custom-cat" style="display: none; margin-top: 6px;">
+                            <div style="display: flex; gap: 6px;">
+                                <input type="text" id="news-input-categorie-custom" class="form-input" placeholder="Scrie categoria personalizată..." maxlength="80">
+                                <button type="button" id="btn-cancel-custom-cat" class="btn btn-secondary btn-sm" title="Revino la lista de categorii">✕</button>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="form-group">
                         <label for="news-input-scope" class="form-label">Anvergură (Scope)</label>
                         <select id="news-input-scope" class="form-select">
                             <option value="local">📍 Local (Sector 1 / București)</option>
-                            <option value="national">🇷🇴 Național / Internațional</option>
+                            <option value="national">🇷🇴 Național (Congres / BEX UGR)</option>
+                            <option value="international">🌍 Internațional (CLGE / FIG / UTM)</option>
+                            <option value="academic">🎓 Academic & Studențesc (UTCB / USAMV)</option>
+                            <option value="parteneriat">🤝 Parteneriat Tehnic & Industrie</option>
+                            <option value="institutional">🏛️ Dialog Instituțional & ANCPI</option>
                         </select>
                     </div>
                 </div>
@@ -1615,7 +1635,7 @@
     <!-- ══════════════════════════════════════════════════════════════════
          MODAL: GALERIE MEDIA & SELECTOR ASSET-URI (STRAPI / PAYLOAD ASSET PICKER)
          ══════════════════════════════════════════════════════════════════ -->
-    <div id="modal-media-picker" class="drawer-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-media-title">
+    <div id="modal-media-picker" class="drawer-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-media-title" style="z-index: 1100;">
         <div class="drawer-box" style="max-width: 780px;">
             <div class="drawer-header">
                 <div>

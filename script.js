@@ -1165,14 +1165,67 @@ function renderEventsTimeline() {
     if (!axis || !ugrData.newsList || ugrData.newsList.length === 0) return;
 
     axis.innerHTML = ugrData.newsList.map(item => {
-        const isNational = item.scope === 'national';
-        const pinClass = isNational ? 'pin-gold' : '';
-        const cardClass = isNational ? 'card-gold' : '';
-        const badgeDateClass = isNational ? 'badge-gold' : '';
-        const badgeScopeClass = isNational ? 'badge-gold-scope' : '';
-        const linkClass = isNational ? 'link-gold' : '';
+        const scope = (item.scope || 'local').toLowerCase();
+
+        let pinClass = '';
+        let cardClass = '';
+        let badgeDateClass = '';
+        let badgeScopeClass = '';
+        let linkClass = '';
+        let scopeBadgeText = '';
+
+        switch (scope) {
+            case 'national':
+                pinClass = 'pin-gold';
+                cardClass = 'card-gold';
+                badgeDateClass = 'badge-gold';
+                badgeScopeClass = 'badge-gold-scope';
+                linkClass = 'link-gold';
+                scopeBadgeText = '🇷🇴 CONGRES ANUAL NAȚIONAL';
+                break;
+            case 'international':
+                pinClass = 'pin-international';
+                cardClass = 'card-international';
+                badgeDateClass = 'badge-international';
+                badgeScopeClass = 'badge-international-scope';
+                linkClass = 'link-international';
+                scopeBadgeText = '🌍 REPREZENTARE INTERNAȚIONALĂ (CLGE / FIG)';
+                break;
+            case 'academic':
+                pinClass = 'pin-academic';
+                cardClass = 'card-academic';
+                badgeDateClass = 'badge-academic';
+                badgeScopeClass = 'badge-academic-scope';
+                linkClass = 'link-academic';
+                scopeBadgeText = '🎓 ACADEMIC & STUDENȚESC (UTCB / USAMV)';
+                break;
+            case 'parteneriat':
+                pinClass = 'pin-partner';
+                cardClass = 'card-partner';
+                badgeDateClass = 'badge-partner';
+                badgeScopeClass = 'badge-partner-scope';
+                linkClass = 'link-partner';
+                scopeBadgeText = '🤝 PARTENERIAT TEHNIC & INDUSTRIE';
+                break;
+            case 'institutional':
+                pinClass = 'pin-inst';
+                cardClass = 'card-inst';
+                badgeDateClass = 'badge-inst';
+                badgeScopeClass = 'badge-inst-scope';
+                linkClass = 'link-inst';
+                scopeBadgeText = '🏛️ DIALOG INSTITUȚIONAL & ANCPI';
+                break;
+            default: // 'local'
+                pinClass = '';
+                cardClass = '';
+                badgeDateClass = '';
+                badgeScopeClass = '';
+                linkClass = '';
+                scopeBadgeText = item.category ? item.category.toUpperCase() : '📍 ACTIVITATE LOCALĂ FILIALA SECTOR 1';
+                break;
+        }
+
         const dateText = item.date || '2026';
-        const scopeText = isNational ? 'CONGRES ANUAL NAȚIONAL & INTERNAȚIONAL' : (item.category ? item.category.toUpperCase() : 'ACTIVITATE LOCALĂ FILIALA SECTOR 1');
 
         let actionsHtml = '';
         if (item.source && item.source.url) {
@@ -1198,8 +1251,8 @@ function renderEventsTimeline() {
                         </div>
                         <div class="events-node-body">
                             <div class="events-node-meta">
-                                <span class="events-badge-date ${badgeDateClass}">${isNational ? '★ ' : ''}${escapeHtml(dateText)}</span>
-                                <span class="events-badge-scope ${badgeScopeClass}">${escapeHtml(scopeText)}</span>
+                                <span class="events-badge-date ${badgeDateClass}">${scope === 'national' ? '★ ' : (scope === 'international' ? '🌍 ' : '')}${escapeHtml(dateText)}</span>
+                                <span class="events-badge-scope ${badgeScopeClass}">${escapeHtml(scopeBadgeText)}</span>
                             </div>
                             <h3 class="events-node-title">${escapeHtml(item.title)}</h3>
                             <p class="events-node-desc">
@@ -2838,7 +2891,7 @@ async function loadNewsFromSupabase() {
             return;
         }
 
-        ugrData.newsList = data.map(item => ({
+        ugrData.newsList = data.map((item, idx) => ({
             scope: item.scope || 'local',
             scopeLabel: item.scope === 'national' ? '[EVENIMENT NAȚIONAL UGR / FIG / CLGE]' : '[ACTIVITATE LOCALĂ FILIALA SECTOR 1]',
             category: item.categorie || 'Eveniment Oficial',
@@ -2847,7 +2900,7 @@ async function loadNewsFromSupabase() {
             location: item.locatie || 'București',
             date: item.data_publicare ? formatNewsDate(item.data_publicare) : '2026',
             source: item.link_actiune ? { org: 'Link Detalii', url: item.link_actiune } : { org: 'Filiala Sector 1', url: '#contact' },
-            image: item.imagine_url || 'ugr-images/united_1384.png',
+            image: getContextualNewsImage(item, idx),
             actionText: item.text_buton || 'Detalii ↗'
         }));
         renderNewsBento();
@@ -2855,6 +2908,41 @@ async function loadNewsFromSupabase() {
     } catch (err) {
         fallbackLoadNewsJson();
     }
+}
+
+function getContextualNewsImage(item, index) {
+    if (item.imagine_url && item.imagine_url.trim()) {
+        return item.imagine_url;
+    }
+    const cat = (item.categorie || '').toLowerCase();
+    const scope = (item.scope || '').toLowerCase();
+    const titlu = (item.titlu || '').toLowerCase();
+
+    if (scope === 'international' || cat.includes('internațional') || cat.includes('clge') || cat.includes('fig')) {
+        return 'ugr-images/6a0c30e4559d8Board-CLGE-Tartu-mai-2026.png';
+    }
+    if (scope === 'academic' || cat.includes('studen') || cat.includes('burse') || cat.includes('utcb') || cat.includes('usamv')) {
+        return 'ugr-images/ISP8267.png';
+    }
+    if (scope === 'parteneriat' || cat.includes('workshop') || cat.includes('formare') || cat.includes('premii')) {
+        return 'ugr-images/ig_post_3.jpg';
+    }
+    if (scope === 'institutional' || cat.includes('ancpi') || cat.includes('bcpi') || cat.includes('consultare') || cat.includes('notificare')) {
+        return 'ugr-images/ig_post_5.jpg';
+    }
+    if (scope === 'national' || cat.includes('bex') || titlu.includes('bex')) {
+        return 'ugr-images/6a16e8a299426Comunicat-in-urma-sedintei-BEX-UGR-din-21.05.2026_Page_1.png';
+    }
+
+    const fallbacks = [
+        'ugr-images/ISP8061.png',
+        'ugr-images/ISP7469.png',
+        'ugr-images/ISP7765.png',
+        'ugr-images/ig_post_1.jpg',
+        'ugr-images/ig_post_4.jpg',
+        'ugr-images/united_1384.png'
+    ];
+    return fallbacks[index % fallbacks.length];
 }
 
 async function loadContentFromSupabase() {
@@ -2961,7 +3049,7 @@ function fallbackLoadNewsJson() {
         .then(r => r.ok ? r.json() : null)
         .then(d => {
             if (d && Array.isArray(d.news) && d.news.length > 0) {
-                ugrData.newsList = d.news.map(item => ({
+                ugrData.newsList = d.news.map((item, idx) => ({
                     scope: item.scope || (item.category && item.category.toLowerCase().includes('local') ? 'local' : 'national'),
                     scopeLabel: item.scopeLabel || (item.category && item.category.toLowerCase().includes('local') ? '[ACTIVITATE LOCALĂ FILIALA SECTOR 1]' : '[EVENIMENT NAȚIONAL UGR / FIG / CLGE]'),
                     category: item.category || 'Eveniment Oficial',
@@ -2970,7 +3058,7 @@ function fallbackLoadNewsJson() {
                     location: item.location || 'București',
                     date: item.date || '2026',
                     source: item.actionUrl ? { org: 'Link Detalii', url: item.actionUrl } : { org: 'Filiala Sector 1', url: '#contact' },
-                    image: item.image || 'ugr-images/united_1384.png',
+                    image: getContextualNewsImage({ imagine_url: item.image, categorie: item.category, scope: item.scope, titlu: item.title }, idx),
                     actionText: item.actionText || 'Detalii & Înscriere ↗'
                 }));
                 renderNewsBento();

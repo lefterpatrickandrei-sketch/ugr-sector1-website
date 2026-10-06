@@ -6,23 +6,38 @@
 import { state } from '../state.js';
 import { client } from '../supabase.js';
 import { showToast } from './toast.js';
+import { updateCharCounters } from '../lib/format.js';
 
 export const OFFICIAL_MEDIA_ASSETS = [
-    { name: "Conferința Geodezie UGR", file: "ugr-images/united_1384.png", tag: "eveniment", isLocal: true },
-    { name: "Echipamente Geodezice Teren", file: "ugr-images/ISP7469.png", tag: "tehnic", isLocal: true },
-    { name: "Măsurători Stație Totală", file: "ugr-images/ISP7765.png", tag: "tehnic", isLocal: true },
-    { name: "Inginerie & Șantier", file: "ugr-images/ISP8061.png", tag: "teren", isLocal: true },
+    { name: "Conferința SGR Chișinău (Amfiteatru UTM)", file: "ugr-images/united_1384.png", tag: "eveniment", isLocal: true },
+    { name: "Masă Rotundă BCPI Sector 1", file: "ugr-images/ig_post_5.jpg", tag: "instituțional", isLocal: true },
+    { name: "Gala MTC & Pachet 18 Workshopuri", file: "ugr-images/ig_post_3.jpg", tag: "workshop", isLocal: true },
+    { name: "Comunitate Geodezică Teren", file: "ugr-images/ig_post_1.jpg", tag: "teren", isLocal: true },
+    { name: "Consultare Tehnică Specialiști", file: "ugr-images/ig_post_2.jpg", tag: "instituțional", isLocal: true },
+    { name: "Activitate Profesională Filială", file: "ugr-images/ig_post_4.jpg", tag: "eveniment", isLocal: true },
+    { name: "Întâlnire Practică & Tehnologie", file: "ugr-images/ig_post_6.jpg", tag: "teren", isLocal: true },
+    { name: "Echipamente Geodezice Teren GNSS", file: "ugr-images/ISP7469.png", tag: "tehnic", isLocal: true },
+    { name: "Măsurători Stație Totală & Rețea", file: "ugr-images/ISP7765.png", tag: "tehnic", isLocal: true },
+    { name: "Inginerie & Șantier Cadastru", file: "ugr-images/ISP8061.png", tag: "teren", isLocal: true },
     { name: "Scanare Laser LiDAR & GNSS", file: "ugr-images/ISP8267.png", tag: "tehnic", isLocal: true },
     { name: "Workshop Profesional GEOS", file: "ugr-images/6a0c07be70466Invitaie-workshop-GEOS.png", tag: "workshop", isLocal: true },
-    { name: "Board CLGE Tartu", file: "ugr-images/6a0c30e4559d8Board-CLGE-Tartu-mai-2026.png", tag: "oficial", isLocal: true },
-    { name: "Adunarea Generală CLGE", file: "ugr-images/6a0c33b42cd7bAG-CLGE-TARTU-Group-pic.png", tag: "oficial", isLocal: true },
-    { name: "Banner Congres Chișinău", file: "ugr-images/6a3a76ec27fdaBanner_chisinau_2026_11.jpg", tag: "eveniment", isLocal: true },
-    { name: "Poster Burse Geodezie UTM", file: "ugr-images/6a2fcf1057a4cPoster-Bursa-SGR-2026.png", tag: "burse", isLocal: true },
-    { name: "Student Community USAMV", file: "ugr-images/ugr_student_community_meeting.jpg", tag: "studenti", isLocal: true },
+    { name: "Student Community USAMV FIFIM", file: "ugr-images/ugr_student_community_meeting.jpg", tag: "studenti", isLocal: true },
+    { name: "Poster Burse Geodezie UTM Chișinău", file: "ugr-images/6a2fcf1057a4cPoster-Bursa-SGR-2026.png", tag: "burse", isLocal: true },
+    { name: "Banner Congres SGR Chișinău", file: "ugr-images/6a3a76ec27fdaBanner_chisinau_2026_11.jpg", tag: "eveniment", isLocal: true },
+    { name: "Board CLGE Tartu (Consiliu European)", file: "ugr-images/6a0c30e4559d8Board-CLGE-Tartu-mai-2026.png", tag: "oficial", isLocal: true },
+    { name: "Adunarea Generală CLGE Tartu", file: "ugr-images/6a0c33b42cd7bAG-CLGE-TARTU-Group-pic.png", tag: "oficial", isLocal: true },
+    { name: "Delegație Cornel Păunescu CLGE", file: "ugr-images/6a0c3219a2b43Cornel-Punescu-CLGE-Tartu.png", tag: "oficial", isLocal: true },
+    { name: "Observator România CLGE Tartu", file: "ugr-images/6a0c329530cd0Observator-Tartu-1.png", tag: "oficial", isLocal: true },
+    { name: "Comunicat Oficial BEX UGR (Pag. 1)", file: "ugr-images/6a16e8a299426Comunicat-in-urma-sedintei-BEX-UGR-din-21.05.2026_Page_1.png", tag: "bex", isLocal: true },
+    { name: "Comunicat Oficial BEX UGR (Pag. 2)", file: "ugr-images/6a16e8af09d90Comunicat-in-urma-sedintei-BEX-UGR-din-21.05.2026_Page_2.png", tag: "bex", isLocal: true },
+    { name: "Noii Vicepreședinți FIG", file: "ugr-images/6a196478983e1Noii-Vicepreedini-FIG.jpeg", tag: "oficial", isLocal: true },
+    { name: "Delegați FIG Iaroslav & Diane", file: "ugr-images/6a19645d0cbc2Iaroslav-i-Diane.jpeg", tag: "oficial", isLocal: true },
+    { name: "Siglă Partener ANCPI", file: "ugr-images/ancpi.png", tag: "partener", isLocal: true },
+    { name: "Siglă For European CLGE", file: "ugr-images/clge.png", tag: "partener", isLocal: true },
+    { name: "Siglă For Internațional FIG", file: "ugr-images/fig.png", tag: "partener", isLocal: true },
     { name: "Sigla Oficială UGR", file: "ugr-images/logo_geodez.png", tag: "identitate", isLocal: true },
-    { name: "Comunicat BEX Oficial", file: "ugr-images/6a16e8a299426Comunicat-in-urma-sedintei-BEX-UGR-din-21.05.2026_Page_1.png", tag: "bex", isLocal: true },
-    { name: "Petre Iuliu Dragomir", file: "ugr-images/6214a5fa49f15Dragomir-Petre-Iuliu.JPG", tag: "conducere", isLocal: true },
-    { name: "Mircea Afrăsinei", file: "ugr-images/67272db703f0aMircea-Afrsinei.jpg", tag: "conducere", isLocal: true }
+    { name: "Portret Petre Iuliu Dragomir", file: "ugr-images/6214a5fa49f15Dragomir-Petre-Iuliu.JPG", tag: "conducere", isLocal: true },
+    { name: "Portret Mircea Afrăsinei", file: "ugr-images/67272db703f0aMircea-Afrsinei.jpg", tag: "conducere", isLocal: true }
 ];
 
 export async function loadRemoteMediaAssets() {
@@ -288,6 +303,7 @@ export function selectMediaAsset(filePath, displayName) {
     const newsInputImagine = document.getElementById('news-input-imagine');
     if (newsInputImagine) newsInputImagine.value = filePath;
     updateNewsImageLivePreview(filePath, displayName || filePath);
+    updateCharCounters();
     closeMediaPickerModal();
     showToast('Fișierul a fost selectat.', 'success');
 }
