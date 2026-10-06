@@ -1116,6 +1116,7 @@ function filterEvents(scope, btn) {
 window.filterEvents = filterEvents;
 
 function renderNewsBento(filterScope = 'all') {
+    renderEventsTimeline();
     const container = document.getElementById('news-bento-container');
     if (!container || !ugrData.newsList) return;
 
@@ -2199,6 +2200,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     renderMembersTable(ugrData.membersList);
     renderNewsBento();
+    renderEventsTimeline();
     renderLeadership();
     renderDocuments();
     renderFaq();
@@ -2849,6 +2851,7 @@ async function loadNewsFromSupabase() {
             actionText: item.text_buton || 'Detalii ↗'
         }));
         renderNewsBento();
+        renderEventsTimeline();
     } catch (err) {
         fallbackLoadNewsJson();
     }
@@ -2971,6 +2974,7 @@ function fallbackLoadNewsJson() {
                     actionText: item.actionText || 'Detalii & Înscriere ↗'
                 }));
                 renderNewsBento();
+                renderEventsTimeline();
             }
         })
         .catch(() => {});
