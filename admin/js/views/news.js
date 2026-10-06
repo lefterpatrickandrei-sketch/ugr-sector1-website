@@ -648,12 +648,21 @@ export function openAddNewsModal() {
         if (input) input.value = val;
     };
     
+    // Resetare Categorie
     const wrapSelectCat = document.getElementById('wrap-select-cat');
     const wrapCustomCat = document.getElementById('wrap-custom-cat');
     const inputCustomCat = document.getElementById('news-input-categorie-custom');
     if (wrapSelectCat) wrapSelectCat.style.display = 'block';
     if (wrapCustomCat) wrapCustomCat.style.display = 'none';
     if (inputCustomCat) inputCustomCat.value = '';
+
+    // Resetare Scope
+    const wrapSelectScope = document.getElementById('wrap-select-scope');
+    const wrapCustomScope = document.getElementById('wrap-custom-scope');
+    const inputCustomScope = document.getElementById('news-input-scope-custom');
+    if (wrapSelectScope) wrapSelectScope.style.display = 'block';
+    if (wrapCustomScope) wrapCustomScope.style.display = 'none';
+    if (inputCustomScope) inputCustomScope.value = '';
 
     setInput('news-input-categorie', 'Eveniment Oficial');
     setInput('news-input-scope', 'local');
@@ -662,6 +671,7 @@ export function openAddNewsModal() {
     setInput('news-input-text-buton', 'Detalii ↗');
     setInput('news-input-slug', '');
 
+    setPhotoLockState(false);
     updateNewsImageLivePreview('', '');
     updateReadingStats();
     updateCharCounters();
@@ -701,17 +711,17 @@ export function openEditNewsModal(item) {
     const selectCat = document.getElementById('news-input-categorie');
     const catVal = item.categorie || 'Eveniment Oficial';
 
-    let isPreset = false;
+    let isCatPreset = false;
     if (selectCat) {
         for (let opt of selectCat.options) {
             if (opt.value === catVal) {
-                isPreset = true;
+                isCatPreset = true;
                 break;
             }
         }
     }
 
-    if (isPreset) {
+    if (isCatPreset) {
         if (wrapSelectCat) wrapSelectCat.style.display = 'block';
         if (wrapCustomCat) wrapCustomCat.style.display = 'none';
         if (selectCat) selectCat.value = catVal;
@@ -723,13 +733,42 @@ export function openEditNewsModal(item) {
         if (inputCustomCat) inputCustomCat.value = catVal;
     }
 
-    setInput('news-input-scope', item.scope || 'local');
+    // Suport anvergură presetată sau personalizată
+    const wrapSelectScope = document.getElementById('wrap-select-scope');
+    const wrapCustomScope = document.getElementById('wrap-custom-scope');
+    const inputCustomScope = document.getElementById('news-input-scope-custom');
+    const selectScope = document.getElementById('news-input-scope');
+    const scopeVal = item.scope || 'local';
+
+    let isScopePreset = false;
+    if (selectScope) {
+        for (let opt of selectScope.options) {
+            if (opt.value === scopeVal) {
+                isScopePreset = true;
+                break;
+            }
+        }
+    }
+
+    if (isScopePreset) {
+        if (wrapSelectScope) wrapSelectScope.style.display = 'block';
+        if (wrapCustomScope) wrapCustomScope.style.display = 'none';
+        if (selectScope) selectScope.value = scopeVal;
+        if (inputCustomScope) inputCustomScope.value = '';
+    } else {
+        if (wrapSelectScope) wrapSelectScope.style.display = 'none';
+        if (wrapCustomScope) wrapCustomScope.style.display = 'block';
+        if (selectScope) selectScope.value = '__custom__';
+        if (inputCustomScope) inputCustomScope.value = scopeVal;
+    }
+
     setInput('news-input-locatie', item.locatie || 'București');
     setInput('news-input-link-actiune', item.link_actiune || '');
     setInput('news-input-text-buton', item.text_buton || 'Detalii ↗');
     setInput('news-input-slug', item.slug || '');
 
     updateNewsImageLivePreview(item.imagine_url || '', item.titlu || '');
+    setPhotoLockState(Boolean(item.imagine_blocata || (item.imagine_url && item.imagine_url.trim())));
     updateReadingStats();
     updateCharCounters();
     modalNews.classList.add('active');
@@ -884,6 +923,18 @@ export async function handleSaveNews() {
     }
 
     try {
+        // Detectare anvergură personalizată sau selectată
+        let scopeVal = getVal('news-input-scope');
+        const wrapCustomScope = document.getElementById('wrap-custom-scope');
+        const inputCustomScope = document.getElementById('news-input-scope-custom');
+        if (wrapCustomScope && wrapCustomScope.style.display !== 'none' && inputCustomScope && inputCustomScope.value.trim()) {
+            scopeVal = inputCustomScope.value.trim();
+        } else if (scopeVal === '__custom__') {
+            scopeVal = (inputCustomScope && inputCustomScope.value.trim()) || 'local';
+        }
+
+        const lockVal = Boolean(document.getElementById('news-input-lock-imagine')?.checked);
+
         const payload = {
             titlu: titluVal,
             data_publicare: dataVal || new Date().toISOString().split('T')[0],
@@ -892,7 +943,7 @@ export async function handleSaveNews() {
             publicat: publicatVal,
             status: publicatVal ? 'publicat' : 'ciorna',
             categorie: categorieVal || 'Eveniment Oficial',
-            scope: getVal('news-input-scope') || 'local',
+            scope: scopeVal || 'local',
             locatie: getVal('news-input-locatie') || 'București',
             link_actiune: getVal('news-input-link-actiune') || null,
             text_buton: getVal('news-input-text-buton') || 'Detalii ↗',
@@ -1001,7 +1052,54 @@ export async function handleDeleteNews(newsId, btn) {
     }
 }
 
+export function setPhotoLockState(isLocked) {
+    const lockCb = document.getElementById('news-input-lock-imagine');
+    const btnToggleLock = document.getElementById('btn-toggle-lock-photo');
+    const badgeLock = document.getElementById('badge-photo-locked');
+    const newsInputImagine = document.getElementById('news-input-imagine');
+    const btnOpenMediaPicker = document.getElementById('btn-open-media-picker');
+    const btnClearNewsImage = document.getElementById('btn-clear-news-image');
+    const previewBox = document.getElementById('news-live-preview-box');
+    const previewSubtext = document.getElementById('news-live-preview-subtext');
+
+    if (lockCb) lockCb.checked = isLocked;
+    if (badgeLock) badgeLock.style.display = isLocked ? 'inline-block' : 'none';
+    if (newsInputImagine) newsInputImagine.readOnly = isLocked;
+    if (btnOpenMediaPicker) {
+        btnOpenMediaPicker.disabled = isLocked;
+        btnOpenMediaPicker.title = isLocked ? 'Imaginea este fixată / blocată. Deblochează pentru a alege alta.' : 'Alege din galeria foto';
+        btnOpenMediaPicker.style.opacity = isLocked ? '0.6' : '1';
+    }
+    if (btnClearNewsImage) {
+        btnClearNewsImage.disabled = isLocked;
+        btnClearNewsImage.style.opacity = isLocked ? '0.5' : '1';
+    }
+
+    if (btnToggleLock) {
+        btnToggleLock.textContent = isLocked ? '🔓 Deblochează' : '🔒 Blochează';
+        btnToggleLock.className = isLocked ? 'btn btn-warning btn-sm' : 'btn btn-secondary btn-sm';
+    }
+
+    if (previewBox) {
+        if (isLocked) {
+            previewBox.style.borderColor = 'var(--cyan)';
+            previewBox.style.boxShadow = '0 0 12px rgba(0, 229, 255, 0.3)';
+        } else {
+            previewBox.style.borderColor = '';
+            previewBox.style.boxShadow = '';
+        }
+    }
+
+    if (previewSubtext) {
+        previewSubtext.textContent = isLocked 
+            ? '🔒 Imagine fixată și protejată (Anti-override)' 
+            : 'Imagine selectată pentru articol';
+        previewSubtext.style.color = isLocked ? '#22d3ee' : 'var(--cyan)';
+    }
+}
+
 export function setupNewsCategoryControls() {
+    // 1. Controale Categorie Personalizată (+ Adaugă)
     const btnToggleCustomCat = document.getElementById('btn-toggle-custom-cat');
     const btnCancelCustomCat = document.getElementById('btn-cancel-custom-cat');
     const selectCat = document.getElementById('news-input-categorie');
@@ -1013,9 +1111,7 @@ export function setupNewsCategoryControls() {
         btnToggleCustomCat.addEventListener('click', () => {
             if (wrapSelectCat) wrapSelectCat.style.display = 'none';
             if (wrapCustomCat) wrapCustomCat.style.display = 'block';
-            if (inputCustomCat) {
-                inputCustomCat.focus();
-            }
+            if (inputCustomCat) inputCustomCat.focus();
         });
     }
 
@@ -1023,9 +1119,7 @@ export function setupNewsCategoryControls() {
         btnCancelCustomCat.addEventListener('click', () => {
             if (wrapCustomCat) wrapCustomCat.style.display = 'none';
             if (wrapSelectCat) wrapSelectCat.style.display = 'block';
-            if (selectCat) {
-                selectCat.value = 'Eveniment Oficial';
-            }
+            if (selectCat) selectCat.value = 'Eveniment Oficial';
         });
     }
 
@@ -1034,10 +1128,61 @@ export function setupNewsCategoryControls() {
             if (selectCat.value === '__custom__') {
                 if (wrapSelectCat) wrapSelectCat.style.display = 'none';
                 if (wrapCustomCat) wrapCustomCat.style.display = 'block';
-                if (inputCustomCat) {
-                    inputCustomCat.focus();
-                }
+                if (inputCustomCat) inputCustomCat.focus();
             }
+        });
+    }
+
+    // 2. Controale Anvergură Personalizată (+ Adaugă)
+    const btnToggleCustomScope = document.getElementById('btn-toggle-custom-scope');
+    const btnCancelCustomScope = document.getElementById('btn-cancel-custom-scope');
+    const selectScope = document.getElementById('news-input-scope');
+    const wrapSelectScope = document.getElementById('wrap-select-scope');
+    const wrapCustomScope = document.getElementById('wrap-custom-scope');
+    const inputCustomScope = document.getElementById('news-input-scope-custom');
+
+    if (btnToggleCustomScope) {
+        btnToggleCustomScope.addEventListener('click', () => {
+            if (wrapSelectScope) wrapSelectScope.style.display = 'none';
+            if (wrapCustomScope) wrapCustomScope.style.display = 'block';
+            if (inputCustomScope) inputCustomScope.focus();
+        });
+    }
+
+    if (btnCancelCustomScope) {
+        btnCancelCustomScope.addEventListener('click', () => {
+            if (wrapCustomScope) wrapCustomScope.style.display = 'none';
+            if (wrapSelectScope) wrapSelectScope.style.display = 'block';
+            if (selectScope) selectScope.value = 'local';
+        });
+    }
+
+    if (selectScope) {
+        selectScope.addEventListener('change', () => {
+            if (selectScope.value === '__custom__') {
+                if (wrapSelectScope) wrapSelectScope.style.display = 'none';
+                if (wrapCustomScope) wrapCustomScope.style.display = 'block';
+                if (inputCustomScope) inputCustomScope.focus();
+            }
+        });
+    }
+
+    // 3. Controale Blocare / Fixare Imagine (Anti-Override)
+    const lockCb = document.getElementById('news-input-lock-imagine');
+    const btnToggleLock = document.getElementById('btn-toggle-lock-photo');
+
+    if (btnToggleLock) {
+        btnToggleLock.addEventListener('click', () => {
+            const nextLocked = !lockCb?.checked;
+            setPhotoLockState(nextLocked);
+            showToast(nextLocked ? '🔒 Imaginea a fost blocată (nu va fi suprascrisă automat).' : '🔓 Imaginea a fost deblocată.', nextLocked ? 'success' : 'info');
+        });
+    }
+
+    if (lockCb) {
+        lockCb.addEventListener('change', () => {
+            setPhotoLockState(lockCb.checked);
+            showToast(lockCb.checked ? '🔒 Imagine blocată împotriva suprascrierii.' : '🔓 Imagine deblocată.', lockCb.checked ? 'success' : 'info');
         });
     }
 }

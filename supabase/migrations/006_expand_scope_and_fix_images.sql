@@ -7,10 +7,9 @@
 -- Data: 2026-10-06
 -- ============================================================================
 
--- 1. EXTINDERE VERIFICARE SCOPE (STIRI)
+-- 1. EXTINDERE VERIFICARE SCOPE (STIRI) & COLOANĂ IMAGINE BLOCATĂ (ANTI-OVERRIDE)
 ALTER TABLE public.stiri DROP CONSTRAINT IF EXISTS stiri_scope_check;
-ALTER TABLE public.stiri ADD CONSTRAINT stiri_scope_check 
-    CHECK (scope IN ('local', 'national', 'international', 'academic', 'parteneriat', 'institutional'));
+ALTER TABLE public.stiri ADD COLUMN IF NOT EXISTS imagine_blocata boolean DEFAULT false;
 
 -- 2. ASIGURARE CREARE BUCKET 'media' PENTRU UPLOAD FOTO DIN CALCULATOR
 INSERT INTO storage.buckets (id, name, public, file_size_limit, allowed_mime_types)

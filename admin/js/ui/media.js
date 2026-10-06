@@ -301,11 +301,24 @@ export function renderMediaPickerGrid(filter) {
 
 export function selectMediaAsset(filePath, displayName) {
     const newsInputImagine = document.getElementById('news-input-imagine');
+    const lockCb = document.getElementById('news-input-lock-imagine');
+    const badgeLock = document.getElementById('badge-photo-locked');
+    const previewSubtext = document.getElementById('news-live-preview-subtext');
+
     if (newsInputImagine) newsInputImagine.value = filePath;
     updateNewsImageLivePreview(filePath, displayName || filePath);
     updateCharCounters();
+
+    // Fixează automat imaginea selectată pentru a preveni orice suprascriere automată
+    if (lockCb) lockCb.checked = true;
+    if (badgeLock) badgeLock.style.display = 'inline-block';
+    if (previewSubtext) {
+        previewSubtext.textContent = '🔒 Imagine fixată și protejată (Anti-override)';
+        previewSubtext.style.color = '#22d3ee';
+    }
+
     closeMediaPickerModal();
-    showToast('Fișierul a fost selectat.', 'success');
+    showToast('Fișierul a fost selectat și fixat împotriva suprascrierii.', 'success');
 }
 
 export function updateNewsImageLivePreview(url, name) {

@@ -1466,9 +1466,21 @@
                             <img id="news-live-preview-img" class="news-preview-thumb" src="" alt="Previzualizare">
                             <div style="flex: 1; overflow: hidden;">
                                 <div id="news-live-preview-name" style="font-size: 12px; font-weight: 600; color: #ffffff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">-</div>
-                                <div style="font-size: 11px; color: var(--cyan); font-family: 'Space Mono', monospace;">Imagine selectată pentru articol</div>
+                                <div id="news-live-preview-subtext" style="font-size: 11px; color: var(--cyan); font-family: 'Space Mono', monospace;">Imagine selectată pentru articol</div>
                             </div>
-                            <button type="button" id="btn-clear-news-image" class="btn btn-danger btn-sm" style="padding: 4px 8px; font-size: 11px;">✕ Șterge</button>
+                            <div style="display: flex; gap: 6px;">
+                                <button type="button" id="btn-toggle-lock-photo" class="btn btn-secondary btn-sm" style="padding: 4px 8px; font-size: 11px;" title="Blochează imaginea pentru a preveni suprascrierea">🔒 Blochează</button>
+                                <button type="button" id="btn-clear-news-image" class="btn btn-danger btn-sm" style="padding: 4px 8px; font-size: 11px;">✕ Șterge</button>
+                            </div>
+                        </div>
+
+                        <!-- OPȚIUNE BLOCARE / FIXARE IMAGINE (ANTI-OVERRIDE) -->
+                        <div id="wrap-lock-photo" style="display: flex; align-items: center; justify-content: space-between; margin-top: 6px; padding: 6px 10px; background: rgba(3, 8, 20, 0.5); border: 1px solid var(--border-subtle); border-radius: 6px;">
+                            <label class="checkbox-label" style="font-size: 12px; margin: 0; cursor: pointer; color: #ffffff; display: flex; align-items: center; gap: 8px;">
+                                <input type="checkbox" id="news-input-lock-imagine">
+                                <span>🔒 <strong>Blochează imaginea</strong> (Anti-override: previne orice suprascriere automată)</span>
+                            </label>
+                            <span id="badge-photo-locked" class="badge-tech" style="font-size: 10px; display: none; color: var(--cyan); border-color: var(--cyan);">🔒 FIXATĂ</span>
                         </div>
                     </div>
                 </div>
@@ -1477,7 +1489,7 @@
                     <div class="form-group">
                         <label for="news-input-categorie" class="form-label">
                             <span>Categorie Articol</span>
-                            <button type="button" id="btn-toggle-custom-cat" class="btn-link" style="font-size: 11.5px; color: var(--cyan); text-decoration: underline; background: none; border: none; cursor: pointer; padding: 0;">+ Categorie manuală</button>
+                            <button type="button" id="btn-toggle-custom-cat" class="btn-link" style="font-size: 11.5px; color: var(--cyan); text-decoration: underline; background: none; border: none; cursor: pointer; padding: 0;">+ Adaugă</button>
                         </label>
                         <div id="wrap-select-cat">
                             <select id="news-input-categorie" class="form-select">
@@ -1507,15 +1519,27 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="news-input-scope" class="form-label">Anvergură (Scope)</label>
-                        <select id="news-input-scope" class="form-select">
-                            <option value="local">📍 Local (Sector 1 / București)</option>
-                            <option value="national">🇷🇴 Național (Congres / BEX UGR)</option>
-                            <option value="international">🌍 Internațional (CLGE / FIG / UTM)</option>
-                            <option value="academic">🎓 Academic & Studențesc (UTCB / USAMV)</option>
-                            <option value="parteneriat">🤝 Parteneriat Tehnic & Industrie</option>
-                            <option value="institutional">🏛️ Dialog Instituțional & ANCPI</option>
-                        </select>
+                        <label for="news-input-scope" class="form-label">
+                            <span>Anvergură (Scope)</span>
+                            <button type="button" id="btn-toggle-custom-scope" class="btn-link" style="font-size: 11.5px; color: var(--cyan); text-decoration: underline; background: none; border: none; cursor: pointer; padding: 0;">+ Adaugă</button>
+                        </label>
+                        <div id="wrap-select-scope">
+                            <select id="news-input-scope" class="form-select">
+                                <option value="local">📍 Local (Sector 1 / București)</option>
+                                <option value="national">🇷🇴 Național (Congres / BEX UGR)</option>
+                                <option value="international">🌍 Internațional (CLGE / FIG / UTM)</option>
+                                <option value="academic">🎓 Academic & Studențesc (UTCB / USAMV)</option>
+                                <option value="parteneriat">🤝 Parteneriat Tehnic & Industrie</option>
+                                <option value="institutional">🏛️ Dialog Instituțional & ANCPI</option>
+                                <option value="__custom__">➕ Altă anvergură (personalizată)...</option>
+                            </select>
+                        </div>
+                        <div id="wrap-custom-scope" style="display: none; margin-top: 6px;">
+                            <div style="display: flex; gap: 6px;">
+                                <input type="text" id="news-input-scope-custom" class="form-input" placeholder="Scrie anvergura dorită (ex: Regional, Județean)..." maxlength="50">
+                                <button type="button" id="btn-cancel-custom-scope" class="btn btn-secondary btn-sm" title="Revino la lista de anverguri">✕</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
 

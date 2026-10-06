@@ -48,7 +48,8 @@ import {
     closePreviewNewsModal,
     handleSaveNews,
     handleSyncDefaultNews,
-    setupNewsCategoryControls
+    setupNewsCategoryControls,
+    setPhotoLockState
 } from './views/news.js';
 import {
     loadTelemetryData,
@@ -533,6 +534,7 @@ function bootAdminApp() {
     if (btnClearNewsImage) {
         btnClearNewsImage.addEventListener('click', () => {
             if (newsInputImagine) newsInputImagine.value = '';
+            setPhotoLockState(false);
             updateNewsImageLivePreview('', '');
             updateCharCounters();
             showToast('Imaginea a fost ștearsă din articol.', 'info');
