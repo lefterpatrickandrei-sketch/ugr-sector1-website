@@ -2149,10 +2149,11 @@ document.addEventListener('DOMContentLoaded', () => {
     renderFaq();
 
     // ═══════════════════════════════════════════════════════════════════════════
-    // Sincronizare date: Membri și Știri din Supabase (cu Fallback local)
+    // Sincronizare date: Membri, Știri și Conținut din Supabase (cu Fallback local)
     // ═══════════════════════════════════════════════════════════════════════════
     loadMembersFromSupabase();
     loadNewsFromSupabase();
+    loadContentFromSupabase();
 
     // 3. Date Instituționale & Contact
     fetch('content/organization.json')
@@ -2720,8 +2721,9 @@ async function loadMembersFromSupabase() {
     try {
         const { data, error } = await client
             .from('membri')
-            .select('id, nume, judet, serie_autorizatie, categorie, status, afisare_publica')
+            .select('id, nume, judet, serie_autorizatie, categorie, status, afisare_publica, demonstrativ')
             .eq('afisare_publica', true)
+            .is('deleted_at', null)
             .order('nume', { ascending: true });
 
         if (error) {
@@ -2772,8 +2774,9 @@ async function loadNewsFromSupabase() {
     try {
         const { data, error } = await client
             .from('stiri')
-            .select('id, titlu, continut, imagine_url, data_publicare, publicat')
+            .select('id, titlu, continut, imagine_url, data_publicare, publicat, categorie, scope, locatie, text_buton, link_actiune')
             .eq('publicat', true)
+            .is('deleted_at', null)
             .order('data_publicare', { ascending: false });
 
         if (error || !data || data.length === 0) {
@@ -2784,16 +2787,16 @@ async function loadNewsFromSupabase() {
         }
 
         ugrData.newsList = data.map(item => ({
-            scope: 'local',
-            scopeLabel: '[ACTIVITATE LOCALĂ FILIALA SECTOR 1]',
-            category: 'Eveniment Oficial',
+            scope: item.scope || 'local',
+            scopeLabel: item.scope === 'national' ? '[EVENIMENT NAȚIONAL UGR / FIG / CLGE]' : '[ACTIVITATE LOCALĂ FILIALA SECTOR 1]',
+            category: item.categorie || 'Eveniment Oficial',
             title: item.titlu,
             desc: item.continut,
-            location: 'București',
+            location: item.locatie || 'București',
             date: item.data_publicare ? formatNewsDate(item.data_publicare) : '2026',
-            source: { org: 'Filiala Sector 1', url: '#contact' },
+            source: item.link_actiune ? { org: 'Link Detalii', url: item.link_actiune } : { org: 'Filiala Sector 1', url: '#contact' },
             image: item.imagine_url || 'ugr-images/united_1384.png',
-            actionText: 'Detalii ↗'
+            actionText: item.text_buton || 'Detalii ↗'
         }));
         renderNewsBento();
     } catch (err) {
@@ -2801,6 +2804,104 @@ async function loadNewsFromSupabase() {
         fallbackLoadNewsJson();
     }
 }
+
+async function loadContentFromSupabase() {
+    const client = getSupabaseClient();
+    if (!client) return;
+
+    // 1. SETĂRI INSTITUȚIONALE (ugrData.organization, ugrData.membershipGuide)
+    try {
+        const { data: setariData, error: setariErr } = await client
+            .from('setari')
+            .select('cheie, valoare');
+
+        if (!setariErr && Array.isArray(setariData) && setariData.length > 0) {
+            setariData.forEach(item => {
+                if (item.cheie === 'organizatie' && item.valoare && typeof item.valoare === 'object') {
+                    Object.assign(ugrData.organization, item.valoare);
+                }
+                if (item.cheie === 'ghid_aderare' && item.valoare && typeof item.valoare === 'object') {
+                    Object.assign(ugrData.membershipGuide, item.valoare);
+                }
+                if (item.cheie === 'telemetrie_sector1' && item.valoare && typeof item.valoare === 'object') {
+                    Object.assign(ugrData.sector1Telemetry, item.valoare);
+                }
+            });
+        }
+    } catch (e) {}
+
+    // 2. LEADERSHIP BEX NAȚIONAL & FILIALA SECTOR 1
+    try {
+        const { data: leadData, error: leadErr } = await client
+            .from('leadership')
+            .select('grup, nume, functie, descriere, telefon, email, foto_url, ordine')
+            .eq('afisare_publica', true)
+            .is('deleted_at', null)
+            .order('ordine', { ascending: true });
+
+        if (!leadErr && Array.isArray(leadData) && leadData.length > 0) {
+            const central = leadData.filter(d => d.grup === 'central').map(d => ({
+                name: d.nume,
+                role: d.functie,
+                desc: d.descriere || '',
+                image: d.foto_url || 'logo_geodez.png'
+            }));
+            const filiala = leadData.filter(d => d.grup === 'filiala').map(d => ({
+                name: d.nume,
+                role: d.functie,
+                desc: d.descriere || '',
+                phone: d.telefon,
+                email: d.email
+            }));
+
+            if (central.length > 0) ugrData.leadership = central;
+            if (filiala.length > 0) ugrData.branchLeadership = filiala;
+            renderLeadership();
+        }
+    } catch (e) {}
+
+    // 3. ÎNTREBĂRI FRECVENTE (FAQ)
+    try {
+        const { data: faqData, error: faqErr } = await client
+            .from('faq')
+            .select('categorie, tag, intrebare, raspuns, ordine')
+            .eq('publicat', true)
+            .is('deleted_at', null)
+            .order('ordine', { ascending: true });
+
+        if (!faqErr && Array.isArray(faqData) && faqData.length > 0) {
+            ugrData.faqList = faqData.map(d => ({
+                category: d.categorie || 'general',
+                tag: d.tag || 'STATUT & PROTOCOL',
+                q: d.intrebare,
+                a: d.raspuns
+            }));
+            renderFaq();
+        }
+    } catch (e) {}
+
+    // 4. DOCUMENTE & FORMULARE TIPIZATE
+    try {
+        const { data: docData, error: docErr } = await client
+            .from('documente')
+            .select('titlu, descriere, tip, badge, fisier_url, ordine')
+            .eq('publicat', true)
+            .is('deleted_at', null)
+            .order('ordine', { ascending: true });
+
+        if (!docErr && Array.isArray(docData) && docData.length > 0) {
+            ugrData.documentsList = docData.map(d => ({
+                title: d.titlu,
+                desc: d.descriere || '',
+                format: d.tip || 'DOCX',
+                badge: d.badge || 'Oficial',
+                fileUrl: d.fisier_url
+            }));
+            renderDocuments();
+        }
+    } catch (e) {}
+}
+
 
 function fallbackLoadNewsJson() {
     // TODO-FINAL: de scos la curățenie
