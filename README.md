@@ -3,7 +3,7 @@
 Website-ul oficial și platforma digitală de gestiune administrativă a Filialei Sector 1 București a Uniunii Geodezilor din România (UGR).
 
 🌐 **Site Oficial Live:** **[https://lefterpatrickandrei-sketch.github.io/ugr-sector1-website/](https://lefterpatrickandrei-sketch.github.io/ugr-sector1-website/)**  
-🔒 **Panou Administrativ (CMS Studio v3.0):** **[`/admin/panou.html`](https://lefterpatrickandrei-sketch.github.io/ugr-sector1-website/admin/panou.html)**
+🔒 **Panou Administrativ (CMS Studio v4.0):** **[`/admin/panou.html`](https://lefterpatrickandrei-sketch.github.io/ugr-sector1-website/admin/panou.html)**
 
 ---
 
@@ -17,6 +17,9 @@ Platforma digitală oficială asigură reprezentarea profesională a inginerilor
 
 * **👥 Registru Public de Membri:** Listare dinamică a specialiștilor autorizați din filială, sincronizată în timp real cu baza de date Supabase, ordonată alfabetic, cu filtrare după județ/categorie și căutare instantanee.
 * **📰 Secțiune Știri & Comunicate:** Publicare dinamică a deciziilor Biroului Executiv (BEX), hotărârilor adunărilor generale, workshop-urilor practice și evenimentelor geodezice (Săptămâna Geodeziei Românești, congrese CLGE).
+* **🏛️ Conducere & Birou Executiv:** Prezentare oficială a conducerii Filialei Sector 1 și a Biroului Executiv Central Național, sincronizată dinamic din baza de date.
+* **❓ Întrebări Frecvente (FAQ):** Răspunsuri la întrebări pe 4 categorii (Înscriere, BCPI & Cadastru, Studenți FIFIM, Evenimente).
+* **📄 Documente Oficiale:** Formulare tipizate descărcabile și statut oficial.
 * **📝 Formular de Aderare Online:** Înscriere în 3 pași cu validare completă de date, verificare consimțământ GDPR, protecție anti-spam Honeypot și salvare securizată în tabela `cereri_inscriere`.
 * **📐 Utilitar Tehnic Geodezic:** Calculator nativ pentru conversia coordonatelor **Stereo 70 ⇄ WGS84**, cu preseturi dedicate pentru Sectorul 1 și Sediul Central UGR.
 * **🗺️ Cartografie & Telemetrie:** Hartă interactivă vectorizată cu polul regional București și repere geodezice locale.
@@ -24,40 +27,66 @@ Platforma digitală oficială asigură reprezentarea profesională a inginerilor
 
 ---
 
-## 🎛️ Panou Administrativ de Top-Tier (`/admin/panou.html` — CMS Studio v3.0)
+## 🎛️ Panou Administrativ Modular (CMS Studio v4.0)
 
-Panoul de administrare a fost proiectat conform standardelor internaționale de referință (**Filament v3**, **Payload CMS v3**, **Ghost Admin**, **Umami v3** și **Shadcn Admin**), integrat nativ cu Supabase și protejat prin arhitectura **Zero-Trust**:
+Panoul de administrare v4.0 este complet modularizat în 29 de module ES6 native (`admin/js/`), fără dependențe de build sau compilare, proiectat conform standardelor de referință (AdminLTE, Tabler, react-admin, Ghost Admin) și protejat prin arhitectura **Zero-Trust**:
 
-### 1. 🔍 Consolă Globală de Comenzi Rapide (`Ctrl+K` Spotlight / Raycast)
-* Declanșare instantanee din orice punct al aplicației prin `Ctrl+K` (sau butonul de căutare din antet).
-* Căutare fuzzy unificată în sub 2ms prin comenzi administrative, registru membri, articole de știri și cereri de înscriere.
-* Navigare completă din tastatură (`↑`, `↓`, `Enter`, `Esc`).
+### 1. 🎚️ Dual Mode (Simplu / Avansat)
+* **Mod Simplu (pentru non-programatori):** Formulare ghidate în limba română, validări prietenoase, previzualizări vizuale Bento, comutatoare cu un singur clic.
+* **Mod Avansat (pentru utilizatori tehnici):** Consola Coder, editor JSON brut, inspectare politici RLS, generator snippets API, selector de volum de date.
 
-### 2. 🖼️ Galerie Foto & Selector Media (Asset Picker)
-* Modal vizual dedicat integrat în formularul de redactare a articolelor.
-* Colecție de 15 active grafice oficiale din `ugr-images/` (conferințe, echipamente topo GNSS/LiDAR, congres Chișinău, burse studențești, conducere).
-* Filtrare după tag-uri tematice (`#eveniment`, `#tehnic`, `#workshop`, `#oficial`, `#conducere`).
-* Suport pentru adăugare URL extern securizat (`https://`) și card cu previzualizare live a miniaturii.
+### 2. 📝 Editori Specializați de Conținut
+* **Setări Filială (`public.setari`):** Date oficiale de contact, cont bancar BRD, link înregistrare SGR 2026, cotizații anuale și ghid de aderare, cu bară flotantă de salvare a modificărilor nesalvate.
+* **Conducere & Echipă (`public.leadership`):** Reordonare secvențială sus/jos (`ordine`), comutator afișare publică, asignare fotografii și editare profiluri.
+* **Întrebări Frecvente (`public.faq`):** Organizare pe 4 categorii oficiale, reordonare, formatare Markdown-lite sigură (fără `innerHTML`), comutator publicare/ciornă.
+* **Documente Oficiale (`public.documente`):** Formulare tipizate, recunoaștere automată tip fișier (PDF/DOCX), link-uri descărcare și etichete oficiale.
+* **Știri & Comunicate v2 (`public.stiri`):** Editor avansat cu categorie, anvergură (local / național), locație fizică, link acțiune extern, previzualizare fidelă Bento card.
+* **Registru Membri v2 (`public.membri`):** Import în masă din fișiere CSV cu validare duplicate ID, conservare etichetă „Date demonstrative” și acțiuni rapide.
 
-### 3. ⚡ Bară Plutitoare pentru Acțiuni în Masă (Filament Bulk Actions Bar)
-* Checkbox „Selectează tot” per pagină și selecție individuală pe rânduri.
-* Bară plutitoare animată în partea de jos cu contor în timp real.
-* Operațiuni colective: export în format CSV (Excel cu diacritice UTF-8 BOM), aprobare/respingere în masă pentru cereri, ștergere colectivă cu dialog de confirmare.
+### 3. 🖼️ Galerie Media & Supabase Storage
+* Bucket dedicat `media` în Supabase Storage cu limită 5MB și citire publică.
+* Zonă drag-and-drop pentru încărcare fișiere din calculator.
+* Compresie automată client-side în format WebP cu redimensionare pe canvas HTML5 la maximum 1600px.
+* Vizualizare separată a fișierelor din Cloud Storage și a celor din arhiva repo (`ugr-images/`).
 
-### 4. ✍️ Toolbar Formatare Text & Statistici Lectură (Ghost Style)
-* Bară de unelte de redactare: Îngroșat (`**text**`), Cursiv (`*text*`), Subtitlu (`### Titlu`), Linkuri externe, Citate, Liste cu buline și numerotate.
-* Contorizare live a numărului de cuvinte și estimare dinamică a timpului de lectură (`~X min de lectură`).
+### 4. 👥 Gestiune Roluri & RBAC (`public.admini`)
+* Niveluri de acces strict delimitate: `owner`, `editor`, `viewer`.
+* Schimbare dinamică a rolurilor și activare/dezactivare conturi de administrator.
+* Modal de înregistrare administrator nou cu generare link invitație.
 
-### 5. 📄 Paginare Client-Side Flexibilă
-* Implementată uniform pe toate secțiunile de date (Cereri, Membri, Știri).
-* Selector de volum: `10 / pag`, `25 / pag`, `50 / pag` sau `Toate`.
-* Navigare rapidă `‹ Anterior` / `Următor ›` cu indicator de pagină.
+### 5. 🗑️ Coș de Reciclate (Trash / Soft-Delete)
+* Ștergere logică sigură (`deleted_at IS NOT NULL`) pe Membri, Știri, Conducere, FAQ și Documente.
+* Restaurare cu un singur clic (resetează `deleted_at = NULL`).
+* Ștergere definitivă (Purge) restricționată exclusiv pentru rolul `owner`, cu confirmare manuală prin tastarea cuvântului „STERGE”.
+* Sugestie și golire în masă a elementelor șterse de peste 30 de zile.
 
-### 6. 📊 Modul Avansat de Telemetrie, Analytics & Audit Sistem
-* **Starea Infrastructurii (Health Monitor):** Ping de latență în timp real către PostgreSQL / Supabase REST API (ms), stare canal WebSocket Realtime (`ugr-live-visitors`), validare protecție GoTrue AAL2 TOTP și conformitate GDPR.
-* **Grafic Vizual Interactiv (Dual-Layer SVG):** Bare proporționale pentru afișări de pagini și linie curbă Bézier fluidă pentru sesiuni unice, cu selector de perioadă (`Astăzi`, `Ultimele 7 zile`, `Ultimele 30 zile`, `Tot istoricul`) și tooltip plutitor la hover.
-* **Bento Grid cu Defalcări Proporționale:** Bare animate de progres orizontal pentru Top Pagini Vizitate, Canale de Achiziție / Referrers, Dispozitive & Browsere și Distribuție Regională (București, Cluj, Iași, Timiș, Constanța, Diaspora).
-* **Jurnal de Activitate & Audit de Securitate:** Tabel cronologic imutabil al evenimentelor administrative (autentificări AAL2, procesări de dosare, publicare de conținut) cu căutare instantanee și filtrare pe categorii.
+### 6. 🕒 Istoric Modificări & Audit Diff (`public.audit_log`)
+* Buton „🕒 Istoric” prezent pe toate cardurile și rândurile de conținut.
+* Cronologie vizuală a modificărilor (INSERT, UPDATE, DELETE, RESTORE).
+* Comparație vizuală câmp-cu-câmp (Vechi vs. Nou) colorată.
+* Restaurare instantanee la o versiune anterioară („Restaurează această versiune”).
+
+### 7. 👤 Conversie Cerere → Membru Oficial
+* Buton „👤 Convertește în Membru” pe orice cerere de adeziune aprobată.
+* Auto-populare a datelor solicitantului și generare ID unic de registru.
+* Legătură automată (`cereri_inscriere.membru_id`) și înregistrare în jurnalul de audit.
+
+### 8. 🔔 Notificări Realtime & Clopoțel Antet
+* Clopoțel animat în antet cu contor de cereri noi în așteptare.
+* Meniu dropdown cu cererile recente și acces instantaneu.
+* Abonare pe WebSocket Realtime Postgres la sosirea cererilor noi.
+
+### 9. 🔄 Pagină Stare Sincronizare (Sync Status Probe)
+* Sondă automată live: interoghează anonim toate cele 8 tabele din perspectiva unui vizitator neautentificat.
+* Compară datele publice cu baza de date și confirmă că tabelele confidențiale returnează HTTP 401.
+* Monitorizare latență (ms) și indicatori de stare (🟢 Sincronizat / 🔴 Neconcordanță / 🔒 Blocat RLS).
+
+### 10. 💻 Consolă Dezvoltator (Coder Mode)
+* Browser generic de tabele cu căutare și filtrare.
+* Editor JSON brut pe rânduri cu validare și salvare directă în Supabase.
+* Export JSON și CSV pe orice tabelă.
+* Export complet al bazei de date („Full Backup Bundle JSON”).
+* Inspector politici RLS și generator de snippets API.
 
 ---
 
@@ -66,11 +95,14 @@ Panoul de administrare a fost proiectat conform standardelor internaționale de 
 | Pilon de Securitate | Implementare în Platformă |
 | :--- | :--- |
 | **Autentificare AAL2 TOTP** | Accesul administrativ este condiționat de validarea factorului secundar (TOTP Google Authenticator / GoTrue AAL2). |
-| **Row Level Security (RLS)** | Politici stricte pe 5 tabele PostgreSQL (`admini`, `membri`, `stiri`, `cereri_inscriere`, `vizite`), verificate prin funcția `is_admin()`. |
+| **Row Level Security (RLS)** | Politici stricte pe toate tabelele PostgreSQL (`admini`, `membri`, `stiri`, `leadership`, `faq`, `documente`, `setari`, `cereri_inscriere`, `audit_log`, `vizite`). |
+| **Roluri RBAC** | `owner` (drepturi depline), `editor` (editare conținut), `viewer` (doar citire). |
 | **Chei Publice Izolate** | Frontend-ul utilizează exclusiv cheia publică `anonKey`; nicio cheie `service_role` nu este expusă în cod. |
-| **Zero-Trust DOM API** | Manipulare exclusivă prin API-uri DOM native (`document.createElement`, `textContent`, `setAttribute`); **zero `innerHTML`** utilizat în logica dinamică. |
-| **Zero-Storage Persistență** | Niciun token sau credențial sensibil nu este salvat în `localStorage`; starea sesiunii este menținută în memoria volatilă a clientului. |
-| **Audit Curat** | Fără declarații reziduale de depanare (`console.log`) în codul panoului. |
+| **Zero-Trust DOM API** | Manipulare exclusivă prin API-uri DOM native (`document.createElement`, `textContent`); **zero `innerHTML`** utilizat în logica dinamică nouă. |
+| **Zero-Storage Persistență** | Niciun token sau credențial sensibil nu este salvat în `localStorage`; starea sesiunii este menținută în memoria securizată a clientului. |
+| **Soft-Delete Protejat** | Nicio ștergere accidentală nu distruge date; elementele merg în Coș și pot fi restaurate. |
+
+Consultați [`SECURITY.md`](SECURITY.md) pentru raportarea vulnerabilităților și matricea completă de permisiuni.
 
 ---
 
@@ -79,36 +111,67 @@ Panoul de administrare a fost proiectat conform standardelor internaționale de 
 ```text
 ├── index.html               # Portalul oficial public (servit de GitHub Pages)
 ├── confidentialitate.html   # Politica oficială de confidențialitate și conformitate GDPR
-├── script.js                # Logica frontend portal: Supabase client, formulare, calculator, hartă
+├── script.js                # Logica frontend portal: încărcare dinamică DB, fallback-uri, hartă
 ├── style.css                # Sistemul de design instituțional și stilurile vizuale
-├── data.js                  # Date structurate secundare (repere geodezice, FAQ)
+├── data.js                  # Date de rezervă locale (repere geodezice, demo fallback)
 ├── borders.js               # Coordonate vectoriale pentru harta Sector 1
 ├── admin/
-│   ├── panou.html           # Panoul administrativ complet (CMS Studio v3.0, AAL2 TOTP, Telemetrie)
-│   └── index.html           # Punct de acces administrativ și redirecționare securizată
-├── import_stiri.sql         # Script SQL pentru inițializarea și sincronizarea articolelor
-├── documente/               # Statutul UGR și formularele tip de înscriere
+│   ├── panou.html           # Panoul administrativ complet (CMS Studio v4.0)
+│   ├── panou.legacy.html    # Copie de siguranță a panoului monolit anterior
+│   ├── index.html           # Punct de acces și redirecționare securizată către panou.html
+│   ├── css/
+│   │   └── panel.css        # Sistemul vizual complet al panoului administrativ
+│   └── js/                  # 29 de module ES6 native
+│       ├── main.js          # Orchestrator principal și ascultători de evenimente
+│       ├── auth.js          # Autentificare Magic Link + TOTP AAL2 & rutare vederi
+│       ├── state.js         # Starea centralizată a aplicației (store reactiv)
+│       ├── supabase.js      # Inițializare client Supabase SDK
+│       ├── lib/             # Utilitare: CSV, formatare, DOM sigur fără innerHTML
+│       ├── ui/              # Componente UI: Mod Simplu/Avansat, Notificări, Media, Modal, Paginare, Spotlight Ctrl+K, Toast
+│       └── views/           # 12 Vederi: Overview, Requests, Members, News, Settings, Leadership, FAQ, Documents, Telemetry, Trash, Roles, Sync, Coder
+├── supabase/
+│   └── migrations/          # 5 Migrări SQL versionate + scripturi de rollback
+│       ├── 001_roles_and_visibility.sql
+│       ├── 002_content_tables.sql
+│       ├── 003_audit_and_trash.sql
+│       ├── 004_media_storage.sql
+│       └── 005_operations_and_conversion.sql
+├── backups/                 # Instantanee de siguranță JSON și arhive
 └── ugr-images/              # Active grafice și fotografii oficiale de arhivă
 ```
 
 ---
 
-## 🛠️ Ghid de Rulare Locală & Dezvoltare
+## 🛠️ Ghid de Rulare Locală & Testare
 
-1. Clonați depozitul local:
-   ```bash
-   git clone https://github.com/lefterpatrickandrei-sketch/ugr-sector1-website.git
-   cd ugr-sector1-website
-   ```
+### 1. Pornire Server Local
 
-2. Porniți un server HTTP local (ex: Python):
-   ```bash
-   python -m http.server 8080
-   ```
+Pentru a testa aplicația local (cu suport complet pentru module ES6):
 
-3. Accesați în browser:
-   * Portal Public: `http://localhost:8080/index.html`
-   * Panou Administrativ: `http://localhost:8080/admin/panou.html`
+**Opțiunea A — Node.js (Recomandat):**
+```bash
+npx serve -l 3000
+# sau
+npx http-server -p 3000
+```
+
+**Opțiunea B — Python:**
+```bash
+python -m http.server 3000
+```
+
+### 2. Accesare în Browser
+
+* **Portal Public:** `http://localhost:3000/index.html`
+* **Panou Administrativ:** `http://localhost:3000/admin/panou.html` (sau `http://localhost:3000/admin/`)
+
+### 3. Verificări Automate de Integritate
+
+Pentru a valida integritatea datelor oficiale și sintaxa JavaScript:
+```bash
+node tools/verificare-date.js
+node scratch/check_syntax.mjs
+```
 
 ---
 

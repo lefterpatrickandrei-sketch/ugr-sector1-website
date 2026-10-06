@@ -2713,7 +2713,6 @@ async function loadMembersFromSupabase() {
     const client = getSupabaseClient();
     if (!client) {
         // Fallback dacă clientul Supabase nu este încărcat
-        // TODO-FINAL: de scos la curățenie
         fallbackLoadMembersJson();
         return;
     }
@@ -2727,7 +2726,6 @@ async function loadMembersFromSupabase() {
             .order('nume', { ascending: true });
 
         if (error) {
-            // TODO-FINAL: de scos la curățenie
             fallbackLoadMembersJson();
             return;
         }
@@ -2744,13 +2742,12 @@ async function loadMembersFromSupabase() {
         ugrData.membersList = mappedMembers;
         renderMembersTable(mappedMembers);
     } catch (err) {
-        // TODO-FINAL: de scos la curățenie
         fallbackLoadMembersJson();
     }
 }
 
 function fallbackLoadMembersJson() {
-    // TODO-FINAL: de scos la curățenie
+    // Încărcare de rezervă din fișierul local content/members.json
     fetch('content/members.json')
         .then(r => r.ok ? r.json() : null)
         .then(d => {
@@ -2766,7 +2763,6 @@ async function loadNewsFromSupabase() {
     const client = getSupabaseClient();
     if (!client) {
         // Fallback dacă clientul Supabase nu este încărcat
-        // TODO-FINAL: de scos la curățenie
         fallbackLoadNewsJson();
         return;
     }
@@ -2781,7 +2777,6 @@ async function loadNewsFromSupabase() {
 
         if (error || !data || data.length === 0) {
             // Dacă tabela stiri este goală sau cererea dă eroare, afișăm știrile locale
-            // TODO-FINAL: de scos la curățenie
             fallbackLoadNewsJson();
             return;
         }
@@ -2800,7 +2795,6 @@ async function loadNewsFromSupabase() {
         }));
         renderNewsBento();
     } catch (err) {
-        // TODO-FINAL: de scos la curățenie
         fallbackLoadNewsJson();
     }
 }
@@ -2904,7 +2898,7 @@ async function loadContentFromSupabase() {
 
 
 function fallbackLoadNewsJson() {
-    // TODO-FINAL: de scos la curățenie
+    // Încărcare de rezervă din fișierul local content/news.json
     fetch('content/news.json')
         .then(r => r.ok ? r.json() : null)
         .then(d => {
