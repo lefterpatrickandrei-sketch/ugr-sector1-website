@@ -83,6 +83,28 @@ import {
     closeDocModal,
     handleSaveDoc
 } from './views/documents.js';
+import {
+    loadTrash,
+    renderTrashList,
+    handleRestoreTrashItem,
+    openPurgeModal,
+    closePurgeModal,
+    handleConfirmPurge,
+    handlePurgeOldTrash
+} from './views/trash.js';
+import {
+    loadAdmins,
+    renderAdminsList,
+    openAddAdminModal,
+    closeAddAdminModal,
+    handleSaveNewAdmin,
+    handleUpdateAdminRole,
+    handleToggleAdminActive
+} from './views/roles.js';
+import {
+    openItemHistoryModal,
+    closeItemHistoryModal
+} from './views/history.js';
 import { initUiMode } from './ui/mode.js';
 import {
     updateBulkActionsBar,
@@ -100,7 +122,8 @@ import {
     openMediaPickerModal,
     closeMediaPickerModal,
     renderMediaPickerGrid,
-    applyFormatting
+    applyFormatting,
+    handleUploadMedia
 } from './ui/media.js';
 import {
     openAdminProfileModal,
@@ -125,6 +148,7 @@ registerPaletteActions({
     openAddLeaderModal,
     openAddFaqModal,
     openAddDocModal,
+    openAddAdminModal,
     handleSyncDefaultNews,
     exportMembersToCsv,
     exportRequestsToCsv,
@@ -653,6 +677,128 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // Media Dropzone & Upload (Supabase Storage)
+    const mediaDropzone = document.getElementById('media-dropzone');
+    const mediaFileInput = document.getElementById('media-file-input');
+    const btnTriggerMediaFile = document.getElementById('btn-trigger-media-file');
+
+    if (btnTriggerMediaFile && mediaFileInput) {
+        btnTriggerMediaFile.addEventListener('click', () => mediaFileInput.click());
+    }
+    if (mediaFileInput) {
+        mediaFileInput.addEventListener('change', (e) => {
+            const file = e.target.files?.[0];
+            if (file) handleUploadMedia(file);
+        });
+    }
+    if (mediaDropzone) {
+        mediaDropzone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            mediaDropzone.style.borderColor = 'var(--cyan)';
+        });
+        mediaDropzone.addEventListener('dragleave', () => {
+            mediaDropzone.style.borderColor = 'var(--border-subtle)';
+        });
+        mediaDropzone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            mediaDropzone.style.borderColor = 'var(--border-subtle)';
+            const file = e.dataTransfer.files?.[0];
+            if (file) handleUploadMedia(file);
+        });
+    }
+    document.querySelectorAll('.filter-pill[data-media-tab]').forEach(pill => {
+        pill.addEventListener('click', () => {
+            document.querySelectorAll('.filter-pill[data-media-tab]').forEach(p => p.classList.remove('active'));
+            pill.classList.add('active');
+            state.mediaActiveTab = pill.getAttribute('data-media-tab') || 'all';
+            renderMediaPickerGrid(document.getElementById('media-search-input')?.value || '');
+        });
+    });
+
+    // Coș de Reciclate (Trash)
+    const btnRefreshTrash = document.getElementById('btn-refresh-trash');
+    const btnPurgeOldTrash = document.getElementById('btn-purge-old-trash');
+    const trashSearchInput = document.getElementById('trash-search-input');
+    const btnClosePurgeModal = document.getElementById('btn-close-purge-modal');
+    const btnCancelPurgeModal = document.getElementById('btn-cancel-purge-modal');
+    const btnConfirmPurge = document.getElementById('btn-confirm-purge');
+    const purgeConfirmInput = document.getElementById('purge-confirm-input');
+    const modalPurgeConfirm = document.getElementById('modal-purge-confirm');
+
+    if (btnRefreshTrash) btnRefreshTrash.addEventListener('click', loadTrash);
+    if (btnPurgeOldTrash) btnPurgeOldTrash.addEventListener('click', handlePurgeOldTrash);
+    if (trashSearchInput) {
+        trashSearchInput.addEventListener('input', (e) => {
+            state.trashSearchQuery = e.target.value;
+            renderTrashList();
+        });
+    }
+    document.querySelectorAll('.filter-pill[data-trash-type]').forEach(pill => {
+        pill.addEventListener('click', () => {
+            document.querySelectorAll('.filter-pill[data-trash-type]').forEach(p => p.classList.remove('active'));
+            pill.classList.add('active');
+            state.trashFilterType = pill.getAttribute('data-trash-type') || 'toate';
+            renderTrashList();
+        });
+    });
+    if (btnClosePurgeModal) btnClosePurgeModal.addEventListener('click', closePurgeModal);
+    if (btnCancelPurgeModal) btnCancelPurgeModal.addEventListener('click', closePurgeModal);
+    if (btnConfirmPurge) btnConfirmPurge.addEventListener('click', handleConfirmPurge);
+    if (purgeConfirmInput && btnConfirmPurge) {
+        purgeConfirmInput.addEventListener('input', (e) => {
+            btnConfirmPurge.disabled = (e.target.value.trim().toUpperCase() !== 'STERGE');
+        });
+    }
+    if (modalPurgeConfirm) {
+        modalPurgeConfirm.addEventListener('click', (e) => {
+            if (e.target === modalPurgeConfirm) closePurgeModal();
+        });
+    }
+
+    // Roluri & Securitate Acces (RBAC)
+    const btnRefreshRoles = document.getElementById('btn-refresh-roles');
+    const btnOpenAddAdmin = document.getElementById('btn-open-add-admin');
+    const btnCloseAddAdmin = document.getElementById('btn-close-add-admin');
+    const btnCancelAddAdmin = document.getElementById('btn-cancel-add-admin');
+    const formAddAdmin = document.getElementById('form-add-admin');
+    const btnSaveNewAdmin = document.getElementById('btn-save-new-admin');
+    const modalAddAdmin = document.getElementById('modal-add-admin');
+
+    if (btnRefreshRoles) btnRefreshRoles.addEventListener('click', loadAdmins);
+    if (btnOpenAddAdmin) btnOpenAddAdmin.addEventListener('click', openAddAdminModal);
+    if (btnCloseAddAdmin) btnCloseAddAdmin.addEventListener('click', closeAddAdminModal);
+    if (btnCancelAddAdmin) btnCancelAddAdmin.addEventListener('click', closeAddAdminModal);
+    if (formAddAdmin) formAddAdmin.addEventListener('submit', handleSaveNewAdmin);
+    if (btnSaveNewAdmin) btnSaveNewAdmin.addEventListener('click', handleSaveNewAdmin);
+    if (modalAddAdmin) {
+        modalAddAdmin.addEventListener('click', (e) => {
+            if (e.target === modalAddAdmin) closeAddAdminModal();
+        });
+    }
+
+    // Istoric Modificări & Audit Diff
+    const btnCloseHistoryModal = document.getElementById('btn-close-history-modal');
+    const btnCloseHistoryAction = document.getElementById('btn-close-history-action');
+    const modalItemHistory = document.getElementById('modal-item-history');
+
+    if (btnCloseHistoryModal) btnCloseHistoryModal.addEventListener('click', closeItemHistoryModal);
+    if (btnCloseHistoryAction) btnCloseHistoryAction.addEventListener('click', closeItemHistoryModal);
+    if (modalItemHistory) {
+        modalItemHistory.addEventListener('click', (e) => {
+            if (e.target === modalItemHistory) closeItemHistoryModal();
+        });
+    }
+
+    window.addEventListener('ugr:item-restored', (e) => {
+        const { table } = e.detail || {};
+        if (table === 'membri') loadMembers();
+        else if (table === 'stiri') loadNews();
+        else if (table === 'leadership') loadLeadership();
+        else if (table === 'faq') loadFaq();
+        else if (table === 'documente') loadDocuments();
+        else if (table === 'setari') loadSettings();
+    });
+
     // Tastatură globală (Ctrl+K, Escape)
     window.addEventListener('keydown', (e) => {
         if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
@@ -676,6 +822,9 @@ document.addEventListener('DOMContentLoaded', () => {
             closeFaqModal();
             closeDocModal();
             closeCsvImportModal();
+            closePurgeModal();
+            closeAddAdminModal();
+            closeItemHistoryModal();
         }
     });
 

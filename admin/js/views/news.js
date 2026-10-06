@@ -10,6 +10,7 @@ import { renderPaginationControls } from '../ui/pagination.js';
 import { updateBulkActionsBar } from '../ui/bulkbar.js';
 import { updateNewsImageLivePreview } from '../ui/media.js';
 import { renderMarkdownLite, clearElement } from '../lib/dom.js';
+import { openItemHistoryModal } from './history.js';
 
 
 export const OFFICIAL_FALLBACK_NEWS = [
@@ -432,6 +433,14 @@ export function renderNewsGrid(items) {
         });
         leftGroup.appendChild(btnToggle);
 
+        const btnHist = document.createElement('button');
+        btnHist.type = 'button';
+        btnHist.className = 'btn btn-secondary btn-sm';
+        btnHist.title = 'Vezi istoricul modificărilor';
+        btnHist.textContent = '🕒 Istoric';
+        btnHist.addEventListener('click', () => openItemHistoryModal('stiri', item.id, item.titlu));
+        leftGroup.appendChild(btnHist);
+
         actionsBar.appendChild(leftGroup);
 
         const btnDelete = document.createElement('button');
@@ -538,6 +547,14 @@ export function renderNewsTable(items) {
             await handleToggleNewsPublish(item.id, !item.publicat, btnToggle);
         });
         actionsWrap.appendChild(btnToggle);
+
+        const btnHist = document.createElement('button');
+        btnHist.type = 'button';
+        btnHist.className = 'btn btn-secondary btn-sm';
+        btnHist.textContent = '🕒';
+        btnHist.title = 'Vezi istoric modificări';
+        btnHist.addEventListener('click', () => openItemHistoryModal('stiri', item.id, item.titlu));
+        actionsWrap.appendChild(btnHist);
 
         const btnDelete = document.createElement('button');
         btnDelete.type = 'button';

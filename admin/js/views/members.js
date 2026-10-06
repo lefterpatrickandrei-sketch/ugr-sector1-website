@@ -10,6 +10,7 @@ import { renderPaginationControls } from '../ui/pagination.js';
 import { updateBulkActionsBar } from '../ui/bulkbar.js';
 import { parseCsv } from '../lib/csv.js';
 import { el, clearElement } from '../lib/dom.js';
+import { openItemHistoryModal } from './history.js';
 
 let editingMemberId = null;
 let currentFilteredMembers = [];
@@ -256,6 +257,14 @@ export function renderMembersTable(items, totalCount) {
             await handleToggleMemberVisibility(m.id, !m.afisare_publica, btnToggle);
         });
         actionsWrap.appendChild(btnToggle);
+
+        const btnHist = document.createElement('button');
+        btnHist.type = 'button';
+        btnHist.className = 'btn btn-secondary btn-sm';
+        btnHist.textContent = '🕒';
+        btnHist.title = 'Vezi istoric modificări';
+        btnHist.addEventListener('click', () => openItemHistoryModal('membri', m.id, `${m.nume} (${m.id})`));
+        actionsWrap.appendChild(btnHist);
 
         const btnDelete = document.createElement('button');
         btnDelete.type = 'button';

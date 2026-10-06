@@ -201,6 +201,21 @@
                         <span>Telemetrie & Prezență</span>
                     </div>
                 </button>
+
+                <button type="button" class="nav-link" data-view="trash">
+                    <div class="nav-link-content">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                        <span>Coș de Reciclate</span>
+                    </div>
+                    <span id="badge-nav-trash" class="nav-badge-pill" style="display: none;">0</span>
+                </button>
+
+                <button type="button" class="nav-link" data-view="roles">
+                    <div class="nav-link-content">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                        <span>Roluri & Acces</span>
+                    </div>
+                </button>
             </nav>
 
             <div class="sidebar-footer">
@@ -1070,6 +1085,87 @@
                         <!-- Populat dinamic -->
                     </div>
                 </section>
+
+                <!-- ══════════════════════════════════════════════════════════
+                     VEDERE 10: COȘ DE RECICLATE (TRASH)
+                     ══════════════════════════════════════════════════════════ -->
+                <section id="view-trash" class="view-panel">
+                    <div class="view-header">
+                        <div>
+                            <h2 class="view-header-title">Coș de Reciclate & Restaurare Date</h2>
+                            <p class="view-header-desc">Elementele șterse logic din sistem. Pot fi restaurate oricând sau eliminate definitiv.</p>
+                        </div>
+                        <div class="view-header-actions">
+                            <button type="button" id="btn-refresh-trash" class="btn btn-secondary">↻ Reîmprospătează</button>
+                        </div>
+                    </div>
+
+                    <!-- BARA AUTOPURGE SUGGESTION (DACĂ ELEMENTE > 30 ZILE) -->
+                    <div id="trash-autopurge-banner" class="banner-feedback info" style="display: none; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                        <div>
+                            <strong style="color: #ffffff;">Sugestie de curățare automată:</strong>
+                            <span> Există <span id="trash-old-count">0</span> elemente șterse de peste 30 de zile.</span>
+                        </div>
+                        <button type="button" id="btn-purge-old-trash" class="btn btn-danger btn-sm">Golește elementele vechi</button>
+                    </div>
+
+                    <!-- FILTRE TIP TABELĂ -->
+                    <div class="filter-pills-bar" id="trash-filter-pills">
+                        <button type="button" class="filter-pill active" data-trash-type="toate">Toate elementele</button>
+                        <button type="button" class="filter-pill" data-trash-type="membri">Membri</button>
+                        <button type="button" class="filter-pill" data-trash-type="stiri">Știri</button>
+                        <button type="button" class="filter-pill" data-trash-type="leadership">Conducere</button>
+                        <button type="button" class="filter-pill" data-trash-type="faq">FAQ</button>
+                        <button type="button" class="filter-pill" data-trash-type="documente">Documente</button>
+                    </div>
+
+                    <div style="margin-bottom: 16px;">
+                        <input type="text" id="trash-search-input" class="form-input" placeholder="Caută în elementele din coș...">
+                    </div>
+
+                    <div id="trash-items-list">
+                        <!-- Populat dinamic -->
+                    </div>
+                </section>
+
+                <!-- ══════════════════════════════════════════════════════════
+                     VEDERE 11: ROLURI & ACCES ADMINISTRATORI (RBAC)
+                     ══════════════════════════════════════════════════════════ -->
+                <section id="view-roles" class="view-panel">
+                    <div class="view-header">
+                        <div>
+                            <h2 class="view-header-title">Roluri & Securitate Acces (RBAC)</h2>
+                            <p class="view-header-desc">Gestiunea conturilor administrative, a nivelurilor de permisiune și activare.</p>
+                        </div>
+                        <div class="view-header-actions">
+                            <button type="button" id="btn-refresh-roles" class="btn btn-secondary">↻ Reîmprospătează</button>
+                            <button type="button" id="btn-open-add-admin" class="btn btn-primary">➕ Adaugă Administrator</button>
+                        </div>
+                    </div>
+
+                    <div id="roles-feedback" class="feedback-banner" role="status"></div>
+
+                    <div class="table-responsive">
+                        <table class="cms-table" id="roles-table">
+                            <thead>
+                                <tr>
+                                    <th>Cont Administrator</th>
+                                    <th>Rol Atribuit</th>
+                                    <th>Stare Cont</th>
+                                    <th>Data Creării</th>
+                                    <th style="text-align: right;">Gestiune Permisiuni</th>
+                                </tr>
+                            </thead>
+                            <tbody id="roles-table-body">
+                                <tr>
+                                    <td colspan="5" style="text-align: center; padding: 40px; color: var(--text-muted);">
+                                        Se încarcă lista administratorilor...
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
             </div>
 
         </main>
@@ -1354,6 +1450,24 @@
                     <h3 id="modal-media-title" class="drawer-title" style="margin-top: 2px;">Galerie Imagini Oficiale UGR</h3>
                 </div>
                 <button type="button" id="btn-close-media-modal" class="drawer-close-btn" aria-label="Închide">✕</button>
+            </div>
+
+            <!-- ZONĂ ÎNCĂRCARE DRAG & DROP CU AUTO-WEBP RESIZE -->
+            <div id="media-dropzone" class="media-dropzone" style="margin-bottom: 14px; border: 2px dashed var(--border-subtle); border-radius: 10px; padding: 20px; text-align: center; background: rgba(3, 8, 20, 0.4); cursor: pointer; transition: all 0.2s ease;">
+                <input type="file" id="media-file-input" accept="image/*,application/pdf" style="display: none;">
+                <div class="dropzone-content">
+                    <span style="font-size: 26px;">☁️</span>
+                    <div style="font-weight: 600; color: #ffffff; margin-top: 4px;">Trage fișierele aici sau <span style="color: var(--cyan); text-decoration: underline; cursor: pointer;" id="btn-trigger-media-file">alege din calculator</span></div>
+                    <div style="font-size: 11.5px; color: var(--text-muted); margin-top: 2px;">Conversie automată WebP (max 1600px) • Limită 5 MB • Formate: JPG, PNG, WebP, PDF</div>
+                </div>
+                <div id="media-upload-status" class="media-upload-status" style="display: none; margin-top: 8px; font-size: 12px; color: var(--cyan);"></div>
+            </div>
+
+            <!-- FILTRE TAB-URI MEDIA -->
+            <div class="filter-pills-bar" id="media-filter-pills" style="margin-bottom: 12px;">
+                <button type="button" class="filter-pill active" data-media-tab="all">Toate fișierele</button>
+                <button type="button" class="filter-pill" data-media-tab="remote">Încărcate (Supabase Storage)</button>
+                <button type="button" class="filter-pill" data-media-tab="local">Arhivă locală</button>
             </div>
 
             <!-- BARA CĂUTARE & FILTRE MEDIA -->
@@ -1651,6 +1765,82 @@
                     <button type="submit" id="btn-save-password" class="btn btn-primary">Actualizează Parola</button>
                 </div>
             </form>
+        </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════════════
+         MODAL: ISTORIC MODIFICĂRI & AUDIT DIFF (ITEM-LEVEL ROLLBACK)
+         ══════════════════════════════════════════════════════════════════ -->
+    <div id="modal-item-history" class="drawer-overlay" role="dialog" aria-modal="true" aria-labelledby="history-modal-item-title">
+        <div class="drawer-box" style="max-width: 760px;">
+            <div class="drawer-header">
+                <div>
+                    <span style="font-size: 11px; font-weight: 700; color: var(--cyan); text-transform: uppercase; letter-spacing: 0.06em;">Registru de Audit</span>
+                    <h3 id="history-modal-item-title" class="drawer-title" style="margin-top: 2px;">Istoric Modificări</h3>
+                </div>
+                <button type="button" id="btn-close-history-modal" class="drawer-close-btn" aria-label="Închide">✕</button>
+            </div>
+            <div id="history-timeline-container" style="max-height: 480px; overflow-y: auto; padding-right: 4px;">
+                <!-- Populat dinamic -->
+            </div>
+            <div style="display: flex; justify-content: flex-end; margin-top: 20px;">
+                <button type="button" id="btn-close-history-action" class="btn btn-secondary">Închide istoricul</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════════════
+         MODAL: ADĂUGARE ADMINISTRATOR NOU (RBAC)
+         ══════════════════════════════════════════════════════════════════ -->
+    <div id="modal-add-admin" class="drawer-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-add-admin-title">
+        <div class="drawer-box" style="max-width: 480px;">
+            <div class="drawer-header">
+                <h3 id="modal-add-admin-title" class="drawer-title">Adaugă Administrator Nou</h3>
+                <button type="button" id="btn-close-add-admin" class="drawer-close-btn" aria-label="Închide">✕</button>
+            </div>
+            <form id="form-add-admin" onsubmit="return false;">
+                <div class="form-group">
+                    <label for="new-admin-email" class="form-label">Adresă de Email (Google / Cont)</label>
+                    <input type="email" id="new-admin-email" class="form-input" placeholder="nume@exemplu.ro" required>
+                </div>
+                <div class="form-group">
+                    <label for="new-admin-role" class="form-label">Rol Inițial</label>
+                    <select id="new-admin-role" class="form-select">
+                        <option value="editor">Editor (Acces complet conținut)</option>
+                        <option value="viewer">Viewer (Doar citire)</option>
+                        <option value="owner">Owner (Drepturi depline & RBAC)</option>
+                    </select>
+                </div>
+                <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 24px;">
+                    <button type="button" id="btn-cancel-add-admin" class="btn btn-secondary">Anulează</button>
+                    <button type="submit" id="btn-save-new-admin" class="btn btn-primary">Înregistrează Administrator</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════════════
+         MODAL: CONFIRMARE ȘTERGERE DEFINITIVĂ (PURGE)
+         ══════════════════════════════════════════════════════════════════ -->
+    <div id="modal-purge-confirm" class="drawer-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-purge-title">
+        <div class="drawer-box" style="max-width: 500px;">
+            <div class="drawer-header">
+                <h3 id="modal-purge-title" class="drawer-title" style="color: var(--danger);">⚠️ Confirmare Ștergere Definitivă</h3>
+                <button type="button" id="btn-close-purge-modal" class="drawer-close-btn" aria-label="Închide">✕</button>
+            </div>
+            <p style="font-size: 13.5px; color: #e2e8f0; line-height: 1.6; margin-bottom: 16px;">
+                Sunteți pe cale să eliminați definitiv înregistrarea:
+                <strong id="purge-target-title" style="color: #ffffff; display: block; margin-top: 6px; padding: 8px; background: rgba(239, 68, 68, 0.1); border-radius: 6px;">—</strong>
+            </p>
+            <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 16px;">
+                Această acțiune este <strong>ireversibilă</strong> și va șterge rândul fizic din baza de date PostgreSQL.
+                Tastați cuvântul <strong style="color: var(--danger);">STERGE</strong> pentru a confirma:
+            </p>
+            <input type="text" id="purge-confirm-input" class="form-input" placeholder="Scrie STERGE..." style="margin-bottom: 20px;">
+            <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                <button type="button" id="btn-cancel-purge-modal" class="btn btn-secondary">Anulează</button>
+                <button type="button" id="btn-confirm-purge" class="btn btn-danger" disabled>Șterge definitiv</button>
+            </div>
         </div>
     </div>
 

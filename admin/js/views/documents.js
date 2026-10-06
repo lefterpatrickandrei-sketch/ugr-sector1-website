@@ -7,6 +7,7 @@ import { state } from '../state.js';
 import { client } from '../supabase.js';
 import { showToast } from '../ui/toast.js';
 import { el, clearElement } from '../lib/dom.js';
+import { openItemHistoryModal } from './history.js';
 
 let editingDocId = null;
 
@@ -121,6 +122,14 @@ function createDocumentCard(doc, index, totalItems) {
             className: `btn btn-sm ${doc.publicat ? 'btn-secondary' : 'btn-success'}`,
             onClick: () => handleToggleDocPublish(doc)
         }, [doc.publicat ? 'Retrage' : 'Publică']) : null,
+
+        // Istoric (Audit diff)
+        el('button', {
+            type: 'button',
+            className: 'btn btn-secondary btn-sm',
+            title: 'Vezi istoricul modificărilor',
+            onClick: () => openItemHistoryModal('documente', doc.id, doc.titlu)
+        }, ['🕒']),
 
         isOwnerOrEditor ? el('button', {
             type: 'button',

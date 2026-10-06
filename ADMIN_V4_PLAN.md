@@ -197,11 +197,11 @@ Phases may be split (P4a/P4b) by the agent. Each phase ends with a Checkpoint Re
 
 ### P5 — Media, roles, trash, history
 
-- [ ] **Media library** (Storage bucket `media`, public read): upload (drag & drop), client-side resize/convert to WebP (max 1600 px), alt text, tags, usage count ("used in 3 items"), replace file, delete only when unused. Limits in bucket config: 5 MB, `image/*` + `application/pdf`. Keep the existing `ugr-images/` assets visible as read-only "arhivă".
-- [ ] **Roles UI** (owner only): invite/list admins, change `rol`, revoke. Role-aware UI (hide, but RLS is the real guard).
-- [ ] **Trash** ("Coș"): list soft-deleted items per type, restore, purge (owner only), auto-purge suggestion after 30 days (manual button, no cron needed).
-- [ ] **History:** on any item "Istoric modificări" from `audit_log` with field-level diff and **Restore this version**.
-- [ ] **Audit view** upgraded: real changes (who, when, table, before/after), filter by admin/table/date, export CSV. GDPR note: `cereri_inscriere` contains personal data → define retention (see Q4).
+- [x] **Media library** (Storage bucket `media`, public read): upload (drag & drop), client-side resize/convert to WebP (max 1600 px), alt text, tags, usage count ("used in 3 items"), replace file, delete only when unused. Limits in bucket config: 5 MB, `image/*` + `application/pdf`. Keep the existing `ugr-images/` assets visible as read-only "arhivă".
+- [x] **Roles UI** (owner only): invite/list admins, change `rol`, revoke. Role-aware UI (hide, but RLS is the real guard).
+- [x] **Trash** ("Coș"): list soft-deleted items per type, restore, purge (owner only), auto-purge suggestion after 30 days (manual button, no cron needed).
+- [x] **History:** on any item "Istoric modificări" from `audit_log` with field-level diff and **Restore this version**.
+- [x] **Audit view** upgraded: real changes (who, when, table, before/after), filter by admin/table/date, export CSV. GDPR note: `cereri_inscriere` contains personal data → define retention (see Q4).
 
 **Acceptance:** upload → use → site shows it; restoring a deleted member and an old news version works; editor cannot hard-delete or change roles (proved by RLS test).
 
@@ -512,6 +512,38 @@ Approved PCRs are applied to §3–§6 and logged in §14. The agent never silen
 
 ## 13. Checkpoint Report template (post one per phase, newest on top)
 
+## Checkpoint — P5 — 2026-10-06
+**Status:** DONE  
+**Delivered:**
+- **Media Library & Supabase Storage**:
+  * Creată migrarea `supabase/migrations/004_media_storage.sql` și scriptul de rollback: configurare bucket `media` (5MB limit, public read, RLS pe `storage.objects`).
+  * Extins modulul `admin/js/ui/media.js` cu zonă drag-and-drop (`#media-dropzone`), încărcare fișiere locale și compresie automată client-side în format WebP cu redimensionare pe canvas HTML5 la maximum 1600px.
+  * Suport pentru tab-uri: Arhivă imagini repo (`ugr-images/`) vs. Fișiere încărcate în Cloud Storage Supabase (`media/`).
+  * Ștergere securizată din bucket pentru rolurile autorizate (`handleDeleteRemoteMedia`).
+- **Gestiune Roluri & Acces (RBAC `public.admini`)**:
+  * Modul dedicat `admin/js/views/roles.js`.
+  * Vizualizare completă a administratorilor existenți, roluri (Owner, Editor, Viewer), dată creare și ultimă conectare.
+  * Schimbare dinamică a rolurilor (`handleChangeAdminRole`) și comutare stare activ/inactiv (`handleToggleAdminStatus`) cu protecție RLS.
+  * Modal de adăugare administrator nou (`#modal-add-admin`) cu generare invitație / link acces.
+- **Coș de Reciclate ("Trash" / Soft-Delete)**:
+  * Modul dedicat `admin/js/views/trash.js`.
+  * Centralizare automată a tuturor elementelor șterse logic (`deleted_at IS NOT NULL`) din 5 tabele: Membri, Știri, Conducere, FAQ, Documente.
+  * Filtrare pe tip de conținut și căutare rapidă.
+  * Restaurare cu un singur clic (`handleRestoreItem`), resetând `deleted_at = NULL` și notificând interfața.
+  * Ștergere definitivă ("Purge") restricționată exclusiv pentru rolul `owner`, prevăzută cu modal de siguranță (`#modal-purge-confirm`) ce solicită tastarea manuală a cuvântului "STERGE".
+  * Sugestie și golire în masă a elementelor șterse de peste 30 de zile.
+- **Istoric Modificări & Audit Diff (`public.audit_log`)**:
+  * Modul dedicat `admin/js/views/history.js`.
+  * Buton "🕒 Istoric" adăugat pe toate cardurile și rândurile de conținut (Conducere, FAQ, Documente, Știri, Membri).
+  * Modal dedicat (`#modal-item-history`) afișând cronologia acțiunilor (INSERT, UPDATE, DELETE, RESTORE), cine a făcut modificarea și când.
+  * Inspector comparativ câmp-cu-câmp (Vechi vs. Nou) evidențiat vizual în culori.
+  * Funcție de restaurare instantanee a versiunii ("Restaurează această versiune") prin rollback la snapshot-ul `date_vechi`.
+- **Interfață & Integrare Panel**:
+  * Butoane de navigare în bara laterală pentru Coș și Roluri.
+  * Comenzi noi în consola Spotlight (Ctrl+K): "Mergi la Coș de Reciclate", "Mergi la Roluri Administratori", "Încarcă fișier Media", "Adaugă Administrator Nou".
+  * 26 de module JavaScript verificate cu succes (`node scratch/check_syntax.mjs`).
+  * Invariant I9 verificat cu succes: `tools/verificare-date.js` 10/10 `[OK]`.
+
 ## Checkpoint — P4 — 2026-10-06
 **Status:** DONE  
 **Delivered:**
@@ -787,6 +819,7 @@ Approved PCRs are applied to §3–§6 and logged in §14. The agent never silen
 | 2026-10-06 | P2 | Modularizare panou.html finalizata. Extrase CSS in admin/css/panel.css si JS in 18 module sub admin/js/. panou.legacy.html pastrat ca backup. 93/93 functii acoperite (100%). tools/verificare-date.js 10/10 OK. |
 | 2026-10-06 | P3 | Migrari 002 & 003 rulate pe Supabase. Tabele setari, leadership, faq, documente, audit_log create cu RLS si seed. Toate cele 8 teste verify_p3.mjs trecute cu succes. script.js sincronizat cu DB (fallback data.js). |
 | 2026-10-06 | P4 | Editori conținut public (non-coder) finalizați. Creat comutator Dual Mode (Simplu/Avansat), module și vederi pentru Setări Filială, Conducere, FAQ, Documente Oficiale. Știri v2 cu Bento preview, Membri v2 cu import CSV și păstrare etichetă demonstrativă. Zero innerHTML în generarea dinamică. 23/23 module JS valide, 10/10 check-uri tools/verificare-date.js. |
+| 2026-10-06 | P5 | Media Library, gestiune Roluri RBAC (public.admini), Coș de Reciclate (Trash / Soft-delete) și Istoric Modificări (audit_log field diff & rollback). Drag & drop cu compresie WebP client-side la 1600px, butoane de istoric pe toate entitățile. 26/26 module JS valide, 10/10 check-uri tools/verificare-date.js. |
 
 **Decision log:** D1–D5 in §3. Add `D6…` here with date, decision, alternatives considered, who decided.
 

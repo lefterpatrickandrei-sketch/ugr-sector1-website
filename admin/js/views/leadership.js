@@ -7,6 +7,7 @@ import { state } from '../state.js';
 import { client } from '../supabase.js';
 import { showToast, setBannerFeedback, clearBannerFeedback } from '../ui/toast.js';
 import { el, clearElement } from '../lib/dom.js';
+import { openItemHistoryModal } from './history.js';
 
 let editingLeaderId = null;
 
@@ -131,6 +132,14 @@ function createLeaderCard(leader, index, totalInGroup) {
             title: leader.afisare_publica ? 'Ascunde de pe site' : 'Afișează public pe site',
             onClick: () => handleToggleVisibility(leader)
         }, [leader.afisare_publica ? 'Ascunde' : 'Afișează']) : null,
+
+        // Istoric (Audit diff)
+        el('button', {
+            type: 'button',
+            className: 'btn btn-secondary btn-sm',
+            title: 'Vezi istoricul modificărilor',
+            onClick: () => openItemHistoryModal('leadership', leader.id, `${leader.nume} (${leader.functie})`)
+        }, ['🕒']),
 
         // Edit
         isOwnerOrEditor ? el('button', {

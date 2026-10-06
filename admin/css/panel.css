@@ -2389,3 +2389,78 @@
             border: 1px dashed var(--border-subtle);
             border-radius: 12px;
         }
+
+        /* ─── P5: MEDIA DROPZONE & STORAGE ───────────────────────────── */
+        .media-dropzone:hover {
+            border-color: var(--cyan);
+            background: rgba(0, 229, 255, 0.05);
+        }
+
+        .media-upload-status {
+            animation: pulse-op 1.5s infinite ease-in-out;
+        }
+
+        @keyframes pulse-op {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
+        }
+
+        /* ─── P5: ROLES & RBAC BADGES ───────────────────────────────── */
+        .badge-owner {
+            background: rgba(168, 85, 247, 0.15);
+            color: #c084fc;
+            border: 1px solid rgba(168, 85, 247, 0.4);
+        }
+
+        .badge-editor {
+            background: rgba(0, 229, 255, 0.15);
+            color: var(--cyan);
+            border: 1px solid rgba(0, 229, 255, 0.4);
+        }
+
+        .badge-viewer {
+            background: rgba(148, 163, 184, 0.15);
+            color: #cbd5e1;
+            border: 1px solid rgba(148, 163, 184, 0.4);
+        }
+
+        /* ─── P5: TRASH CARDS & BADGES ──────────────────────────────── */
+        .trash-card {
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin-bottom: 12px;
+            background: var(--bg-card);
+            transition: all 0.2s ease;
+        }
+
+        .trash-card:hover {
+            border-color: var(--border-strong);
+            background: var(--bg-card-hover);
+        }
+
+        .badge-trash-type {
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        .badge-membri { background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); }
+        .badge-stiri { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
+        .badge-leadership { background: rgba(168, 85, 247, 0.15); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.3); }
+        .badge-faq { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
+        .badge-documente { background: rgba(236, 72, 153, 0.15); color: #f472b6; border: 1px solid rgba(236, 72, 153, 0.3); }
+
+        /* ─── P5: AUDIT DIFF & HISTORY TIMELINE ─────────────────────── */
+        .history-entry-card {
+            border: 1px solid var(--border-subtle);
+            border-radius: 10px;
+            padding: 16px;
+            background: rgba(3, 11, 23, 0.7);
+        }
+
+        .row-diff-changed td {
+            font-family: 'Space Mono', monospace;
+            font-size: 11.5px;
+        }

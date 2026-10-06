@@ -77,6 +77,8 @@ export function renderCommandPaletteResults(query) {
         { title: "Conducere & Echipă", desc: "Gestionează conducerea filialei și BEX central", icon: "🏛️", action: () => commandActions.switchView?.('leadership') },
         { title: "Întrebări Frecvente (FAQ)", desc: "Administrează asistența și ghidurile utile", icon: "❓", action: () => commandActions.switchView?.('faq') },
         { title: "Documente Oficiale", desc: "Gestionează cererile și statutele descărcabile", icon: "📄", action: () => commandActions.switchView?.('documents') },
+        { title: "Coș de Reciclate (Trash)", desc: "Elemente șterse logic și restaurare date", icon: "🗑️", action: () => commandActions.switchView?.('trash') },
+        { title: "Roluri & Securitate Acces", desc: "Gestiunea conturilor administrative și RBAC", icon: "👥", action: () => commandActions.switchView?.('roles') },
         { title: "Telemetrie & Monitorizare", desc: "Vizitatori live și jurnal de audit", icon: "📈", action: () => commandActions.switchView?.('telemetry') },
         { title: "Adaugă Membru Nou", desc: "Înregistrează un specialist în baza de date", icon: "➕", action: () => { commandActions.switchView?.('members'); commandActions.openAddMemberModal?.(); } },
         { title: "Importă Membri din CSV", desc: "Încarcă fișier CSV cu membri noi în masă", icon: "📤", action: () => { commandActions.switchView?.('members'); commandActions.openCsvImportModal?.(); } },
@@ -84,10 +86,11 @@ export function renderCommandPaletteResults(query) {
         { title: "Adaugă Membru Conducere", desc: "Deschide formularul de membru conducere", icon: "➕", action: () => { commandActions.switchView?.('leadership'); commandActions.openAddLeaderModal?.(); } },
         { title: "Adaugă Întrebare Frecventă", desc: "Deschide formularul de adăugare FAQ", icon: "➕", action: () => { commandActions.switchView?.('faq'); commandActions.openAddFaqModal?.(); } },
         { title: "Adaugă Document Oficial", desc: "Deschide formularul de adăugare document", icon: "➕", action: () => { commandActions.switchView?.('documents'); commandActions.openAddDocModal?.(); } },
+        { title: "Adaugă Administrator Nou", desc: "Înregistrează un cont de administrator", icon: "➕", action: () => { commandActions.switchView?.('roles'); commandActions.openAddAdminModal?.(); } },
         { title: "Sincronizează Știri Locale", desc: "Importă cele 9 știri oficiale în Supabase", icon: "📥", action: () => commandActions.handleSyncDefaultNews?.() },
         { title: "Exportă CSV Membri", desc: "Descarcă registrul membrilor în format Excel", icon: "📁", action: () => commandActions.exportMembersToCsv?.() },
         { title: "Exportă CSV Cereri", desc: "Descarcă cererile înregistrate în CSV", icon: "📁", action: () => commandActions.exportRequestsToCsv?.() },
-        { title: "Galerie Foto Oficială (Media)", desc: "Explorează fotografiile și asset-urile filialei", icon: "🖼️", action: () => commandActions.openMediaPickerModal?.() },
+        { title: "Galerie Foto & Upload (Media)", desc: "Explorează și încarcă imagini în Supabase Storage", icon: "🖼️", action: () => commandActions.openMediaPickerModal?.() },
         { title: "Profil & Securitate Cont", desc: "Schimbă parola și verifică MFA AAL2", icon: "⚙️", action: () => commandActions.openAdminProfileModal?.() },
         { title: "Deconectare Sesiune", desc: "Închide sesiunea securizată de administrator", icon: "🔒", action: () => commandActions.handleSignOut?.() }
     ];

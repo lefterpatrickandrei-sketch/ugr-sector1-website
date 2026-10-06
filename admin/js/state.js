@@ -63,5 +63,13 @@ export const state = {
     
     // Realtime Channels
     adminPresenceChannel: null,
-    realtimeRequestsChannel: null
+    realtimeRequestsChannel: null,
+
+    // P5 State: Roles, Trash & Storage
+    allAdminsData: [],
+    allTrashData: [],
+    trashFilterType: 'toate',
+    trashSearchQuery: '',
+    remoteMediaAssets: [],
+    mediaActiveTab: 'all'
 };
