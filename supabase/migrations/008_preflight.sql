@@ -43,38 +43,54 @@ GROUP BY rol, activ;
 
 
 -- ───────────────────────────────────────────────────────────────────────────
--- P3 — Starea TOTP (2FA) per cont
+-- P3a — Inventarul structurii MFA din schemata auth (autodetectare)
 --
 -- ⚠️ NU e blocant pentru 008_security_hardening.sql (acela nu atinge AAL2).
 --    E informativ: îți spune când va deveni sigur să rulezi
---    008b_enforce_aal2.sql. Răspunsul așteptat de mine: "am nevoie de asta".
+--    008b_enforce_aal2.sql.
 --
--- Sursa de adevăr e tabela auth.mfa_amr_claims: conține un rând per
--- metodă MFA înscrisă, iar 'totp' apare în vectorul amr abia DUPă ce
--- utilizatorul a confirmat enroll-ul (is_amr_accepted = true).
+-- Această interogare nu presupune niciun nume de coloană. Citește
+-- information_schema, deci nu poate eșua cu 42703. Scopul e să-mi spui
+-- ce tabele MFA există și ce coloane au efectiv, ca să nu mai ghicesc
+-- denumirea la următoarea întrebare.
 --
--- Se folosește LEFT JOIN ca să apară și rândurile de invitație care încă
--- nu au user_id (invitatul nu s-a logat niciodată). La acelea 2FA nu se
--- poate verifica și n-are rost — contează doar conturile deja conectate.
+-- Așteptat: un rând sau mai multe, cu table_name de forma
+-- auth.mfa_amr_claims / auth.mfa_factors / auth.mfa_challenge.
+-- Dacă lista e goală, proiectul nu are deloc infrastructură MFA.
 -- ───────────────────────────────────────────────────────────────────────────
 SELECT
-    a.email AS email_admin,
+    c.table_name,
+    c.column_name,
+    c.data_type,
+    c.ordinal_position
+FROM information_schema.columns c
+WHERE c.table_schema = 'auth'
+  AND c.table_name LIKE '%mfa%'
+ORDER BY c.table_name, c.ordinal_position;
+
+
+-- ───────────────────────────────────────────────────────────────────────────
+-- P3b — Conturile conectate (doar public.admini + auth.users)
+--
+-- Se folosește LEFT JOIN ca să apară și rândurile de invitație care nu
+-- s-au logat niciodată — acelea nu pot avea 2FA și n-are rost să le
+-- verificăm acum.
+--
+-- Așteptat: un rând pentru fiecare cont din admini. Pentru fiecare:
+--   - 'invitat, nu s-a conectat'  → user_id IS NULL (normal, ok)
+--   - 'user_id fara cont'         → PROBLEMĂ, spune-mi
+--   - 'conectat' + last_sign_in_at → cont activ, 2FA se verifică în P3c
+-- ───────────────────────────────────────────────────────────────────────────
+SELECT
     a.rol,
     a.activ,
+    a.email                                   AS email_admin,
     CASE
-        WHEN a.user_id IS NULL              THEN 'invitat, nu s-a conectat'
-        WHEN u.id IS NULL                    THEN 'user_id fara cont in auth.users'
-        WHEN EXISTS (
-                SELECT 1 FROM auth.mfa_amr_claims c
-                WHERE c.user_id = a.user_id
-                  AND c.amr @> ARRAY['totp']
-                  AND c.is_amr_accepted
-              )
-        THEN 'are 2FA'
-        ELSE 'NU are 2FA'
-    END AS stare_2fa,
-    (SELECT count(*) FROM auth.mfa_amr_claims c WHERE c.user_id = a.user_id)
-        AS nr_metode_mfa_inregistrate
+        WHEN a.user_id IS NULL THEN 'invitat, nu s-a conectat'
+        WHEN u.id IS NULL       THEN 'user_id fara cont in auth.users'
+        ELSE 'conectat'
+    END                                        AS stare_cont,
+    u.last_sign_in_at
 FROM public.admini a
 LEFT JOIN auth.users u ON u.id = a.user_id
 ORDER BY a.rol, a.email;
@@ -184,7 +200,8 @@ WHERE tgname = 'trg_prevent_last_owner_loss';
 -- REZUMAT — spune-mi pe scurt:
 --   P1  câți 'owner' activi există?
 --   P2  lista nu e goală?
---   P3  cine nu are 2FA?
+--   P3a ce tabele/coloane MFA exista in auth?
+--   P3b cine nu s-a conectat? exista vreun user_id fara cont?
 --   P4  admin_claim_invited există?
 --   P5  cele două politici anon există?
 --   P6  cele trei politici media_* sunt deschise?
