@@ -64,7 +64,11 @@ export async function loadAdmins() {
         const { data, error } = await client
             .from('admini')
             .select('*')
-            .order('creat_la', { ascending: false });
+            // Tabelul admini a fost creat din Supabase Dashboard, nu de migrările
+            // din repo, și folosește created_at — nu creat_la ca restul tabelelor.
+            // Postgrest răspundea cu 42703 la .order('creat_la'), deci lista de
+            // administratori nu se încărca deloc.
+            .order('created_at', { ascending: false });
 
         if (error) throw error;
 
@@ -156,7 +160,7 @@ export function renderAdminsList() {
         ]);
 
         // 4. Creat la
-        const createdDate = admin.creat_la ? new Date(admin.creat_la).toLocaleDateString('ro-RO') : '—';
+        const createdDate = admin.created_at ? new Date(admin.created_at).toLocaleDateString('ro-RO') : '—';
         const dateCell = el('td', { style: { fontSize: '12px', color: 'var(--text-muted)' } }, [createdDate]);
 
         // 5. Acțiuni (doar pentru owner)
@@ -418,15 +422,26 @@ export async function handleSaveNewAdmin(e) {
                 .insert([{
                     email,
                     rol,
-                    activ: true
+                    // Rândul nou e o invitație: user_id rămâne NULL până când
+                    // persoana creează contul și claim_admin_invite() îl preia.
+                    // Pornim de la activ = false ca owner-ul să aprobe explicit.
+                    // Cu activ = true, oricine ar putea crea un cont cu adresa
+                    // deja introdusă aici și ar primi acces imediat la prima
+                    // conectare, fără nicio verificare întreagă.
+                    activ: false
                 }])
                 .select('id'),
             { context: `adăugarea administratorului «${email}»` }
         );
 
         if (error) {
-            if (error.message && error.message.includes('user_id') && error.message.includes('not-null')) {
-                throw new Error('Coloana user_id din PostgreSQL necesită aplicarea migrării 007 (ALTER TABLE admini ALTER COLUMN user_id DROP NOT NULL).');
+            // Coloana user_id este nullable de la 008a_admini_invites.sql, deci
+            // inserarea fără user_id este forma normală a unei invitații. Mesajul
+            // vechi indica migrarea 007, care nu a fost aplicată niciodată și n-ar
+            // fi putut fi aplicată (ALTER COLUMN user_id DROP NOT NULL pică pe o
+            // coloană care era cheie primară). 008a mută cheia primară pe id.
+            if (error.code === '23502' && String(error.message || '').includes('user_id')) {
+                throw new Error('Coloana user_id din PostgreSQL nu permite nule. Aplică supabase/migrations/008a_admini_invites.sql.');
             }
             if (error.code === '23505') {
                 throw new Error('Acest email este deja înregistrat ca administrator.');
@@ -434,7 +449,7 @@ export async function handleSaveNewAdmin(e) {
             throw error;
         }
 
-        showToast(`Administratorul «${email}» (${ROL_LABELS[rol]}) a fost înregistrat cu succes!`, 'success');
+        showToast(`Administratorul «${email}» (${ROL_LABELS[rol]}) a fost înregistrat ca invitație. Rândul apare ca „○ Inactiv" și devine activ după ce persoana creează contul cu această adresă și tu activezi rândul.`, 'success');
         closeAddAdminModal();
         await loadAdmins();
     } catch (err) {
