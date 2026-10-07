@@ -1637,8 +1637,23 @@
     <!-- ══════════════════════════════════════════════════════════════════
          SCRIPTOURI: Proj4.js, Three.js, Globe.gl, Date & Script Principal
          ══════════════════════════════════════════════════════════════════ -->
-    <!-- Supabase JS Client for Realtime & Full Stack Database -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- Supabase JS Client for Realtime & Full Stack Database
+         Versiunea este fixata pe 2.117.2, iar integrity blocheaza orice
+         continut diferit de cel calculat. Pe acest site scriptul ruleaza
+         pentru orice vizitator, anonim inclusiv, deci o versiune flotanta
+         "@2" ar inserta cod nou fara testare la fiecare lansare Supabase.
+         Hash-ul este acelasi ca in admin/panou.html (verificat: ambele
+         fisiere incarca octeti identici).
+
+         Pentru actualizare:
+           1. node scratch/sri-supabase.mjs <versiune-noua>
+           2. inlocuieste versiunea si hash-ul in ambele fisiere
+           3. testeaza pagina: continut incarcat din Supabase + formularul
+              de contact
+    -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2"
+            integrity="sha512-4w/AcXbU7AGdxOzJGUPCLrSqlTh+jnM25jQ+wmZByQckoKFyHvA10J9JLEavYV9cfp0JdTxIP6jddakO4xlOGA=="
+            crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/proj4@2.9.0/dist/proj4.js"></script>
     <script src="https://unpkg.com/three@0.146.0/build/three.min.js"></script>
     <script src="https://unpkg.com/globe.gl@2.28.3/dist/globe.gl.min.js"></script>
