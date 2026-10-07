@@ -533,6 +533,48 @@ Cheia `anon` e la `admin/js/supabase.js:7`. Prefixul REST e `https://<project-re
 
 ---
 
+# Rezultate verificare live
+
+Migrările `008a_admini_invites.sql` și `008_security_hardening.sql` au fost **aplicate și verificate în baza de date reală**. Mai jos sunt rezultatele obținute, nu așteptările teoretice.
+
+## Verificare structurală (SQL Editor)
+
+| Ce | Rezultat |
+|---|---|
+| Politici pe `admini` | 5, toate corecte — `admin_select_invited` cu varianta reparată din 008a, plus cele 4 din Dashboard |
+| Politici storage | `media_read` public, `media_insert`/`media_update` owner+editor, `media_delete` owner ✅ T-S3 |
+| `setari_citire_anonim` | allowlist cu cele 3 chei + `pagina\_%` ✅ T-S5 |
+| Triggeruri pe `admini` | `audit_admini` + `trg_prevent_last_owner_loss` ✅ T-S7 |
+| Funcții | 12 în `public`, `claim_admin_invite` și `get_table_rls_policies` SECURITY DEFINER ✅ |
+| `prevent_last_owner_loss` | `security_definer = false` — corect, triggerul nu ocolește RLS |
+| Constraint-uri `admini` | `admini_id_pkey` (id), `admini_email_key`, `admini_user_id_key` ✅ 008a |
+| `admini_rol_check` | doar `owner`, `editor`, `viewer` ✅ T-S3b |
+| Bucket `media` | fără `image/svg+xml` ✅ T-S8 |
+| `admin_claim_invited` | absent ✅ T-S1 (n-a existat niciodată în această bază) |
+
+## Verificare de efect — anon, fără autentificare
+
+Teste HTTP reale împotriva API-ului PostgREST cu `anon key`:
+
+| Test | Rezultat |
+|---|---|
+| `GET /stiri` ca anon | 10 rânduri, **0 cu `deleted_at` ne-null** |
+| `GET /membri`, `/leadership`, `/faq`, `/documente` ca anon | **0 rânduri șterse** vizibile |
+| `GET /admini` ca anon | **401** |
+| `GET /audit_log` ca anon | **401** |
+| `GET /cereri_inscriere` ca anon | **401** |
+| `GET /setari?cheie=eq.contact_email_notificari` ca anon | `[]` — adresa personală nu mai e publică |
+| `POST /rpc/get_table_rls_policies` ca anon | **401 `42501 permission denied`** ✅ T-S6 |
+| `DELETE /membri`, `DELETE /setari` ca anon | **401** |
+
+**T-S4 este închis prin efect, nu doar prin definiție.** Înainte de migrare, politica `stiri_public_select` (creată din Supabase Dashboard, absentă din repository) avea `qual` egal cu doar `publicat` — deci orice știre ștearsă din coș rămânea publică. Cum politicile permissive se aplică cu OR, eliminarea doar a celor `anon_select_*` ar fi raportat „gata" fără să închidă scurgerea. Migrarea 008 șterge toate cele patru politici.
+
+## Necunoscut verificat
+
+`membri.judet` afișat ca `Bucure?ti` în consola PowerShell: **nu e corupție**. Octeții răspunsului sunt `0xC8 0x99`, adică `ș` corect în UTF-8. E doar codepage-ul consolei.
+
+---
+
 # Fișiere modificate
 
 **Noi (7):** `supabase/migrations/008_security_hardening.sql`, `…_rollback.sql`, `008_verify.sql`, `008b_enforce_aal2.sql`, `008b_enforce_aal2_rollback.sql`, `admin/js/lib/db.js`, `scratch/sri-supabase.mjs`, `scratch/check-page-fields.mjs`
