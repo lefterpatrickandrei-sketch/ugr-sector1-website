@@ -569,6 +569,44 @@ Teste HTTP reale împotriva API-ului PostgREST cu `anon key`:
 
 **T-S4 este închis prin efect, nu doar prin definiție.** Înainte de migrare, politica `stiri_public_select` (creată din Supabase Dashboard, absentă din repository) avea `qual` egal cu doar `publicat` — deci orice știre ștearsă din coș rămânea publică. Cum politicile permissive se aplică cu OR, eliminarea doar a celor `anon_select_*` ar fi raportat „gata" fără să închidă scurgerea. Migrarea 008 șterge toate cele patru politici.
 
+## Verificare funcțională — calea de scriere pe `admini`
+
+Teste executate cu SQL Editor, ca `postgres`. Fiecare a fost conceput să nu modifice permanent starea.
+
+| Test | Rezultat |
+|---|---|
+| `INSERT INTO admini (email, rol, activ) VALUES (...)` | rând creat, `id` = uuid, `user_id` gol, `activ = false` ✅ |
+| Inserare cu email duplicat | `ERROR 23505 duplicate key … admini_email_key` ✅ exact ramura din `roles.js` |
+| `UPDATE admini SET rol = 'viewer' WHERE email = ...` | rând actualizat ✅ calea `.eq('id', …)` |
+| Trigger ultimul owner | `ERROR P0001 Nu se poate elimina sau dezactiva ultimul owner activ.` ✅ **T-S7 funcțional** |
+
+Testul triggerului a fost rulat într-un bloc `DO` care încearcă dezactivarea owner-ului, prinde excepția, **aplică înapoi `activ = true`** și raportează verdictul prin `RAISE EXCEPTION`. Rândul proprietarului rămâne activ indiferent de rezultat.
+
+## Verificare de vizibilitate — politica `admin_select_invited`
+
+Simulare de rol prin `set_config('request.jwt.claims', …)` + `SET LOCAL ROLE authenticated`:
+
+| JWT `email` | Rânduri vizibile din `admini` | Corect |
+|---|---|---|
+| `cineva@random.ro` | **0** | ✅ un utilizator autenticat oarecare nu află niciun administrator |
+| `stefanmatei927@gmail.com` (invitație) | **1** | ✅ vede doar propriul rând de invitație |
+
+Varianta din migrarea 007 ar fi folosit `lower(email) = lower(jwt.email) OR user_id = auth.uid()` — deci orice utilizator autentificat ar fi putut afla dacă o adresă arbitrară este administrator. `008a` înlocuiește condiția cu `user_id IS NULL AND lower(email) = lower(COALESCE(auth.jwt() ->> 'email', ''))`, eliminând enumerarea de conturi.
+
+## Bugs găsite și reparate în timpul verificării
+
+`admin/js/views/roles.js` — lista de administratori nu se încărca deloc:
+
+```js
+.order('creat_la', { ascending: false })
+```
+
+Tabelul `admini` a fost creat direct din Supabase Dashboard, nu de migrările din repository, și folosește `created_at` — spre deosebire de `cereri_inscriere` și `audit_log`, care au într-adevăr `creat_la`. PostgREST răspundea cu `42703 column does not exist`, deci fiecare apel `loadAdmins()` arunca. **Aceasta este cauza reală a eșecului de adăugare a unui administrator, nu lipsa coloanei `id`.** Corectat în `c74bb31`, împreună cu:
+
+- coloana „Creat la" din listă, care afișa permanent `—`;
+- mesajul de eroare care indica migrarea 007 (neaplicată niciodată și inaplicabilă, fiindcă `ALTER COLUMN user_id DROP NOT NULL` pică pe o coloană cheie primară) — înlocuit cu referință la `008a` și condiționat pe codul real `23502`;
+- invitațiile noi se inserează cu `activ = false` în loc de `true`, ca owner-ul să aprobe explicit. Cu `activ = true`, orice cont creat cu adresa deja introdusă în panou ar primi acces complet la prima conectare.
+
 ## Necunoscut verificat
 
 `membri.judet` afișat ca `Bucure?ti` în consola PowerShell: **nu e corupție**. Octeții răspunsului sunt `0xC8 0x99`, adică `ș` corect în UTF-8. E doar codepage-ul consolei.
