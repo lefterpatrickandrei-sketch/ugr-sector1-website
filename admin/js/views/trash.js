@@ -8,8 +8,23 @@ import { client } from '../supabase.js';
 import { showToast } from '../ui/toast.js';
 import { el, clearElement } from '../lib/dom.js';
 import { writeRows, describeDbError } from '../lib/db.js';
+import { formatDateOnlyRo } from '../lib/format.js';
 
 let pendingPurgeItem = null;
+
+// T-J5: categoriile care nu au putut fi citite la ultimul loadTrash().
+// Reținute la nivel de modul ca mesajul din listă să nu se piardă la re-render.
+let failedTrashSources = [];
+
+// T-J5: numele afișate în coș. Cheia e starea locală a view-ului (tabelul
+// sursă), nu o coloană din baza de date.
+const TRASH_SOURCES = [
+    { tabel: 'membri', tipLabel: 'Membru Registru' },
+    { tabel: 'stiri', tipLabel: 'Articol Știre' },
+    { tabel: 'leadership', tipLabel: 'Membru Conducere' },
+    { tabel: 'faq', tipLabel: 'Întrebare Frecventă' },
+    { tabel: 'documente', tipLabel: 'Document Oficial' }
+];
 
 export async function loadTrash() {
     const list = document.getElementById('trash-items-list');
@@ -21,7 +36,7 @@ export async function loadTrash() {
     }
 
     try {
-        const [resMembri, resStiri, resLeader, resFaq, resDoc] = await Promise.all([
+        const responses = await Promise.all([
             client.from('membri').select('*').not('deleted_at', 'is', null),
             client.from('stiri').select('*').not('deleted_at', 'is', null),
             client.from('leadership').select('*').not('deleted_at', 'is', null),
@@ -29,9 +44,34 @@ export async function loadTrash() {
             client.from('documente').select('*').not('deleted_at', 'is', null)
         ]);
 
+        // T-J5: Promise.all nu arunca la un .error per-tabel, deci o politică
+        // RLS reușită pe un tabel și refuzată pe altul arădea un coș gol, ca și
+        // când nu ar fi fost nimic de șters. Verificăm fiecare răspuns separat.
+        const byTable = {};
+        const failedTables = [];
+        responses.forEach((res, index) => {
+            const { tabel, tipLabel } = TRASH_SOURCES[index];
+            if (res.error) {
+                failedTables.push(tipLabel);
+                byTable[tabel] = [];
+            } else {
+                byTable[tabel] = res.data || [];
+            }
+        });
+
+        failedTrashSources = failedTables;
+
+        if (failedTables.length > 0) {
+            showToast(
+                `Nu s-au putut încărca toate categoriile din coș: ${failedTables.join(', ')}. ` +
+                'Este posibil ca rolul curent să nu aibă acces la acele tabele.',
+                'error'
+            );
+        }
+
         const trashItems = [];
 
-        (resMembri.data || []).forEach(m => {
+        byTable.membri.forEach(m => {
             trashItems.push({
                 id: m.id,
                 tabel: 'membri',
@@ -42,18 +82,20 @@ export async function loadTrash() {
             });
         });
 
-        (resStiri.data || []).forEach(s => {
+        // T-J5: coloana din baza de date este data_publicare. Rândul precedent
+        // citea s.data, o coloană inexistentă, deci data nu apărea niciodată.
+        byTable.stiri.forEach(s => {
             trashItems.push({
                 id: s.id,
                 tabel: 'stiri',
                 tipLabel: 'Articol Știre',
                 titlu: s.titlu,
-                subtitlu: `Publicat la: ${s.data || '—'} • Categorie: ${s.categorie || 'General'}`,
+                subtitlu: `Publicat la: ${s.data_publicare ? formatDateOnlyRo(s.data_publicare) : '—'} • Categorie: ${s.categorie || 'General'}`,
                 deleted_at: s.deleted_at
             });
         });
 
-        (resLeader.data || []).forEach(l => {
+        byTable.leadership.forEach(l => {
             trashItems.push({
                 id: l.id,
                 tabel: 'leadership',
@@ -64,7 +106,7 @@ export async function loadTrash() {
             });
         });
 
-        (resFaq.data || []).forEach(f => {
+        byTable.faq.forEach(f => {
             trashItems.push({
                 id: f.id,
                 tabel: 'faq',
@@ -75,7 +117,7 @@ export async function loadTrash() {
             });
         });
 
-        (resDoc.data || []).forEach(d => {
+        byTable.documente.forEach(d => {
             trashItems.push({
                 id: d.id,
                 tabel: 'documente',
@@ -98,6 +140,7 @@ export async function loadTrash() {
 
         renderTrashList();
     } catch (err) {
+        failedTrashSources = [];
         showToast(`Eroare la încărcarea coșului de reciclate: ${err.message}`, 'error');
         if (list) {
             clearElement(list);
@@ -144,10 +187,24 @@ export function renderTrashList() {
         }
     }
 
-    if (items.length === 0) {
-        list.appendChild(el('div', { className: 'empty-notice' }, ['Coșul de reciclate este gol.']));
-        return;
-    }
+    // T-J5: dacă o categorie nu s-a putut încărca, lista nu este cu adevărat
+        // goală. Mesajul spune explicit asta, în loc să sugereze că
+        // administratorul a golit coșul.
+        if (items.length === 0) {
+            const notice = el('div', { className: 'empty-notice' }, [
+                failedTrashSources.length > 0
+                    ? `Nu s-au putut încărca categoriile: ${failedTrashSources.join(', ')}. Restul coșului este gol.`
+                    : 'Coșul de reciclate este gol.'
+            ]);
+            list.appendChild(notice);
+            return;
+        }
+
+        if (failedTrashSources.length > 0) {
+            list.appendChild(el('p', {
+                style: { fontSize: '12px', margin: '0 0 12px', color: 'var(--error, #ef4444)' }
+            }, [`⚠️ Nu s-au putut încărca categoriile: ${failedTrashSources.join(', ')}.`]));
+        }
 
     const isOwner = state.adminRecord?.rol === 'owner';
 
@@ -189,6 +246,15 @@ export function renderTrashList() {
 }
 
 export async function handleRestoreTrashItem(table, id, title) {
+    // T-J5: tabelul vine din lista randată în view, nu din input exterior.
+    // Totuși, orice tabel primit prin cale greșită ar ajunge în .from() și ar
+    // putea șterge/crea rânduri într-o tabelă neașteptată.
+    const TABLES = ['membri', 'stiri', 'leadership', 'faq', 'documente'];
+    if (!TABLES.includes(table)) {
+        showToast('Tabel necunoscut pentru restaurare. Operațiunea a fost oprită.', 'error');
+        return;
+    }
+
     try {
         // T-J2: .select('id') — altfel o restaurare blocată de RLS ar raporta succes
         const { error } = await writeRows(
@@ -235,6 +301,12 @@ export async function handleConfirmPurge() {
     if (!pendingPurgeItem) return;
     const { table, id, title } = pendingPurgeItem;
 
+    if (!TRASH_SOURCES.some(src => src.tabel === table)) {
+        closePurgeModal();
+        showToast('Tabel necunoscut pentru ștergere definitivă. Operațiunea a fost oprită.', 'error');
+        return;
+    }
+
     const btnConfirm = document.getElementById('btn-confirm-purge');
     if (btnConfirm) {
         btnConfirm.disabled = true;
@@ -274,6 +346,11 @@ export async function handlePurgeOldTrash() {
     const now = Date.now();
     const thirtyDaysMs = 30 * 24 * 60 * 60 * 1000;
     const oldItems = state.allTrashData.filter(it => it.deleted_at && (now - new Date(it.deleted_at).getTime()) > thirtyDaysMs);
+
+    if (oldItems.length === 0) {
+        showToast('Nu există elemente mai vechi de 30 de zile în coș.', 'info');
+        return;
+    }
 
     let purgedCount = 0;
     const failed = [];
