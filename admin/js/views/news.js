@@ -5,7 +5,7 @@
 import { state } from '../state.js';
 import { client } from '../supabase.js';
 import { showToast, setBannerFeedback, clearBannerFeedback } from '../ui/toast.js';
-import { formatDateOnlyRo, isValidImageUrl, updateReadingStats, updateCharCounters } from '../lib/format.js';
+import { formatDateOnlyRo, isValidImageUrl, updateReadingStats, updateCharCounters, checkHrefField } from '../lib/format.js';
 import { renderPaginationControls } from '../ui/pagination.js';
 import { updateBulkActionsBar } from '../ui/bulkbar.js';
 import { updateNewsImageLivePreview } from '../ui/media.js';
@@ -965,6 +965,17 @@ export async function handleSaveNews() {
 
         const lockVal = Boolean(document.getElementById('news-input-lock-imagine')?.checked);
 
+        const linkActiuneVal = getVal('news-input-link-actiune') || null;
+
+        // T-J7: javascript: sau data: salvate aici ajung în href pe site-ul public.
+        const hrefProblem = checkHrefField(linkActiuneVal, 'Link acțiune');
+        if (hrefProblem) {
+            showToast(hrefProblem, 'error');
+            const linkInput = document.getElementById('news-input-link-actiune');
+            if (linkInput) linkInput.focus();
+            return;
+        }
+
         const payload = {
             titlu: titluVal,
             data_publicare: dataVal || new Date().toISOString().split('T')[0],
@@ -975,7 +986,7 @@ export async function handleSaveNews() {
             categorie: categorieVal || 'Eveniment Oficial',
             scope: scopeVal || 'local',
             locatie: getVal('news-input-locatie') || 'București',
-            link_actiune: getVal('news-input-link-actiune') || null,
+            link_actiune: linkActiuneVal,
             text_buton: getVal('news-input-text-buton') || 'Detalii ↗',
         };
 

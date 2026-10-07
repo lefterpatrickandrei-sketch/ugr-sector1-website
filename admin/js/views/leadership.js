@@ -9,6 +9,7 @@ import { showToast, setBannerFeedback, clearBannerFeedback } from '../ui/toast.j
 import { el, clearElement } from '../lib/dom.js';
 import { openItemHistoryModal } from './history.js';
 import { writeRows, describeDbError } from '../lib/db.js';
+import { checkHrefField } from '../lib/format.js';
 
 let editingLeaderId = null;
 
@@ -227,6 +228,15 @@ export async function handleSaveLeader(e) {
         return;
     }
 
+    // T-J7: foto_url ajunge în src pe site-ul public.
+    const fotoUrl = getVal('leader-foto') || null;
+    const hrefProblem = checkHrefField(fotoUrl, 'Adresa imaginii');
+    if (hrefProblem) {
+        showToast(hrefProblem, 'error');
+        document.getElementById('leader-foto')?.focus();
+        return;
+    }
+
     const payload = {
         grup: getVal('leader-grup') || 'filiala',
         nume,
@@ -234,7 +244,7 @@ export async function handleSaveLeader(e) {
         descriere: getVal('leader-descriere') || null,
         telefon: getVal('leader-telefon') || null,
         email: getVal('leader-email') || null,
-        foto_url: getVal('leader-foto') || null,
+        foto_url: fotoUrl,
         ordine: parseInt(getVal('leader-ordine') || '0', 10),
         afisare_publica: document.getElementById('leader-afisare')?.checked ?? true
     };

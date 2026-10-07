@@ -9,6 +9,7 @@ import { showToast } from '../ui/toast.js';
 import { el, clearElement } from '../lib/dom.js';
 import { openItemHistoryModal } from './history.js';
 import { writeRows, describeDbError } from '../lib/db.js';
+import { checkHrefField, isSafeHref } from '../lib/format.js';
 
 let editingDocId = null;
 
@@ -78,6 +79,13 @@ function createDocumentCard(doc, index, totalItems) {
 
     const iconBox = el('div', { className: 'doc-card-icon' }, [iconSymbol]);
 
+    // T-J7: prefixul '../' se aplica și URL-urilor absolute, transformând
+    // "https://cdn.exemplu.ro/x.pdf" în "../https://cdn.exemplu.ro/x.pdf".
+    const isAbsoluteDocUrl = /^(https?:)?\/\//i.test(doc.fisier_url || '');
+    const docHref = (isAbsoluteDocUrl && isSafeHref(doc.fisier_url))
+        ? doc.fisier_url
+        : `../${doc.fisier_url}`;
+
     const info = el('div', { className: 'doc-card-info' }, [
         el('div', { className: 'doc-card-header' }, [
             el('h4', { className: 'doc-card-title' }, [doc.titlu]),
@@ -92,7 +100,7 @@ function createDocumentCard(doc, index, totalItems) {
         el('div', { className: 'doc-card-link-box' }, [
             el('span', { className: 'text-subtle' }, ['Fișier: ']),
             el('a', {
-                href: `../${doc.fisier_url}`,
+                href: docHref,
                 target: '_blank',
                 rel: 'noopener noreferrer',
                 className: 'doc-link-anchor'
@@ -207,6 +215,14 @@ export async function handleSaveDoc(e) {
 
     if (!titlu || !fisierUrl) {
         showToast('Titlul și calea/URL-ul fișierului sunt obligatorii.', 'warning');
+        return;
+    }
+
+    // T-J7: fisier_url ajunge direct în href pe site-ul public.
+    const hrefProblem = checkHrefField(fisierUrl, 'Calea/URL-ul fișierului');
+    if (hrefProblem) {
+        showToast(hrefProblem, 'error');
+        document.getElementById('doc-fisier-url')?.focus();
         return;
     }
 

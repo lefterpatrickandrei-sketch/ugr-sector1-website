@@ -13,6 +13,7 @@ import { client } from '../supabase.js';
 import { showToast, setBannerFeedback, clearBannerFeedback } from '../ui/toast.js';
 import { el, clearElement } from '../lib/dom.js';
 import { writeRows, describeDbError } from '../lib/db.js';
+import { checkHrefField } from '../lib/format.js';
 
 let isDirty = false;
 let currentTab = 'acasa';
@@ -474,6 +475,39 @@ function getVal(id) {
     return elTarget ? elTarget.value.trim() : '';
 }
 
+// T-J7: câmpurile de link din paginile editabile. Fiecare valoare ajunge într-un
+// href pe site-ul public, deci javascript:/data: trebuie respinse la salvare.
+const PAGE_LINK_FIELDS = {
+    acasa: [{ field: 'heroBtnSecondaryLink', label: 'Link buton secundar (Acasă)' }],
+    despre: [{ field: 'statutPdfUrl', label: 'Link statut (Despre)' }],
+    membri: [{ field: 'cardBtnSecondaryLink', label: 'Link buton secundar (Membri)' }],
+    evenimente: [{ field: 'link1', label: 'Link eveniment', inside: 'events' }],
+    contact: []
+};
+
+/**
+ * Verifică toate câmpurile de link din payload-ul unei pagini.
+ * @returns {string|null} mesajul de eroare sau null
+ */
+function validatePageLinks(tabKey, payload) {
+    const fields = PAGE_LINK_FIELDS[tabKey] || [];
+
+    for (const spec of fields) {
+        if (spec.inside) {
+            const items = Array.isArray(payload[spec.inside]) ? payload[spec.inside] : [];
+            for (const item of items) {
+                const problem = checkHrefField(item?.[spec.field], spec.label);
+                if (problem) return problem;
+            }
+        } else {
+            const problem = checkHrefField(payload?.[spec.field], spec.label);
+            if (problem) return problem;
+        }
+    }
+
+    return null;
+}
+
 export function setDirtyState(dirty) {
     isDirty = dirty;
     state.pagesDirty = dirty;
@@ -642,6 +676,13 @@ export async function handleSaveCurrentPage() {
 
     const payload = gatherCurrentPagesPayload(currentTab);
     const cheie = `pagina_${currentTab}`;
+
+    // T-J7: blocăm schemele periculoase înainte de a ajunge în baza de date.
+    const linkProblem = validatePageLinks(currentTab, payload);
+    if (linkProblem) {
+        showToast(linkProblem, 'error');
+        return;
+    }
 
     try {
         // T-J2: .select('cheie') după upsert ca să putem confirma că rândul a fost scris

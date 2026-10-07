@@ -52,6 +52,42 @@ export function isValidImageUrl(url) {
     return false;
 }
 
+// T-J7: scheme-uri acceptate în câmpurile de link din panou.
+// Fără javascript: și data: un link salvat în baza de date devine XSS la
+// randare pe site-ul public.
+const SAFE_URL_SCHEMES = ['http', 'https', 'mailto', 'tel'];
+
+/**
+ * Verifică dacă o adresă introdusă într-un câmp de link poate fi salvată.
+ * - câmp gol  → valid (opțional)
+ * - fără schemă → valid (adresă relativă)
+ * - cu schemă → valid doar dacă e în SAFE_URL_SCHEMES
+ * @returns {boolean}
+ */
+export function isSafeHref(url) {
+    const s = String(url ?? '').trim();
+    if (!s) return true;
+
+    // Eliminăm caracterele de control și spațiile, pe care browserele le
+    // ignoră înainte de a interpreta schema: "java\nscript:alert(1)".
+    const probe = s.replace(/[\u0000-\u0020\u007F]+/g, '');
+    const m = probe.match(/^([a-z][a-z0-9+.-]*):/i);
+    if (!m) return true; // adresă relativă, fără schemă
+
+    return SAFE_URL_SCHEMES.includes(m[1].toLowerCase());
+}
+
+/** Mesajul standard pentru un câmp de link respins. */
+export function unsafeHrefMessage(label) {
+    return `Adresa de la «${label}» este invalidă. Sunt permise doar adrese care încep cu https://, http://, mailto: sau tel:.`;
+}
+
+/** Verifică și returnează mesajul de eroare, sau null dacă valoarea e acceptată. */
+export function checkHrefField(value, label) {
+    if (isSafeHref(value)) return null;
+    return unsafeHrefMessage(label);
+}
+
 export function updateCharCounters() {
     const counterMemberNume = document.getElementById('counter-member-nume');
     const memberInputNume = document.getElementById('member-input-nume');
