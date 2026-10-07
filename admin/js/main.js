@@ -365,7 +365,10 @@ function bootAdminApp() {
     const btnOpenAddNews = document.getElementById('btn-open-add-news');
     const btnCloseNewsModal = document.getElementById('btn-close-news-modal');
     const btnCancelNewsModal = document.getElementById('btn-cancel-news-modal');
-    const btnSaveNews = document.getElementById('btn-save-news');
+    // D8: btn-save-news este type="submit" în form-news. Un click pe el pornește
+    // mai întâi evenimentul click, apoi submit, deci un ascultător pe click ar
+    // executa handlerul de două ori — la un articol nou, două INSERT, deci
+    // duplicat. Tratat exclusiv prin ascultătorul de submit de mai jos.
     const btnSyncNewsAction = document.getElementById('btn-sync-news-action');
     const btnNewsModeGrid = document.getElementById('btn-news-mode-grid');
     const btnNewsModeTable = document.getElementById('btn-news-mode-table');
@@ -422,7 +425,6 @@ function bootAdminApp() {
             handleSaveNews();
         });
     }
-    if (btnSaveNews) btnSaveNews.addEventListener('click', handleSaveNews);
     if (btnSyncNewsAction) btnSyncNewsAction.addEventListener('click', () => handleSyncDefaultNews(btnSyncNewsAction));
     if (btnClosePreviewModal) btnClosePreviewModal.addEventListener('click', closePreviewNewsModal);
     if (btnClosePreviewAction) btnClosePreviewAction.addEventListener('click', closePreviewNewsModal);
@@ -544,7 +546,8 @@ function bootAdminApp() {
     const btnCloseProfileModal = document.getElementById('btn-close-profile-modal');
     const btnCancelProfileModal = document.getElementById('btn-cancel-profile-modal');
     const formUpdatePassword = document.getElementById('form-update-password');
-    const btnSavePassword = document.getElementById('btn-save-password');
+    // D8: vezi nota de la btn-save-news. Butonul e type="submit", deci
+    // ascultătorul de click de mai jos executa handleUpdatePassword de două ori.
     const modalAdminProfile = document.getElementById('modal-admin-profile');
 
     if (btnSidebarProfile) btnSidebarProfile.addEventListener('click', openAdminProfileModal);
@@ -557,7 +560,6 @@ function bootAdminApp() {
             handleUpdatePassword();
         });
     }
-    if (btnSavePassword) btnSavePassword.addEventListener('click', handleUpdatePassword);
     if (modalAdminProfile) {
         modalAdminProfile.addEventListener('click', (e) => {
             if (e.target === modalAdminProfile) closeAdminProfileModal();
@@ -806,7 +808,8 @@ function bootAdminApp() {
     const btnCloseAddAdmin = document.getElementById('btn-close-add-admin');
     const btnCancelAddAdmin = document.getElementById('btn-cancel-add-admin');
     const formAddAdmin = document.getElementById('form-add-admin');
-    const btnSaveNewAdmin = document.getElementById('btn-save-new-admin');
+    // D8: vezi nota de la btn-save-news. Aici dublul apel era mascat de gardul
+    // isSavingAdmin din roles.js, dar rămăsesc tot două cereri la server.
     const modalAddAdmin = document.getElementById('modal-add-admin');
 
     if (btnRefreshRoles) btnRefreshRoles.addEventListener('click', loadAdmins);
@@ -814,7 +817,7 @@ function bootAdminApp() {
     if (btnCloseAddAdmin) btnCloseAddAdmin.addEventListener('click', closeAddAdminModal);
     if (btnCancelAddAdmin) btnCancelAddAdmin.addEventListener('click', closeAddAdminModal);
     if (formAddAdmin) formAddAdmin.addEventListener('submit', handleSaveNewAdmin);
-    if (btnSaveNewAdmin) btnSaveNewAdmin.addEventListener('click', handleSaveNewAdmin);
+    
     if (modalAddAdmin) {
         modalAddAdmin.addEventListener('click', (e) => {
             if (e.target === modalAddAdmin) closeAddAdminModal();
