@@ -135,30 +135,59 @@ export async function handleSyncDefaultNews(btnTrigger) {
     }
 
     try {
-        if (state.allNewsData.length > 0) {
-            const confirmSync = confirm(`Există deja ${state.allNewsData.length} articole în baza de date. Doriți să adăugați cele 9 comunicate oficiale din site?`);
-            if (!confirmSync) {
-                if (btnTrigger) {
-                    btnTrigger.disabled = false;
-                    btnTrigger.textContent = '📥 Sincronizează știri locale';
-                }
-                return;
-            }
-        }
-
-        const { error } = await client
+        // T-J6: citim titlurile deja existente. Fără deleted_at filter, pentru ca
+        // un comunicat aflat în coș să nu fie re-inserat (ar apărea de două ori
+        // în istoric și ar rămâne oricum șters).
+        const { data: existing, error: readError } = await client
             .from('stiri')
-            .insert(OFFICIAL_FALLBACK_NEWS);
+            .select('titlu');
 
-        if (error) {
-            showToast('Eroare la sincronizarea știrilor: ' + error.message, 'error');
+        if (readError) {
+            showToast('Nu am putut citi știrile existente: ' + readError.message, 'error');
             return;
         }
 
-        showToast('✓ 9 știri oficiale au fost sincronizate cu succes în Supabase!', 'success', 5000);
+        const normalize = (t) => String(t ?? '').trim().toLowerCase();
+        const existingTitles = new Set((existing || []).map(n => normalize(n.titlu)));
+        const missing = OFFICIAL_FALLBACK_NEWS.filter(n => !existingTitles.has(normalize(n.titlu)));
+        const alreadyThere = OFFICIAL_FALLBACK_NEWS.length - missing.length;
+
+        if (missing.length === 0) {
+            showToast(`Nu s-a adăugat nimic: toate cele ${OFFICIAL_FALLBACK_NEWS.length} comunicate există deja în bază.`, 'info');
+            await loadNews();
+            return;
+        }
+
+        const confirmSync = confirm(
+            `Se vor adăuga ${missing.length} comunicate oficiale.\n` +
+            (alreadyThere > 0 ? `${alreadyThere} există deja și nu vor fi dublate.\n` : '') +
+            (existing && existing.length > 0 ? `\nBaza conține deja ${existing.length} articole.\n` : '') +
+            '\nContinui?'
+        );
+        if (!confirmSync) return;
+
+        const { error } = await writeRows(
+            client
+                .from('stiri')
+                .insert(missing)
+                .select('id'),
+            { context: `sincronizarea a ${missing.length} comunicate oficiale`, expect: missing.length }
+        );
+
+        if (error) {
+            showToast(describeDbError(error, 'Eroare la sincronizarea știrilor.'), 'error');
+            return;
+        }
+
+        showToast(
+            `✓ ${missing.length} ${missing.length === 1 ? 'comunicat a fost adăugat' : 'comunicate au fost adăugate'}` +
+            (alreadyThere > 0 ? `, ${alreadyThere} existau deja` : '') + '.',
+            'success',
+            5000
+        );
         await loadNews();
     } catch (err) {
-        showToast('Eroare de conexiune la sincronizarea știrilor.', 'error');
+        showToast(describeDbError(err, 'Eroare la sincronizarea știrilor.'), 'error');
     } finally {
         if (btnTrigger) {
             btnTrigger.disabled = false;
