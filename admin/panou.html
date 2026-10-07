@@ -117,6 +117,8 @@
             <section id="step-unauthorized" class="auth-screen-step">
                 <h2 class="auth-heading" style="color: var(--error);">Acces Neautorizat</h2>
                 <p class="auth-desc">Acest cont nu este înregistrat în tabela de administratori autorizați a filialei.</p>
+                <!-- T-J3 (3.2): motivul real al eșecului, în loc de un mesaj fix -->
+                <div id="unauthorized-detail" class="feedback-banner error" role="status" style="display: none; margin-bottom: 12px;"></div>
                 <button type="button" id="btn-unauth-return" class="btn btn-primary" style="width: 100%;">
                     Înapoi la conectare
                 </button>

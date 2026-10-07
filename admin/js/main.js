@@ -948,11 +948,26 @@ function bootAdminApp() {
     });
 
     // Supabase Auth State Change Listener
-    client.auth.onAuthStateChange(async (event) => {
-        if (event === 'SIGNED_IN' || event === 'USER_UPDATED') {
-            await evaluateAuthState();
-        } else if (event === 'SIGNED_OUT') {
+    // T-J3 (3.1): `await` pe un apel Supabase în interiorul callback-ului
+    // onAuthStateChange poate bloca (lock reentrant pe clientul de auth) și
+    // poate arunca erori neprinse. Decizia reală e luată într-un macrou ulterior.
+    // Evenimentele redundante (aceeași sesiune, deja verificată) sunt ignorate.
+    client.auth.onAuthStateChange((event, session) => {
+        if (event === 'SIGNED_OUT') {
             showAuthStep('login');
+            return;
+        }
+
+        if (event === 'SIGNED_IN' || event === 'USER_UPDATED' || event === 'TOKEN_REFRESHED') {
+            const incomingUserId = session && session.user ? session.user.id : null;
+
+            // Deja autentificat pe exact același user → re-evaluarea e zadarnică
+            // și ar retrigera încărcările înainte ca ele să se termine.
+            if (incomingUserId && state.user && state.user.id === incomingUserId) {
+                return;
+            }
+
+            setTimeout(() => { evaluateAuthState(); }, 0);
         }
     });
 

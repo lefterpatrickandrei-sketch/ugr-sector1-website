@@ -2,7 +2,7 @@
  * Authentication & MFA AAL2 Module
  */
 
-import { state } from './state.js';
+import { state, resetState } from './state.js';
 import { client } from './supabase.js';
 import { showToast, setBannerFeedback, clearBannerFeedback } from './ui/toast.js';
 import { updateBulkActionsBar } from './ui/bulkbar.js';
@@ -20,6 +20,9 @@ import { loadSyncStatus } from './views/sync.js';
 import { loadCoderView } from './views/coder.js';
 import { loadPagesData } from './views/pages.js';
 
+// T-J3 (3.3): etichete umane pentru eșecurile de încărcare parțiale.
+const LOADER_LABELS = ['Cereri de înscriere', 'Membri', 'Știri', 'Statistici vizite'];
+
 export function getPanelRedirectUrl() {
     if (window.location.protocol.startsWith('http')) {
         return window.location.origin + window.location.pathname;
@@ -27,7 +30,7 @@ export function getPanelRedirectUrl() {
     return 'https://ugr-sector1.ro/admin/panou.html';
 }
 
-export function showAuthStep(stepName) {
+export function showAuthStep(stepName, detailMessage) {
     const authWrapper = document.getElementById('auth-wrapper');
     const cmsApp = document.getElementById('cms-app');
     const authSteps = {
@@ -45,6 +48,14 @@ export function showAuthStep(stepName) {
             authSteps[k].classList.toggle('active', k === stepName);
         }
     });
+
+    // T-J3 (3.2): pasul `unauthorized` primea doar un pas fix, fără explicație.
+    // Afișăm acum motivul real (email neinvitat, cont inactiv, claim eșuat).
+    const unauthorizedDetail = document.getElementById('unauthorized-detail');
+    if (unauthorizedDetail) {
+        unauthorizedDetail.textContent = detailMessage || '';
+        unauthorizedDetail.style.display = detailMessage ? '' : 'none';
+    }
 }
 
 export function showCmsDashboard() {
@@ -393,50 +404,41 @@ export async function verifyAdminStatus(user) {
             .eq('user_id', user.id)
             .maybeSingle();
 
-        // Dacă nu s-a găsit după user_id, verificăm dacă este un admin invitat
+        // Motivul pentru care adminul nu a fost găsit, ca să fie afișat în pasul
+        // `unauthorized` în loc de un mesaj generic.
+        let claimFailureReason = null;
+
+        // T-J3 (3.2): fallback-ul `.ilike('email', …).update({ user_id })` a fost eliminat.
+        //  - cu T-S1 aplicat, politica `admin_claim_invited` nu mai există, deci
+        //    scrierea ar eșua oricum prin RLS → cod mort;
+        //  - `ilike` interpretează `%` și `_` ca wildcard-uri, iar `.maybeSingle()`
+        //    ar putea potrivi rândul altui administrator → risc de preluare de cont.
+        // Singura cale de claim rămâne RPC-ul SECURITY DEFINER `claim_admin_invite()`.
+        // Eroarea lui nu mai e înghițită: e propagată la pasul `unauthorized`.
         if (!adminRecord) {
-            // 1. Încercăm funcția RPC securizată claim_admin_invite
-            try {
-                const { data: claimData, error: claimErr } = await client.rpc('claim_admin_invite');
-                if (!claimErr && claimData && claimData.success) {
-                    adminRecord = {
-                        id: claimData.id,
-                        user_id: claimData.user_id,
-                        email: claimData.email,
-                        rol: claimData.rol,
-                        activ: claimData.activ
-                    };
-                }
-            } catch (rpcErr) {
-                // RPC poate să nu existe încă dacă migrarea 007 nu a fost rulată
-            }
+            const { data: claimData, error: claimError } = await client.rpc('claim_admin_invite');
 
-            // 2. Fallback direct prin verificare email și update RLS
-            if (!adminRecord && user.email) {
-                const normalizedEmail = user.email.trim().toLowerCase();
-                const { data: invitedRecord } = await client
-                    .from('admini')
-                    .select('id, user_id, email, rol, activ')
-                    .ilike('email', normalizedEmail)
-                    .maybeSingle();
-
-                if (invitedRecord && invitedRecord.activ) {
-                    if (!invitedRecord.user_id || invitedRecord.user_id !== user.id) {
-                        try {
-                            await client
-                                .from('admini')
-                                .update({ user_id: user.id })
-                                .eq('id', invitedRecord.id);
-                        } catch (e) {}
-                    }
-                    adminRecord = { ...invitedRecord, user_id: user.id };
-                }
+            if (!claimError && claimData && claimData.success) {
+                adminRecord = {
+                    id: claimData.id,
+                    user_id: claimData.user_id,
+                    email: claimData.email,
+                    rol: claimData.rol,
+                    activ: claimData.activ
+                };
+            } else if (claimError) {
+                claimFailureReason = claimError;
             }
         }
 
         if (adminErr || !adminRecord || !adminRecord.activ) {
+            if (!adminRecord && !adminErr && !claimFailureReason && user.email) {
+                claimFailureReason = new Error(
+                    'Adresa ' + user.email + ' nu este înscrisă în tabelul administratorilor (public.admini).'
+                );
+            }
             await client.auth.signOut();
-            showAuthStep('unauthorized');
+            showAuthStep('unauthorized', claimFailureReason ? claimFailureReason.message : null);
             return;
         }
 
@@ -457,15 +459,32 @@ export async function verifyAdminStatus(user) {
             window.history.replaceState(null, '', window.location.pathname);
         }
 
-        await loadRequests();
-        await loadMembers();
-        await loadNews();
-        await loadVisitsStats();
+        // T-J3 (3.3): `Promise.all` propaga prima excepție în catch-ul exterior, care
+        // făcea signOut() → un modul cu o eroare de rețea deconecta utilizatorul.
+        // allSettled izolează fiecare modul; un eșec parțial nu mai omoară sesiunea.
+        const loaded = await Promise.allSettled([
+            loadRequests(),
+            loadMembers(),
+            loadNews(),
+            loadVisitsStats()
+        ]);
+
+        const failed = loaded
+            .map((res, i) => (res.status === 'rejected'
+                ? `${LOADER_LABELS[i]}: ${(res.reason && res.reason.message) || 'eroare necunoscută'}`
+                : null))
+            .filter(Boolean);
+
+        if (failed.length > 0) {
+            showToast('Unele secțiuni nu s-au putut încărca — ' + failed.join(' | '), 'warning');
+        }
+
+        // T-J3 (3.4): idempotent — dacă un canal există deja, nu se creează altul.
         initAdminLivePresence();
         initRealtimeRequestsListener();
     } catch (err) {
         await client.auth.signOut();
-        showAuthStep('unauthorized');
+        showAuthStep('unauthorized', (err && err.message) ? err.message : null);
     }
 }
 
@@ -512,9 +531,6 @@ export async function evaluateAuthState() {
 
 export async function handleSignOut() {
     await client.auth.signOut();
-    state.user = null;
-    state.adminRecord = null;
-    state.activeTotpFactorId = null;
 
     const adminEmailInput = document.getElementById('admin-email');
     const mfaEnrollInput = document.getElementById('mfa-enroll-input');
@@ -529,18 +545,20 @@ export async function handleSignOut() {
     if (mfaEnrollInput) mfaEnrollInput.value = '';
     if (mfaVerifyInput) mfaVerifyInput.value = '';
 
-    state.allRequestsData = [];
-    state.allMembersData = [];
-    state.allNewsData = [];
-
+    // Canalele trebuie scoase de pe client **înainte** de reset: după
+    // `resetState()` referințele din state.devin null și nu mai avem ce scoate.
     if (state.adminPresenceChannel) {
         client.removeChannel(state.adminPresenceChannel);
-        state.adminPresenceChannel = null;
     }
     if (state.realtimeRequestsChannel) {
         client.removeChannel(state.realtimeRequestsChannel);
-        state.realtimeRequestsChannel = null;
     }
+
+    // T-J3 (3.5): reset complet al stării. Înainte se goleau doar
+    // allRequestsData / allMembersData / allNewsData, deci setările, conducerea,
+    // FAQ, documentele, lista de admini, coșul, media și selecțiile bulk rămâneau
+    // în memorie și apăreau pentru următorul utilizator autentificat pe același browser.
+    resetState();
 
     if (topbarLiveCount) topbarLiveCount.textContent = '—';
     if (topbarLiveDot) topbarLiveDot.className = 'admin-pulse-dot offline';
