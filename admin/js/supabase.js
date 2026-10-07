@@ -10,6 +10,17 @@ export const SUPABASE_CONFIG = {
 export const SUPABASE_URL = SUPABASE_CONFIG.url;
 export const ANON_KEY = SUPABASE_CONFIG.anonKey;
 
+// T-J11: scriptul CDN are acum `integrity`. Dacă verificarea eșuează, browserul
+// nu îl execută deloc și `window.supabase` rămâne undefined, ceea ce arunca o
+// eroare la importarea acestui modul și ar lăsa panoul complet gol, fără niciun
+// mesaj. Verificarea de mai jos înlocuiește un ecran gol cu o explicație.
+if (!window.supabase) {
+    throw new Error(
+        'Librăria Supabase nu a fost încărcată. Verifică accesul la rețea și faptul ' +
+        'că valoarea "integrity" din antetul admin/panou.html corespunde versiunii fixate.'
+    );
+}
+
 export const client = window.supabase.createClient(SUPABASE_CONFIG.url, SUPABASE_CONFIG.anonKey, {
     auth: {
         persistSession: true,

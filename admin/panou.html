@@ -6,7 +6,23 @@
     <title>CMS Panou Administrare — UGR Filiala Sector 1 București</title>
     <link rel="icon" type="image/png" href="../logo_geodez.png">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap">
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- T-J11: supabase-js era încărcat de pe CDN cu eticheta mobilă "@2",
+         care se actualizează automat la fiecare lansare nouă. Conține acest
+         script starea sesiunii admin și cheie pentru operațiile de scriere, deci
+         un răspuns modificat sau injectat în lanțul CDN ar ajunge în panou.
+         Versiunea este fixată, iar integrity blochează orice conținut diferit
+         de cel calculat.
+
+         Pentru actualizare:
+           1. node scratch/sri-supabase.mjs <versiune-noua>
+           2. înlocuiește ambele valori de mai jos cu cele afișate
+           3. testează autentificarea și scrierea înainte de a face commit
+
+         crossorigin="anonymous" este obligatoriu: fără el browserul nu
+         compară răspunsul CDN cu hash-ul și integritatea nu se verifică. -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2"
+            integrity="sha512-4w/AcXbU7AGdxOzJGUPCLrSqlTh+jnM25jQ+wmZByQckoKFyHvA10J9JLEavYV9cfp0JdTxIP6jddakO4xlOGA=="
+            crossorigin="anonymous"></script>
     <link rel="stylesheet" href="css/panel.css">
 </head>
 <body>
