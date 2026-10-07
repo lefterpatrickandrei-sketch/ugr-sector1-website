@@ -49,22 +49,32 @@ DECLARE
   v_dup_email integer;
   v_dup_user  integer;
 BEGIN
-  -- email trebuie să poată deveni UNIQUE pentru tratarea codului 23505
+  -- email trebuie să poată deveni UNIQUE pentru tratarea codului 23505.
+  -- Se grupează după lower(email), deci se selectează expresia agregată,
+  -- nu coloana simplă — altfel Postgres ar respinge cu 42803.
   SELECT count(*) INTO v_dup_email
-    FROM (SELECT email FROM public.admini
-           GROUP BY lower(email) HAVING count(*) > 1) d;
+    FROM (
+      SELECT lower(email) AS email_norm, count(*) AS c
+        FROM public.admini
+       GROUP BY lower(email)
+      HAVING count(*) > 1
+    ) d;
   IF v_dup_email > 0 THEN
     RAISE EXCEPTION
       '008a oprit: % email-uri duplicate (diferenta doar de majuscule/minuscule). '
       'Rezolva manual inainte de a rula din nou.', v_dup_email
-      USING HINT = 'SELECT email, count(*) FROM public.admini GROUP BY lower(email) HAVING count(*) > 1;';
+      USING HINT = 'SELECT lower(email), count(*) FROM public.admini GROUP BY lower(email) HAVING count(*) > 1;';
   END IF;
 
   -- user_id trebuie să poată deveni UNIQUE pentru ca .maybeSingle() să fie sigur
   SELECT count(*) INTO v_dup_user
-    FROM (SELECT user_id FROM public.admini
-           WHERE user_id IS NOT NULL
-           GROUP BY user_id HAVING count(*) > 1) d;
+    FROM (
+      SELECT user_id, count(*) AS c
+        FROM public.admini
+       WHERE user_id IS NOT NULL
+       GROUP BY user_id
+      HAVING count(*) > 1
+    ) d;
   IF v_dup_user > 0 THEN
     RAISE EXCEPTION
       '008a oprit: % user_id-uri duplicate. Rezolva manual inainte de a rula din nou.',
