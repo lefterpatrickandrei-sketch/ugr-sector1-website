@@ -67,7 +67,40 @@ export function showCmsDashboard() {
     switchView('overview');
 }
 
+// T-J10: vizibilitatea după rol se decide într-un singur loc, applyRoleUiGates().
+// 'coder' permite editarea JSON a oricărui rând, exportul bazei complete și
+// restaurarea unei versiuni de backup. Nu are sens pentru editor sau viewer:
+// restore-ul ar rescrie tabele întregi, iar RLS le-ar opri oricum pe jumătate
+// din operații, lăsând baza într-o stare intermediară greu de reparat.
+const OWNER_ONLY_VIEWS = ['coder'];
+
+export function applyRoleUiGates() {
+    const isOwner = state.adminRecord?.rol === 'owner';
+
+    OWNER_ONLY_VIEWS.forEach(viewName => {
+        const navLink = document.querySelector(`.nav-link[data-view="${viewName}"]`);
+        if (navLink) {
+            navLink.style.display = isOwner ? '' : 'none';
+            // setUiMode() (mode.js) scrie direct display pe elementele
+            // .advanced-only, deci owner-only trebuie reaplicat după comutarea
+            // de mod. Înregistrăm un flag ca acesta să poată fi verificat.
+            navLink.dataset.ownerOnly = isOwner ? 'true' : 'false';
+        }
+    });
+
+    // Dacă un non-owner avea deja vizualizarea deschisă dintr-o sesiune anterioară,
+    // o închidem și îl trimitem înapoi la panou.
+    if (!isOwner && OWNER_ONLY_VIEWS.includes(state.currentActiveView)) {
+        switchView('overview');
+    }
+}
+
 export function switchView(viewName) {
+    if (OWNER_ONLY_VIEWS.includes(viewName) && state.adminRecord?.rol !== 'owner') {
+        showToast('Această secțiune este rezervată rolului Owner.', 'warning');
+        if (state.currentActiveView !== viewName) return;
+    }
+
     state.currentActiveView = viewName;
 
     const navLinks = document.querySelectorAll('.nav-link');
@@ -455,6 +488,10 @@ export async function verifyAdminStatus(user) {
 
         showCmsDashboard();
 
+        // T-J10: se aplică după showCmsDashboard(), fiindcă acesta face
+        // switchView('overview') înainte ca rolul să fie cunoscut în interfață.
+        applyRoleUiGates();
+
         if (window.location.hash) {
             window.history.replaceState(null, '', window.location.pathname);
         }
@@ -559,6 +596,12 @@ export async function handleSignOut() {
     // FAQ, documentele, lista de admini, coșul, media și selecțiile bulk rămâneau
     // în memorie și apăreau pentru următorul utilizator autentificat pe același browser.
     resetState();
+
+    // T-J10: resetState() a golit și adminRecord, deci vizibilitatea trebuie
+    // recalculată. Altfel, după deconectarea unui owner, linkul spre Consola
+    // Dezvoltator rămâne vizibil pentru următorul utilizator (editor sau viewer)
+    // care se autentifică pe același browser.
+    applyRoleUiGates();
 
     if (topbarLiveCount) topbarLiveCount.textContent = '—';
     if (topbarLiveDot) topbarLiveDot.className = 'admin-pulse-dot offline';

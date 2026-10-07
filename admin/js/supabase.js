@@ -17,20 +17,11 @@ export const client = window.supabase.createClient(SUPABASE_CONFIG.url, SUPABASE
     }
 });
 
-export async function pingSupabaseHealth(latencyEl, statusEl, dotEl) {
-    const t0 = performance.now();
-    try {
-        await fetch(SUPABASE_CONFIG.url + '/auth/v1/health', {
-            method: 'HEAD',
-            headers: { 'apikey': SUPABASE_CONFIG.anonKey }
-        });
-        const rtt = Math.max(12, Math.round(performance.now() - t0));
-        if (latencyEl) latencyEl.textContent = `${rtt} ms`;
-        if (statusEl) statusEl.textContent = rtt < 120 ? 'Operațional (RTT excelent)' : 'Operațional (REST API v1)';
-        if (dotEl) dotEl.className = 'health-dot ok';
-    } catch (e) {
-        if (latencyEl) latencyEl.textContent = '18 ms';
-        if (statusEl) statusEl.textContent = 'Operațional (REST API v1)';
-        if (dotEl) dotEl.className = 'health-dot ok';
-    }
-}
+// T-J10: funcția pingSupabaseHealth care era aici a fost eliminată.
+// Existau două copii: aceasta și cea din views/telemetry.js. Cea de aici
+// primea elementele DOM ca argumente, dar nimeni nu o apela cu argumente
+// (toate apelurile vin din telemetry.js și nu trimit nimic), deci nu avea
+// efect asupra niciunui element din interfață. În plus, cei doi parametri
+// rămâneau la aceleași valori false pe orice eroare de rețea, deci un proiect
+// căzut era raportat drept "Operațional". Versiunea din telemetry.js cere
+// /auth/v1/health, verifică res.ok și raportează latența măsurată.

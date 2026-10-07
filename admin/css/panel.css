@@ -1865,6 +1865,14 @@
             animation: pulseGlow 2s infinite ease-in-out;
         }
 
+        /* T-J10: starea de eroare. Lipsea pentru că verificarea de sănătate
+           raporta întotdeauna "ok", inclusiv după o eroare de rețea. */
+        .health-dot.err {
+            background-color: #EF4444;
+            box-shadow: 0 0 8px #EF4444;
+            animation: none;
+        }
+
         .health-val {
             font-size: 17px;
             font-weight: 700;

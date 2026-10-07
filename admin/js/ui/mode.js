@@ -28,7 +28,12 @@ export function setUiMode(mode) {
     // Toggle visibility of advanced-only elements
     const advancedElements = document.querySelectorAll('.advanced-only');
     advancedElements.forEach(el => {
-        el.style.display = mode === 'avansat' ? '' : 'none';
+        // T-J10: .advanced-only și owner-only sunt condiții independente, iar
+        // codul de mai jos scrie display direct, deci le-ar suprascrie.
+        // ownerOnly === 'false' înseamnă "rol nepermis", caz în care rămâne ascuns
+        // indiferent de modul de lucru.
+        const ownerBlocked = el.dataset.ownerOnly === 'false';
+        el.style.display = (mode === 'avansat' && !ownerBlocked) ? '' : 'none';
     });
 
     const simpleElements = document.querySelectorAll('.simple-only');

@@ -358,46 +358,32 @@ export async function loadRlsInspector() {
     clearElement(container);
     container.appendChild(el('div', { className: 'loading-pulse' }, ['Se interoghează catalogul de politici RLS...']));
 
-    let policies = [];
+    // T-J10: catalogul RLS se citește doar din baza de date.
+// Versiunea anterioară cădea pe o listă de 17 politici scrise manual în acest
+// fișier. Era periculoasă: se afișa drept "starea reală" ceva ce nu avea nicio
+// legătură cu serverul și devenea greșit la prima modificare de politică. Conținea
+// și rolul 'admin', eliminat în migrarea 008, deci indica deja o configurație
+// care nu mai există. Mai mult, RPC-ul poate eșua (T-S6 îl restricționează la
+// owner), caz în care lista falsă apărea tocmai când accesul era refuzat corect.
+    const { data, error } = await client.rpc('get_table_rls_policies');
 
-    // Încercare apel RPC get_table_rls_policies
-    try {
-        const { data, error } = await client.rpc('get_table_rls_policies');
-        if (!error && Array.isArray(data) && data.length > 0) {
-            policies = data;
-        }
-    } catch (e) {
-        // Fallback la catalog documentat
+    if (error) {
+        clearElement(container);
+        container.appendChild(el('div', { className: 'empty-state' }, [
+            `Catalogul de politici RLS nu a putut fi citit: ${error.message}`
+        ]));
+        return;
     }
 
-    if (policies.length === 0) {
-        // Catalog documentat activ
-        policies = getDocumentedRlsCatalog();
+    if (!Array.isArray(data) || data.length === 0) {
+        clearElement(container);
+        container.appendChild(el('div', { className: 'empty-state' }, [
+            'Serverul nu a raportat nicio politică RLS.'
+        ]));
+        return;
     }
 
-    renderRlsPoliciesTable(container, policies);
-}
-
-function getDocumentedRlsCatalog() {
-    return [
-        { tablename: 'membri', policyname: 'membri_read_public', cmd: 'SELECT', roles: ['public'], qual: 'afisare_publica = true AND deleted_at IS NULL' },
-        { tablename: 'membri', policyname: 'membri_admin_all', cmd: 'ALL', roles: ['authenticated'], qual: "admin_rol() IN ('owner', 'editor', 'admin')" },
-        { tablename: 'stiri', policyname: 'stiri_read_public', cmd: 'SELECT', roles: ['public'], qual: 'publicat = true AND deleted_at IS NULL' },
-        { tablename: 'stiri', policyname: 'stiri_admin_all', cmd: 'ALL', roles: ['authenticated'], qual: "admin_rol() IN ('owner', 'editor', 'admin')" },
-        { tablename: 'leadership', policyname: 'leadership_read_public', cmd: 'SELECT', roles: ['public'], qual: 'afisare_publica = true AND deleted_at IS NULL' },
-        { tablename: 'leadership', policyname: 'leadership_admin_all', cmd: 'ALL', roles: ['authenticated'], qual: "admin_rol() IN ('owner', 'editor', 'admin')" },
-        { tablename: 'faq', policyname: 'faq_read_public', cmd: 'SELECT', roles: ['public'], qual: 'publicat = true AND deleted_at IS NULL' },
-        { tablename: 'faq', policyname: 'faq_admin_all', cmd: 'ALL', roles: ['authenticated'], qual: "admin_rol() IN ('owner', 'editor', 'admin')" },
-        { tablename: 'documente', policyname: 'documente_read_public', cmd: 'SELECT', roles: ['public'], qual: 'publicat = true AND deleted_at IS NULL' },
-        { tablename: 'documente', policyname: 'documente_admin_all', cmd: 'ALL', roles: ['authenticated'], qual: "admin_rol() IN ('owner', 'editor', 'admin')" },
-        { tablename: 'setari', policyname: 'setari_read_public', cmd: 'SELECT', roles: ['public'], qual: 'true' },
-        { tablename: 'setari', policyname: 'setari_admin_update', cmd: 'UPDATE', roles: ['authenticated'], qual: "admin_rol() IN ('owner', 'editor', 'admin')" },
-        { tablename: 'cereri_inscriere', policyname: 'cereri_insert_anon', cmd: 'INSERT', roles: ['public'], qual: 'with_check: true' },
-        { tablename: 'cereri_inscriere', policyname: 'cereri_admin_select', cmd: 'SELECT', roles: ['authenticated'], qual: "admin_rol() IN ('owner', 'editor', 'admin', 'viewer')" },
-        { tablename: 'admini', policyname: 'admini_self_select', cmd: 'SELECT', roles: ['authenticated'], qual: 'user_id = auth.uid()' },
-        { tablename: 'admini', policyname: 'admini_owner_manage', cmd: 'ALL', roles: ['authenticated'], qual: "admin_rol() = 'owner'" },
-        { tablename: 'audit_log', policyname: 'audit_read_admin', cmd: 'SELECT', roles: ['authenticated'], qual: "admin_rol() IN ('owner', 'editor', 'admin')" }
-    ];
+    renderRlsPoliciesTable(container, data);
 }
 
 function renderRlsPoliciesTable(container, policies) {

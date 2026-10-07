@@ -6,6 +6,15 @@ import { state } from '../state.js';
 import { client, SUPABASE_CONFIG } from '../supabase.js';
 import { formatDateTimeRo, formatStatusLabel } from '../lib/format.js';
 
+// T-J10: singura implementare a verificării de sănătate.
+// Problema veche: Math.max(12, ...) afișa minimum 12 ms chiar dacă răspunsul a
+// venit în 1 ms, iar blocul catch scria tot "Operațional" cu 18 ms fixe, deci o
+// conexiune căzută era raportată exact la fel ca una funcțională. Un test de
+// sănătate care nu poate spune "câștigat" nu e un test de sănătate.
+//
+// GET, nu HEAD: /auth/v1/health răspunde cu 200 și corpul {"status":"ok"}.
+let lastHealthResult = null;
+
 export async function pingSupabaseHealth() {
     const latencyEl = document.getElementById('telemetry-db-latency');
     const statusEl = document.getElementById('telemetry-db-status');
@@ -13,20 +22,43 @@ export async function pingSupabaseHealth() {
     if (!latencyEl) return;
 
     const t0 = performance.now();
+    let res;
     try {
-        await fetch(SUPABASE_CONFIG.url + '/auth/v1/health', {
-            method: 'HEAD',
-            headers: { 'apikey': SUPABASE_CONFIG.anonKey }
+        res = await fetch(SUPABASE_CONFIG.url + '/auth/v1/health', {
+            method: 'GET',
+            cache: 'no-store',
+            headers: {
+                'apikey': SUPABASE_CONFIG.anonKey,
+                'Authorization': 'Bearer ' + SUPABASE_CONFIG.anonKey
+            }
         });
-        const rtt = Math.max(12, Math.round(performance.now() - t0));
-        latencyEl.textContent = `${rtt} ms`;
-        if (statusEl) statusEl.textContent = rtt < 120 ? 'Operațional (RTT excelent)' : 'Operațional (REST API v1)';
-        if (dotEl) dotEl.className = 'health-dot ok';
     } catch (e) {
-        latencyEl.textContent = '18 ms';
-        if (statusEl) statusEl.textContent = 'Operațional (REST API v1)';
-        if (dotEl) dotEl.className = 'health-dot ok';
+        // Eroare de rețea: fetch a aruncat. Asta e o cădere reală.
+        lastHealthResult = { ok: false, rtt: null, reason: 'Fără răspuns de la server' };
+        latencyEl.textContent = '— ms';
+        if (statusEl) statusEl.textContent = 'Inaccesibil (fără răspuns)';
+        if (dotEl) dotEl.className = 'health-dot err';
+        return;
     }
+
+    const rtt = Math.round(performance.now() - t0);
+
+    if (!res.ok) {
+        lastHealthResult = { ok: false, rtt, reason: `HTTP ${res.status}` };
+        latencyEl.textContent = `${rtt} ms`;
+        if (statusEl) statusEl.textContent = `Eroare server (HTTP ${res.status})`;
+        if (dotEl) dotEl.className = 'health-dot err';
+        return;
+    }
+
+    lastHealthResult = { ok: true, rtt, reason: null };
+    latencyEl.textContent = `${rtt} ms`;
+    if (statusEl) statusEl.textContent = rtt < 120 ? 'Operațional (RTT excelent)' : 'Operațional (REST API v1)';
+    if (dotEl) dotEl.className = 'health-dot ok';
+}
+
+export function getLastHealthResult() {
+    return lastHealthResult;
 }
 
 export async function loadVisitsStats() {
