@@ -15,7 +15,6 @@ import { el, clearElement } from '../lib/dom.js';
 import { writeRows, describeDbError } from '../lib/db.js';
 import { checkHrefField } from '../lib/format.js';
 
-let isDirty = false;
 let currentTab = 'acasa';
 
 // Valori implicite fidele 1-la-1 structurii din index.html
@@ -509,7 +508,8 @@ function validatePageLinks(tabKey, payload) {
 }
 
 export function setDirtyState(dirty) {
-    isDirty = dirty;
+    // T-J10/lint: starea reală stă în state.pagesDirty; variabila locală isDirty
+    // era scrisă, dar nu era citită nicăieri.
     state.pagesDirty = dirty;
     const stickyBar = document.getElementById('pages-sticky-bar');
     if (stickyBar) {

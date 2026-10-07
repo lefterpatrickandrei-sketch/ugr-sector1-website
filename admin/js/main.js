@@ -9,7 +9,6 @@ import { updateCharCounters, updateReadingStats, isValidImageUrl } from './lib/f
 import { exportMembersToCsv, exportRequestsToCsv } from './lib/csv.js';
 import {
     showAuthStep,
-    showCmsDashboard,
     switchView,
     handleSendOtp,
     toggleAuthMethod,
@@ -21,8 +20,7 @@ import {
 } from './auth.js';
 import {
     loadRequests,
-    applyRequestsFilter,
-    renderRequestsWithPagination
+    applyRequestsFilter
 } from './views/requests.js';
 import {
     loadMembers,
@@ -42,7 +40,6 @@ import {
     applyNewsFilter,
     renderNewsWithPagination,
     openAddNewsModal,
-    openEditNewsModal,
     closeNewsModal,
     openPreviewNewsModal,
     closePreviewNewsModal,
@@ -67,9 +64,7 @@ import { initPagesView } from './views/pages.js';
 
 import {
     loadLeadership,
-    renderLeadershipLists,
     openAddLeaderModal,
-    openEditLeaderModal,
     closeLeaderModal,
     handleSaveLeader
 } from './views/leadership.js';
@@ -77,7 +72,6 @@ import {
     loadFaq,
     renderFaqList,
     openAddFaqModal,
-    openEditFaqModal,
     closeFaqModal,
     handleSaveFaq
 } from './views/faq.js';
@@ -85,44 +79,33 @@ import {
     loadDocuments,
     renderDocumentsList,
     openAddDocModal,
-    openEditDocModal,
     closeDocModal,
     handleSaveDoc
 } from './views/documents.js';
 import {
     loadTrash,
     renderTrashList,
-    handleRestoreTrashItem,
-    openPurgeModal,
     closePurgeModal,
     handleConfirmPurge,
     handlePurgeOldTrash
 } from './views/trash.js';
 import {
     loadAdmins,
-    renderAdminsList,
     openAddAdminModal,
     closeAddAdminModal,
-    handleSaveNewAdmin,
-    handleUpdateAdminRole,
-    handleToggleAdminActive
+    handleSaveNewAdmin
 } from './views/roles.js';
-import {
-    openItemHistoryModal,
-    closeItemHistoryModal
-} from './views/history.js';
+import { closeItemHistoryModal } from './views/history.js';
 import { loadSyncStatus } from './views/sync.js';
 import {
-    loadCoderView,
     loadCoderTableData,
-    openCoderJsonEditorModal,
     closeCoderJsonEditorModal,
     handleSaveCoderJson,
     exportCurrentTableJson,
     exportCurrentTableCsv,
     handleExportFullBackup
 } from './views/coder.js';
-import { initNotifications, updateNotificationBadge } from './ui/notifications.js';
+import { initNotifications } from './ui/notifications.js';
 import { initUiMode } from './ui/mode.js';
 import {
     updateBulkActionsBar,
@@ -133,7 +116,6 @@ import {
     openCommandPalette,
     closeCommandPalette,
     renderCommandPaletteResults,
-    updateCommandPaletteHighlight,
     registerPaletteActions
 } from './ui/palette.js';
 import {

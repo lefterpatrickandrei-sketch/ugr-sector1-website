@@ -5,7 +5,7 @@
 
 import { state } from '../state.js';
 import { client } from '../supabase.js';
-import { showToast, setBannerFeedback, clearBannerFeedback } from '../ui/toast.js';
+import { showToast } from '../ui/toast.js';
 import { el, clearElement } from '../lib/dom.js';
 import { openItemHistoryModal } from './history.js';
 import { writeRows, describeDbError } from '../lib/db.js';

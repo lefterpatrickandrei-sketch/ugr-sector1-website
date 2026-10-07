@@ -3,7 +3,6 @@
  * Probes what the public site sees (anonymous client) vs what the admin sees in Supabase.
  */
 
-import { state } from '../state.js';
 import { client, SUPABASE_URL, ANON_KEY } from '../supabase.js';
 import { showToast } from '../ui/toast.js';
 import { el, clearElement } from '../lib/dom.js';
@@ -95,7 +94,6 @@ export async function loadSyncStatus() {
     try {
         for (const meta of MONITORED_TABLES) {
             const startTime = performance.now();
-            let adminData = [];
             let adminTotal = 0;
             let adminPublic = 0;
             let adminDeleted = 0;
@@ -105,7 +103,6 @@ export async function loadSyncStatus() {
             try {
                 const { data, error } = await client.from(meta.name).select('*');
                 if (!error && Array.isArray(data)) {
-                    adminData = data;
                     adminTotal = data.length;
                     adminDeleted = data.filter(r => !!r.deleted_at).length;
                     if (meta.isPublicTable) {

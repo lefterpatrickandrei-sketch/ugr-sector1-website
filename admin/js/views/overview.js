@@ -2,7 +2,6 @@
  * Overview View (Tablou de Bord General UGR)
  */
 
-import { state } from '../state.js';
 import { updateRequestsKpi } from './requests.js';
 import { updateMembersKpi } from './members.js';
 import { updateNewsKpi } from './news.js';

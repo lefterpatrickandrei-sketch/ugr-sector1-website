@@ -963,8 +963,6 @@ export async function handleSaveNews() {
             scopeVal = (inputCustomScope && inputCustomScope.value.trim()) || 'local';
         }
 
-        const lockVal = Boolean(document.getElementById('news-input-lock-imagine')?.checked);
-
         const linkActiuneVal = getVal('news-input-link-actiune') || null;
 
         // T-J7: javascript: sau data: salvate aici ajung în href pe site-ul public.

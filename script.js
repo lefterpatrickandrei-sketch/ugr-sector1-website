@@ -3172,7 +3172,13 @@ function applyCustomPageData(cheie, val) {
             const btnSecondary = document.querySelector('#hero-btn-secondary span:first-child') || document.getElementById('hero-btn-secondary');
             if (btnSecondary && val.heroBtnSecondaryText) btnSecondary.textContent = val.heroBtnSecondaryText;
             const btnSecLink = document.getElementById('hero-btn-secondary');
-            if (btnSecLink && val.heroBtnSecondaryLink) btnSecLink.setAttribute('href', val.heroBtnSecondaryLink);
+            // T-J9: href vine din setari (intrare cu privilegii de admin). Panoul
+            // respinge deja javascript:/data: la salvare (checkHrefField), dar
+            // site-ul nu trebuie sa depinda de validarea din alt fisier.
+            if (btnSecLink) {
+                const heroSecLink = safeUrl(val.heroBtnSecondaryLink);
+                if (heroSecLink) btnSecLink.setAttribute('href', heroSecLink);
+            }
 
             // 2. Spatial HUD
             const badge = document.getElementById('spatial-node-badge');
@@ -3269,7 +3275,10 @@ function applyCustomPageData(cheie, val) {
             const statutBtn = document.querySelector('#view-despre .btn-statut-download span:first-child');
             if (statutBtn && val.statutBtnText) statutBtn.textContent = val.statutBtnText;
             const statutLink = document.querySelector('#view-despre .btn-statut-download');
-            if (statutLink && val.statutPdfUrl) statutLink.setAttribute('href', val.statutPdfUrl);
+            if (statutLink) {
+                const statutHref = safeUrl(val.statutPdfUrl);
+                if (statutHref) statutLink.setAttribute('href', statutHref);
+            }
 
         } else if (cheie === 'pagina_evenimente') {
             // 1. Hero
@@ -3326,7 +3335,10 @@ function applyCustomPageData(cheie, val) {
             const cardBtn2 = document.querySelector('#view-membri .m-demo4-actions .btn-secondary span:first-child');
             if (cardBtn2 && val.cardBtnSecondaryText) cardBtn2.textContent = val.cardBtnSecondaryText;
             const cardBtn2Link = document.querySelector('#view-membri .m-demo4-actions .btn-secondary');
-            if (cardBtn2Link && val.cardBtnSecondaryLink) cardBtn2Link.setAttribute('href', val.cardBtnSecondaryLink);
+            if (cardBtn2Link) {
+                const cardBtn2Href = safeUrl(val.cardBtnSecondaryLink);
+                if (cardBtn2Href) cardBtn2Link.setAttribute('href', cardBtn2Href);
+            }
 
             // 3. Mecanism Statutar
             const mechKicker = document.querySelector('#m-apartenenta-block .m-kicker-badge');

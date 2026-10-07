@@ -6,7 +6,6 @@
 import { state } from '../state.js';
 import { client } from '../supabase.js';
 import { showToast, setBannerFeedback, clearBannerFeedback } from '../ui/toast.js';
-import { el, clearElement } from '../lib/dom.js';
 import { writeRows, describeDbError } from '../lib/db.js';
 
 let isDirty = false;
@@ -201,7 +200,6 @@ export async function handleSaveSettings() {
             };
 
             const existingGhid = state.allSettingsData.ghid_aderare || {};
-            const existingTiers = existingGhid.tiers || [];
             updatedGhid = {
                 ...existingGhid,
                 tiers: [

@@ -145,7 +145,7 @@ export async function handleUploadMedia(file) {
         const cleanName = processedFile.name.toLowerCase().replace(/[^a-z0-9._-]/g, '-');
         const fileName = `${Date.now()}-${cleanName}`;
 
-        const { data, error } = await client.storage
+        const { error } = await client.storage
             .from('media')
             .upload(fileName, processedFile, {
                 cacheControl: '3600',
