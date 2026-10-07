@@ -1168,6 +1168,12 @@ function renderNewsBento(filterScope = 'all') {
     renderEventsTimeline();
 }
 
+// D9: valorile din setari pentru pagina de evenimente, reținute până la
+// următoarea randare a timeline-ului. Null = fără personalizare.
+// Declarat înaintea funcției ca să nu existe risc de TDZ dacă randarea ar
+// porni înainte de a ajunge la acest punct din fișier.
+let eventPanelOverrides = null;
+
 function renderEventsTimeline() {
     const axis = document.querySelector('.events-timeline-axis');
     if (!axis || !ugrData.newsList || ugrData.newsList.length === 0) return;
@@ -1274,6 +1280,37 @@ function renderEventsTimeline() {
             </div>
         `;
     }).join('');
+
+    // D9: applyCustomPageData('pagina_evenimente') scria textContent pe nodurile
+    // .events-timeline-item, iar această funcție le reconstruiește din zero. Cum
+    // ambele sunt asincrone fără sincronizare, câștiga oricare ajunge ultimul:
+    // valorile din panou fie erau șterse de innerHTML, fie suprascriau știrile
+    // din baza de date. Depanarea era mascată pentru că panoul avea exact 6
+    // evenimente, câte noduri erau în index.html.
+    // Suprascrierile se păstrează aici și se aplică după fiecare randare, deci
+    // ordinea în care se termină cele două cereri nu mai contează.
+    applyEventPanelOverrides();
+}
+
+function applyEventPanelOverrides() {
+    if (!Array.isArray(eventPanelOverrides) || eventPanelOverrides.length === 0) return;
+
+    const eventNodes = document.querySelectorAll('#view-evenimente .events-timeline-item');
+    eventPanelOverrides.forEach((ev, idx) => {
+        const node = eventNodes[idx];
+        // Index mai mare decât numărul de noduri: evenimentul nu are unde să
+        // apară. Nu e eroare, e o limită a numărului de evenimente din DB.
+        if (!node || !ev) return;
+
+        const dateEl = node.querySelector('.events-badge-date');
+        const scopeEl = node.querySelector('.events-badge-scope');
+        const titleEl = node.querySelector('.events-node-title');
+        const descEl = node.querySelector('.events-node-desc');
+        if (dateEl && ev.data) dateEl.textContent = ev.data;
+        if (scopeEl && ev.scope) scopeEl.textContent = ev.scope;
+        if (titleEl && ev.titlu) titleEl.textContent = ev.titlu;
+        if (descEl && ev.desc) descEl.textContent = ev.desc;
+    });
 }
 
 // T-J9: safeUrl filtrează adresele care ajung în href sau src.
@@ -3298,20 +3335,12 @@ function applyCustomPageData(cheie, val) {
             if (axisSub && val.axisSub) axisSub.textContent = val.axisSub;
 
             // 3. Jaloane Evenimente
+            // D9: se memorează și se reaplică prin renderEventsTimeline(), nu se
+            // scrie direct în noduri. Altfel o randare ulterioară, venită din
+            // loadNewsFromSupabase(), ștergea tot ce se scrisese aici.
             if (Array.isArray(val.events) && val.events.length > 0) {
-                const eventNodes = document.querySelectorAll('#view-evenimente .events-timeline-item');
-                val.events.forEach((ev, idx) => {
-                    if (eventNodes[idx]) {
-                        const dateEl = eventNodes[idx].querySelector('.events-badge-date');
-                        const scopeEl = eventNodes[idx].querySelector('.events-badge-scope');
-                        const titleEl = eventNodes[idx].querySelector('.events-node-title');
-                        const descEl = eventNodes[idx].querySelector('.events-node-desc');
-                        if (dateEl && ev.data) dateEl.textContent = ev.data;
-                        if (scopeEl && ev.scope) scopeEl.textContent = ev.scope;
-                        if (titleEl && ev.titlu) titleEl.textContent = ev.titlu;
-                        if (descEl && ev.desc) descEl.textContent = ev.desc;
-                    }
-                });
+                eventPanelOverrides = val.events;
+                renderEventsTimeline();
             }
 
         } else if (cheie === 'pagina_membri') {
