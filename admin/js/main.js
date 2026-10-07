@@ -141,7 +141,10 @@ import {
     closeMediaPickerModal,
     renderMediaPickerGrid,
     applyFormatting,
-    handleUploadMedia
+    handleUploadMedia,
+    // T-J1: import lipsea → main.js:447/531/541 arunca ReferenceError la
+    // deschiderea/actualizarea formularului de știre.
+    updateNewsImageLivePreview
 } from './ui/media.js';
 import {
     openAdminProfileModal,
