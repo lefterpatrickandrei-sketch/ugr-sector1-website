@@ -531,7 +531,7 @@ function init3DGlobe() {
         .pointLabel(d => `
             <div style="display:inline-flex;align-items:center;gap:6px;">
                 <span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:${d.id === 'chisinau' ? '#FF9F1C' : '#00E5FF'};box-shadow:0 0 6px ${d.id === 'chisinau' ? '#FF9F1C' : '#00E5FF'};"></span>
-                <span>${d.labelTitle}</span>
+                <span>${escapeHtml(d.labelTitle)}</span>
             </div>
         `)
         .onPointClick(point => {
@@ -1129,7 +1129,17 @@ function renderNewsBento(filterScope = 'all') {
         const badgeClass = isNational ? 'badge-scope-national' : 'badge-scope-local';
         const dotClass = isNational ? 'badge-dot-gold' : 'badge-dot-cyan';
         const borderClass = isNational ? 'card-scope-national' : 'card-scope-local';
-        const targetAttr = (item.source.url && item.source.url.startsWith('http')) ? 'target="_blank" rel="noopener noreferrer"' : '';
+        // T-J9: link_actiune ajunge direct în href. escapeHtml nu blochează
+        // javascript:, deci adresa trece mai întâi prin safeUrl. Dacă e respinsă
+        // (rând vechi, scris direct în baza de date) se afișează textul fără link,
+        // pentru că un <a href="#"> ar părea buton funcțional.
+        const actionUrl = safeUrl(item.source.url);
+        const targetAttr = actionUrl.startsWith('http') ? 'target="_blank" rel="noopener noreferrer"' : '';
+        const actionHtml = actionUrl
+            ? `<a href="${escapeHtml(actionUrl)}" ${targetAttr} class="bento-action-link ${isNational ? 'link-gold' : 'link-cyan'}">
+                        ${escapeHtml(item.actionText || 'Deschide detalii ↗')}
+                    </a>`
+            : `<span class="bento-action-link ${isNational ? 'link-gold' : 'link-cyan'}">${escapeHtml(item.actionText || 'Deschide detalii ↗')}</span>`;
 
         return `
         <article class="bento-card ${borderClass}">
@@ -1149,9 +1159,7 @@ function renderNewsBento(filterScope = 'all') {
                 <p class="bento-card-desc">${escapeHtml(item.desc)}</p>
                 <div class="bento-card-footer">
                     <span class="bento-location">📍 ${escapeHtml(item.location)}</span>
-                    <a href="${escapeHtml(item.source.url)}" ${targetAttr} class="bento-action-link ${isNational ? 'link-gold' : 'link-cyan'}">
-                        ${escapeHtml(item.actionText || 'Deschide detalii ↗')}
-                    </a>
+                    ${actionHtml}
                 </div>
             </div>
         </article>
@@ -1228,12 +1236,13 @@ function renderEventsTimeline() {
         const dateText = item.date || '2026';
 
         let actionsHtml = '';
-        if (item.source && item.source.url) {
-            const isExternal = item.source.url.startsWith('http');
-            const targetAttr = isExternal ? 'target="_blank" rel="noopener noreferrer"' : '';
+        // T-J9: safeUrl înainte de href, ca în renderNews.
+        const actionUrl = item.source && item.source.url ? safeUrl(item.source.url) : '';
+        if (actionUrl) {
+            const targetAttr = actionUrl.startsWith('http') ? 'target="_blank" rel="noopener noreferrer"' : '';
             actionsHtml = `
                 <div class="events-node-actions" style="display: flex; gap: 14px; flex-wrap: wrap;">
-                    <a href="${escapeHtml(item.source.url)}" ${targetAttr} class="events-action-link ${linkClass}">
+                    <a href="${escapeHtml(actionUrl)}" ${targetAttr} class="events-action-link ${linkClass}">
                         <span>${escapeHtml(item.actionText || 'Detalii')}</span>
                         <span class="action-arrow">↗</span>
                     </a>
@@ -1267,47 +1276,78 @@ function renderEventsTimeline() {
     }).join('');
 }
 
+// T-J9: safeUrl filtrează adresele care ajung în href sau src.
+// Aceeași listă de scheme ca în admin/js/lib/format.js (isSafeHref).
+// javascript: ar executa cod la clic, iar data:text/html ar deschide o pagină
+// controlată de cel care a salvat rândul. Spațiile și caracterele de control se
+// elimină înainte de test, fiindcă browserul le ignoră la navigare.
+const SAFE_URL_SCHEMES = ['http:', 'https:', 'mailto:', 'tel:'];
+
+function safeUrl(url) {
+    const raw = String(url ?? '').trim();
+    if (!raw) return '';
+    const compact = raw.replace(/[\u0000-\u0020\u007F]+/g, '');
+    const scheme = compact.match(/^([a-z][a-z0-9+.-]*):/i);
+    if (!scheme) return raw;
+    return SAFE_URL_SCHEMES.indexOf(scheme[1].toLowerCase() + ':') !== -1 ? raw : '';
+}
+
 function renderLeadership() {
     const container = document.getElementById('leadership-cards-container');
     if (!container || !ugrData.leadership) return;
 
-    container.innerHTML = ugrData.leadership.map(member => `
+    // T-J9: nume, rol și descriere vin din tabelul leadership și ajung în HTML
+    // prin interpolare într-un șir de caractere. Fără escapeHtml, un nume cu
+    // <script> în el s-ar executa în browserul fiecărui vizitator.
+    container.innerHTML = ugrData.leadership.map(member => {
+        const imageUrl = safeUrl(member.image);
+        const photoHtml = imageUrl
+            ? `<img src="${escapeHtml(imageUrl)}" alt="${escapeHtml(member.name)}" style="height: 100%; object-fit: contain; padding: 12px;">`
+            : '';
+        return `
         <div class="bento-card card-light">
             <div style="height: 160px; overflow: hidden; background: var(--ugr-paper); display: flex; align-items: center; justify-content: center;">
-                <img src="${member.image}" alt="${member.name}" style="height: 100%; object-fit: contain; padding: 12px;">
+                ${photoHtml}
             </div>
             <div class="bento-card-content">
-                <span style="font-family: var(--font-mono); font-size: 10px; color: var(--ugr-accent); text-transform: uppercase; font-weight: 700; margin-bottom: 6px;">${member.role}</span>
-                <h4 style="font-size: 17px; margin-bottom: 8px; font-weight: 700; color: var(--ugr-text-main);">${member.name}</h4>
-                <p style="font-size: 12.5px; color: var(--ugr-text-muted); line-height: 1.5;">${member.desc}</p>
+                <span style="font-family: var(--font-mono); font-size: 10px; color: var(--ugr-accent); text-transform: uppercase; font-weight: 700; margin-bottom: 6px;">${escapeHtml(member.role)}</span>
+                <h4 style="font-size: 17px; margin-bottom: 8px; font-weight: 700; color: var(--ugr-text-main);">${escapeHtml(member.name)}</h4>
+                <p style="font-size: 12.5px; color: var(--ugr-text-muted); line-height: 1.5;">${escapeHtml(member.desc)}</p>
             </div>
         </div>
-    `).join('');
+    `;
+    }).join('');
 }
 
 function renderDocuments() {
     const container = document.getElementById('documents-container');
     if (!container || !ugrData.documentsList) return;
 
-    container.innerHTML = ugrData.documentsList.map(doc => `
+    // T-J9: fisier_url vine din tabelul documente. Panoul îl validează la salvare
+    // (T-J7), dar și o valoare veche sau introdusă direct în baza de date trebuie
+    // filtrată înainte să ajungă în href. '#' înseamnă "adresă respinsă".
+    container.innerHTML = ugrData.documentsList.map(doc => {
+        const fileHref = safeUrl(doc.fileUrl) || '#';
+        return `
         <div class="bento-card card-light">
             <div class="bento-card-content" style="padding: 24px;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
                     <span style="display: inline-block; padding: 3px 8px; border-radius: 4px; font-size: 10px; font-family: var(--font-mono); font-weight: 700; background: rgba(18,125,194,0.1); color: var(--ugr-accent);">
-                        ${doc.format}
+                        ${escapeHtml(doc.format)}
                     </span>
                     <span style="font-family: var(--font-mono); font-size: 10px; color: var(--ugr-text-muted); text-transform: uppercase;">
-                        ${doc.badge}
+                        ${escapeHtml(doc.badge)}
                     </span>
                 </div>
-                <h4 style="font-size: 16px; font-weight: 700; margin-bottom: 8px; color: var(--ugr-text-main);">${doc.title}</h4>
-                <p style="font-size: 12.5px; color: var(--ugr-text-muted); line-height: 1.5; margin-bottom: 20px;">${doc.desc}</p>
-                <a href="${doc.fileUrl}" download target="_blank" rel="noopener noreferrer" class="btn-secondary" style="border-color: var(--ugr-accent); color: var(--ugr-accent); justify-content: center; text-align: center; font-size: 11px; margin-top: auto;">
+                <h4 style="font-size: 16px; font-weight: 700; margin-bottom: 8px; color: var(--ugr-text-main);">${escapeHtml(doc.title)}</h4>
+                <p style="font-size: 12.5px; color: var(--ugr-text-muted); line-height: 1.5; margin-bottom: 20px;">${escapeHtml(doc.desc)}</p>
+                <a href="${escapeHtml(fileHref)}" download target="_blank" rel="noopener noreferrer" class="btn-secondary" style="border-color: var(--ugr-accent); color: var(--ugr-accent); justify-content: center; text-align: center; font-size: 11px; margin-top: auto;">
                     Descarcă formularul tipizat ⬇
                 </a>
             </div>
         </div>
-    `).join('');
+    `;
+    }).join('');
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -1413,11 +1453,15 @@ function updateFaqResultsCounter(filteredCount, totalCount) {
         metaContext += ` pentru <strong style="color: var(--ugr-cyan, #00E5FF);">„${escapeHtml(currentFaqSearch)}”</strong>`;
     }
     if (currentFaqCategory !== 'all') {
-        metaContext += ` în <span style="color: var(--ugr-hq-gold-bright, #F5D77F);">${catName}</span>`;
+        // T-J9: catName poate cădea pe currentFaqCategory, care nu vine dintr-o
+        // listă de constante dacă cineva adaugă un data-category nou în HTML.
+        metaContext += ` în <span style="color: var(--ugr-hq-gold-bright, #F5D77F);">${escapeHtml(catName)}</span>`;
     }
 
     const hasFilters = (currentFaqCategory !== 'all' || currentFaqSearch);
-    const resetHtml = hasFilters ? `<a href="javascript:void(0)" class="faq-reset-link" onclick="resetFaqFilters()">✕ Resetează filtrele</a>` : '';
+    // T-J9: href="javascript:void(0)" era singurul javascript: rămas în șirurile
+    // de caractere. Un buton face același lucru fără URL de executat.
+    const resetHtml = hasFilters ? `<button type="button" class="faq-reset-link" onclick="resetFaqFilters()">✕ Resetează filtrele</button>` : '';
 
     counterEl.innerHTML = `
         <span class="faq-results-badge">
