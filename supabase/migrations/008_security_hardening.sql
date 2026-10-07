@@ -142,9 +142,36 @@ CREATE POLICY media_delete ON storage.objects
 --     stiri_citire_anonim  -> publicat = true AND deleted_at is null
 --     membri_citire_anonim -> afisare_publica = true AND deleted_at is null
 -- deci după ștergerea celor vechi, singurele politici anon rămase sunt corecte.
+--
+-- ── EXTINDERE: politici create din Dashboard, absente din repo ──────────────
+-- Preflight (008_preflight.sql, P5a/P5b) a găsit în baza de date și două
+-- politici care NU apar în nicio migrare din acest repo, create din
+-- Supabase Dashboard:
+--     membri_public_select  SELECT {anon,authenticated}  status='activ' AND afisare_publica
+--     stiri_public_select   SELECT {anon,authenticated}  publicat
+--
+-- stiri_public_select este cea mai gravă: `qual` este doar `publicat`, deci
+-- ORICE știre ștearsă din coș (deleted_at NOT NULL) rămâne publică la
+-- cerere. În Postgres politica permisivă se aplică cu OR, deci simpla
+-- ștergere a celor anon_select_* NU ar închide scurgerea.
+--
+-- După ștergere, singurele politici anon rămase pe membri/stiri sunt
+-- membri_citire_anonim și stiri_citire_anonim, ambele cu deleted_at is null.
 -- ═══════════════════════════════════════════════════════════════════════════
-DROP POLICY IF EXISTS anon_select_membri ON public.membri;
-DROP POLICY IF EXISTS anon_select_stiri  ON public.stiri;
+DROP POLICY IF EXISTS anon_select_membri   ON public.membri;
+DROP POLICY IF EXISTS anon_select_stiri    ON public.stiri;
+DROP POLICY IF EXISTS membri_public_select ON public.membri;
+DROP POLICY IF EXISTS stiri_public_select  ON public.stiri;
+
+COMMENT ON POLICY membri_citire_anonim ON public.membri IS
+  'Singura politică de citire anonimă pentru membri. Condiția deleted_at IS NULL '
+  'este obligatorie: rândurile din coș nu pot fi vizibile public. '
+  'Orice politică anon suplimentară pe membri este o scurgere.';
+
+COMMENT ON POLICY stiri_citire_anonim ON public.stiri IS
+  'Singura politică de citire anonimă pentru știri. Condiția deleted_at IS NULL '
+  'este obligatorie: rândurile din coș nu pot fi vizibile public. '
+  'Orice politică anon suplimentară pe stiri este o scurgere.';
 
 
 -- ═══════════════════════════════════════════════════════════════════════════
@@ -286,7 +313,8 @@ COMMIT;
 --   T-S2   AMÂNAT        AAL2 în SQL (vezi 008b_enforce_aal2.sql)
 --   T-S3   aplicat       storage media_* cu admin_rol(), fără 'admin'
 --   T-S3b  aplicat       'admin' → 'editor'; CHECK restrâns la 3 roluri
---   T-S4   aplicat       șterse anon_select_membri / anon_select_stiri
+--   T-S4   aplicat       șterse anon_select_* ȘI membri_public_select /
+--                                   stiri_public_select (politici din Dashboard)
 --   T-S5   aplicat       setari anon limitat la allowlist
 --   T-S6   aplicat       get_table_rls_policies() cere is_admin()
 --   T-S7   aplicat       trigger anti pierdere ultim owner

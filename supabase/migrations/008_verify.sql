@@ -6,10 +6,15 @@
 -- ═══════════════════════════════════════════════════════════════════════════
 
 -- ── V1 (T-S4) ───────────────────────────────────────────────────────────────
--- Așteptat: EXACT câte o politică anon per tabel.
+-- Așteptat: EXACT 2 rânduri.
 --   membri → membri_citire_anonim
 --   stiri  → stiri_citire_anonim
--- Dacă apare anon_select_membri / anon_select_stiri → 008 nu s-a aplicat complet.
+-- Dacă apare vreunul dintre acestea, 008 nu s-a aplicat complet:
+--   anon_select_membri    (001, fără deleted_at)
+--   anon_select_stiri     (001, fără deleted_at)
+--   membri_public_select  (creată din Dashboard, fără deleted_at)
+--   stiri_public_select   (creată din Dashboard, qual = doar 'publicat')
+-- Ultimele două erau scurgerea reală: le șterge T-S4 extins.
 select tablename, policyname, cmd, roles, qual
   from pg_policies
  where tablename in ('membri', 'stiri')
@@ -18,8 +23,15 @@ select tablename, policyname, cmd, roles, qual
 
 
 -- ── V2 (T-S1) ───────────────────────────────────────────────────────────────
--- Așteptat: admin_claim_invited NU apare în listă.
-select policyname, cmd, roles
+-- Așteptat: EXACT 5 politici, admin_claim_invited ABSENT.
+--   admin_select_self        SELECT  user_id = auth.uid()
+--   admini_select            SELECT  (user_id = auth.uid()) OR is_admin()
+--   owner_manage_admini      ALL     admin_rol() = 'owner'
+--   owner_select_all_admini  SELECT  admin_rol() = 'owner'
+--   admin_select_invited     SELECT  venit din 008a
+-- ⚠️ admin_claim_invited NU trebuie să apară. Dacă apare, cineva l-a creat
+--    după 008 și escaladarea viewer → owner este din nou posibilă.
+select policyname, cmd, roles, permissive, qual
   from pg_policies
  where tablename = 'admini'
  order by policyname;
@@ -59,8 +71,9 @@ select conname, pg_get_constraintdef(oid) as definitie
    and conname = 'admini_rol_check';
 
 
--- ── V6 (T-S6, T-S7) ────────────────────────────────────────────────────────
--- Așteptat: toate cele 5 funcții există.
+-- ── V6 (T-S6, T-S7, 008a) ───────────────────────────────────────────────────
+-- Așteptat: toate cele 5 funcții există, iar claim_admin_invite are
+-- security_definer = true (obligatoriu, altfel nu ocolește RLS).
 select proname,
        prosecdef as security_definer,
        prorettype::regtype as retur
@@ -120,3 +133,42 @@ select
 -- Rulează DUPĂ ce te-ai autentificat ca non-admin (viewer sau editor).
 -- Așteptat: ERROR: forbidden: functia este rezervata administratorilor
 select * from public.get_table_rls_policies() limit 1;
+
+
+-- ── V12 (008a, structura tabelei admini) ────────────────────────────────────
+-- Așteptat EXACT aceste 5 coloane. user_id trebuie să fie 'YES' (nullable).
+-- Dacă user_id e 'NO', 008a nu s-a aplicat și invitațiile rămân imposibile.
+select column_name, data_type, is_nullable, column_default
+  from information_schema.columns
+ where table_schema = 'public'
+   and table_name = 'admini'
+ order by column_name;
+
+
+-- ── V13 (008a, constraint-uri) ──────────────────────────────────────────────
+-- Așteptat EXACT 5:
+--   admini_id_pkey        PRIMARY KEY (id)            ← mutată de pe user_id
+--   admini_rol_check     CHECK (... owner, editor, viewer)
+--   admini_user_id_fkey  FOREIGN KEY → auth.users(id)
+--   admini_user_id_key   UNIQUE (user_id)            ← nou
+--   admini_email_key     UNIQUE (email)              ← nou
+-- Dacă admini_pkey (user_id) mai există → 008a nu s-a aplicat.
+select conname, pg_get_constraintdef(oid) as definitie
+  from pg_constraint
+ where conrelid = 'public.admini'::regclass
+ order by conname;
+
+
+-- ── V14 (008a, efect real) ─────────────────────────────────────────────────
+-- Așteptat: 1 rând (tău, owner). Nicio invitație orfană.
+-- Testează invitația din UI, nu aici: adaugă un admin editor din panou și
+-- vezi dacă apare un rând cu user_id IS NULL înainte ca el să se logheze.
+select
+    id,
+    email,
+    rol,
+    activ,
+    (user_id is null) as invitatie_neatribuita,
+    created_at
+  from public.admini
+ order by created_at;
