@@ -45,31 +45,39 @@ GROUP BY rol, activ;
 -- ───────────────────────────────────────────────────────────────────────────
 -- P3 — Starea TOTP (2FA) per cont
 --
--- Așteptat: 'configured' pentru conturile care au deja 2FA.
--- NULL sau 'unconfigured' înseamnă că unele conturi NU au 2FA.
---
 -- ⚠️ NU e blocant pentru 008_security_hardening.sql (acela nu atinge AAL2).
 --    E informativ: îți spune când va deveni sigur să rulezi
 --    008b_enforce_aal2.sql. Răspunsul așteptat de mine: "am nevoie de asta".
+--
+-- Sursa de adevăr e tabela auth.mfa_amr_claims: conține un rând per
+-- metodă MFA înscrisă, iar 'totp' apare în vectorul amr abia DUPă ce
+-- utilizatorul a confirmat enroll-ul (is_amr_accepted = true).
+--
+-- Se folosește LEFT JOIN ca să apară și rândurile de invitație care încă
+-- nu au user_id (invitatul nu s-a logat niciodată). La acelea 2FA nu se
+-- poate verifica și n-are rost — contează doar conturile deja conectate.
 -- ───────────────────────────────────────────────────────────────────────────
 SELECT
-    u.email,
+    a.email AS email_admin,
     a.rol,
     a.activ,
     CASE
-        WHEN u.factor IS NULL OR u.factor = 'null'
-          OR NOT EXISTS (
+        WHEN a.user_id IS NULL              THEN 'invitat, nu s-a conectat'
+        WHEN u.id IS NULL                    THEN 'user_id fara cont in auth.users'
+        WHEN EXISTS (
                 SELECT 1 FROM auth.mfa_amr_claims c
                 WHERE c.user_id = a.user_id
                   AND c.amr @> ARRAY['totp']
+                  AND c.is_amr_accepted
               )
-        THEN 'NU are 2FA'
-        ELSE 'are 2FA'
-    END AS stare_2fa
+        THEN 'are 2FA'
+        ELSE 'NU are 2FA'
+    END AS stare_2fa,
+    (SELECT count(*) FROM auth.mfa_amr_claims c WHERE c.user_id = a.user_id)
+        AS nr_metode_mfa_inregistrate
 FROM public.admini a
-JOIN auth.users u ON u.id = a.user_id
-WHERE a.user_id IS NOT NULL
-ORDER BY a.rol, u.email;
+LEFT JOIN auth.users u ON u.id = a.user_id
+ORDER BY a.rol, a.email;
 
 
 -- ───────────────────────────────────────────────────────────────────────────
