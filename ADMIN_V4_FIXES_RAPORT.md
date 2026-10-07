@@ -28,7 +28,7 @@
 | 17 | T-J8 · cele 13 câmpuri neconsumate | **FĂCUT** | `b3f2708` |
 | 18 | T-J9 · XSS stocat pe site-ul public | **FĂCUT** | `96fd961` |
 | 19 | T-J10 · health check + consolă protejată | **FĂCUT** | `9381e1b`, `dcf8afc` |
-| 20 | T-J11 · pin + SRI `supabase-js` | **FĂCUT** | `f095147` |
+| 20 | T-J11 · pin + SRI `supabase-js` | **FĂCUT** | `f095147`, `fce2157` |
 
 Niciun task marcat „FĂCUT" fără dovadă — vezi secțiunea de verificare de mai jos.
 
@@ -352,7 +352,7 @@ Rescris: `GET <url>/auth/v1/health`, `cache: 'no-store'`, antetele `apikey` **ș
 **Fix.** Versiunea curentă rezolvată prin API-ul npm: **`2.117.2`**. S-a confirmat că `@2` și `@2.117.2` servesc conținut identic la octet (218237 bytes, același sha512) — deci fixarea nu schimbă nimic din ce se rulează azi.
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/dist/umd/supabase.js"
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2"
         integrity="sha512-4w/AcXbU7AGdxOzJGUPCLrSqlTh+jnM25jQ+wmZByQckoKFyHvA10J9JLEavYV9cfp0JdTxIP6jddakO4xlOGA=="
         crossorigin="anonymous"></script>
 ```
@@ -364,6 +364,16 @@ Rescris: `GET <url>/auth/v1/health`, `cache: 'no-store'`, antetele `apikey` **ș
 **Fail explicit.** `admin/js/supabase.js` aruncă acum o eroare numită și acționabilă când `window.supabase` e `undefined`. Altfel, un mismatch de `integrity` sau un CDN blocat ar produce un `TypeError` gol la import și un panou complet alb.
 
 **Dovadă.** `node scratch/sri-supabase.mjs 2.117.2` reproduce hash-ul din eticheta de mai sus.
+
+### Extindere pe `index.html` (`fce2157`)
+
+Prima aplicare a acoperit doar `admin/panou.html`, fiind singurul fișier indicat în brief. `index.html` încărca aceeași bibliotecă cu eticheta flotantă `@2` și rămă neatins.
+
+Diferența de context contează: pe panou scriptul rulează doar pentru administratori care au trecut deja de autentificare. Pe `index.html` rulează pentru **orice vizitator, anonim inclusiv**, și alimentează prezența live, membrii, știrile, conducerea, FAQ-ul și formularul de contact. După aplicarea migrării 008 singura apărare rămâne RLS, deci o versiune nouă netestată introdusă automat de CDN s-ar vedea direct în conținutul public.
+
+`index.html` a primit aceeași etichetă, cu același hash reutilizat. Diferența de execuție e zero: `@2` servea oricum `2.117.2` în ziua aplicării.
+
+**Rămas neschimbat, conștient:** `proj4@2.9.0`, `three@0.146.0` și `globe.gl@2.28.3` de la `index.html:1657-1659`. Toate trei sunt deja fixate pe versiune, deci nu se actualizează surpriză — dar nu au `integrity`. Adăugarea SRI pentru ele este o sarcină separată, netestată în această sesiune.
 
 ---
 
