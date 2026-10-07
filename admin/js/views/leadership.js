@@ -8,6 +8,7 @@ import { client } from '../supabase.js';
 import { showToast, setBannerFeedback, clearBannerFeedback } from '../ui/toast.js';
 import { el, clearElement } from '../lib/dom.js';
 import { openItemHistoryModal } from './history.js';
+import { writeRows, describeDbError } from '../lib/db.js';
 
 let editingLeaderId = null;
 
@@ -240,16 +241,24 @@ export async function handleSaveLeader(e) {
 
     try {
         if (editingLeaderId) {
-            const { error } = await client
-                .from('leadership')
-                .update(payload)
-                .eq('id', editingLeaderId);
+            const { error } = await writeRows(
+                client
+                    .from('leadership')
+                    .update(payload)
+                    .eq('id', editingLeaderId)
+                    .select('id'),
+                { context: 'actualizarea membrului de conducere' }
+            );
             if (error) throw error;
             showToast('Membru conducere actualizat cu succes!', 'success');
         } else {
-            const { error } = await client
-                .from('leadership')
-                .insert([payload]);
+            const { error } = await writeRows(
+                client
+                    .from('leadership')
+                    .insert([payload])
+                    .select('id'),
+                { context: 'adăugarea membrului de conducere' }
+            );
             if (error) throw error;
             showToast('Membru conducere adăugat cu succes!', 'success');
         }
@@ -257,17 +266,21 @@ export async function handleSaveLeader(e) {
         closeLeaderModal();
         await loadLeadership();
     } catch (err) {
-        showToast(`Eroare la salvare: ${err.message}`, 'error');
+        showToast(describeDbError(err, 'Membrul de conducere nu a putut fi salvat.'), 'error');
     }
 }
 
 export async function handleToggleVisibility(leader) {
     try {
         const nextState = !leader.afisare_publica;
-        const { error } = await client
-            .from('leadership')
-            .update({ afisare_publica: nextState })
-            .eq('id', leader.id);
+        const { error } = await writeRows(
+            client
+                .from('leadership')
+                .update({ afisare_publica: nextState })
+                .eq('id', leader.id)
+                .select('id'),
+            { context: 'schimbarea vizibilității' }
+        );
 
         if (error) throw error;
 
@@ -275,7 +288,7 @@ export async function handleToggleVisibility(leader) {
         renderLeadershipLists();
         showToast(`Vizibilitatea pentru ${leader.nume} a fost modificată.`, 'info');
     } catch (err) {
-        showToast(`Eroare: ${err.message}`, 'error');
+        showToast(describeDbError(err, 'Vizibilitatea nu a putut fi modificată.'), 'error');
     }
 }
 
@@ -292,8 +305,17 @@ export async function handleReorderLeader(leader, delta) {
 
     try {
         // Swap orders
-        await client.from('leadership').update({ ordine: targetOrder }).eq('id', leader.id);
-        await client.from('leadership').update({ ordine: currentOrder }).eq('id', targetLeader.id);
+        const { error: errUp } = await writeRows(
+            client.from('leadership').update({ ordine: targetOrder }).eq('id', leader.id).select('id'),
+            { context: 'reordonarea conducerii' }
+        );
+        if (errUp) throw errUp;
+
+        const { error: errDown } = await writeRows(
+            client.from('leadership').update({ ordine: currentOrder }).eq('id', targetLeader.id).select('id'),
+            { context: 'reordonarea conducerii' }
+        );
+        if (errDown) throw errDown;
 
         leader.ordine = targetOrder;
         targetLeader.ordine = currentOrder;
@@ -302,7 +324,7 @@ export async function handleReorderLeader(leader, delta) {
         renderLeadershipLists();
         showToast('Ordinea a fost actualizată!', 'success');
     } catch (err) {
-        showToast(`Eroare la reordonare: ${err.message}`, 'error');
+        showToast(describeDbError(err, 'Ordinea conducerii nu a putut fi actualizată.'), 'error');
     }
 }
 
@@ -313,16 +335,20 @@ export async function handleDeleteLeader(leader) {
 
     try {
         // Soft delete (deleted_at = now)
-        const { error } = await client
-            .from('leadership')
-            .update({ deleted_at: new Date().toISOString() })
-            .eq('id', leader.id);
+        const { error } = await writeRows(
+            client
+                .from('leadership')
+                .update({ deleted_at: new Date().toISOString() })
+                .eq('id', leader.id)
+                .select('id'),
+            { context: 'arhivarea membrului de conducere' }
+        );
 
         if (error) throw error;
 
         showToast(`${leader.nume} a fost șters (mutat în arhivă).`, 'info');
         await loadLeadership();
     } catch (err) {
-        showToast(`Eroare la ștergere: ${err.message}`, 'error');
+        showToast(describeDbError(err, 'Membrul de conducere nu a putut fi arhivat.'), 'error');
     }
 }

@@ -6,6 +6,7 @@ import { state } from '../state.js';
 import { client } from '../supabase.js';
 import { showToast } from './toast.js';
 import { exportArrayToCsv } from '../lib/csv.js';
+import { writeRows, describeDbError } from '../lib/db.js';
 
 let reloadMembersCallback = null;
 let reloadRequestsCallback = null;
@@ -145,14 +146,17 @@ export async function handleBulkDeleteMembers() {
     showToast(`Se șterg ${count} membri...`, 'info');
     try {
         const ids = Array.from(state.selectedMemberIds);
-        const { error } = await client.from('membri').delete().in('id', ids);
+        const { error } = await writeRows(
+            client.from('membri').delete().in('id', ids).select('id'),
+            { context: 'ștergerea membrilor selectați', expect: ids.length }
+        );
         if (error) throw error;
         state.selectedMemberIds.clear();
         updateBulkActionsBar();
         showToast(`Au fost șterși ${count} membri din registru.`, 'success');
         if (reloadMembersCallback) await reloadMembersCallback();
     } catch (err) {
-        showToast('Eroare la ștergerea în masă: ' + (err.message || 'Server indisponibil'), 'error');
+        showToast(describeDbError(err, 'Eroare la ștergerea în masă.'), 'error');
     }
 }
 
@@ -162,17 +166,20 @@ export async function handleBulkApproveRequests() {
     showToast(`Se validează ${count} cereri...`, 'info');
     try {
         const ids = Array.from(state.selectedRequestIds);
-        const { error } = await client.from('cereri_inscriere').update({
-            status: 'aprobat',
-            procesat_la: new Date().toISOString()
-        }).in('id', ids);
+        const { error } = await writeRows(
+            client.from('cereri_inscriere').update({
+                status: 'aprobat',
+                procesat_la: new Date().toISOString()
+            }).in('id', ids).select('id'),
+            { context: 'aprobarea în masă a cererilor', expect: ids.length }
+        );
         if (error) throw error;
         state.selectedRequestIds.clear();
         updateBulkActionsBar();
         showToast(`Au fost aprobate ${count} cereri de înscriere.`, 'success');
         if (reloadRequestsCallback) await reloadRequestsCallback();
     } catch (err) {
-        showToast('Eroare la aprobare: ' + (err.message || 'Server indisponibil'), 'error');
+        showToast(describeDbError(err, 'Eroare la aprobarea cererilor.'), 'error');
     }
 }
 
@@ -182,17 +189,20 @@ export async function handleBulkRejectRequests() {
     showToast(`Se resping ${count} cereri...`, 'info');
     try {
         const ids = Array.from(state.selectedRequestIds);
-        const { error } = await client.from('cereri_inscriere').update({
-            status: 'respins',
-            procesat_la: new Date().toISOString()
-        }).in('id', ids);
+        const { error } = await writeRows(
+            client.from('cereri_inscriere').update({
+                status: 'respins',
+                procesat_la: new Date().toISOString()
+            }).in('id', ids).select('id'),
+            { context: 'respingerea în masă a cererilor', expect: ids.length }
+        );
         if (error) throw error;
         state.selectedRequestIds.clear();
         updateBulkActionsBar();
         showToast(`Au fost respinse ${count} cereri.`, 'success');
         if (reloadRequestsCallback) await reloadRequestsCallback();
     } catch (err) {
-        showToast('Eroare la respingere: ' + (err.message || 'Server indisponibil'), 'error');
+        showToast(describeDbError(err, 'Eroare la respingerea cererilor.'), 'error');
     }
 }
 
@@ -204,13 +214,16 @@ export async function handleBulkDeleteNews() {
     showToast(`Se șterg ${count} articole...`, 'info');
     try {
         const ids = Array.from(state.selectedNewsIds);
-        const { error } = await client.from('stiri').delete().in('id', ids);
+        const { error } = await writeRows(
+            client.from('stiri').delete().in('id', ids).select('id'),
+            { context: 'ștergerea în masă a știrilor', expect: ids.length }
+        );
         if (error) throw error;
         state.selectedNewsIds.clear();
         updateBulkActionsBar();
         showToast(`Au fost șterse ${count} știri din baza de date.`, 'success');
         if (reloadNewsCallback) await reloadNewsCallback();
     } catch (err) {
-        showToast('Eroare la ștergerea știrilor: ' + (err.message || 'Server indisponibil'), 'error');
+        showToast(describeDbError(err, 'Eroare la ștergerea știrilor.'), 'error');
     }
 }

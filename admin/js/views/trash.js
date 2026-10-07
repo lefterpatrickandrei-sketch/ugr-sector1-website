@@ -7,6 +7,7 @@ import { state } from '../state.js';
 import { client } from '../supabase.js';
 import { showToast } from '../ui/toast.js';
 import { el, clearElement } from '../lib/dom.js';
+import { writeRows, describeDbError } from '../lib/db.js';
 
 let pendingPurgeItem = null;
 
@@ -189,17 +190,22 @@ export function renderTrashList() {
 
 export async function handleRestoreTrashItem(table, id, title) {
     try {
-        const { error } = await client
-            .from(table)
-            .update({ deleted_at: null })
-            .eq('id', id);
+        // T-J2: .select('id') — altfel o restaurare blocată de RLS ar raporta succes
+        const { error } = await writeRows(
+            client
+                .from(table)
+                .update({ deleted_at: null })
+                .eq('id', id)
+                .select('id'),
+            { context: `restaurarea elementului «${title || id}» din ${table}` }
+        );
 
         if (error) throw error;
 
         showToast(`Elementul «${title || id}» a fost restaurat cu succes!`, 'success');
         await loadTrash();
     } catch (err) {
-        showToast(`Eroare la restaurare: ${err.message}`, 'error');
+        showToast(describeDbError(err, 'Eroare la restaurare.'), 'error');
     }
 }
 
@@ -236,10 +242,14 @@ export async function handleConfirmPurge() {
     }
 
     try {
-        const { error } = await client
-            .from(table)
-            .delete()
-            .eq('id', id);
+        const { error } = await writeRows(
+            client
+                .from(table)
+                .delete()
+                .eq('id', id)
+                .select('id'),
+            { context: `ștergerea definitivă a elementului «${title}» din ${table}` }
+        );
 
         if (error) throw error;
 
@@ -247,7 +257,7 @@ export async function handleConfirmPurge() {
         closePurgeModal();
         await loadTrash();
     } catch (err) {
-        showToast(`Eroare la ștergerea definitivă: ${err.message}`, 'error');
+        showToast(describeDbError(err, 'Eroare la ștergerea definitivă.'), 'error');
     } finally {
         if (btnConfirm) {
             btnConfirm.disabled = false;
@@ -266,15 +276,35 @@ export async function handlePurgeOldTrash() {
     const oldItems = state.allTrashData.filter(it => it.deleted_at && (now - new Date(it.deleted_at).getTime()) > thirtyDaysMs);
 
     let purgedCount = 0;
+    const failed = [];
     for (const it of oldItems) {
         try {
-            await client.from(it.tabel).delete().eq('id', it.id);
+            // T-J2: .select('id') ca să numărăm doar ștergerile reușite
+            const { error } = await writeRows(
+                client
+                    .from(it.tabel)
+                    .delete()
+                    .eq('id', it.id)
+                    .select('id'),
+                { context: `ștergerea automată a elementului ${it.id} din ${it.tabel}` }
+            );
+
+            if (error) throw error;
             purgedCount++;
         } catch (e) {
-            // Continuă pentru celelalte
+            // Continuă pentru celelalte, dar reținem elementele pentru raport
+            failed.push(`${it.tabel}#${it.id}`);
         }
     }
 
-    showToast(`Au fost eliminate definitiv ${purgedCount} elemente expirate.`, 'info');
+    if (failed.length === 0) {
+        showToast(`Au fost eliminate definitiv ${purgedCount} elemente expirate.`, 'info');
+    } else {
+        showToast(
+            `Au fost eliminate definitiv ${purgedCount} din ${oldItems.length} elemente expirate. ` +
+            `${failed.length} au eșuat și au rămas în coș: ${failed.slice(0, 5).join(', ')}${failed.length > 5 ? '…' : ''}`,
+            'warning'
+        );
+    }
     await loadTrash();
 }

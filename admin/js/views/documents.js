@@ -8,6 +8,7 @@ import { client } from '../supabase.js';
 import { showToast } from '../ui/toast.js';
 import { el, clearElement } from '../lib/dom.js';
 import { openItemHistoryModal } from './history.js';
+import { writeRows, describeDbError } from '../lib/db.js';
 
 let editingDocId = null;
 
@@ -221,16 +222,24 @@ export async function handleSaveDoc(e) {
 
     try {
         if (editingDocId) {
-            const { error } = await client
-                .from('documente')
-                .update(payload)
-                .eq('id', editingDocId);
+            const { error } = await writeRows(
+                client
+                    .from('documente')
+                    .update(payload)
+                    .eq('id', editingDocId)
+                    .select('id'),
+                { context: 'actualizarea documentului' }
+            );
             if (error) throw error;
             showToast('Documentul a fost actualizat!', 'success');
         } else {
-            const { error } = await client
-                .from('documente')
-                .insert([payload]);
+            const { error } = await writeRows(
+                client
+                    .from('documente')
+                    .insert([payload])
+                    .select('id'),
+                { context: 'adăugarea documentului' }
+            );
             if (error) throw error;
             showToast('Documentul a fost adăugat!', 'success');
         }
@@ -238,17 +247,21 @@ export async function handleSaveDoc(e) {
         closeDocModal();
         await loadDocuments();
     } catch (err) {
-        showToast(`Eroare la salvare: ${err.message}`, 'error');
+        showToast(describeDbError(err, 'Documentul nu a putut fi salvat.'), 'error');
     }
 }
 
 export async function handleToggleDocPublish(doc) {
     try {
         const nextState = !doc.publicat;
-        const { error } = await client
-            .from('documente')
-            .update({ publicat: nextState })
-            .eq('id', doc.id);
+        const { error } = await writeRows(
+            client
+                .from('documente')
+                .update({ publicat: nextState })
+                .eq('id', doc.id)
+                .select('id'),
+            { context: 'schimbarea stării de publicare' }
+        );
 
         if (error) throw error;
 
@@ -256,7 +269,7 @@ export async function handleToggleDocPublish(doc) {
         renderDocumentsList();
         showToast('Starea de publicare a documentului a fost modificată.', 'info');
     } catch (err) {
-        showToast(`Eroare: ${err.message}`, 'error');
+        showToast(describeDbError(err, 'Starea documentului nu a putut fi modificată.'), 'error');
     }
 }
 
@@ -271,8 +284,17 @@ export async function handleReorderDoc(doc, delta) {
     const targetOrder = targetDoc.ordine;
 
     try {
-        await client.from('documente').update({ ordine: targetOrder }).eq('id', doc.id);
-        await client.from('documente').update({ ordine: currentOrder }).eq('id', targetDoc.id);
+        const { error: errUp } = await writeRows(
+            client.from('documente').update({ ordine: targetOrder }).eq('id', doc.id).select('id'),
+            { context: 'reordonarea documentelor' }
+        );
+        if (errUp) throw errUp;
+
+        const { error: errDown } = await writeRows(
+            client.from('documente').update({ ordine: currentOrder }).eq('id', targetDoc.id).select('id'),
+            { context: 'reordonarea documentelor' }
+        );
+        if (errDown) throw errDown;
 
         doc.ordine = targetOrder;
         targetDoc.ordine = currentOrder;
@@ -281,7 +303,7 @@ export async function handleReorderDoc(doc, delta) {
         renderDocumentsList();
         showToast('Ordinea documentelor a fost actualizată!', 'success');
     } catch (err) {
-        showToast(`Eroare la reordonare: ${err.message}`, 'error');
+        showToast(describeDbError(err, 'Ordinea documentelor nu a putut fi actualizată.'), 'error');
     }
 }
 
@@ -291,16 +313,20 @@ export async function handleDeleteDoc(doc) {
     }
 
     try {
-        const { error } = await client
-            .from('documente')
-            .update({ deleted_at: new Date().toISOString() })
-            .eq('id', doc.id);
+        const { error } = await writeRows(
+            client
+                .from('documente')
+                .update({ deleted_at: new Date().toISOString() })
+                .eq('id', doc.id)
+                .select('id'),
+            { context: 'arhivarea documentului' }
+        );
 
         if (error) throw error;
 
         showToast('Documentul a fost șters (mutat în arhivă).', 'info');
         await loadDocuments();
     } catch (err) {
-        showToast(`Eroare la ștergere: ${err.message}`, 'error');
+        showToast(describeDbError(err, 'Documentul nu a putut fi șters.'), 'error');
     }
 }

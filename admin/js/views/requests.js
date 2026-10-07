@@ -9,6 +9,7 @@ import { formatStatusLabel, formatDateTimeRo } from '../lib/format.js';
 import { renderPaginationControls } from '../ui/pagination.js';
 import { updateBulkActionsBar } from '../ui/bulkbar.js';
 import { openConvertMemberModal } from './members.js';
+import { writeRows, describeDbError } from '../lib/db.js';
 
 let currentFilteredRequests = [];
 
@@ -380,20 +381,25 @@ export async function handleSaveNotes(reqId, notesVal, btn) {
     btn.textContent = 'Salvare...';
 
     try {
-        const { error } = await client
-            .from('cereri_inscriere')
-            .update({ notite_interne: notesVal })
-            .eq('id', reqId);
+        // T-J2: .select('id') — fără el o scriere blocată de RLS ar apărea ca succes
+        const { error } = await writeRows(
+            client
+                .from('cereri_inscriere')
+                .update({ notite_interne: notesVal })
+                .eq('id', reqId)
+                .select('id'),
+            { context: 'salvarea notițelor interne' }
+        );
 
         if (error) {
-            showToast('Eroare la salvare: ' + error.message, 'error');
+            showToast(describeDbError(error, 'Eroare la salvarea notițelor.'), 'error');
             return;
         }
 
         showToast('Notițele interne au fost salvate!', 'success');
         await loadRequests();
     } catch (err) {
-        showToast('Eroare de conexiune la salvarea notițelor.', 'error');
+        showToast(describeDbError(err, 'Eroare de conexiune la salvarea notițelor.'), 'error');
     } finally {
         btn.disabled = false;
         btn.textContent = prev;
@@ -409,24 +415,28 @@ export async function handleSetRequestStatus(reqId, newStatus, btn) {
         const { data: { user } } = await client.auth.getUser();
         const currentUserId = user ? user.id : null;
 
-        const { error } = await client
-            .from('cereri_inscriere')
-            .update({
-                status: newStatus,
-                procesat_la: new Date().toISOString(),
-                procesat_de: currentUserId
-            })
-            .eq('id', reqId);
+        const { error } = await writeRows(
+            client
+                .from('cereri_inscriere')
+                .update({
+                    status: newStatus,
+                    procesat_la: new Date().toISOString(),
+                    procesat_de: currentUserId
+                })
+                .eq('id', reqId)
+                .select('id'),
+            { context: `actualizarea statusului cererii la „${formatStatusLabel(newStatus)}”` }
+        );
 
         if (error) {
-            showToast('Eroare la actualizare: ' + error.message, 'error');
+            showToast(describeDbError(error, 'Eroare la actualizarea cererii.'), 'error');
             return;
         }
 
         showToast(`Cerere actualizată: ${formatStatusLabel(newStatus)}`, 'success');
         await loadRequests();
     } catch (err) {
-        showToast('Eroare de conexiune la modificarea statusului.', 'error');
+        showToast(describeDbError(err, 'Eroare de conexiune la modificarea statusului.'), 'error');
     } finally {
         btn.disabled = false;
         btn.textContent = prev;
@@ -439,20 +449,24 @@ export async function handleDeleteRequest(reqId, btn) {
     btn.textContent = 'Ștergere...';
 
     try {
-        const { error } = await client
-            .from('cereri_inscriere')
-            .delete()
-            .eq('id', reqId);
+        const { error } = await writeRows(
+            client
+                .from('cereri_inscriere')
+                .delete()
+                .eq('id', reqId)
+                .select('id'),
+            { context: 'ștergerea definitivă a cererii' }
+        );
 
         if (error) {
-            showToast('Eroare la ștergere: ' + error.message, 'error');
+            showToast(describeDbError(error, 'Eroare la ștergerea cererii.'), 'error');
             return;
         }
 
         showToast('Cererea a fost ștearsă definitiv.', 'success');
         await loadRequests();
     } catch (err) {
-        showToast('Eroare de conexiune la ștergerea cererii.', 'error');
+        showToast(describeDbError(err, 'Eroare de conexiune la ștergerea cererii.'), 'error');
     } finally {
         btn.disabled = false;
         btn.textContent = prev;

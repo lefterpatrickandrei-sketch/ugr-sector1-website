@@ -12,6 +12,7 @@ import { state } from '../state.js';
 import { client } from '../supabase.js';
 import { showToast, setBannerFeedback, clearBannerFeedback } from '../ui/toast.js';
 import { el, clearElement } from '../lib/dom.js';
+import { writeRows, describeDbError } from '../lib/db.js';
 
 let isDirty = false;
 let currentTab = 'acasa';
@@ -643,13 +644,18 @@ export async function handleSaveCurrentPage() {
     const cheie = `pagina_${currentTab}`;
 
     try {
-        const { error } = await client
-            .from('setari')
-            .upsert({
-                cheie,
-                valoare: payload,
-                actualizat_la: new Date().toISOString()
-            }, { onConflict: 'cheie' });
+        // T-J2: .select('cheie') după upsert ca să putem confirma că rândul a fost scris
+        const { error } = await writeRows(
+            client
+                .from('setari')
+                .upsert({
+                    cheie,
+                    valoare: payload,
+                    actualizat_la: new Date().toISOString()
+                }, { onConflict: 'cheie' })
+                .select('cheie'),
+            { context: `salvarea paginii „${getTabLabel(currentTab)}”` }
+        );
 
         if (error) throw error;
 
@@ -660,7 +666,7 @@ export async function handleSaveCurrentPage() {
         setDirtyState(false);
         showToast(`Pagina „${getTabLabel(currentTab)}” a fost salvată cu succes!`, 'success');
     } catch (err) {
-        showToast(`Eroare la salvare: ${err.message}`, 'error');
+        showToast(describeDbError(err, 'Eroare la salvare.'), 'error');
     }
 }
 
@@ -678,9 +684,13 @@ export async function handleSaveAllPages() {
             actualizat_la: new Date().toISOString()
         }));
 
-        const { error } = await client
-            .from('setari')
-            .upsert(updates, { onConflict: 'cheie' });
+        const { error } = await writeRows(
+            client
+                .from('setari')
+                .upsert(updates, { onConflict: 'cheie' })
+                .select('cheie'),
+            { context: 'salvarea tuturor paginilor', expect: updates.length }
+        );
 
         if (error) throw error;
 
@@ -692,7 +702,7 @@ export async function handleSaveAllPages() {
         setDirtyState(false);
         showToast('Toate cele 5 pagini au fost sincronizate cu succes în Supabase!', 'success');
     } catch (err) {
-        showToast(`Eroare la salvare: ${err.message}`, 'error');
+        showToast(describeDbError(err, 'Eroare la salvare.'), 'error');
     }
 }
 

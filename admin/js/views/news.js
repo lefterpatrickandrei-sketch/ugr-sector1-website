@@ -11,6 +11,7 @@ import { updateBulkActionsBar } from '../ui/bulkbar.js';
 import { updateNewsImageLivePreview } from '../ui/media.js';
 import { renderMarkdownLite, clearElement } from '../lib/dom.js';
 import { openItemHistoryModal } from './history.js';
+import { writeRows, describeDbError } from '../lib/db.js';
 
 
 export const OFFICIAL_FALLBACK_NEWS = [
@@ -950,34 +951,44 @@ export async function handleSaveNews() {
         };
 
         if (editingNewsId) {
-            const { error } = await client
-                .from('stiri')
-                .update(payload)
-                .eq('id', editingNewsId);
+            const { error } = await writeRows(
+                client
+                    .from('stiri')
+                    .update(payload)
+                    .eq('id', editingNewsId)
+                    .select('id'),
+                { context: 'actualizarea știrii' }
+            );
 
             if (error) {
-                showToast('Eroare: ' + error.message, 'error');
+                const msg = describeDbError(error, 'Știrea nu a putut fi actualizată.');
+                showToast(msg, 'error');
                 const fb = document.getElementById('modal-news-feedback');
                 if (fb) {
                     fb.style.display = 'block';
                     fb.className = 'feedback-banner error';
-                    fb.textContent = 'Eroare la salvare: ' + error.message;
+                    fb.textContent = 'Eroare la salvare: ' + msg;
                 }
                 return;
             }
             showToast('Știrea a fost actualizată!', 'success');
         } else {
-            const { error } = await client
-                .from('stiri')
-                .insert([payload]);
+            const { error } = await writeRows(
+                client
+                    .from('stiri')
+                    .insert([payload])
+                    .select('id'),
+                { context: 'adăugarea știrii' }
+            );
 
             if (error) {
-                showToast('Eroare: ' + error.message, 'error');
+                const msg = describeDbError(error, 'Știrea nu a putut fi publicată.');
+                showToast(msg, 'error');
                 const fb = document.getElementById('modal-news-feedback');
                 if (fb) {
                     fb.style.display = 'block';
                     fb.className = 'feedback-banner error';
-                    fb.textContent = 'Eroare la salvare: ' + error.message;
+                    fb.textContent = 'Eroare la salvare: ' + msg;
                 }
                 return;
             }
@@ -1003,13 +1014,17 @@ export async function handleToggleNewsPublish(newsId, newStatus, btn) {
     }
 
     try {
-        const { error } = await client
-            .from('stiri')
-            .update({ publicat: newStatus })
-            .eq('id', newsId);
+        const { error } = await writeRows(
+            client
+                .from('stiri')
+                .update({ publicat: newStatus })
+                .eq('id', newsId)
+                .select('id'),
+            { context: 'schimbarea stării de publicare a știrii' }
+        );
 
         if (error) {
-            showToast('Eroare la actualizare: ' + error.message, 'error');
+            showToast(describeDbError(error, 'Starea știrii nu a putut fi modificată.'), 'error');
             return;
         }
 
@@ -1031,13 +1046,17 @@ export async function handleDeleteNews(newsId, btn) {
     }
 
     try {
-        const { error } = await client
-            .from('stiri')
-            .update({ deleted_at: new Date().toISOString() })
-            .eq('id', newsId);
+        const { error } = await writeRows(
+            client
+                .from('stiri')
+                .update({ deleted_at: new Date().toISOString() })
+                .eq('id', newsId)
+                .select('id'),
+            { context: 'arhivarea știrii' }
+        );
 
         if (error) {
-            showToast('Eroare la ștergere: ' + error.message, 'error');
+            showToast(describeDbError(error, 'Știrea nu a putut fi ștearsă.'), 'error');
             return;
         }
 

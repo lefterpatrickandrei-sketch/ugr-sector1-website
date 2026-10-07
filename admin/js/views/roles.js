@@ -7,6 +7,7 @@ import { state } from '../state.js';
 import { client } from '../supabase.js';
 import { showToast, setBannerFeedback, clearBannerFeedback } from '../ui/toast.js';
 import { el, clearElement } from '../lib/dom.js';
+import { writeRows, describeDbError } from '../lib/db.js';
 
 export async function loadAdmins() {
     const list = document.getElementById('roles-table-body');
@@ -181,49 +182,61 @@ export async function handleDeleteAdmin(adminId, adminEmail) {
     }
 
     try {
-        const { error } = await client
-            .from('admini')
-            .delete()
-            .eq('id', adminId);
+        const { error } = await writeRows(
+            client
+                .from('admini')
+                .delete()
+                .eq('id', adminId)
+                .select('id'),
+            { context: `eliminarea administratorului «${adminEmail}»` }
+        );
 
         if (error) throw error;
 
         showToast(`Administratorul «${adminEmail}» a fost eliminat.`, 'info');
         await loadAdmins();
     } catch (err) {
-        showToast(`Eroare la eliminarea administratorului: ${err.message}`, 'error');
+        showToast(describeDbError(err, 'Eroare la eliminarea administratorului.'), 'error');
     }
 }
 
 export async function handleUpdateAdminRole(adminId, newRole) {
     try {
-        const { error } = await client
-            .from('admini')
-            .update({ rol: newRole })
-            .eq('id', adminId);
+        const { error } = await writeRows(
+            client
+                .from('admini')
+                .update({ rol: newRole })
+                .eq('id', adminId)
+                .select('id'),
+            { context: `actualizarea rolului la „${newRole}”` }
+        );
 
         if (error) throw error;
 
         showToast(`Rolul a fost actualizat la «${newRole}».`, 'success');
         await loadAdmins();
     } catch (err) {
-        showToast(`Eroare la actualizarea rolului: ${err.message}`, 'error');
+        showToast(describeDbError(err, 'Eroare la actualizarea rolului.'), 'error');
     }
 }
 
 export async function handleToggleAdminActive(adminId, nextActiveState) {
     try {
-        const { error } = await client
-            .from('admini')
-            .update({ activ: nextActiveState })
-            .eq('id', adminId);
+        const { error } = await writeRows(
+            client
+                .from('admini')
+                .update({ activ: nextActiveState })
+                .eq('id', adminId)
+                .select('id'),
+            { context: `schimbarea stării în ${nextActiveState ? 'Activ' : 'Inactiv'}` }
+        );
 
         if (error) throw error;
 
         showToast(`Starea administratorului a fost schimbată la: ${nextActiveState ? 'Activ' : 'Inactiv'}.`, 'info');
         await loadAdmins();
     } catch (err) {
-        showToast(`Eroare: ${err.message}`, 'error');
+        showToast(describeDbError(err, 'Eroare la schimbarea stării.'), 'error');
     }
 }
 
@@ -257,17 +270,24 @@ export async function handleSaveNewAdmin(e) {
     }
 
     try {
-        const { error } = await client
-            .from('admini')
-            .insert([{
-                email,
-                rol,
-                activ: true
-            }]);
+        const { error } = await writeRows(
+            client
+                .from('admini')
+                .insert([{
+                    email,
+                    rol,
+                    activ: true
+                }])
+                .select('id'),
+            { context: `adăugarea administratorului «${email}»` }
+        );
 
         if (error) {
             if (error.message && error.message.includes('user_id') && error.message.includes('not-null')) {
                 throw new Error('Coloana user_id din PostgreSQL necesită aplicarea migrării 007 (ALTER TABLE admini ALTER COLUMN user_id DROP NOT NULL).');
+            }
+            if (error.code === '23505') {
+                throw new Error(`Adresa «${email}» există deja în lista de administratori.`);
             }
             throw error;
         }
@@ -276,6 +296,6 @@ export async function handleSaveNewAdmin(e) {
         closeAddAdminModal();
         await loadAdmins();
     } catch (err) {
-        showToast(`Eroare la adăugarea administratorului: ${err.message}`, 'error');
+        showToast(describeDbError(err, 'Eroare la adăugarea administratorului.'), 'error');
     }
 }

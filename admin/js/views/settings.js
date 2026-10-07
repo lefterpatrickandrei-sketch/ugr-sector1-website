@@ -7,6 +7,7 @@ import { state } from '../state.js';
 import { client } from '../supabase.js';
 import { showToast, setBannerFeedback, clearBannerFeedback } from '../ui/toast.js';
 import { el, clearElement } from '../lib/dom.js';
+import { writeRows, describeDbError } from '../lib/db.js';
 
 let isDirty = false;
 
@@ -241,10 +242,15 @@ export async function handleSaveSettings() {
             { cheie: 'telemetrie_sector1', valoare: updatedTelemetrie, descriere: 'Repere geodezice și stații ROMPOS Sector 1' }
         ];
 
+        // T-J2: .select('cheie') după upsert pentru a confirma scrierea fiecărei chei
         for (const item of updates) {
-            const { error: upsertErr } = await client
-                .from('setari')
-                .upsert(item, { onConflict: 'cheie' });
+            const { error: upsertErr } = await writeRows(
+                client
+                    .from('setari')
+                    .upsert(item, { onConflict: 'cheie' })
+                    .select('cheie'),
+                { context: `salvarea setării „${item.cheie}”` }
+            );
 
             if (upsertErr) throw upsertErr;
         }
@@ -258,8 +264,9 @@ export async function handleSaveSettings() {
         showToast('Setările filialei au fost salvate cu succes în Supabase!', 'success');
         setBannerFeedback(feedback, 'Toate modificările au fost sincronizate cu baza de date.', 'success');
     } catch (err) {
-        showToast(`Eroare la salvare: ${err.message}`, 'error');
-        setBannerFeedback(feedback, `Eroare la salvarea setărilor: ${err.message}`, 'error');
+        const message = describeDbError(err, 'Eroare la salvarea setărilor.');
+        showToast(message, 'error');
+        setBannerFeedback(feedback, message, 'error');
     } finally {
         if (btnSave) {
             btnSave.disabled = false;

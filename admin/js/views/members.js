@@ -11,6 +11,7 @@ import { updateBulkActionsBar } from '../ui/bulkbar.js';
 import { parseCsv } from '../lib/csv.js';
 import { el, clearElement } from '../lib/dom.js';
 import { openItemHistoryModal } from './history.js';
+import { writeRows, describeDbError } from '../lib/db.js';
 
 let editingMemberId = null;
 let convertingRequest = null;
@@ -435,41 +436,49 @@ export async function handleSaveMember() {
 
     try {
         if (editingMemberId) {
-            const { error } = await client
-                .from('membri')
-                .update({
-                    nume: numeVal,
-                    judet: judetVal,
-                    serie_autorizatie: serieVal,
-                    categorie: categorieVal,
-                    status: statusVal,
-                    afisare_publica: publicVal
-                })
-                .eq('id', editingMemberId);
+            const { error } = await writeRows(
+                client
+                    .from('membri')
+                    .update({
+                        nume: numeVal,
+                        judet: judetVal,
+                        serie_autorizatie: serieVal,
+                        categorie: categorieVal,
+                        status: statusVal,
+                        afisare_publica: publicVal
+                    })
+                    .eq('id', editingMemberId)
+                    .select('id'),
+                { context: 'actualizarea membrului' }
+            );
 
             if (error) {
-                showToast('Eroare: ' + error.message, 'error');
+                showToast(describeDbError(error, 'Membrul nu a putut fi actualizat.'), 'error');
                 return;
             }
             showToast(`Membrul «${numeVal}» a fost actualizat cu succes!`, 'success');
         } else {
-            const { error } = await client
-                .from('membri')
-                .insert([{
-                    id: idVal,
-                    nume: numeVal,
-                    judet: judetVal,
-                    serie_autorizatie: serieVal,
-                    categorie: categorieVal,
-                    status: statusVal,
-                    afisare_publica: publicVal
-                }]);
+            const { error } = await writeRows(
+                client
+                    .from('membri')
+                    .insert([{
+                        id: idVal,
+                        nume: numeVal,
+                        judet: judetVal,
+                        serie_autorizatie: serieVal,
+                        categorie: categorieVal,
+                        status: statusVal,
+                        afisare_publica: publicVal
+                    }])
+                    .select('id'),
+                { context: 'adăugarea membrului' }
+            );
 
             if (error) {
                 if (error.code === '23505' || (error.message && error.message.includes('unique'))) {
                     showToast(`ID-ul «${idVal}» există deja. Alegeți alt ID.`, 'error');
                 } else {
-                    showToast('Eroare: ' + error.message, 'error');
+                    showToast(describeDbError(error, 'Membrul nu a putut fi adăugat.'), 'error');
                 }
                 return;
             }
@@ -486,16 +495,20 @@ export async function handleSaveMember() {
                         ? `${convertingRequest.notite_interne}\n\n${noteAdd}`
                         : noteAdd;
 
-                    await client
-                        .from('cereri_inscriere')
-                        .update({
-                            status: 'aprobat',
-                            membru_id: idVal,
-                            notite_interne: updatedNotes,
-                            procesat_la: nowIso,
-                            procesat_de: adminEmail
-                        })
-                        .eq('id', reqId);
+                    await writeRows(
+                        client
+                            .from('cereri_inscriere')
+                            .update({
+                                status: 'aprobat',
+                                membru_id: idVal,
+                                notite_interne: updatedNotes,
+                                procesat_la: nowIso,
+                                procesat_de: adminEmail
+                            })
+                            .eq('id', reqId)
+                            .select('id'),
+                        { context: 'finalizarea cererii de înscriere' }
+                    );
 
                     await client
                         .from('audit_log')
@@ -540,13 +553,17 @@ export async function handleToggleMemberVisibility(memberId, newVisibility, btn)
     }
 
     try {
-        const { error } = await client
-            .from('membri')
-            .update({ afisare_publica: newVisibility })
-            .eq('id', memberId);
+        const { error } = await writeRows(
+            client
+                .from('membri')
+                .update({ afisare_publica: newVisibility })
+                .eq('id', memberId)
+                .select('id'),
+            { context: 'actualizarea vizibilității membrului' }
+        );
 
         if (error) {
-            showToast('Eroare la actualizarea vizibilității: ' + error.message, 'error');
+            showToast(describeDbError(error, 'Vizibilitatea nu a putut fi actualizată.'), 'error');
             return;
         }
 
@@ -568,13 +585,17 @@ export async function handleDeleteMember(memberId, btn) {
     }
 
     try {
-        const { error } = await client
-            .from('membri')
-            .update({ deleted_at: new Date().toISOString() })
-            .eq('id', memberId);
+        const { error } = await writeRows(
+            client
+                .from('membri')
+                .update({ deleted_at: new Date().toISOString() })
+                .eq('id', memberId)
+                .select('id'),
+            { context: 'mutarea membrului în arhivă' }
+        );
 
         if (error) {
-            showToast('Eroare la ștergere: ' + error.message, 'error');
+            showToast(describeDbError(error, 'Membrul nu a putut fi arhivat.'), 'error');
             return;
         }
 
@@ -730,9 +751,13 @@ export async function handleCommitCsvImport() {
     }
 
     try {
-        const { error } = await client
-            .from('membri')
-            .insert(pendingCsvImportRows);
+        const { error } = await writeRows(
+            client
+                .from('membri')
+                .insert(pendingCsvImportRows)
+                .select('id'),
+            { context: 'importul CSV de membri', expect: pendingCsvImportRows.length }
+        );
 
         if (error) throw error;
 

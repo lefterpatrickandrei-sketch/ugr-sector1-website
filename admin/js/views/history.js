@@ -7,6 +7,7 @@ import { state } from '../state.js';
 import { client } from '../supabase.js';
 import { showToast } from '../ui/toast.js';
 import { el, clearElement } from '../lib/dom.js';
+import { writeRows, describeDbError } from '../lib/db.js';
 
 let activeHistoryContext = null;
 
@@ -192,10 +193,14 @@ export async function handleRestoreSnapshot(snapshot, snapshotDate) {
     delete cleanPayload.actualizat_la;
 
     try {
-        const { error } = await client
-            .from(table)
-            .update(cleanPayload)
-            .eq('id', rowId);
+        const { error } = await writeRows(
+            client
+                .from(table)
+                .update(cleanPayload)
+                .eq('id', rowId)
+                .select('id'),
+            { context: 'restaurarea versiunii anterioare' }
+        );
 
         if (error) throw error;
 
@@ -205,6 +210,6 @@ export async function handleRestoreSnapshot(snapshot, snapshotDate) {
         // Refresh corespunzător dacă utilizatorul e pe o vedere deschisă
         window.dispatchEvent(new CustomEvent('ugr:item-restored', { detail: { table, rowId } }));
     } catch (err) {
-        showToast(`Eroare la restaurarea versiunii: ${err.message}`, 'error');
+        showToast(describeDbError(err, 'Versiunea anterioară nu a putut fi restaurată.'), 'error');
     }
 }

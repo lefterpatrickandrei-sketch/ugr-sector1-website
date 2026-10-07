@@ -8,6 +8,7 @@ import { state } from '../state.js';
 import { client, SUPABASE_URL, ANON_KEY } from '../supabase.js';
 import { showToast } from '../ui/toast.js';
 import { el, clearElement } from '../lib/dom.js';
+import { writeRows, describeDbError } from '../lib/db.js';
 
 let currentCoderTable = 'membri';
 let coderTableData = [];
@@ -222,15 +223,21 @@ export async function handleSaveCoderJson() {
         const idCol = tableName === 'setari' ? 'cheie' : 'id';
         const idVal = row[idCol];
 
-        const { error } = await client
-            .from(tableName)
-            .update(parsed)
-            .eq(idCol, idVal);
+        // T-J2: .select() obligatoriu — fără el, RLS poate bloca scrierea
+        // iar API-ul răspunde { data: null, error: null } (salvare "fantomă").
+        const { error } = await writeRows(
+            client
+                .from(tableName)
+                .update(parsed)
+                .eq(idCol, idVal)
+                .select(idCol),
+            { context: `salvarea JSON în public.${tableName}` }
+        );
 
         if (error) {
             if (feedback) {
                 feedback.className = 'text-danger';
-                feedback.textContent = 'Eroare Supabase RLS / DB: ' + error.message;
+                feedback.textContent = describeDbError(error, 'Eroare Supabase RLS / DB: ' + error.message);
             }
             return;
         }
@@ -242,7 +249,7 @@ export async function handleSaveCoderJson() {
     } catch (err) {
         if (feedback) {
             feedback.className = 'text-danger';
-            feedback.textContent = 'Eroare la salvare: ' + err.message;
+            feedback.textContent = describeDbError(err, 'Eroare la salvare: ' + err.message);
         }
     } finally {
         if (btnSave) {

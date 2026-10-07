@@ -8,6 +8,7 @@ import { client } from '../supabase.js';
 import { showToast } from '../ui/toast.js';
 import { el, clearElement, renderMarkdownLite } from '../lib/dom.js';
 import { openItemHistoryModal } from './history.js';
+import { writeRows, describeDbError } from '../lib/db.js';
 
 let editingFaqId = null;
 
@@ -221,16 +222,24 @@ export async function handleSaveFaq(e) {
 
     try {
         if (editingFaqId) {
-            const { error } = await client
-                .from('faq')
-                .update(payload)
-                .eq('id', editingFaqId);
+            const { error } = await writeRows(
+                client
+                    .from('faq')
+                    .update(payload)
+                    .eq('id', editingFaqId)
+                    .select('id'),
+                { context: 'actualizarea întrebării frecvente' }
+            );
             if (error) throw error;
             showToast('Întrebarea frecventă a fost actualizată!', 'success');
         } else {
-            const { error } = await client
-                .from('faq')
-                .insert([payload]);
+            const { error } = await writeRows(
+                client
+                    .from('faq')
+                    .insert([payload])
+                    .select('id'),
+                { context: 'adăugarea întrebării frecvente' }
+            );
             if (error) throw error;
             showToast('Întrebarea frecventă a fost adăugată!', 'success');
         }
@@ -238,17 +247,21 @@ export async function handleSaveFaq(e) {
         closeFaqModal();
         await loadFaq();
     } catch (err) {
-        showToast(`Eroare la salvare: ${err.message}`, 'error');
+        showToast(describeDbError(err, 'Întrebarea nu a putut fi salvată.'), 'error');
     }
 }
 
 export async function handleToggleFaqPublish(faqItem) {
     try {
         const nextState = !faqItem.publicat;
-        const { error } = await client
-            .from('faq')
-            .update({ publicat: nextState })
-            .eq('id', faqItem.id);
+        const { error } = await writeRows(
+            client
+                .from('faq')
+                .update({ publicat: nextState })
+                .eq('id', faqItem.id)
+                .select('id'),
+            { context: 'schimbarea stării de publicare' }
+        );
 
         if (error) throw error;
 
@@ -256,7 +269,7 @@ export async function handleToggleFaqPublish(faqItem) {
         renderFaqList();
         showToast(`Starea de publicare a fost modificată.`, 'info');
     } catch (err) {
-        showToast(`Eroare: ${err.message}`, 'error');
+        showToast(describeDbError(err, 'Starea întrebării nu a putut fi modificată.'), 'error');
     }
 }
 
@@ -271,8 +284,17 @@ export async function handleReorderFaq(faqItem, delta) {
     const targetOrder = targetFaq.ordine;
 
     try {
-        await client.from('faq').update({ ordine: targetOrder }).eq('id', faqItem.id);
-        await client.from('faq').update({ ordine: currentOrder }).eq('id', targetFaq.id);
+        const { error: errUp } = await writeRows(
+            client.from('faq').update({ ordine: targetOrder }).eq('id', faqItem.id).select('id'),
+            { context: 'reordonarea întrebărilor' }
+        );
+        if (errUp) throw errUp;
+
+        const { error: errDown } = await writeRows(
+            client.from('faq').update({ ordine: currentOrder }).eq('id', targetFaq.id).select('id'),
+            { context: 'reordonarea întrebărilor' }
+        );
+        if (errDown) throw errDown;
 
         faqItem.ordine = targetOrder;
         targetFaq.ordine = currentOrder;
@@ -281,7 +303,7 @@ export async function handleReorderFaq(faqItem, delta) {
         renderFaqList();
         showToast('Ordinea întrebărilor a fost actualizată!', 'success');
     } catch (err) {
-        showToast(`Eroare la reordonare: ${err.message}`, 'error');
+        showToast(describeDbError(err, 'Ordinea întrebărilor nu a putut fi actualizată.'), 'error');
     }
 }
 
@@ -291,16 +313,20 @@ export async function handleDeleteFaq(faqItem) {
     }
 
     try {
-        const { error } = await client
-            .from('faq')
-            .update({ deleted_at: new Date().toISOString() })
-            .eq('id', faqItem.id);
+        const { error } = await writeRows(
+            client
+                .from('faq')
+                .update({ deleted_at: new Date().toISOString() })
+                .eq('id', faqItem.id)
+                .select('id'),
+            { context: 'arhivarea întrebării frecvente' }
+        );
 
         if (error) throw error;
 
         showToast('Întrebarea a fost ștearsă (mutată în arhivă).', 'info');
         await loadFaq();
     } catch (err) {
-        showToast(`Eroare la ștergere: ${err.message}`, 'error');
+        showToast(describeDbError(err, 'Întrebarea nu a putut fi ștearsă.'), 'error');
     }
 }
