@@ -457,6 +457,13 @@ Cu `shouldCreateUser: false`, un email care nu există încă în `auth.users` n
 
 De verificat în Supabase Auth: „Allow new users to sign up" = **OFF**, „Confirm email" = **ON**.
 
+**Confirmat prin test live** (`POST /auth/v1/signup`, atât cu email existent, cât și cu email nou):
+```json
+{"code":422,"error_code":"signup_disabled","msg":"Signups not allowed for this instance"}
+```
+
+Configurația e corectă pentru securitate, dar are o consecință operațională: **un administrator invitat nu își poate crea singur contul.** Ca să intre în panou, contul trebuie creat din Supabase Dashboard → Authentication → Users → Add user, cu „Auto Confirm User" bifat. Alternativa e activarea temporară a signup-ului, care ar deschide o fereastră în care orice vizitator care află URL-ul proiectului poate crea conturi.
+
 ## D6 — CSP pentru panou
 
 `admin/panou.html` are mult JavaScript inline. Tratat separat de T-J11, care a rezolvat doar supply chain-ul bibliotecii.
@@ -465,13 +472,23 @@ De verificat în Supabase Auth: „Allow new users to sign up" = **OFF**, „Con
 
 `008_security_hardening_rollback.sql` R-6 restaurează politicile **deschise** pe storage, R-4 `USING (true)` pe `setari`, R-5 politicile anon fără `deleted_at`. Sunt fișierul de siguranță, nu o opțiune de rollback curentă. Dacă R-6 ajunge în producție, Q4-ul devine „cine poate șterge fișiere din bucket".
 
-## D8 — `main.js`: doi ascultători pe butonul de submit
+## D8 — `main.js`: doi ascultători pe butonul de submit — **REPARAT** (`8cda38d`)
 
-La T-J4 s-a constatat că `main.js:834-835` atașează `handleSaveNewAdmin` atât pe `submit`-ul formularului, cât și pe `click`-ul butonului, deci handlerul se execută de două ori. Am adăugat gardul `isSavingAdmin` în `roles.js` — corect local. **Cauza de bază (dublul ascultător) e încă în `main.js`**; merită verificat dacă există și alți butoane cu aceeași problemă.
+La T-J4 s-a constatat că `main.js:834-835` atașează `handleSaveNewAdmin` atât pe `submit`-ul formularului, cât și pe `click`-ul butonului, deci handlerul se execută de două ori. Gardul `isSavingAdmin` din `roles.js` masca simptomul, dar cauza de bază era încă în `main.js`.
 
-## D9 — Ordine `applyCustomPageData` vs `renderEventsTimeline`
+**Scanarea tuturor celor 10 butoane `type="submit"` din panou a găsit trei, nu unul:**
 
-Raportat, **fără modificare de comportament**, conform cerinței.
+| Formular | Handler | Gravitate |
+|---|---|---|
+| `form-news` | `handleSaveNews` | **negardat — articol nou = două INSERT = duplicat în `stiri`** |
+| `form-update-password` | `handleUpdatePassword` | negardat, două cereri de modificare parolă |
+| `form-add-admin` | `handleSaveNewAdmin` | mascat de `isSavingAdmin`, dar două cereri |
+
+Reparat prin eliminarea celor trei ascultători `click` și a celor trei `const` nefolosite. Cazul `form-news` era cel mai grav și nu avea nicio protecție.
+
+## D9 — Ordine `applyCustomPageData` vs `renderEventsTimeline` — **REPARAT** (`d2b2b3d`)
+
+Raportat inițial **fără modificare de comportament**, conform cerinței. Ulterior reparat.
 
 Ambele ating `.events-timeline-item`, prin mecanisme diferite:
 - `applyCustomPageData('pagina_evenimente')` scrie `textContent` **pornind de la index** pe nodurile existente din `#view-evenimente`.
@@ -483,7 +500,22 @@ Deci: dacă `stiri` se încarcă **înainte** de `setari`,Timeline-ul din `stiri
 
 În `index.html` există 6 `.events-timeline-item`, iar panoul trimite 6 elemente `events` — astăzi numerele se potrivesc. Dacă panoul va avea mai multe evenimente decât știri publicate, `applyCustomPageData` le va ignora în tăcere (bucla `if (eventNodes[idx])`).
 
-**Recomandare pentru o decizie viitoare:** un singur punct de randare pentru timeline (ex. `applyCustomPageData` rulează la finalul unui `Promise.all`, nu într-un `forEach` concurent).
+**Recomandarea inițială a fost:** un singur punct de randare pentru timeline. **Implementată în `d2b2b3d`.** `applyCustomPageData('pagina_evenimente')` memorează acum valorile în `eventPanelOverrides` și apelează `renderEventsTimeline()`; un singur loc scrie acum în noduri, `applyEventPanelOverrides()`, invocat la finalul fiecărei randări. Cele două ordini de sosire conduc la același rezultat. Declararea `let` a fost mutată înaintea funcției, pentru a evita o referință din zona temporala moartă.
+
+## D10 — Politici corecte în DB, absente din repo — **NOU, neacționat**
+
+`cereri_inscriere` are patru politici create din Dashboard, absente din orice migrare din repository:
+
+| Politică | Cmd | Roluri | `WITH CHECK` |
+|---|---|---|---|
+| `cereri_public_insert` | INSERT | `{anon, authenticated}` | `consimtamant_gdpr IS TRUE AND status = 'in_asteptare'` |
+| `cereri_admin_select` | SELECT | `{authenticated}` | `is_admin()` |
+| `cereri_admin_update` | UPDATE | `{authenticated}` | `is_admin()` |
+| `cereri_admin_delete` | DELETE | `{authenticated}` | — |
+
+**Verificate ca fiind corecte.** Formularul public de înscriere funcționează: `script.js` nu trimite `status`, iar coloana are `'in_asteptare'::text` ca valoare implicită, deci politica e satisfăcută. Proiectarea e sănătoasă — sursa de adevăr pentru `status` stă în bază de date, nu în JavaScript, deci clientul nu poate forța o valoare pe care politica nu o acceptă.
+
+Problema nu e configurația, ci **versionarea**: o bază reconstituită din migrările din repo ar ajunge fără aceste politici și cu RLS activ — deci formularul public ar fi refuzat cu `42501`. Rezolvarea e D4 (export de bază din DB live).
 
 ---
 
