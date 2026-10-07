@@ -212,7 +212,9 @@ export function renderMediaPickerGrid(filter) {
     while (mediaPickerGrid.firstChild) mediaPickerGrid.removeChild(mediaPickerGrid.firstChild);
 
     const f = (filter || '').toLowerCase().trim();
-    const isOwner = state.adminRecord?.rol === 'owner' || state.adminRecord?.rol === 'admin';
+    // T-J4/A3: rolul legacy "admin" nu mai există (migrarea 008 convertește
+    // rândurile în "editor" și restrânge CHECK-ul la owner|editor|viewer).
+    const isOwner = state.adminRecord?.rol === 'owner';
 
     let allAssets = [];
     if (state.mediaActiveTab === 'remote') {
