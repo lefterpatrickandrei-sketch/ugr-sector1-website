@@ -140,7 +140,7 @@ SELECT tablename, policyname, cmd, roles, qual
 FROM pg_policies
 WHERE schemaname = 'public'
   AND tablename IN ('membri', 'stiri')
-  AND (roles @> ARRAY['anon'] OR roles @> ARRAY['public'])
+  AND (roles::text[] @> ARRAY['anon'] OR roles::text[] @> ARRAY['public'])
 ORDER BY tablename, policyname;
 
 
@@ -182,7 +182,7 @@ SELECT policyname, cmd, roles, qual, with_check,
 FROM pg_policies
 WHERE schemaname = 'storage'
   AND tablename = 'objects'
-  AND (roles @> ARRAY['anon'] OR roles @> ARRAY['authenticated'])
+  AND (roles::text[] @> ARRAY['anon'] OR roles::text[] @> ARRAY['authenticated'])
   AND (coalesce(qual, '') ILIKE '%media%'
        OR coalesce(with_check, '') ILIKE '%media%')
 ORDER BY policyname;
