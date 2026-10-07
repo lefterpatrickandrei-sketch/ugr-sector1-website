@@ -26,7 +26,19 @@ export const AVAILABLE_TABLES = [
     { id: 'audit_log', name: 'audit_log', label: 'Jurnal Audit' }
 ];
 
+// T-J10: singurul punct prin care o scriere poate ajunge într-o tabelă.
+// 'admini' nu apare în lista, deci nici măcar prin UI nu se poate ajunge la ea;
+// RLS rămâne autoritatea reală, dar o listă albă în cod oprește și o valoare
+// forțată din DOM (de ex. <select> modificat în DevTools).
+const EDITABLE_TABLES = AVAILABLE_TABLES.map(t => t.name);
+
 export async function loadCoderView() {
+    // T-J10: dublă verificare cu switchView. Aceasta prinde și cazul în care
+    // funcția e apelată direct dintr-un alt flux, nu doar prin navigație.
+    if (state.adminRecord?.rol !== 'owner') {
+        showToast('Această secțiune este rezervată rolului Owner.', 'warning');
+        return;
+    }
     setupCoderTabs();
     if (coderActiveTab === 'browser') {
         await loadCoderTableData(currentCoderTable);
@@ -63,6 +75,10 @@ function setupCoderTabs() {
 // ============================================================================
 
 export async function loadCoderTableData(tableName) {
+    // T-J10: același whitelist ca la salvarea JSON. Citarea e inofensivă, dar
+    // tabelul venit din DOM nu trebuie să depindă de un <select> de încredere.
+    const readTable = AVAILABLE_TABLES.some(t => t.name === tableName) ? tableName : 'membri';
+    tableName = readTable;
     currentCoderTable = tableName;
     const tableSelect = document.getElementById('coder-table-select');
     if (tableSelect) tableSelect.value = tableName;
@@ -202,6 +218,22 @@ export async function handleSaveCoderJson() {
 
     if (!coderEditingRow || !textarea) return;
     const { row, tableName } = coderEditingRow;
+
+    // T-J10: scriere directă în baza de date, fără formular și fără validare
+    // pe câmpuri. Se cere confirmare explicită și se verifică tabela.
+    if (EDITABLE_TABLES.indexOf(tableName) === -1) {
+        if (feedback) {
+            feedback.className = 'text-danger';
+            feedback.textContent = `Tabelul public.${tableName} nu este editabil din consolă.`;
+        }
+        return;
+    }
+    if (!window.confirm(
+        `Modifici direct rândul ${row[tableName === 'setari' ? 'cheie' : 'id']} din public.${tableName}.\n\n` +
+        'Modificarea este imediată și nu poate fi anulată. Continuă?'
+    )) {
+        return;
+    }
 
     let parsed = null;
     try {
