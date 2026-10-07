@@ -3046,6 +3046,74 @@ async function loadContentFromSupabase() {
     } catch (e) {}
 }
 
+// T-J8: cârligele de editare din panou.
+// Panoul (admin/js/views/pages.js) salvează în tabelul setari valori pe care
+// script.js nu le citea niciodată: editarea din interfață nu avea niciun efect
+// pe site. Fiecare element editabil din index.html poartă acum atributul
+// data-cp cu numele câmpului, iar funcțiile de mai jos îl Actualizează.
+// Textul implicit rămâne în HTML, deci fără JavaScript pagina arată aceleași date.
+
+// Doar cifrele, pentru partea de după "tel:" din href.
+function cpDigits(value) {
+    return String(value || '').replace(/\D+/g, '');
+}
+
+// Câmpul poate conține mai multe numere ("0726 390 774 / 0748 912 263"),
+// așa cum apare implicit în panou. Fiecare grup primește propriul link tel:.
+function cpPhoneChunks(value) {
+    return String(value || '')
+        .split(/[\/,;|·]+/)
+        .map(s => s.trim())
+        .filter(s => /\d/.test(s));
+}
+
+function cpSetText(field, value) {
+    if (typeof value !== 'string' || !value.trim()) return;
+    document.querySelectorAll(`[data-cp="${field}"]`).forEach(el => {
+        el.textContent = value.trim();
+    });
+}
+
+function cpSetTel(field, value) {
+    const chunks = cpPhoneChunks(value);
+    if (!chunks.length) return;
+    document.querySelectorAll(`[data-cp="${field}"]`).forEach(el => {
+        el.textContent = '';
+        chunks.forEach((chunk, idx) => {
+            const digits = cpDigits(chunk);
+            if (!digits) return;
+            if (idx > 0) el.appendChild(document.createTextNode(' / '));
+            const a = document.createElement('a');
+            a.setAttribute('href', 'tel:' + digits);
+            a.style.color = 'var(--ugr-cyan)';
+            a.style.textDecoration = 'none';
+            a.textContent = chunk;
+            el.appendChild(a);
+        });
+    });
+}
+
+function cpSetMail(field, value) {
+    const addr = String(value || '').trim();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(addr)) return;
+    document.querySelectorAll(`[data-cp="${field}"]`).forEach(el => {
+        if (el.tagName === 'A') el.setAttribute('href', 'mailto:' + addr);
+        el.textContent = addr;
+    });
+}
+
+// Butoanele "copiază" afișează valoarea și o trimit și către clipboard prin
+// onclick="copyToClipboard(this.dataset.cpPhone ...)". Textul și dataset-ul se
+// actualizează împreună, altfel s-ar copia numărul vechi.
+function cpSetCopyChip(field, value, attr) {
+    const val = String(value || '').trim();
+    if (!val) return;
+    document.querySelectorAll(`[data-cp="${field}"]`).forEach(el => {
+        el.textContent = val;
+        el.dataset[attr] = (attr === 'cpPhone' ? cpDigits(val) : val) || val;
+    });
+}
+
 function applyCustomPageData(cheie, val) {
     if (!val || typeof val !== 'object') return;
     try {
@@ -3283,6 +3351,8 @@ function applyCustomPageData(cheie, val) {
             if (bankIban && val.bankIban) bankIban.textContent = val.bankIban;
             const bankPurpose = document.querySelector('#m-cotizatii-block .m-cotizatii-bank em');
             if (bankPurpose && val.bankPurpose) bankPurpose.textContent = val.bankPurpose;
+            // T-J8: bankName se editează din tab-ul Membri, nu din Contact.
+            cpSetText('bankName', val.bankName);
 
         } else if (cheie === 'pagina_contact') {
             // 1. Hero
@@ -3304,7 +3374,23 @@ function applyCustomPageData(cheie, val) {
             const triageCentralTitle = document.querySelector('#view-contact .triaj-card-central h4');
             if (triageCentralTitle && val.triageCentralTitle) triageCentralTitle.textContent = val.triageCentralTitle;
 
-            // 3. Formular
+            // 3. Date de contact și puncte de întâlnire (T-J8)
+            cpSetText('addressAcademic', val.addressAcademic);
+            cpSetTel('contactPresidentPhone', val.contactPresidentPhone);
+            cpSetTel('contactSecretaryPhone', val.contactSecretaryPhone);
+            cpSetTel('contactCotizatiiPhone', val.contactCotizatiiPhone);
+            cpSetMail('contactEmailLocal', val.contactEmailLocal);
+            cpSetText('addressCentral', val.addressCentral);
+            cpSetTel('contactCentralPhone', val.contactCentralPhone);
+            cpSetMail('contactCentralEmail', val.contactCentralEmail);
+
+            // 4. Butoanele de copiere din cele două carduri de triaj
+            cpSetCopyChip('triageLocalPhone', val.triageLocalPhone, 'cpPhone');
+            cpSetCopyChip('triageLocalEmail', val.triageLocalEmail, 'cpEmail');
+            cpSetCopyChip('triageCentralPhone', val.triageCentralPhone, 'cpPhone');
+            cpSetCopyChip('triageCentralEmail', val.triageCentralEmail, 'cpEmail');
+
+            // 5. Formular
             const formTitle = document.querySelector('#view-contact .contact-glass-panel h3');
             if (formTitle && val.formTitle) formTitle.textContent = val.formTitle;
             const formDesc = document.querySelector('#view-contact .contact-glass-panel p');

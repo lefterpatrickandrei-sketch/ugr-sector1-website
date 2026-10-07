@@ -1113,7 +1113,9 @@
                         <div>
                             <span style="font-family: var(--font-mono); font-size: 10px; color: #00E5FF; font-weight: 700; text-transform: uppercase;">DATE BANCARE OFICIALE (UGR.RO):</span>
                             <div style="font-family: var(--font-mono); font-size: 12.5px; color: #fff; margin-top: 4px;">
-                                BRD Ag. Tei: <b style="color: #FFE082;">RO57 BRDE 426S V810 0757 4450</b>
+                                <!-- T-J8: bankName era editabil din panou (pagina_membri) dar nu avea
+                                     unde să apară; script.js scrie aici valoarea din setari. -->
+                                <span data-cp="bankName">BRD Ag. Tei</span>: <b style="color: #FFE082;">RO57 BRDE 426S V810 0757 4450</b>
                             </div>
                             <span style="font-size: 11px; color: rgba(250,251,252,0.65); display: block; margin-top: 4px;">Mențiune virament: <em>Nume Prenume / CNP / Cotizație Filiala Sector 1</em></span>
                         </div>
@@ -1277,10 +1279,13 @@
                             </ul>
                         </div>
                         <div class="triaj-actions">
-                            <button type="button" class="btn-copy-chip" onclick="copyToClipboard('0726390774', 'Telefon Președinte Sector 1', this)">
+                            <!-- T-J8: telefonul și emailul triajului sunt editabile din panou.
+                                 Valoarea copiată stă în dataset (nu în onclick), ca să poată fi
+                                 actualizată din setari fără rescrierea atributului inline. -->
+                            <button type="button" class="btn-copy-chip" data-cp="triageLocalPhone" data-cp-label="Telefon Filiala Sector 1" data-cp-phone="0726390774" onclick="copyToClipboard(this.dataset.cpPhone, this.dataset.cpLabel, this)">
                                 0726 390 774
                             </button>
-                            <button type="button" class="btn-copy-chip" onclick="copyToClipboard('filiala.ugr.s1@gmail.com', 'Email Filiala Sector 1', this)">
+                            <button type="button" class="btn-copy-chip" data-cp="triageLocalEmail" data-cp-label="Email Filiala Sector 1" data-cp-email="filiala.ugr.s1@gmail.com" onclick="copyToClipboard(this.dataset.cpEmail, this.dataset.cpLabel, this)">
                                 filiala.ugr.s1@gmail.com
                             </button>
                         </div>
@@ -1312,7 +1317,12 @@
                         </div>
                         <div class="triaj-actions">
                             <a href="https://ugr.ro" target="_blank" rel="noopener noreferrer" class="btn-secondary" style="padding: 6px 12px; font-size: 11px;">Portal ugr.ro ↗</a>
-                            <button type="button" class="btn-copy-chip" style="color: #F5D77F; border-color: rgba(197, 160, 89, 0.35); background: rgba(197, 160, 89, 0.08);" onclick="copyToClipboard('office@ugr.ro', 'Email Sediul Central', this)">
+                            <!-- T-J8: telefonul Sediului Central era editabil din panou
+                                 (pagina_contact.triageCentralPhone) dar nu avea buton în acest card. -->
+                            <button type="button" class="btn-copy-chip" data-cp="triageCentralPhone" data-cp-label="Telefon Sediu Central" data-cp-phone="0723587081" style="color: #F5D77F; border-color: rgba(197, 160, 89, 0.35); background: rgba(197, 160, 89, 0.08);" onclick="copyToClipboard(this.dataset.cpPhone, this.dataset.cpLabel, this)">
+                                0723 587 081
+                            </button>
+                            <button type="button" class="btn-copy-chip" data-cp="triageCentralEmail" data-cp-label="Email Sediu Central" data-cp-email="office@ugr.ro" style="color: #F5D77F; border-color: rgba(197, 160, 89, 0.35); background: rgba(197, 160, 89, 0.08);" onclick="copyToClipboard(this.dataset.cpEmail, this.dataset.cpLabel, this)">
                                 office@ugr.ro
                             </button>
                         </div>
@@ -1331,11 +1341,14 @@
                             <div class="contact-point-block" style="margin-bottom: 18px; padding-bottom: 18px; border-bottom: 1px solid rgba(255,255,255,0.08);">
                                 <div style="font-size: 12px; font-family: var(--font-mono); color: var(--ugr-cyan); font-weight: 700; text-transform: uppercase; margin-bottom: 8px;">Secretariat Filiala Sector 1</div>
                                 <div style="font-size: 13.5px; line-height: 1.7; color: #FAFBFC;">
-                                    <strong>Punct de Întâlnire &amp; Catedră:</strong> FIFIM — USAMV București, Bulevardul Mărăști nr. 59, Sector 1<br>
-                                    <strong>Președinte:</strong> Alexandru Dorin PĂUN · <a href="tel:0726390774" style="color: var(--ugr-cyan); text-decoration: none;">0726 390 774</a> / <a href="tel:0748912263" style="color: var(--ugr-cyan); text-decoration: none;">0748 912 263</a><br>
-                                    <strong>Secretar:</strong> Andra Teodora VIȘAN · <a href="tel:0764572874" style="color: var(--ugr-cyan); text-decoration: none;">0764 572 874</a><br>
-                                    <strong>Info Cotizații &amp; Taxe:</strong> Camelia MATEI · <a href="tel:0722684104" style="color: var(--ugr-cyan); text-decoration: none;">0722 684 104</a><br>
-                                    <strong>Email:</strong> <a href="mailto:filiala.ugr.s1@gmail.com" style="color: var(--ugr-cyan); text-decoration: none; font-weight: 600;">filiala.ugr.s1@gmail.com</a>
+                                    <!-- T-J8: fiecare valoare editabilă din panou are acum un cârlig
+                                         data-cp. Textul implicit rămâne în HTML, deci dacă script.js
+                                         nu se încarcă pagina arată aceleași date ca înainte. -->
+                                    <strong>Punct de Întâlnire &amp; Catedră:</strong> <span data-cp="addressAcademic">FIFIM — USAMV București, Bulevardul Mărăști nr. 59, Sector 1</span><br>
+                                    <strong>Președinte:</strong> Alexandru Dorin PĂUN · <span data-cp="contactPresidentPhone"><a href="tel:0726390774" style="color: var(--ugr-cyan); text-decoration: none;">0726 390 774</a> / <a href="tel:0748912263" style="color: var(--ugr-cyan); text-decoration: none;">0748 912 263</a></span><br>
+                                    <strong>Secretar:</strong> Andra Teodora VIȘAN · <span data-cp="contactSecretaryPhone"><a href="tel:0764572874" style="color: var(--ugr-cyan); text-decoration: none;">0764 572 874</a></span><br>
+                                    <strong>Info Cotizații &amp; Taxe:</strong> Camelia MATEI · <span data-cp="contactCotizatiiPhone"><a href="tel:0722684104" style="color: var(--ugr-cyan); text-decoration: none;">0722 684 104</a></span><br>
+                                    <strong>Email:</strong> <a data-cp="contactEmailLocal" href="mailto:filiala.ugr.s1@gmail.com" style="color: var(--ugr-cyan); text-decoration: none; font-weight: 600;">filiala.ugr.s1@gmail.com</a>
                                 </div>
                             </div>
 
@@ -1343,8 +1356,8 @@
                             <div class="contact-point-block" style="margin-bottom: 18px;">
                                 <div style="font-size: 12px; font-family: var(--font-mono); color: var(--ugr-hq-gold-bright); font-weight: 700; text-transform: uppercase; margin-bottom: 6px;">Sediul Central UGR (Palatul Geodeziei)</div>
                                 <div style="font-size: 14px; line-height: 1.6; color: rgba(250, 251, 252, 0.85);">
-                                    <strong>Adresă:</strong> Bulevardul Lacul Tei nr. 124, Sector 2, București<br>
-                                    <strong>Telefon:</strong> 0723 587 081 &nbsp;|&nbsp; <strong>Email:</strong> office@ugr.ro<br>
+                                    <strong>Adresă:</strong> <span data-cp="addressCentral">Bulevardul Lacul Tei nr. 124, Sector 2, București</span><br>
+                                    <strong>Telefon:</strong> <span data-cp="contactCentralPhone"><a href="tel:0723587081" style="color: var(--ugr-cyan); text-decoration: none;">0723 587 081</a></span> &nbsp;|&nbsp; <strong>Email:</strong> <a data-cp="contactCentralEmail" href="mailto:office@ugr.ro" style="color: var(--ugr-cyan); text-decoration: none; font-weight: 600;">office@ugr.ro</a><br>
                                     <strong>Cod Fiscal (CIF):</strong> 6480330
                                 </div>
                             </div>
