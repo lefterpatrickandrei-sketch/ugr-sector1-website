@@ -115,30 +115,52 @@ Consultați [`SECURITY.md`](SECURITY.md) pentru raportarea vulnerabilităților 
 ├── style.css                # Sistemul de design instituțional și stilurile vizuale
 ├── data.js                  # Date de rezervă locale (repere geodezice, demo fallback)
 ├── borders.js               # Coordonate vectoriale pentru harta Sector 1
+├── demos-faq.html           # Secțiunea FAQ & Contact (legată din index.html)
+├── demos-membri.html        # Registrul membrilor și procedura de aderare
+├── showcase/                # Calculatorul Stereo 70 + cele 5 variante de design
 ├── admin/
 │   ├── panou.html           # Panoul administrativ complet (CMS Studio v4.0)
 │   ├── panou.legacy.html    # Copie de siguranță a panoului monolit anterior
 │   ├── index.html           # Punct de acces și redirecționare securizată către panou.html
 │   ├── css/
 │   │   └── panel.css        # Sistemul vizual complet al panoului administrativ
-│   └── js/                  # 29 de module ES6 native
+│   └── js/                  # 31 de module ES6 native
 │       ├── main.js          # Orchestrator principal și ascultători de evenimente
 │       ├── auth.js          # Autentificare Magic Link + TOTP AAL2 & rutare vederi
 │       ├── state.js         # Starea centralizată a aplicației (store reactiv)
 │       ├── supabase.js      # Inițializare client Supabase SDK
-│       ├── lib/             # Utilitare: CSV, formatare, DOM sigur fără innerHTML
+│       ├── lib/             # Utilitare: CSV, formatare, DOM sigur fără innerHTML, db.js (writeRows/describeDbError)
 │       ├── ui/              # Componente UI: Mod Simplu/Avansat, Notificări, Media, Modal, Paginare, Spotlight Ctrl+K, Toast
-│       └── views/           # 12 Vederi: Overview, Requests, Members, News, Settings, Leadership, FAQ, Documents, Telemetry, Trash, Roles, Sync, Coder
+│       └── views/           # 14 Vederi: Overview, Requests, Members, News, Settings, Pages, Leadership, FAQ, Documents, Telemetry, Trash, Roles, Sync, Coder
 ├── supabase/
-│   └── migrations/          # 5 Migrări SQL versionate + scripturi de rollback
-│       ├── 001_roles_and_visibility.sql
-│       ├── 002_content_tables.sql
-│       ├── 003_audit_and_trash.sql
-│       ├── 004_media_storage.sql
-│       └── 005_operations_and_conversion.sql
+│   ├── migrations/          # Migrări SQL versionate + scripturi de rollback și verificare
+│   ├── baseline/            # Starea reală a DB-ului exportată: politici, tabele, funcții, declanșatoare
+│   ├── seed/
+│   └── combined_004_005.sql
+├── tools/                   # Scripturi de verificare referite de package.json (test:data)
+│   └── verificare-date.js   # Verifică datele oficiale publice
+├── scratch/                 # Unelte de dezvoltare: sintaxă, audit-uri, calcul SRI
+│   ├── check_syntax.mjs     # Verifică sintaxa celor 31 de module din admin/js (test:syntax)
+│   ├── audit-coloane.mjs    # Testează fiecare .select()/.insert() prin REST, cu cheia anon
+│   ├── audit-imports.mjs    # Verifică că fiecare simbol importat există în modulul sursă
+│   ├── audit-ids.mjs        # Verifică că fiecare getElementById() există în HTML
+│   ├── audit-rls.mjs        # Caută tabele fără SELECT pentru administrator
+│   ├── sri-supabase.mjs     # Calculează hash-ul SRI pentru supabase-js
+│   └── check-page-fields.mjs# Compară cheile salvate de panou cu cele citite de portal
 ├── backups/                 # Instantanee de siguranță JSON și arhive
+├── _archive/                # Istoric și experimente nepublicate (NU sunt servite)
 └── ugr-images/              # Active grafice și fotografii oficiale de arhivă
 ```
+
+> **Notă despre `_archive/`** — conține versiuni anterioare ale site-ului (`demo-v2/`,
+> `ugr-variants/`, `backup/`) și scripturi de dezvoltare (`dev-scripts/`). Folderul
+> este exclus din `robots.txt` și nu este legat din nicio pagină publică. Nu modifica
+> nimic acolo. Vezi [`_archive/README.md`](_archive/README.md).
+>
+> **Singura excepție:** `dev-scripts/tools/verificare-date.js` a fost mutat înapoi în
+> `tools/`, fiindcă `package.json` îl referă prin `npm run test:data`. Dacă ar rămâne
+> în arhivă, comanda se oprește cu „Cannot find module". Un instrument de test pe care
+> îl rulezi nu are ce să caute într-un folder de istoric.
 
 ---
 
@@ -172,6 +194,17 @@ Pentru a valida integritatea datelor oficiale și sintaxa JavaScript:
 node tools/verificare-date.js
 node scratch/check_syntax.mjs
 ```
+
+Audit-uri suplimentare, care verifică lucruri pe care `check_syntax.mjs` nu le atinge:
+```bash
+node scratch/audit-coloane.mjs   # fiecare .select()/.insert() testat prin REST, cu cheia anon
+node scratch/audit-imports.mjs   # fiecare simbol importat există în modulul sursă
+node scratch/audit-ids.mjs       # fiecare getElementById() există în HTML
+node scratch/audit-rls.mjs       # tabele fără SELECT pentru administrator
+```
+
+`audit-coloane.mjs` are nevoie de cheia `anon` (se află în `admin/js/supabase.js`).
+Restul merg offline.
 
 ---
 
