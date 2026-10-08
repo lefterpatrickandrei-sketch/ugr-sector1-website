@@ -531,6 +531,31 @@ Jurnalul rămâne folosibil: se poate răspunde „ce s-a întâmplat cu acest m
 
 Migrarea nu rescrie rândurile existente. Redimensionarea istoricului e o operație deliberată, cu rezultat asumat, nu un efect secundar al unei migrări: cineva trebuie să știe ce devine ireversibil înainte să se întâmple. Interogarea de inventar e în `008f`, secțiunea 4.
 
+### Verificare în DB live — 8 octombrie 2026
+
+`008f_pii_redaction.sql` aplicat, apoi testat pe un membru fictiv, `TEST-PII-008F`, creat și șters în același bloc.
+
+**Cazul 1 — membrul iese din registru** (`status` → `inactiv`):
+
+| | așteptat | obținut |
+|---|---|---|
+| rânduri de audit cu numele real | 0 | **0** |
+| rânduri de audit cu seria reală | 0 | **0** |
+| rânduri de audit înregistrate | > 0 | **1** |
+
+**Cazul 2 — membrul mutat în coș** (`deleted_at` setat, `status` rămâne `activ`):
+
+| | așteptat | obținut |
+|---|---|---|
+| rânduri de audit cu numele real | > 0 | **2** |
+| rânduri de audit înregistrate | > 0 | **1** |
+
+Al doilea caz confirmă proprietatea care le-a schimbat implementarea: **coșul nu redactează**, pentru că e restaurabil din panou (`trash.js`). O redactare acolo ar șterge definitiv numele unui membru care or să se întoarcă.
+
+O eroare de interpretare a fost corectată înainte de implementare: redactarea fusese propusă inițial la `deleted_at`, ceea ce ar fi făcut ireversibilă o ștergere pe care panoul o oferă ca fiind temporară.
+
+Datele de test au fost curățate în același bloc, pentru că `anon` nu are `DELETE` pe `membri`.
+
 ### Rollback
 
 Oprește redimensionarea viitoare. **Nu poate readuce numele deja redimensionate.** Ce s-a pierdut, s-a pierdut.
