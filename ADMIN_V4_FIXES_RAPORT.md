@@ -32,15 +32,26 @@
 
 Niciun task marcat „FĂCUT" fără dovadă — vezi secțiunea de verificare de mai jos.
 
+Task-uri **adăugate în timpul execuției**, din măsurători, nu din brief: T-S3b, D1…D15. Dintre acestea, **neacționate rămân D3** (retenția PII în `audit_log`), **D5** (crearea contului lui Ștefan din Dashboard) și **D12** (decizia despre `evenimente`).
+
 ---
 
-## ⚠️ Ordinea aplicării — citește înainte
+## Ordinea aplicării — stare la 8 octombrie 2026
 
-Migrarea SQL **nu este aplicată**. Codul JS este gata de deploy, dar SQL-ul trebuie rulat manual în Supabase SQL Editor, în această ordine:
+**Aplicat și verificat în baza de date:** `008a_admini_invites.sql`, `008_security_hardening.sql`, `008c_role_isolation.sql`, `008d_public_writes.sql`, `008e_anti_spam.sql`.
 
-1. `supabase/migrations/008_security_hardening.sql` — aplică T-S1, T-S3, T-S3b, T-S4, T-S5, T-S6, T-S7, T-S8. Este idempotent (`DROP ... IF EXISTS` peste tot), înconjurat de `BEGIN; … COMMIT;`.
-2. `supabase/migrations/008_verify.sql` — **read-only**, 11 interogări V1…V11. Nu modifică nimic.
-3. `supabase/migrations/008b_enforce_aal2.sql` — **NU APLICA ACUM.** Vezi Decizia D1.
+**În repo, neaplicat:** `008b_enforce_aal2.sql` — **NU APLICA ACUM.** Vezi Decizia D1. Se rulează abia după ce fiecare cont de administrator are TOTP configurat.
+
+Ordinea în care au fost rulate, pentru reproducere:
+
+1. `008a_admini_invites.sql` — **înaintea** lui `008`, fiindcă repară tabela `admini` (`id` lipsă, `user_id` NOT NULL) de care depind T-S3b și T-S7.
+2. `008_security_hardening.sql` — T-S1, T-S3, T-S3b, T-S4, T-S5, T-S6, T-S7, T-S8.
+3. `008c_role_isolation.sql` — D11.
+4. `008d_public_writes.sql` — D14. **Fără acest pas, `008e` nu are obiect**: până la el, `anon` nu putea scrie nimic, deci limitarea din `limiteaza_cereri()` nu se putea declanșa niciodată.
+5. `008e_anti_spam.sql` — D15.
+6. `008_verify.sql` — **read-only**, interogări V1…V13. Nu modifică nimic.
+
+`008_preflight.sql` și `008_preflight_2fa.sql` sunt interogări read-only de măsurare, nu migrări.
 
 `008_security_hardening_rollback.sql` (secțiuni R-1…R-8) este disponibil dacă ceva merge prost. ⚠️ R-6, R-7 și R-8 **reintroduc** riscul pe care le-au închis; sunt marcate în fișier.
 
@@ -688,6 +699,71 @@ DELETE FROM evenimente WHERE tip = 'test';
 ```
 
 Rândul din `vizite` apare în panelul Telemetrie până la ștergere. Rândul din `evenimente` e invizibil: tabela nu e citită de niciun cod.
+
+Ambele rânduri au fost șterse.
+
+---
+
+## D15 — `limiteaza_cereri()` putea bloca formularul tuturor — **NOU, REPARAT** (`008e`)
+
+Constatare, nu presupunere. Funcția `limiteaza_cereri()` a fost creată din Dashboard și nu se regăsea în nicio migrare; a fost exportată în `supabase/baseline/000_functionii_si_trigere.sql` la închiderea D4. Conținea două verificări:
+
+| Verificare | Cod | Efect |
+|---|---|---|
+| același email, 2 cereri în 24 h | `EXISTS(...)` | corect |
+| **maxim 30 de cereri în 10 minute, GLOBAL** | `count(*) … >= 30` | **problemă** |
+
+A doua verificare nu are niciun filtru. Tradus: **30 de cereri trimise de orice sursă opresc formularul de înscriere al tuturor vizitatorilor, timp de 10 minute.** Cheia `anon` e publică (`admin/js/supabase.js:7`), deci oricine poate face asta din `curl`, în buclă.
+
+**Această limită era inaccesibilă până la `008d`.** Fără `GRANT INSERT`, `anon` nu putea scrie nimic și declanșatorul nu avea ce bloca. `008d` a făcut formularul funcțional și, odată cu el, a activat suprafața de atac. Consecința nu fusese evaluată înainte de aplicare — `008d` a fost aplicat fără o măsurătoare prealabilă a declanșatorilor. Vezi D14.
+
+### De ce nu se limitează per IP
+
+| Metodă | De ce nu merge |
+|---|---|
+| `inet_client_addr()` | întoarce adresa serverului PostgREST, nu a vizitatorului — toate cererile trec prin infrastructura Supabase. Ar fi aceeași valoare pentru toată lumea, deci identică cu limita globală. |
+| `x-forwarded-for` | falsificabil de client. O limită construită pe o valoare falsificabilă nu oferă protecție, iar dacă e prea strictă blochează vizitatori legițimi cu proxy sau rețea comună. |
+
+Protecția rămâne pe ce se poate susține cu date reale: **emailul**.
+
+### Ce s-a schimbat
+
+| # | Regula | Înainte | După |
+|---|---|---|---|
+| 1 | același email | 1 cerere / 24 h | 1 cerere / 24 h (nemodificat) |
+| 2 | același email, prag mare | — | 3 cereri / 24 h → `prea_multe_cereri_acelasi_email` |
+| 3 | prag global | 30 cereri / 10 min | **100 cereri / 10 min** |
+
+**Pragul global crește intenționat.** Un prag mic nu descurajează atacatorul — 30 de cereri sunt puține — ci blochează mai repede vizitatorii reali. Cu 100, e nevoie de 100 de cereri false ca formularul să devină inutilizabil, iar acele cereri ajung oricum în tabel: exact cele pe care le vom șterge ulterior, nu cele pe care le păstrăm.
+
+### O regulă care rămâne inaccesibilă prin formular
+
+Prima versiune scrisă ordona invers verificările: `EXISTS(...)` pentru duplicat, **apoi** `count(*) >= 3` pe exact aceleași rânduri. Cum `count >= 3` implică `EXISTS = true`, regula de 3 cereri ar fi oprit **orice** cerere înainte de a se putea atinge, deci **cod mort**. Corectat în `b1f21f8`: numărul se calculează o dată, iar pragurile se testează descrescător (3, apoi 1).
+
+Rămâne totuși un fapt onest: **pragul de 3 cereri pe email nu poate fi atins prin formular**, fiindcă regula „1 la 24 h" respinge a doua cerere, deci nu se acumulează niciodată 3 rânduri. E plasa de siguranță pentru o cale de inserare care ocolește declanșatorul (import manual, o relaxare viitoare a regulii de duplicat), nu o protecție măsurabilă. Nu e prezentat ca fiind testat.
+
+### Limita rămâne, și e onest să fie spusă
+
+Fără o adresă de IP de încredere, un atacator doritor poate bloca în continuare formularul, cu 100 în loc de 30. E un efort de 3,3 ori mai mare, **nu o interzicere**. Interzicerea reală ar cere o limită per IP la nivel de rețea, adică o configurare în afara bazei de date.
+
+Ce ar reduce cel mai mult riscul e un CAPTCHA în formular, aplicat la rândul lui în panou. Nu s-a atins: depinde de alegerea furnizorului.
+
+### Verificat în baza de date
+
+Definție, prin poziție în `prosrc` (ordinea pragurilor):
+
+| `prag_3` | `prag_1` | `prag_100` |
+|---|---|---|
+| 210 | 319 | 526 |
+
+Efect, prin REST cu cheia `anon` (fără autentificare):
+
+| Test | Rezultat | Ce demonstrează |
+|---|---|---|
+| `POST /cereri_inscriere` cu `consimtamant_gdpr: true`, `judet` setat | `201` | declanșatorul **nu blochează** cererile normale — formularul e funcțional |
+| același `POST`, imediat, același email | `400` · `P0001` · `cerere_duplicata` | regula de duplicat ajunge la client prin PostgREST, nu rămâne pe server |
+
+Rândul de test creat la primul `POST` a fost șters.
 
 ---
 
