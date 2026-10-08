@@ -529,9 +529,11 @@ Deci: dacă `stiri` se încarcă **înainte** de `setari`,Timeline-ul din `stiri
 | `cereri_admin_update` | UPDATE | `{authenticated}` | `is_admin()` |
 | `cereri_admin_delete` | DELETE | `{authenticated}` | — |
 
-**Verificate ca fiind corecte.** Formularul public de înscriere funcționează: `script.js` nu trimite `status`, iar coloana are `'in_asteptare'::text` ca valoare implicită, deci politica e satisfăcută. Proiectarea e sănătoasă — sursa de adevăr pentru `status` stă în bază de date, nu în JavaScript, deci clientul nu poate forța o valoare pe care politica nu o acceptă.
+**Verificate ca fiind corecte — dar irrelevante.** Am concluzionat inițial că formularul public de înscriere funcționează fiindcă politica e satisfăcută: `script.js` nu trimite `status`, iar coloana are `'in_asteptare'::text` ca valoare implicită. **Concluzia era greșită.** Politica nu era niciodată consultată, pentru că rolul `anon` nu avea GRANT-ul de `INSERT` — Postgreș refuza apelul înainte de a evalua RLS. Vezi **D14**.
 
-Problema nu e configurația, ci **versionarea**: o bază reconstituită din migrările din repo ar ajunge fără aceste politici și cu RLS activ — deci formularul public ar fi refuzat cu `42501`. Rezolvarea e D4 (export de bază din DB live), **rezolvată** — vezi D13.
+Proiectarea politicii în sine e sănătoasă și rămâne de dorit: sursa de adevăr pentru `status` stă în bază de date, nu în JavaScript, deci clientul nu poate forța o valoare pe care politica nu o acceptă. Nu s-a schimbat nimic în ea.
+
+Problema de versionare e D4, **rezolvată** — vezi D13.
 
 ## D11 — `viewer` putea șterge membri și știri — **NOU, REPARAT** (`008c`)
 
@@ -620,7 +622,42 @@ Rezolvă D4 și D10. `supabase/baseline/000_policies_verificat.sql` conține toa
 
 Fișierul e idempotent (`DROP IF EXISTS` + `CREATE`) și marcat explicit ca **snapshot, nu parte a lanțului de migrări**. Nu activează RLS, nu acordă GRANT-uri, nu atinge funcțiile. La final conține și `DROP` pentru cele două politici `*_admin_all`, ca rularea lui pe o bază unde `008c` nu s-a aplicat să nu le readucă.
 
-Ce **nu** e acoperit încă: GRANT-urile pe tabele, definițiile celor 5 funcții create din Dashboard, structura tabelelor `evenimente`, `vizite` și `jurnal_admin`. Rămâne de extras.
+Ce **nu** e acoperit încă: definițiile celor 5 funcții create din Dashboard, structura tabelelor `evenimente` / `vizite` / `jurnal_admin` (acum documentate în `000_tabele_neversionate.sql`) și GRANT-urile pe tabele — **acestea din urmă au fost extrase și au produs D14**.
+
+## D14 — Cheia `anon` nu putea scrie nimic: formularul public și telemetria erau moarte — **NOU, REPARAT** (`008d`)
+
+Descoperit pe 8 octombrie 2026, la finalizarea exportului de GRANT-uri (D4).
+
+În PostgreSQL, RLS decide *ce* operații sunt permise **în** GRANT-uri. Dacă GRANT-ul lipsește, accesul e refuzat înainte ca RLS să fie evaluat. Politicile de scriere publică existau și erau corecte; GRANT-urile corespunzătoare nu.
+
+Verificat prin REST cu cheia `anon`, pe baza reală:
+
+```
+POST /rest/v1/cereri_inscriere → 401 {"code":"42501","message":"permission denied for table cereri_inscriere"}
+POST /rest/v1/vizite          → 401 {"code":"42501","message":"permission denied for table vizite"}
+```
+
+Rolul `anon` nu avea **niciun** GRANT pe `cereri_inscriere`, `vizite` sau `evenimente`. Avea `SELECT` doar pe cele șase tabele publice de citit.
+
+Două consecințe reale:
+
+**1. Formularul public de înscriere nu funcționa.** Niciun vizitator nu putea trimite o cerere. Singurul rând existent a fost creat manual din Dashboard. `cereri_public_insert` nu a fost niciodată consultată.
+
+**2. Telemetria era moartă, în tăcere.** `script.js:3631` și `script.js:3652` trimit `INSERT` cu cheia `anon`, iar ambele apeluri sunt fire-and-forget:
+
+```js
+client.from('vizite').insert([...]).then(() => {}).catch(() => {});
+```
+
+Eroarea `401` e prinsă și aruncată. Fiecare acces de pagină și fiecare eveniment se pierdeau fără urmă. Panelul Telemetrie citește corect, dar tabela rămâne goală.
+
+Aceeași clasă de defect ca `pingSupabaseHealth` cu latențe inventate (T-J10.2): panoul afirma ceva ce nu poate fi adevărat, pentru că nimeni nu verifică.
+
+**Reparație:** `GRANT INSERT` pe exact cele trei tabele, fără `SELECT`. Politicile existente decid conținutul — pentru `cereri_inscriere`, vizitatorul nu poate crea o cerere cu alt status decât `'in_asteptare'`. Pentru `vizite` și `evenimente`, `WITH CHECK (true)` rămâne, deci riscul de spam persistă (D12); nu poate fi eliminat, fiindcă scriptul rulează în browser unde cheia `anon` e publică.
+
+Fișiere: `008d_public_writes.sql` (idempotent, cu acordarea `USAGE` pe secvențe doar pentru cele trei tabele, prin buclă care caută secvențe după prefix — nu atinge secvențele celorlalte tabele), `008d_public_writes_rollback.sql` (cu variantă de rollback parțial: retrage telemetria, păstrează formularul).
+
+**De ce nu a fost prins mai devreme.** Verificările anterioare au măsurat definiția politicii, nu efectul ei. Testul care ar fi prins asta e un `POST` real prin REST, nu o interogare de catalog — e în `Teste manuale` începând cu această versiune.
 
 ---
 
@@ -629,6 +666,18 @@ Ce **nu** e acoperit încă: GRANT-urile pe tabele, definițiile celor 5 funcți
 **Doar după ce ai aplicat `008_security_hardening.sql` în SQL Editor și ai rulat `008_verify.sql`.**
 
 Cheia `anon` e la `admin/js/supabase.js:7`. Prefixul REST e `https://<project-ref>.supabase.co`.
+
+### Test de efect prin REST — rulează primul
+
+Verifică definițiile din catalog **și** efectul lor. Un `GET` care „merge" înseamnă „merge" și când definiția e corectă dar GRANT-ul lipsește — exact cazul din D14, care a trecut nedetectat luni de zile.
+
+| # | Test | Așteptat |
+|---|---|---|
+| 0 | `POST /cereri_inscriere` cu `{"consimtamant_gdpr":false}` | `permission denied for table` → GRANT lipsește; `new row violates row-level security policy` → GRANT ok, politica își face treaba. **Această diferență e singura care deosebește o configurație corectă de una ruptă.** |
+| 0b | `POST /vizite` cu `{"pagina":"test"}` | `201` |
+| 0c | `GET /vizite?select=pagina&limit=1` ca `anon` | `401` — publicul **nu** trebuie să citească telemetria |
+
+### Teste de configurare
 
 | # | Test | Așteptat |
 |---|---|---|
