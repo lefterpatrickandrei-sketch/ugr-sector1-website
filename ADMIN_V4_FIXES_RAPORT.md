@@ -578,9 +578,26 @@ Descoperit în aceeași extragere. Ambele politici au `WITH CHECK (true)`:
 
 Un vizitator neautentificat poate insera rânduri cu orice conținut. Pentru `vizite` (contor de acces) e un vector de inflație a statisticilor; pentru `evenimente` e mai grav, dacă tabela reprezintă agenda publică.
 
-**Nu s-a atins nimic**, pentru că nici structura acestor două tabele nu apare în repo — `evenimente` e doar menționat într-un seed, `vizite` nu apare deloc. Fără coloane nu se poate decide ce câmpuri trebuie validate (de exemplu, dacă un eveniment poate avea un câmp `publicat`, inserarea anon ar crea evenimente publice fără trecere prin panou).
+**Nu s-a atins nimic.** Structura celor două tabele a fost extrasă între timp și a schimbat evaluarea:
 
-Sunt și două politici `is_admin()` de SELECT pe aceleași tabele, corecte. Necunoscut rămâne tabela `jurnal_admin` — există, are RLS activă și o politică corectă, dar nici structura, nici GRANT-urile nu sunt în repo.
+| Tabel | Coloane | Scris de | Citit de |
+|---|---|---|---|
+| `vizite` | `id`, `created_at`, `pagina`, `referrer`, `dispozitiv`, `sesiune` | `script.js:3631` | `telemetry.js:76` |
+| `evenimente` | `id`, `created_at`, `tip`, `pagina`, `sesiune` | `script.js:3652` | **nimeni** |
+
+**`vizite` — funcționează așa cum trebuie.** `INSERT` cu `WITH CHECK (true)` pe `anon` nu e o slăbiciune corectabilă: `logPageVisit()` rulează în browserul vizitatorului, unde cheia anon e publică, deci orice verificare server-side a identității ar respinge apelul și telemetria ar muri. Singura protecție posibilă e limitarea volumului, nu autentificarea. Risc real, dar modest: un bot poate insera volume mari de contori și falsifica statisticile din panel. Nu duce la scurgere de date.
+
+**`evenimente` — tabel scris fără să fie citit.** Niciun `SELECT` pe `evenimente` în tot repo-ul. Primește scrieri anonime fără restricție și nu produce nicio valoare folosită. **Atenție:** `evenimente` nu e agenda publică, cum bănuiam înainte de extragere — e tot telemetrie, deci severitatea e mai mică decât părea. Diferența față de `vizite` e că acolo datele sunt citite, aici nu.
+
+Stergerea politicii de `INSERT` ar opri și telemetria folosită de script, fără să elimine riscul: riskul nu e accesul, ci volumul. Deciziile posibile:
+
+1. să înceapă să fie citită — panelul Telemetrie ar putea afișa evenimente pe pagină, caz în care inserarea publică e motivată;
+2. dacă nu va fi citită, să se elimine calea de scriere din `script.js` (`logTelemetryEvent` și apelurile ei);
+3. dacă rămâne necitită și scrisă, se acceptă riscul de spam, documentat.
+
+**`jurnal_admin` — structură clară, origine necunoscută.** Coloane: `id`, `created_at`, `admin_id`, `admin_email`, `tabel`, `actiune`, `rand_id`, `detalii jsonb`. E un jurnal de audit, dar **niciun SELECT, INSERT sau UPDATE pe el în tot repo-ul**. Nu are politică de `INSERT`. Deci fie există un trigger neextras, fie tabela e complet nefolosită.
+
+Structura tuturor trei tabele e documentată în `supabase/baseline/000_tabele_neversionate.sql`.
 
 ## D13 — Starea reală a DB-ului exportată în repo — **REPARAT** (`supabase/baseline/`)
 

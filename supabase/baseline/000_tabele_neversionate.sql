@@ -1,0 +1,110 @@
+-- =============================================================================
+-- 000_tabele_neversionate.sql  --  SCHEMA REALA, EXTRASA DIN DB
+-- =============================================================================
+-- Data extragerii: 2026-10-08
+-- Sursa: pg_attribute + pg_attrdef, pe proiectul Supabase de productie.
+--
+-- ACEST FOLDER NU ESTE LANT DE MIGRARI. Documentatie, nu migrare.
+--
+-- De ce exista
+-- ------------
+-- Trei tabele din baza de date nu apar in nicio migrare din acest repo, deci
+-- o baza reconstruita din migrari nu ar contine structura lor. Sunt
+-- documentate aici ca sa poata fi recreate si ca sa fie vizibile in revizii.
+--
+-- Toate trei au RLS activata si cate o politica SELECT cu is_admin()
+-- (vezi 000_policies_verificat.sql). Diferenta majora fata de tabelele
+-- versionate: cele doua tabele de telemetrie sunt SCRISE de site-ul public
+-- cu cheia anon, deci nu pot fi insulate pe rol.
+-- =============================================================================
+
+
+-- -----------------------------------------------------------------------------
+-- vizite  -- contor de acces, 6 coloane
+--
+-- Citit de:  admin/js/views/telemetry.js:76  (panelul Telemetrie)
+-- Scris de:  script.js:3631  (logPageVisit, la fiecare acces)
+--
+-- INSERT cu WITH CHECK (true) pe rolul anon. Nu e o slăbiciune de corectat:
+-- scriptul ruleaza in browserul vizitatorului, unde cheia anon este publica,
+-- deci orice verificare server-side a identitatii ar respinge apelul. singura
+-- protectie posibila e limitarea volumului, nu autentificarea.
+-- Risc real, modest: un bot poate insera volume mari de randuri false, ceea ce
+-- falsifica statisticile din panel. Nu duce la scurgere de date.
+-- -----------------------------------------------------------------------------
+--   id          bigint        NOT NULL    serial
+--   created_at  timestamptz   NOT NULL    DEFAULT now()
+--   pagina      text          NOT NULL
+--   referrer    text          NULL
+--   dispozitiv  text          NULL
+--   sesiune     text          NULL
+
+
+-- -----------------------------------------------------------------------------
+-- evenimente  -- jurnal de evenimente de telemetrie, 5 coloane
+--
+-- Scris de:  script.js:3652  (logTelemetryEvent)
+-- CITIT DE: NIMENI. Niciun SELECT pe 'evenimente' in tot repo-ul.
+--
+-- Consecinta: tabela primeste scrieri anonime cu WITH CHECK (true) si nu
+-- produce nicio valoare folosita. E o tabela scrisa fara sa fie citita.
+--
+-- NU s-a schimbat nimic. Stergerea politicii de INSERT ar opri si telemetria
+-- pe care o foloseste scriptul, fara sa elimine riscul, pentru ca riscul nu
+-- e accesul ci volumul. Deciziile posibile, in ordinea preferintelor:
+--
+--   1. sa inceapa sa fie citita (panelul Telemetrie ar putea afisa evenimente
+--      per pagina, ceea ce ar fi util), caz in care insertul public e motivat;
+--   2. daca nu va fi citita, sa se elimine calea de scriere din script.js
+--      (logTelemetryEvent si apelurile ei), caz in care tabela se poate
+--      suprascrie in alt fel;
+--   3. daca ramane necitita si scrisa, se accepta riscul de spam, documentat.
+--
+-- Orice alegere necesita o decizie explicita. Nu s-a atins nimic implicit.
+-- -----------------------------------------------------------------------------
+--   id          bigint        NOT NULL    serial
+--   created_at  timestamptz   NOT NULL    DEFAULT now()
+--   tip         text          NOT NULL
+--   pagina      text          NULL
+--   sesiune     text          NULL
+
+
+-- -----------------------------------------------------------------------------
+-- jurnal_admin  -- jurnal de audit al actiunilor de administrare, 8 coloane
+--
+-- Referit de: NIMENI in cod. Niciun SELECT, INSERT sau UPDATE pe
+--              'jurnal_admin' in tot repo-ul.
+--
+-- Structura e clar un jurnal de audit (admin_id, admin_email, tabel, actiune,
+-- rand_id, detalii jsonb), dar nu se stie cine il populeaza: codul nu scrie
+-- in el, deci fie exista un trigger neextras, fie e complet nefolosit.
+-- Pana la clarificare, tratat ca tabel nefolosit.
+--
+-- Nu are politica de INSERT. Daca un trigger il populeaza, triggerul ruleaza cu
+-- SECURITY DEFINER si nu e blocat de RLS. Daca nu exista trigger, tabela ramane
+-- goala permanent.
+--
+-- De verificat: existenta unui trigger pe jurnal_admin. Interogare:
+--   SELECT tgname, pg_get_triggerdef(oid)
+--   FROM pg_trigger
+--   WHERE tgrelid = 'public.jurnal_admin'::regclass AND NOT tgisinternal;
+-- -----------------------------------------------------------------------------
+--   id            bigint        NOT NULL    serial
+--   created_at    timestamptz   NOT NULL    DEFAULT now()
+--   admin_id      uuid          NULL
+--   admin_email   text          NULL
+--   tabel         text          NOT NULL
+--   actiune       text          NOT NULL
+--   rand_id       text          NULL
+--   detalii       jsonb         NOT NULL    DEFAULT '{}'
+
+
+-- =============================================================================
+-- CE LIPSA INCA DIN REPO
+--
+--   - GRANT-urile pe tabele (ce rol are ce permisiune la nivel de tabel)
+--   - Definitia celor 5 functii create din Dashboard: limiteaza_cereri,
+--     log_admin_action, marcheaza_procesare, rls_auto_enable, set_updated_at
+--   - Triggerele existente pe tabelele public
+--   - Secventele si tipurile enumerate folosite in coloanele de mai sus
+-- =============================================================================
