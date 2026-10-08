@@ -52,6 +52,11 @@
 --      cazul in care un vizitator sau un automat trimite aceeasi adresa in
 --      timp real, in timp ce regula 1 se bazeaza pe faptul ca o cerere
 --      nereusita nu se salveaza.
+--
+-- ORDINEA CONTROLELOR: numarul se calculeaza o singura data, iar cele doua
+-- praguri se testeaza de la cel mai mare la cel mai mic (3, apoi 1). In
+-- ordinea inversa, regula "exista deja una" ar opri orice cerere inainte ca
+-- pragul de 3 sa poata fi atins, iar pragul de 3 ar ramane cod mort.
 --   3. Pragul global creste de la 30 la 100 cereri in 10 minute.
 --
 -- Pragul global creste intentionat. Un prag mic nu descurajeaza atacatorul --
@@ -84,29 +89,29 @@ DECLARE
     v_cereri_24h integer;
     v_cereri_10min integer;
 BEGIN
-    -- 1. Un email nu poate cere de doua ori in 24 de ore.
-    IF EXISTS (
-        SELECT 1 FROM public.cereri_inscriere
-        WHERE lower(email) = lower(NEW.email)
-          AND creat_la > now() - interval '24 hours'
-    ) THEN
-        RAISE EXCEPTION 'cerere_duplicata' USING ERRCODE = 'P0001';
-    END IF;
-
-    -- 2. acelasi email, cel mult 3 cereri in 24 de ore.
-    --    Prinde retragerile repetate si automatele care nu reusesc sa trimita
-    --    o cerere valida.
+    -- Se numara o singura data; cele doua praguri se testeaza in ordine
+    -- descrescatoare (3, apoi 1). In ordinea inversa, regula "exista deja
+    -- una" ar opri orice cerere inainte ca pragul de 3 sa poata fi atins, iar
+    -- pragul de 3 ar ramane cod mort.
     SELECT count(*) INTO v_cereri_24h
     FROM public.cereri_inscriere
     WHERE lower(email) = lower(NEW.email)
       AND creat_la > now() - interval '24 hours';
 
+    -- 1. acelasi email, cel mult 3 cereri in 24 de ore.
+    --    Prinde retragerile repetate si automatele care nu reusesc sa trimita
+    --    o cerere valida.
     IF v_cereri_24h >= 3 THEN
         RAISE EXCEPTION 'prea_multe_cereri_acelasi_email' USING ERRCODE = 'P0001';
     END IF;
 
+    -- 2. Un email nu poate cere de doua ori in 24 de ore.
+    IF v_cereri_24h >= 1 THEN
+        RAISE EXCEPTION 'cerere_duplicata' USING ERRCODE = 'P0001';
+    END IF;
+
     -- 3. Prag global. Protejeaza baza de date de inundatie, fara a opri
-    --   /formularul la primele 30 de cereri ale zilei.
+    --    formularul la primele 30 de cereri ale zilei.
     SELECT count(*) INTO v_cereri_10min
     FROM public.cereri_inscriere
     WHERE creat_la > now() - interval '10 minutes';
@@ -167,8 +172,11 @@ COMMIT;
 --      Asteptat: 401 cerere_duplicata.
 --      Asta era si inainte de 008e, deci nu dovedeste nimic nou.
 --
---   4. Pentru regula noua de 3 la 24 de ore e nevoie de 3 cereri REUSITE cu
---      aceeasi adresa, dar regula 1 o blocheaza la prima. Testul nu se poate
---      face fara a modifica functia. E o regula de siguranta, nu ceva care
---      trebuie demonstrat.
+--   4. Pragul de 3 cereri pe email NU se poate atinge prin formular: fiecare
+--      cerere cu o adresa deja folosita e respinsa de regula "1 la 24 de
+--      ore", deci nu se accumulate 3 randuri. Ramane ca plasa de siguranta,
+--      valabila doar daca apare o cale de inserare care ocoleste declansatorul
+--      (import manual, o relaxare viitoare a regulii de duplicat, o functie
+--      noua de procesare in lot). Nu are rost sa fie demonstrat prin formular
+--      si n-ar trebui pretins ca s-a testat.
 -- =============================================================================
