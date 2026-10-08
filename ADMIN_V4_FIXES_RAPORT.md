@@ -531,7 +531,79 @@ Deci: dacă `stiri` se încarcă **înainte** de `setari`,Timeline-ul din `stiri
 
 **Verificate ca fiind corecte.** Formularul public de înscriere funcționează: `script.js` nu trimite `status`, iar coloana are `'in_asteptare'::text` ca valoare implicită, deci politica e satisfăcută. Proiectarea e sănătoasă — sursa de adevăr pentru `status` stă în bază de date, nu în JavaScript, deci clientul nu poate forța o valoare pe care politica nu o acceptă.
 
-Problema nu e configurația, ci **versionarea**: o bază reconstituită din migrările din repo ar ajunge fără aceste politici și cu RLS activ — deci formularul public ar fi refuzat cu `42501`. Rezolvarea e D4 (export de bază din DB live).
+Problema nu e configurația, ci **versionarea**: o bază reconstituită din migrările din repo ar ajunge fără aceste politici și cu RLS activ — deci formularul public ar fi refuzat cu `42501`. Rezolvarea e D4 (export de bază din DB live), **rezolvată** — vezi D13.
+
+## D11 — `viewer` putea șterge membri și știri — **NOU, REPARAT** (`008c`)
+
+Descoperit la 8 octombrie 2026, în timpul exportului de baseline (D4).
+
+`membri` și `stiri` aveau câte o politică `FOR ALL` creată din Dashboard, absentă din orice migrare:
+
+```sql
+membri_admin_all ON membri FOR ALL TO authenticated USING (is_admin())
+stiri_admin_all  ON stiri  FOR ALL TO authenticated USING (is_admin())
+```
+
+Funcția `is_admin()` (`001_roles_and_visibility.sql:47-58`) întreabă doar „există un rând activ în `admini`?", fără să citească `rol`:
+
+```sql
+SELECT EXISTS(SELECT 1 FROM public.admini WHERE user_id = auth.uid() AND activ = true);
+```
+
+Deci `is_admin()` este `true` și pentru `viewer`. Politicile permissive se combină cu **OR**, așa că o politică `FOR ALL` cu `is_admin()` acordă orice operație oricărui rol activ, iar politicile granulare care impuneau limitele de rol devin irelevante:
+
+| Operație | Politica granulată corectă | Ce se aplica de fapt |
+|---|---|---|
+| `DELETE membri` | `admin_delete_membri` → `owner` | `membri_admin_all` → orice rol activ |
+| `UPDATE membri` | `admin_update_membri` → `owner`+`editor` | `membri_admin_all` → orice rol activ |
+| `DELETE stiri` | `admin_delete_stiri` → `owner` | `stiri_admin_all` → orice rol activ |
+| `UPDATE stiri` | `admin_update_stiri` → `owner`+`editor` | `stiri_admin_all` → orice rol activ |
+
+Ierarhia de roluri scrisă cu atenție în `001` era anulată de două politici create ulterior, care nu aveau cum să fie cunoscute la scrierea migrărilor. **Testul din lista de verificare („salvează un membru ca viewer → trebuie să dea eroare") nu ar fi dat eroare**: `viewer` ar fi putut șterge membri din Registru.
+
+**Reparație:** `DROP` pentru cele două politici. Nu s-a adăugat nimic în locul lor — pentru ambele tabele există deja setul complet de politici granulare, create de migrările din repo și verificate corecte. Acoperirea rămâne: citire pentru orice rol activ, scriere pentru `owner`+`editor`, ștergere doar pentru `owner`.
+
+`is_admin()` nu s-a atins. În politicile de **SELECT** e corect ca un `viewer` să citească integral registrul; problema era folosirea ei și în politici de scriere și ștergere.
+
+Fișiere: `008c_role_isolation.sql` (idempotent, aplicat manual înainte de a fi scris), `008c_role_isolation_rollback.sql` (reface cele două politici, cu avertisment explicit că reintroduce escaladarea).
+
+## D12 — Orice vizitator poate insera rânduri în `evenimente` și `vizite` — **NOU, neacționat**
+
+Descoperit în aceeași extragere. Ambele politici au `WITH CHECK (true)`:
+
+| Tabel | Politică | Roluri | `WITH CHECK` |
+|---|---|---|---|
+| `evenimente` | `evenimente_public_insert` | `{anon, authenticated}` | `true` |
+| `vizite` | `vizite_public_insert` | `{anon, authenticated}` | `true` |
+
+Un vizitator neautentificat poate insera rânduri cu orice conținut. Pentru `vizite` (contor de acces) e un vector de inflație a statisticilor; pentru `evenimente` e mai grav, dacă tabela reprezintă agenda publică.
+
+**Nu s-a atins nimic**, pentru că nici structura acestor două tabele nu apare în repo — `evenimente` e doar menționat într-un seed, `vizite` nu apare deloc. Fără coloane nu se poate decide ce câmpuri trebuie validate (de exemplu, dacă un eveniment poate avea un câmp `publicat`, inserarea anon ar crea evenimente publice fără trecere prin panou).
+
+Sunt și două politici `is_admin()` de SELECT pe aceleași tabele, corecte. Necunoscut rămâne tabela `jurnal_admin` — există, are RLS activă și o politică corectă, dar nici structura, nici GRANT-urile nu sunt în repo.
+
+## D13 — Starea reală a DB-ului exportată în repo — **REPARAT** (`supabase/baseline/`)
+
+Rezolvă D4 și D10. `supabase/baseline/000_policies_verificat.sql` conține toate cele **43 de politici pe 12 tabele**, extrase pe 8 octombrie 2026 direct din catalogul PostgreSQL (`pg_policy` + `pg_get_expr`), nu reconstruite din memorie.
+
+| Tabel | Politici | Origine înainte de export |
+|---|---|---|
+| `admini` | 5 | 4 din Dashboard, 1 din `008a` |
+| `audit_log` | 1 | din migrări |
+| `cereri_inscriere` | 4 | toate din Dashboard |
+| `documente` | 5 | din migrări |
+| `evenimente` | 2 | ambele din Dashboard |
+| `faq` | 5 | din migrări |
+| `jurnal_admin` | 1 | din Dashboard |
+| `leadership` | 5 | din migrări |
+| `membri` | 5 | 1 din Dashboard (`membri_admin_all`), eliminată în `008c` |
+| `setari` | 3 | din migrări + rescriere în `008` |
+| `stiri` | 5 | 1 din Dashboard (`stiri_admin_all`), eliminată în `008c` |
+| `vizite` | 2 | ambele din Dashboard |
+
+Fișierul e idempotent (`DROP IF EXISTS` + `CREATE`) și marcat explicit ca **snapshot, nu parte a lanțului de migrări**. Nu activează RLS, nu acordă GRANT-uri, nu atinge funcțiile. La final conține și `DROP` pentru cele două politici `*_admin_all`, ca rularea lui pe o bază unde `008c` nu s-a aplicat să nu le readucă.
+
+Ce **nu** e acoperit încă: GRANT-urile pe tabele, definițiile celor 5 funcții create din Dashboard, structura tabelelor `evenimente`, `vizite` și `jurnal_admin`. Rămâne de extras.
 
 ---
 
