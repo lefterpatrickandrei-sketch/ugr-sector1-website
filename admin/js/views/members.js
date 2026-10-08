@@ -489,45 +489,51 @@ export async function handleSaveMember() {
                 try {
                     const reqId = convertingRequest.id;
                     const adminEmail = state.currentAdmin?.email || 'admin';
-                    const nowIso = new Date().toISOString();
                     const noteAdd = `[CONVERSIE CERERE] Înregistrat în registrul oficial cu ID: ${idVal} la data ${new Date().toLocaleString('ro-RO')} de către ${adminEmail}.`;
                     const updatedNotes = convertingRequest.notite_interne 
                         ? `${convertingRequest.notite_interne}\n\n${noteAdd}`
                         : noteAdd;
 
+                    // procesat_la si procesat_de NU se trimit aici.
+                    //
+                    // procesat_de este o coloana de tip uuid, nu text: trimiterea
+                    // adresei de e-mail ar picat cu 22P02 si ar fi lasat cererea
+                    // nefinalizata, desi membrul fusese deja creat. Inregistrarea
+                    // corecta o face declansatorul marcheaza_procesare(), care
+                    // completeaza procesat_la := now() si procesat_de := auth.uid()
+                    // atunci cand statusul se schimba.
+                    //
+                    // Numele administratorului ramane in notite_interne, in
+                    // format text, unde poate fi citit de un om.
                     await writeRows(
                         client
                             .from('cereri_inscriere')
                             .update({
                                 status: 'aprobat',
                                 membru_id: idVal,
-                                notite_interne: updatedNotes,
-                                procesat_la: nowIso,
-                                procesat_de: adminEmail
+                                notite_interne: updatedNotes
                             })
                             .eq('id', reqId)
                             .select('id'),
                         { context: 'finalizarea cererii de înscriere' }
                     );
 
-                    await client
-                        .from('audit_log')
-                        .insert([{
-                            tabel: 'cereri_inscriere',
-                            actiune: 'CONVERSIE_MEMBRU',
-                            record_id: String(reqId),
-                            admin_email: adminEmail,
-                            date_noi: {
-                                membru_id: idVal,
-                                nume: numeVal,
-                                serie: serieVal
-                            }
-                        }]);
+                    // Jurnalul pentru aceasta actiune se scrie singur, prin
+                    // declansatoare: audit_membri inregistreaza crearea
+                    // membrului in audit_log, iar log_admin_action inregistreaza
+                    // modificarea cererii in jurnal_admin. Inserarea manuala care
+                    // era aici nu putea functiona nici o data: authenticated are
+                    // doar SELECT pe audit_log, iar coloanele record_id,
+                    // admin_email si date_noi nu exista, iar actiunea
+                    // 'CONVERSIE_MEMBRU' incalca CHECK-ul care accepta doar
+                    // INSERT, UPDATE si DELETE. Lipsa de verificare a erorii o
+                    // facea sa treaca neobservata.
 
                     showToast(`Cererea a fost convertită cu succes în membru activ (${idVal})!`, 'success');
                     window.dispatchEvent(new CustomEvent('ugr:request-converted', { detail: { requestId: reqId, memberId: idVal } }));
                 } catch (errConv) {
-                    console.warn('Eroare la actualizarea cererii convertite:', errConv);
+                    console.warn('Eroare la finalizarea cererii convertite:', errConv);
+                    showToast(`Membrul ${idVal} a fost creat, dar cererea nu a putut fi finalizată: ${describeDbError(errConv, 'Eroare necunoscută')}`, 'error');
                 } finally {
                     convertingRequest = null;
                 }

@@ -7,31 +7,55 @@
 import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 
-const ROOT = 'admin/js';
+const ROOTS = ['admin/js', 'script.js'];
 const ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNra3R6dnp6a2xzcHFmY2xjc2J1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTExMDEzNjcsImV4cCI6MjEwNjY3NzM2N30.hrmXR_K-o6jWJ-ts-Opds_cGlU_qMamc6nRgAxArQzo';
 const BASE = 'https://ckktzvzzklspqfclcsbu.supabase.co/rest/v1';
 const HEADERS = { apikey: ANON, Authorization: `Bearer ${ANON}` };
 
-function* walk(dir) {
-    for (const name of readdirSync(dir)) {
-        const p = join(dir, name);
+function* walk(target) {
+    const st = statSync(target);
+    if (st.isFile()) { yield target; return; }
+    for (const name of readdirSync(target)) {
+        const p = join(target, name);
         if (statSync(p).isDirectory()) yield* walk(p);
         else if (name.endsWith('.js')) yield p;
     }
 }
 
-// Aduna .from('tabel') ... .select('a, b, c') din acelasi lant de apel.
+// Aduna .from('tabel') ... .select('a, b, c') si .insert({...}) din acelasi
+// lant de apel. Se prind ambele forme, pentru ca script.js scrie mai mult
+// decat citeste.
 const pairs = new Map(); // "tabel|coloane" -> [fisiere]
-for (const file of walk(ROOT)) {
-    const src = readFileSync(file, 'utf8');
-    const re = /\.from\(\s*'([a-z_]+)'\s*\)[\s\S]{0,400}?\.select\(\s*'([^']+)'/g;
-    let m;
-    while ((m = re.exec(src)) !== null) {
-        const [, table, cols] = m;
-        if (table === 'storage' || cols.includes('(')) continue;
-        const key = `${table}|${cols}`;
-        if (!pairs.has(key)) pairs.set(key, []);
-        pairs.get(key).push(file);
+for (const root of ROOTS) {
+    for (const file of walk(root)) {
+        const src = readFileSync(file, 'utf8');
+
+        const reSel = /\.from\(\s*'([a-z_]+)'\s*\)[\s\S]{0,400}?\.select\(\s*'([^']+)'/g;
+        let m;
+        while ((m = reSel.exec(src)) !== null) {
+            const [, table, cols] = m;
+            if (table === 'storage' || cols.includes('(')) continue;
+            const key = `${table}|${cols}`;
+            if (!pairs.has(key)) pairs.set(key, []);
+            pairs.get(key).push(file);
+        }
+
+        const reIns = /\.from\(\s*'([a-z_]+)'\s*\)[\s\S]{0,200}?\.insert\(\s*(\[[\s\S]{0,1200}?\]|\{[\s\S]{0,1200}?\})/g;
+        while ((m = reIns.exec(src)) !== null) {
+            const [, table, blob] = m;
+            if (table === 'storage') continue;
+            // cheile de la primul nivel, inclusiv din obiectele din vector
+            const keys = new Set();
+            for (const km of blob.matchAll(/(?:^|[{,\s])([a-z_][a-z0-9_]*)\s*:/g)) {
+                keys.add(km[1]);
+            }
+            keys.delete('to');
+            if (!keys.size) continue;
+            const cols = [...keys].sort().join(', ');
+            const key = `${table}|${cols}`;
+            if (!pairs.has(key)) pairs.set(key, []);
+            pairs.get(key).push(file);
+        }
     }
 }
 
