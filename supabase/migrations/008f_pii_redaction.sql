@@ -40,7 +40,13 @@
 -- (admin/panou.html:2160-2164): activ, suspendat, inactiv. Un membru nu mai
 -- este membru daca:
 --
---     status <> 'activ'        sau   deleted_at IS NOT NULL      sau   randul a fost sters definitiv
+--     status <> 'activ'        sau   randul a fost sters definitiv
+--
+-- COSUL NU CONTE. Un membru mutat in cos (deleted_at setat, status 'activ')
+-- e RESTURABIL din panou (admin/js/views/trash.js, butonul de restaurare).
+-- Redimensionarea lui ar stinge definitiv numele unui membru care or sa se
+-- intoarca, iar numele NU poate fi recuperat din pseudonim. Deci cosul e
+-- reversibil, deci nu se redacteaza.
 --
 -- Suspendat si inactiv trateaza la fel. Un membru temporar suspendat poate
 -- reveni, dar numele lui ramane in jurnal pana la o decizie explicita de
@@ -108,8 +114,17 @@ BEGIN
         RETURN NULL;
     END IF;
 
-    r_pseudonim := '[redat:' || left(md5(coalesce(p_json->>'id', '')), 8) || ']';
+    -- Pseudonimul se bazeaza pe id. Daca id lipseste, md5('') ar fi acelasi
+    -- pentru toate randurile, deci toate ar parea aceeasi persoana. In cazul
+    -- acesta se renunta la pseudonim si se foloseste doar '[redat]'.
+    r_pseudonim := '[redat]';
+    IF p_json->>'id' IS NOT NULL AND p_json->>'id' <> '' THEN
+        r_pseudonim := '[redat:' || left(md5(p_json->>'id'), 8) || ']';
+    END IF;
 
+    -- Se modifica doar cheile care exista deja. create_missing = true la
+    -- jsonb_set NU e corect aici: ar ADAUGA chei inexistente in randul vechi
+    -- sau nou, inventand coloane care nu au existat niciodata in acel rand.
     r_rezultat := p_json;
 
     IF p_json ? 'nume' THEN
@@ -140,18 +155,25 @@ AS $function$
 DECLARE
     v_id text;
 BEGIN
-    -- Daca randul este inca membru activ si nu e in cos, nu e nimic de facut.
-    -- Testul e pe starea CURENTA, nu pe cea anterioara: o redactare ratata se
-    -- repara singura la urmatoarea editare, in loc sa depinda de faptul ca
-    -- acest declansator a vazut exact tranzitia.
-    IF TG_OP <> 'DELETE'
-       AND NEW.status = 'activ'
-       AND NEW.deleted_at IS NULL THEN
+    -- REDIMENSIONAREA E IRREVERSIBILA, deci se face doar cand dezmembrarea e
+    -- irreversibila. Doua conditii de iesire:
+    --
+    --   1. Randul nou are tot status 'activ'. Asta include si randul mutat in
+    --      cos (deleted_at setat, status neatins): cosul e RESTURABIL din
+    --      panou, deci persoana e inca membru si poate reveni. Redimensionarea
+    --      in acest moment ar stinge definitiv numele unui membru care or sa se
+    --      intoarca.
+    --   2. DELETE: stergerea definitiva, singurul caz fara intoarcere.
+    --
+    -- Testul e pe starea CURENTA (NEW), nu pe cea anterioara: o redactare
+    -- ratata se repara singura la urmatoarea editare, in loc sa depinda de
+    -- faptul ca declansatorul a vazut exact tranzitia.
+    IF TG_OP <> 'DELETE' AND NEW.status = 'activ' THEN
         RETURN NEW;
     END IF;
 
-    -- La DELETE si la UPDATE id-ul este acelasi, tinut in OLD pentru cazul
-    -- stergerii definitive.
+    -- La DELETE si la UPDATE id-ul e acelasi. OLD il acopera pe DELETE, unde
+    -- NEW.status n-ar putea fi citit ("record new is not assigned yet").
     v_id := OLD.id::text;
 
     -- Conditia de la final face operatia idempotenta: randurile deja
@@ -169,7 +191,7 @@ END;
 $function$;
 
 COMMENT ON FUNCTION public.redacteaza_pii_la_dezmembrare() IS
-    'Redimensioneaza datele personale din audit_log pentru membrii care nu mai sunt membri (status diferit de activ, deleted_at setat, sau rand sters definitiv). Declansator AFTER, declansat de trg_redact_membri_pii, care ruleaza dupa audit_membri.';
+    'Redimensioneaza datele personale din audit_log pentru membrii care nu mai sunt membri: status diferit de activ, sau rand sters definitiv. Randul mutat in cos (deleted_at setat, status activ) NU se redimensioneaza, fiindca e restaurabil. Declansator AFTER, declansat de trg_redact_membri_pii, care ruleaza dupa audit_membri.';
 
 
 DROP TRIGGER IF EXISTS trg_redact_membri_pii ON public.membri;
@@ -211,6 +233,12 @@ DECLARE
     v_id text;
 BEGIN
     -- Acelasi principiu ca la membri: se testeaza starea curenta, nu tranzitia.
+    --
+    -- INSERT e si el acoperit, pentru ca o invitatie se creeaza direct cu
+    -- activ = false (admin/js/views/roles.js). Adresa ei ajunge in audit_log
+    -- la inserare si, fara INSERT in declansator, ar ramane neatinsa pana la
+    -- prima modificare. Nu se pierde nimic: adresa e in continuare in
+    -- admini.email, randul viu.
     IF TG_OP <> 'DELETE' AND NEW.activ IS NOT FALSE THEN
         RETURN NEW;
     END IF;
@@ -218,7 +246,14 @@ BEGIN
     -- audit_trigger foloseste to_jsonb(NEW)->>'id'. Dupa 008a, admini are
     -- coloana id (uuid, cheie primaria), iar user_id e nullable. Deci rand_id
     -- din audit_log este id, nu user_id.
-    v_id := OLD.id::text;
+    --
+    -- OLD nu exista la INSERT, iar referirea lui acolo ar ridica erori
+    -- ("record old is not assigned yet"). Deci la INSERT se citeste din NEW.
+    IF TG_OP = 'DELETE' THEN
+        v_id := OLD.id::text;
+    ELSE
+        v_id := NEW.id::text;
+    END IF;
 
     UPDATE public.audit_log
     SET vechi = public.redacteaza_pii_admin(vechi),
@@ -232,9 +267,16 @@ BEGIN
 END;
 $function$;
 
+COMMENT ON FUNCTION public.redacteaza_pii_admin(jsonb) IS
+    'Redimensioneaza emailul dintr-un rand de audit_log pentru admini: devine [redat]. Restul randului ramane neatins.';
+
+COMMENT ON FUNCTION public.redacteaza_pii_la_dezactivare_admin() IS
+    'Redimensioneaza emailul din audit_log pentru administratorii care nu mai sunt activi (activ = false) sau stersi definitiv. Declansator AFTER, pe INSERT OR UPDATE OR DELETE, declansat de trg_redact_admini, care ruleaza dupa audit_admini.';
+
+
 DROP TRIGGER IF EXISTS trg_redact_admini ON public.admini;
 CREATE TRIGGER trg_redact_admini
-    AFTER UPDATE OR DELETE ON public.admini
+    AFTER INSERT OR UPDATE OR DELETE ON public.admini
     FOR EACH ROW EXECUTE FUNCTION public.redacteaza_pii_la_dezactivare_admin();
 
 
@@ -294,30 +336,62 @@ COMMIT;
 --       Asteptat: 4 randuri.
 --
 --   V3. Ca sa nu se fi ratat ceva prin ordinea declansatorilor, cauta randuri
---       de membri neatinse in afara de 'activ':
+--       de membri neatinse pentru care dezmembrarea e IRREVERSIBILA.
+--       Randurile de DELETE au nou = NULL, deci statusul nu se citeste din
+--       'nou'; de aceea se testeaza si 'vechi'. Randurile in cos (status
+--       'activ') NU se numara, fiindca e reversibile prin design.
 --       SELECT count(*) FROM audit_log
 --       WHERE tabel = 'membri'
---         AND coalesce(nou->>'status', '') <> 'activ'
+--         AND coalesce(nou->>'status', vechi->>'status', '') <> 'activ'
 --         AND coalesce(nou->>'nume', vechi->>'nume', '') NOT LIKE '[redat%';
 --       Asteptat: 0. Daca nu e 0, declansatorul a rulat inaintea lui
 --       audit_membri. Verifica numele: trebuie sa inceapa cu 'trg_'.
 --
---   V4. Functional. Membrul real 'UGR-0012' poate fi folosit, dar NU il
---       modifica: verifica mai intai daca e deja neactiv, ca sa nu schimbi
---       starea unui membru real doar pentru un test.
---       SELECT id, status, deleted_at IS NOT NULL AS in_cos FROM membri
---       WHERE id = 'UGR-0012';
---
---   V5. Test cu un membru nou, de asemenea fara a atinge un membru real:
+--   V4. Functional, fara a atinge un membru real:
 --       INSERT INTO membri (id, nume, judet, serie_autorizatie, categorie, status)
 --       VALUES ('TEST-PII-001', 'Persoana Test', 'Bucuresti', 'UGR-TEST-999', 'test', 'activ');
---       UPDATE membri SET status = 'inactiv' WHERE id = 'TEST-PII-001';
---       SELECT nume, serie_autorizatie, status FROM audit_log
+--
+--       UPDATE membri SET deleted_at = now() WHERE id = 'TEST-PII-001';
+--       SELECT count(*) FROM audit_log
+--       WHERE tabel = 'membri' AND rand_id = 'TEST-PII-001'
+--         AND (vechi->>'nume' = 'Persoana Test' OR nou->>'nume' = 'Persoana Test');
+--       Asteptat: 0. COSUL NU REDIMENSIONEAZA. Daca iese diferit de 0, se
+--       redacteaza la mutarea in cos, ceea ce ar stinge numele unui membru
+--       care or sa fie restaurat.
+--
+--       UPDATE membri SET deleted_at = NULL, status = 'inactiv' WHERE id = 'TEST-PII-001';
+--       SELECT actiune, vechi->>'nume' AS nume_vechi, nou->>'nume' AS nume_nou,
+--              nou->>'serie_autorizatie' AS serie_noua
+--       FROM audit_log
 --       WHERE tabel = 'membri' AND rand_id = 'TEST-PII-001' ORDER BY ts;
 --       Asteptat: 'Persoana Test' nu apare niciodata. apar doar
---       '[redat:XXXXXXXX]' si status 'inactiv'.
---       Observatie: randul de DELETE va fi si el redimensionat, pentru ca
---       stergerea definitiva inseamna tot "nu mai este membru".
---       Curatare:
+--       '[redat:XXXXXXXX]' si '[redat]'.
+--
 --       DELETE FROM membri WHERE id = 'TEST-PII-001';
+--       SELECT count(*) FROM audit_log
+--       WHERE tabel = 'membri' AND rand_id = 'TEST-PII-001'
+--         AND (vechi->>'nume' = 'Persoana Test' OR nou->>'nume' = 'Persoana Test');
+--       Asteptat: 0. Randul de DELETE se redacteaza si el: stergerea
+--       definitiva inseamna tot "nu mai este membru".
+--
+--       Curatare (randurile din audit_log raman, dar sunt redimensionate):
+--       DELETE FROM audit_log WHERE tabel = 'membri' AND rand_id = 'TEST-PII-001';
+--
+--   V5. La fel pentru admini. Se foloseste o adresa de test, care ramane in
+--       admini.email (randul viu), deci nu se pierde nimic. Se retine id-ul
+--       randului creat, ca sa nu se curate decat intrarile lui:
+--       INSERT INTO admini (email, rol, activ)
+--       VALUES ('test-pii@exemplu.ro', 'viewer', false) RETURNING id;
+--       (noteaza id-ul, inlocuieste-l mai jos cu <ID>)
+--
+--       SELECT actiune, vechi->>'email' AS email_vechi, nou->>'email' AS email_nou
+--       FROM audit_log
+--       WHERE tabel = 'admini' AND rand_id = '<ID>' ORDER BY ts;
+--       Asteptat: 0 randuri cu adresa reala. Invitatia s-a creat direct cu
+--       activ = false, deci INSERT-ul ei trebuie redimensionat imediat.
+--
+--       Curatare (id-ul se ia din randul creat, nu se cauta dupa email, ca sa
+--       nu se ating[a] jurnalul altui administrator):
+--       DELETE FROM admini WHERE email = 'test-pii@exemplu.ro';
+--       DELETE FROM audit_log WHERE tabel = 'admini' AND rand_id = '<ID>';
 -- =============================================================================

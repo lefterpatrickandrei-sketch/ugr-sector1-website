@@ -498,7 +498,9 @@ Nu există email, telefon, CNP sau IBAN. **Sistemul nu stochează date de contac
 
 > Păstrează datele personale cât timp persoana este membru. Redimensionează când nu mai este.
 
-„Nu mai este membru" = `status <> 'activ'` **sau** `deleted_at IS NOT NULL` **sau** rând șters definitiv. Pentru membri, interfața permite doar trei statusuri (`activ`, `suspendat`, `inactiv` — `admin/panou.html:2160-2164`). `suspendat` e tratat la fel ca `inactiv`: un membru temporar suspendat poate reveni, dar numele lui rămâne în jurnal până la o decizie explicită de mai departe. Mai protector, nu mai puțin.
+„Nu mai este membru" = `status <> 'activ'` **sau** rând șters definitiv. Pentru membri, interfața permite doar trei statusuri (`activ`, `suspendat`, `inactiv` — `admin/panou.html:2160-2164`). `suspendat` e tratat la fel ca `inactiv`: un membru temporar suspendat poate reveni, dar numele lui rămâne în jurnal până la o decizie explicită de mai departe. Mai protector, nu mai puțin.
+
+**Coșul nu contează.** Un membru mutat în coș (`deleted_at` setat, `status` neatins) e **restaurabil** din panou (`admin/js/views/trash.js`). Redimensionarea lui ar stinge definitiv numele unui membru care or să se întoarcă, iar pseudonimul nu poate fi inversat. Deci coșul e reversibil, deci nu se redactează.
 
 ### Redimensionare, nu ștergere
 
@@ -522,6 +524,7 @@ Jurnalul rămâne folosibil: se poate răspunde „ce s-a întâmplat cu acest m
 - **`rand_id` pentru `admini` e `id`, nu `user_id`.** `audit_trigger` folosește `to_jsonb(NEW)->>'id'`, iar după `008a` coloana `id` există și e cheia primară, `user_id` fiind nullable.
 - **Idempotență.** Condiția `NOT LIKE '[redat%'` face ca rândurile deja redimensionate să nu fie atinse din nou.
 - **Odată redimensionat, rămâne redimensionat.** Nu există cale de întoarcere: pseudonimul nu poate fi inversat. N-ar fi corect să se pretindă că revenirea la `activ` restaurează numele.
+- **`admini` se redactează și la INSERT.** O invitație se creează direct cu `activ = false` (`roles.js`), deci adresa ei ajunge în `audit_log` la inserare. Fără `INSERT` în declanșator, ar fi rămas neatinsă până la prima modificare.
 - **SECURITY DEFINER** pe declanșatoare, fiindcă `audit_log` are `revoke insert, update, delete from authenticated` și RLS activ. Fără `DEFINER`, declanșatorul ar eșua.
 
 ### Istoricul deja acumulat NU e atins
