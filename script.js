@@ -2950,6 +2950,16 @@ function fallbackLoadMembersJson() {
         .catch(() => {});
 }
 
+// D2: data_publicare este o coloană de tip date, nu de tip timestamp. Trimitem
+// data locală, nu ISO de UTC: pentru un vizitator din București, după ora 00:00
+// local diferența dintre UTC și data locală ar scoate de la vedere articolele
+// programate pentru ziua curentă. Construim manual pentru că toISOString()
+// include ora și ar forța Postgres să compare cu 00:00:00Z.
+function formatLocalDateRo(d) {
+    const pad = n => String(n).padStart(2, '0');
+    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+}
+
 async function loadNewsFromSupabase() {
     const client = getSupabaseClient();
     if (!client) {
@@ -2959,11 +2969,19 @@ async function loadNewsFromSupabase() {
     }
 
     try {
+        // D2: publicat = true cu data_publicare in viitor facea articolul
+        // vizibil imediat. Programarea exista doar ca un camp nefolosit.
+        // .or() se aplica impreuna cu .eq()/.is() deoarece PostgREST combina
+        // filtrele de tipuri diferite cu AND, iar conditiile din .or() cu OR:
+        //   publicat = true AND deleted_at IS NULL
+        //   AND (data_publicare IS NULL OR data_publicare <= azi)
+        const azi = formatLocalDateRo(new Date());
         const { data, error } = await client
             .from('stiri')
             .select('id, titlu, continut, imagine_url, data_publicare, publicat, categorie, scope, locatie, text_buton, link_actiune')
             .eq('publicat', true)
             .is('deleted_at', null)
+            .or(`data_publicare.is.null,data_publicare.lte.${azi}`)
             .order('data_publicare', { ascending: false });
 
         if (error || !data || data.length === 0) {

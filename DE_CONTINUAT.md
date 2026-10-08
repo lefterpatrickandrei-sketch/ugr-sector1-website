@@ -10,7 +10,7 @@ Toate cele 19 task-uri din brief sunt FĂCUTE. D8 și D9, raportate ca observaț
 
 ## Resturi, în ordinea recomandată
 
-**1. D2 — „Programat" nu înseamnă viitor.** `script.js:2965` filtrează doar după `publicat` și `deleted_at`. Nu există criteriu pe `data_publicare`, nici în interogare, nici în politica RLS (`stiri_citire_anonim` = `publicat AND deleted_at IS NULL`). Un articol cu `publicat = bifat` și dată viitoare apare imediat. Corectura: `.or('data_publicare.is.null,data_publicare.lte.<now>')` în interogare, cu tratamentul valorii nule. ~2 linii.
+**1. ~~D2 — „Programat" nu înseamnă viitor.~~ FĂCUT.** Interogarea publică din `script.js` filtra doar după `publicat` și `deleted_at`; `data_publicare` nu avea niciun efect, nici în interogare, nici în RLS. Măsurat: o știre programată pe 11 noiembrie 2026 era vizibilă pe 8 octombrie. Corectat cu `.or('data_publicare.is.null,data_publicare.lte.<data locală>')`. Verificat pe server: 9 articole în loc de 10.
 
 **2. Cele 15 teste de UI din secțiunea „Mai de testat în interfață".** Niciunul n-a fost rulat. SQL-ul e migrat, dar nu s-a verificat că interfața se comportă cum descrie raportul. Aici apar surprizele.
 

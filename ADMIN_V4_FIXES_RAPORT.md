@@ -439,9 +439,25 @@ Nu e o decizie de „mai târziu", ci una de **secvență**. Impunerea lui `(aut
 
 `admin_select_invited` nu depinde de `admin_rol()`, deci loginul rămâne funcțional. Restul blocării rămâne în UI, în `auth.js`.
 
-## D2 — „Programat" nu însemna viitor
+## D2 — „Programat" nu însemna viitor — **REPARAT**
 
-`publicat = true` cu `data_publicare` în viitor face știrea **imediat vizibilă** pe site. N-a fost schimbat — e în afara scopului acestui raport, dar merită o decizie: fie se tratează „programat" la nivel de interogare (`.lte('data_publicare', now())`), fie panoul ar trebui să nu permită `publicat` înainte de data indicată.
+`publicat = true` cu `data_publicare` în viitor făcea știrea **imediat vizibilă** pe site.
+
+**Cauza.** Interogarea din `script.js:2965` filtra doar după `publicat` și `deleted_at`. Nu exista criteriu pe `data_publicare` nici în interogare, nici în politica RLS: `stiri_citire_anonim` este `publicat = true AND deleted_at IS NULL`. Câmpul de dată exista, era editabil din panou, și nu avea niciun efect.
+
+**Demonstrație pe date reale**, măsurată la 8 octombrie 2026: baza conținea o știre cu `data_publicare = 2026-11-11` și `publicat = true`, adică programată cu peste o lună, vizibilă pe site în acel moment.
+
+**Corectura**, o singură condiție în interogare:
+```js
+.or(`data_publicare.is.null,data_publicare.lte.${azi}`)
+```
+PostgREST combină filtrele de tipuri diferite cu `AND`, iar condițiile din `.or()` între ele cu `OR`, deci rezultatul este `publicat = true AND deleted_at IS NULL AND (data_publicare IS NULL OR data_publicare <= azi)`. Valoarea nulă e tratată explicit, ca un articol fără dată să nu devină invizibil.
+
+**De ce data locală, nu `toISOString()`.** `data_publicare` e o coloană de tip `date`, nu de tip timestamp — răspunsul PostgREST o serializează `2026-11-11`, nu cu oră și zonă. `toISOString()` ar produce `2026-10-08T23:59:59Z` pentru ora 01:59 din București, iar Postgres ar compara cu 00:00:00Z, ascunzând articolele programate pentru ziua curentă. Helperul `formatLocalDateRo()` construiește `YYYY-MM-DD` din componentele locale.
+
+**Decizia e în server, nu în panou.** Nu s-a adăugat validare care să interzică bifarea lui `publicat` înainte de dată: regula stă în interogare, deci orice consumator respectă programarea. Panoul continuă să arate articolele programate, fiindcă interogarea lui nu are acest filtru.
+
+**Verificat pe server:** cu filtrul, 9 articole; fără, 10. Dispărea exact articolul din 11 noiembrie.
 
 ## D3 — Retenție `audit_log`
 
