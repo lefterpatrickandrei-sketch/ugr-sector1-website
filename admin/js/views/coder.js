@@ -93,7 +93,10 @@ export async function loadCoderTableData(tableName) {
         const { data, error } = await client
             .from(tableName)
             .select('*')
-            .order(tableName === 'audit_log' ? 'creat_la' : (tableName === 'setari' ? 'cheie' : 'id'), { ascending: false })
+            // Coloana de timp difera per tabela: audit_log are 'ts', cereri_inscriere
+            // are 'creat_la', iar restul au 'created_at'. 'ts' era lipsa, deci consola
+            // pica cu 42703 la deschiderea Jurnalului Audit.
+            .order(tableName === 'audit_log' ? 'ts' : (tableName === 'setari' ? 'cheie' : 'id'), { ascending: false })
             .limit(100);
 
         if (error) {

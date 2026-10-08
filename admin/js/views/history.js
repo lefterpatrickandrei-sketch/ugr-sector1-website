@@ -9,6 +9,26 @@ import { showToast } from '../ui/toast.js';
 import { el, clearElement } from '../lib/dom.js';
 import { writeRows, describeDbError } from '../lib/db.js';
 
+// Coloane de carcotaj. Nu apar ca "campuri modificate" in dif, pentru ca se
+// schimba la fiecare scriere si ar umple tabelul de zgomot.
+//
+// Numele diferenta per tabela, ceea ce a facut ca filtrul vechi, care stia
+// doar creat_la si actualizat_la, sa lase updated_at sa apara in fiecare
+// diferenta:
+//   cereri_inscriere  creat_la, actualizat_la, procesat_la
+//   membri, stiri,    created_at, updated_at
+//   leadership, faq,
+//   documente, admini
+//   setari
+const BOOKKEEPING_COLUMNS = [
+    'id',
+    'creat_la',
+    'actualizat_la',
+    'created_at',
+    'updated_at',
+    'procesat_la'
+];
+
 let activeHistoryContext = null;
 
 export async function openItemHistoryModal(table, rowId, rowTitle) {
@@ -110,7 +130,7 @@ function buildDiffTable(oldObj, newObj, actiune) {
     if (actiune === 'INSERT') {
         const table = el('table', { className: 'cms-table', style: { fontSize: '12px' } });
         const tbody = el('tbody');
-        const keys = Object.keys(newObj || {}).filter(k => !['id', 'creat_la', 'actualizat_la'].includes(k));
+        const keys = Object.keys(newObj || {}).filter(k => !BOOKKEEPING_COLUMNS.includes(k));
 
         keys.forEach(k => {
             const val = formatDiffVal(newObj[k]);
@@ -127,7 +147,7 @@ function buildDiffTable(oldObj, newObj, actiune) {
         const oldO = oldObj || {};
         const newO = newObj || {};
         const allKeys = Array.from(new Set([...Object.keys(oldO), ...Object.keys(newO)]))
-            .filter(k => !['id', 'actualizat_la'].includes(k));
+            .filter(k => !BOOKKEEPING_COLUMNS.includes(k));
 
         const changedKeys = allKeys.filter(k => JSON.stringify(oldO[k]) !== JSON.stringify(newO[k]));
 
