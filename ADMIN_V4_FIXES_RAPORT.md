@@ -659,6 +659,36 @@ Fișiere: `008d_public_writes.sql` (idempotent, cu acordarea `USAGE` pe secvenț
 
 **De ce nu a fost prins mai devreme.** Verificările anterioare au măsurat definiția politicii, nu efectul ei. Testul care ar fi prins asta e un `POST` real prin REST, nu o interogare de catalog — e în `Teste manuale` începând cu această versiune.
 
+### Verificat prin REST după aplicare
+
+| Test | Rezultat | Corect |
+|---|---|---|
+| `information_schema.table_privileges` pentru `anon` | 3 rânduri, toate `INSERT`, niciun `SELECT` sau `DELETE` | ✅ |
+| `POST /vizite` `{pagina:"test-008d", sesiune:"test", dispozitiv:"desktop"}` | `201` | ✅ |
+| `POST /evenimente` `{tip:"test", pagina:"test", sesiune:"test"}` | `201` | ✅ |
+| `POST /cereri_inscriere` `{nume_complet:"probe", consimtamant_gdpr:false}` | `401 new row violates row-level security policy` | ✅ GRANT funcționează, politica respinge |
+| `GET /vizite` ca `anon` | `401 permission denied` | ✅ publicul nu citește telemetria |
+| `GET /cereri_inscriere` ca `anon` | `401 permission denied` | ✅ |
+
+Testul al patrulea e cel care distinge configurația corectă de una ruptă: mesajul ajunge la **politica**, ceea ce dovedește că GRANT-ul e acordat și că singurul lucru care oprește cererea invalidă e regula de business.
+
+### Două capcane întâlnite la testare
+
+**1. `Prefer: return=representation` maschează rezultatul.** Un `POST` cu `Prefer: return=representation` primește `permission denied`, pentru că PostgREST adaugă `RETURNING *`, care implică necesitatea unui GRANT `SELECT`. `supabase-js` nu trimite acest header decât dacă se folosește `.insert().select()`, iar `script.js:3631` și `:3652` **nu** îl folosesc. Deci un test care adaugă acest header poate raporta un GRANT lipsă care în realitate e corect. Testele trebuie făcute exact cum trimite aplicația.
+
+**2. `vizite` are un `CHECK` pe `dispozitiv`.** Valorile admise sunt `mobil`, `tableta`, `desktop` (`script.js:3602-3611`, `detectDeviceType()`). O valoare arbitrară produce `23514`, nu o eroare de acces — deci un test prost ales poate fi citit drept GRANT lipsă.
+
+### Curățare
+
+Testele au creat două rânduri reale, pe care `anon` nu le poate șterge:
+
+```sql
+DELETE FROM vizite WHERE pagina = 'test-008d';
+DELETE FROM evenimente WHERE tip = 'test';
+```
+
+Rândul din `vizite` apare în panelul Telemetrie până la ștergere. Rândul din `evenimente` e invizibil: tabela nu e citită de niciun cod.
+
 ---
 
 # Teste manuale — Patrick
