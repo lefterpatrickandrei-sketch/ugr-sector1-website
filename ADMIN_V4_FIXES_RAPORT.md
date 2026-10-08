@@ -470,9 +470,67 @@ PostgREST combină filtrele de tipuri diferite cu `AND`, iar condițiile din `.o
 
 **Verificat pe server:** cu filtrul, 9 articole; fără, 10. Dispărea exact articolul din 11 noiembrie.
 
-## D3 — Retenție `audit_log`
+## D3 — Retenție `audit_log` — **REPARAT** (`008f`)
 
-Coloanele `vechi` și `nou` stochează date personale complete, fără retenție și fără anonimizare. La ștergerea unui membru, urma lui rămâne în jurnal pentru totdeauna. Nu s-a schimbat (ar distruge istoricul de audit, care e chiar scopul tabelei). Propunere: o politică de retenție declarată explicit, plus un proces de ștergere la cerere, cu acoperirea manuală a înregistrărilor din coloanele `vechi`/`nou`.
+### ⚠️ Corecție: afirmația anterioară era falsă
+
+Prima versiune a acestei secțiuni spunea că `audit_log` păstrează pentru membri *nume, email, telefon, CNP și IBAN*. **Nu e adevărat.** Măsurarea coloanelor din `information_schema` arată că `public.membri` are exact 11 coloane:
+
+```
+id, nume, judet, serie_autorizatie, categorie, status,
+afisare_publica, created_at, updated_at, demonstrativ, deleted_at
+```
+
+Nu există email, telefon, CNP sau IBAN. **Sistemul nu stochează date de contact per membru.** Singurele date de contact ale oamenilor stau în `cereri_inscriere` — tabel care **nu** are `audit_trigger`, ci doar `log_admin_action`, jurnalul care scrie numele coloanelor modificate, fără valori. Deci cererile nu ajung copiate integral în `audit_log`.
+
+### Ce date personale există efectiv în `audit_log`
+
+`audit_trigger` e atașat la 7 tabele. Dintre ele, cele cu date personale:
+
+| Tabel | Coloane cu PII | Expunere reală |
+|---|---|---|
+| `membri` | `nume`, `serie_autorizatie` | **redimensionate de `008f`** |
+| `admini` | `email` | **redimensionat de `008f`** la dezactivare |
+| `leadership` | `nume`, `telefon`, `email` | **neatinse** — sunt publicate pe site prin `leadership_citire_anonim`; a le redimensiona ar distruge jurnalul fără să elimine vreo expunere |
+| `documente`, `faq`, `stiri`, `setari` | — | conținut de conținut, nu PII |
+
+### Decizia aplicată
+
+> Păstrează datele personale cât timp persoana este membru. Redimensionează când nu mai este.
+
+„Nu mai este membru" = `status <> 'activ'` **sau** `deleted_at IS NOT NULL` **sau** rând șters definitiv. Pentru membri, interfața permite doar trei statusuri (`activ`, `suspendat`, `inactiv` — `admin/panou.html:2160-2164`). `suspendat` e tratat la fel ca `inactiv`: un membru temporar suspendat poate reveni, dar numele lui rămâne în jurnal până la o decizie explicită de mai departe. Mai protector, nu mai puțin.
+
+### Redimensionare, nu ștergere
+
+| Coloană | Înainte | După |
+|---|---|---|
+| `membri.nume` | `'Ion Popescu'` | `'[redat:3f9a1c02]'` |
+| `membri.serie_autorizatie` | `'UGR-0123'` | `'[redat]'` |
+| `membri.judet`, `categorie`, `status`, `afisare_publica`, `demonstrativ`, `created_at`, `updated_at` | — | **neatinse** |
+| `audit_log.tabel`, `actiune`, `rand_id`, `ts` | — | **neatinse** |
+
+Jurnalul rămâne folosibil: se poate răspunde „ce s-a întâmplat cu acest membru" fără a mai ști cum îl cheamă.
+
+**Pseudonimul se calculează din `id`, nu din nume.** Un `md5(nume)` ar fi tot date personală — spațiul de căutare al numelor românești e suficient de mic încât un dicționar să-l inverseze. `id` nu e PII și e deja prezent în `rand_id`.
+
+**Lista e de „ce eliminăm", nu de „ce păstrăm"**, ca o coloană nouă adăugată acum la `membri` să treacă automat în jurnal, nu să fie uitată.
+
+### Detalii de implementare care contează
+
+- **Ordinea declanșatorilor.** Redimensionarea trebuie să ruleze *după* `audit_membri`, ca rândul nou să existe deja. PostgreSQL ordonează declanșatorii alfabetic, deci numele începe cu `trg_` (`audit_membri` < `trg_redact_membri_pii`). Un nume de forma `aaa_…` ar rula primul și ar lăsa neatins exact rândul tocmai scris. Interogarea V3 din `008f` există tocmai ca să prindă asta.
+- **Test pe starea curentă, nu pe tranziție.** Declanșatorul redactează dacă rândul *acum* nu mai e membru activ, nu doar dacă tocmai a schimbat. O redactare ratată se repară singură la urmatoarea editare, în loc să depindă de faptul că declanșatorul a vazut tranziția exactă.
+- **`rand_id` pentru `admini` e `id`, nu `user_id`.** `audit_trigger` folosește `to_jsonb(NEW)->>'id'`, iar după `008a` coloana `id` există și e cheia primară, `user_id` fiind nullable.
+- **Idempotență.** Condiția `NOT LIKE '[redat%'` face ca rândurile deja redimensionate să nu fie atinse din nou.
+- **Odată redimensionat, rămâne redimensionat.** Nu există cale de întoarcere: pseudonimul nu poate fi inversat. N-ar fi corect să se pretindă că revenirea la `activ` restaurează numele.
+- **SECURITY DEFINER** pe declanșatoare, fiindcă `audit_log` are `revoke insert, update, delete from authenticated` și RLS activ. Fără `DEFINER`, declanșatorul ar eșua.
+
+### Istoricul deja acumulat NU e atins
+
+Migrarea nu rescrie rândurile existente. Redimensionarea istoricului e o operație deliberată, cu rezultat asumat, nu un efect secundar al unei migrări: cineva trebuie să știe ce devine ireversibil înainte să se întâmple. Interogarea de inventar e în `008f`, secțiunea 4.
+
+### Rollback
+
+Oprește redimensionarea viitoare. **Nu poate readuce numele deja redimensionate.** Ce s-a pierdut, s-a pierdut.
 
 ## D4 — Politicile lipsă din repo
 
