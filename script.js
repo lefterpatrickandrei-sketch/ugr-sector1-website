@@ -3387,97 +3387,9 @@ function applyCustomPageData(cheie, val) {
                 if (cardBtn2Href) cardBtn2Link.setAttribute('href', cardBtn2Href);
             }
 
-            // 3. Mecanism Statutar
-            const mechKicker = document.querySelector('#m-apartenenta-block .m-kicker-badge');
-            if (mechKicker && val.mechKicker) mechKicker.textContent = val.mechKicker;
-            const mechTitle = document.querySelector('#m-apartenenta-block .m-block-title');
-            if (mechTitle && val.mechanismTitle) mechTitle.textContent = val.mechanismTitle;
-            const mechDesc = document.querySelector('#m-apartenenta-block .m-block-desc');
-            if (mechDesc && val.mechanismDesc) mechDesc.textContent = val.mechanismDesc;
-
-            const mechPoints = document.querySelectorAll('#m-apartenenta-block .m-step-card-mini');
-            if (mechPoints && mechPoints.length >= 3) {
-                if (val.mechP1Title && mechPoints[0].querySelector('b')) mechPoints[0].querySelector('b').textContent = val.mechP1Title;
-                if (val.mechP1Desc && mechPoints[0].querySelector('span')) mechPoints[0].querySelector('span').textContent = val.mechP1Desc;
-                if (val.mechP2Title && mechPoints[1].querySelector('b')) mechPoints[1].querySelector('b').textContent = val.mechP2Title;
-                if (val.mechP2Desc && mechPoints[1].querySelector('span')) mechPoints[1].querySelector('span').textContent = val.mechP2Desc;
-                if (val.mechP3Title && mechPoints[2].querySelector('b')) mechPoints[2].querySelector('b').textContent = val.mechP3Title;
-                if (val.mechP3Desc && mechPoints[2].querySelector('span')) mechPoints[2].querySelector('span').textContent = val.mechP3Desc;
-            }
-
-            // 4. Procedura în 4 Pași
-            const stepsTag = document.querySelector('#m-procedura-block .m-tag-cyan');
-            if (stepsTag && val.stepsTag) stepsTag.textContent = val.stepsTag;
-            const stepsTitle = document.querySelector('#m-procedura-block .m-section-subheading');
-            if (stepsTitle && val.stepsTitle) stepsTitle.textContent = val.stepsTitle;
-
-            const pasiCards = document.querySelectorAll('#m-procedura-block .m-pasi-card');
-            if (pasiCards && pasiCards.length >= 4) {
-                const stepData = [
-                    { t: val.step1Title, d: val.step1Desc },
-                    { t: val.step2Title, d: val.step2Desc },
-                    { t: val.step3Title, d: val.step3Desc },
-                    { t: val.step4Title, d: val.step4Desc }
-                ];
-                stepData.forEach((sd, idx) => {
-                    if (pasiCards[idx]) {
-                        const titleEl = pasiCards[idx].querySelector('b');
-                        const descEl = pasiCards[idx].querySelector('p');
-                        if (titleEl && sd.t) titleEl.textContent = sd.t;
-                        if (descEl && sd.d) descEl.textContent = sd.d;
-                    }
-                });
-            }
-
-            // 5. Grilă Cotizații
-            const feesTag = document.querySelector('#m-cotizatii-block .m-tag-gold');
-            if (feesTag && val.feesTag) feesTag.textContent = val.feesTag;
-            const feesTitle = document.querySelector('#m-cotizatii-block .m-section-subheading');
-            if (feesTitle && val.feesTitle) feesTitle.textContent = val.feesTitle;
-
-            const feeRows = document.querySelectorAll('#m-cotizatii-block .dark-members-table tbody tr');
-            if (feeRows && feeRows.length >= 3) {
-                if (val.feeTitularTax && feeRows[0].children[1]) feeRows[0].children[1].textContent = val.feeTitularTax;
-                if (val.feeTitularAnnual && feeRows[0].children[2]) feeRows[0].children[2].textContent = val.feeTitularAnnual;
-                if (val.feeTitularDesc && feeRows[0].children[3]) feeRows[0].children[3].textContent = val.feeTitularDesc;
-
-                if (val.feeStudentTax && feeRows[1].children[1]) feeRows[1].children[1].textContent = val.feeStudentTax;
-                if (val.feeStudentAnnual && feeRows[1].children[2]) feeRows[1].children[2].textContent = val.feeStudentAnnual;
-                if (val.feeStudentDesc && feeRows[1].children[3]) feeRows[1].children[3].textContent = val.feeStudentDesc;
-
-                if (val.feeFirmaTax && feeRows[2].children[1]) feeRows[2].children[1].textContent = val.feeFirmaTax;
-                if (val.feeFirmaAnnual && feeRows[2].children[2]) feeRows[2].children[2].textContent = val.feeFirmaAnnual;
-                if (val.feeFirmaDesc && feeRows[2].children[3]) feeRows[2].children[3].textContent = val.feeFirmaDesc;
-            }
-
-            const bankIban = document.querySelector('#m-cotizatii-block .m-cotizatii-bank b');
-            if (bankIban && val.bankIban) bankIban.textContent = val.bankIban;
-            const bankPurpose = document.querySelector('#m-cotizatii-block .m-cotizatii-bank em');
-            if (bankPurpose && val.bankPurpose) bankPurpose.textContent = val.bankPurpose;
-            // T-J8: bankName se editează din tab-ul Membri, nu din Contact.
-            cpSetText('bankName', val.bankName);
-
-        } else if (cheie === 'pagina_contact') {
-            // 1. Hero
-            const kicker = document.querySelector('#view-contact .faq-hero-kicker');
-            if (kicker && val.heroKicker) kicker.textContent = val.heroKicker;
-            const title = document.querySelector('#view-contact .faq-hero-title');
-            if (title && val.heroTitle) title.textContent = val.heroTitle;
-            const sub = document.querySelector('#view-contact .faq-hero-subtitle');
-            if (sub && val.heroSubtitle) sub.textContent = val.heroSubtitle;
-
-            // 2. Triaj
-            const triageHeading = document.querySelector('#view-contact .section-header h3');
-            if (triageHeading && val.triageHeading) triageHeading.textContent = val.triageHeading;
-            const triageSub = document.querySelector('#view-contact .section-header p');
-            if (triageSub && val.triageSub) triageSub.textContent = val.triageSub;
-
-            const triageLocalTitle = document.querySelector('#view-contact .triaj-card-local h4');
-            if (triageLocalTitle && val.triageLocalTitle) triageLocalTitle.textContent = val.triageLocalTitle;
-            const triageCentralTitle = document.querySelector('#view-contact .triaj-card-central h4');
-            if (triageCentralTitle && val.triageCentralTitle) triageCentralTitle.textContent = val.triageCentralTitle;
-
-            // 3. Date de contact și puncte de întâlnire (T-J8)
+            // 3. Date de Contact & Puncte de Întâlnire (T-J8; fuzionat din
+            // vechiul tab „FAQ & Contact”, care avea propriul view-contact —
+            // acum totul trăiește în #view-membri).
             cpSetText('addressAcademic', val.addressAcademic);
             cpSetTel('contactPresidentPhone', val.contactPresidentPhone);
             cpSetTel('contactSecretaryPhone', val.contactSecretaryPhone);
@@ -3487,16 +3399,10 @@ function applyCustomPageData(cheie, val) {
             cpSetTel('contactCentralPhone', val.contactCentralPhone);
             cpSetMail('contactCentralEmail', val.contactCentralEmail);
 
-            // 4. Butoanele de copiere din cele două carduri de triaj
-            cpSetCopyChip('triageLocalPhone', val.triageLocalPhone, 'cpPhone');
-            cpSetCopyChip('triageLocalEmail', val.triageLocalEmail, 'cpEmail');
-            cpSetCopyChip('triageCentralPhone', val.triageCentralPhone, 'cpPhone');
-            cpSetCopyChip('triageCentralEmail', val.triageCentralEmail, 'cpEmail');
-
-            // 5. Formular
-            const formTitle = document.querySelector('#view-contact .contact-glass-panel h3');
+            // 4. Formular de contact
+            const formTitle = document.querySelector('#view-membri .contact-glass-panel h3');
             if (formTitle && val.formTitle) formTitle.textContent = val.formTitle;
-            const formDesc = document.querySelector('#view-contact .contact-glass-panel p');
+            const formDesc = document.querySelector('#view-membri .contact-glass-panel p');
             if (formDesc && val.formDesc) formDesc.textContent = val.formDesc;
         }
     } catch (e) {
