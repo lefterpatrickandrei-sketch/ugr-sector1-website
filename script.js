@@ -28,7 +28,7 @@ const appState = {
 // ═══════════════════════════════════════════════════════════════════════════
 
 function navigateTo(viewId) {
-    const validViews = ['acasa', 'despre', 'evenimente', 'membri', 'contact'];
+    const validViews = ['acasa', 'despre', 'evenimente', 'membri'];
     if (!validViews.includes(viewId)) {
         viewId = 'acasa';
     }
