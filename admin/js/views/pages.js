@@ -1,11 +1,11 @@
 /**
  * Pages View ("Editor Pagini Site Public")
- * Manages editable sections for all 5 public pages 1-to-1:
+ * Manages editable sections for all 4 public pages 1-to-1:
  * - Acasă (pagina_acasa)
  * - Despre noi (pagina_despre)
  * - Evenimente & Media (pagina_evenimente)
- * - Membri & Adeziune (pagina_membri)
- * - FAQ & Contact (pagina_contact)
+ * - Membri (pagina_membri) — include și datele de contact & formularul de mesaj,
+ *   fuzionate aici după eliminarea secțiunii separate FAQ & Contact de pe site.
  */
 
 import { state } from '../state.js';
@@ -103,7 +103,7 @@ export const defaultPagesData = {
                 scope: 'FORMARE PROFESIONALĂ CONTINUĂ',
                 titlu: 'Gala Premiilor de Excelență MTC & Pachetul de 18 Workshopuri',
                 desc: 'Premierea celor mai merituoase lucrări de licență și disertație, însoțită de lansarea unui program intensiv de 18 workshopuri tehnice specializate în tehnologii de scanare laser 3D, fotogrammetrie cu drone și cadastru sistematic în parteneriat cu KarmaCad Store și SphereFix.',
-                link1: '#contact',
+                link1: '#membri',
                 link1Text: 'Detalii Program Tehnic & Înscrieri →'
             },
             {
@@ -134,60 +134,14 @@ export const defaultPagesData = {
     },
     membri: {
         heroKicker: 'Comunitate & Evidență Oficială · STATUT UGR',
-        heroTitle: 'Registrul Geodezilor & Ghidul de Aderare',
-        heroSubtitle: 'Evidența membrilor acreditați UGR și procedura completă de înscriere conform normelor statutare oficiale de pe ugr.ro/cum-devin-membru.',
+        heroTitle: 'Membri',
+        heroSubtitle: 'Evidența membrilor acreditați UGR, procedura de înscriere și datele de contact ale Filialei Sector 1.',
         cardKicker: '✨ ADERARE DIGITALĂ RAPIDĂ · SECTOR 1 BUCUREȘTI',
         cardTitle: 'Devino Membru al Filialei Sector 1 București',
         cardDesc: 'Bucură-te de recunoaștere națională, asistență tehnico-juridică la BCPI Sector 1, reduceri la cursurile de perfecționare și vot statutar în adunările generale UGR.',
         cardBtnPrimaryText: 'Lansează Înscrierea Acum',
         cardBtnSecondaryText: 'Ghid ugr.ro ↗',
         cardBtnSecondaryLink: 'https://ugr.ro/cum-devin-membru',
-        mechKicker: 'Mecanism Statutar',
-        mechanismTitle: 'Cum Funcționează Apartenența: Înscriere Locală cu Voce Națională',
-        mechanismDesc: 'Geodezii autorizați și societățile de profil care activează în Sectorul 1 se înscriu direct în Filiala Sector 1 București. Prin această aderare teritorială, membrii dobândesc automat calitatea de membru deplin al Uniunii Geodezilor din România (UGR Național), participă cu drept de vot la Adunările Generale Locale, aleg conducerea filialei și mandatează delegații locali pentru forul național. Totodată, Filiala Sector 1 colectează blocajele tehnice din BCPI Sector 1 și le înaintează către Biroul Executiv (BEX) pentru susținere directă în fața ANCPI.',
-        mechP1Title: '1. Înscriere în Filială',
-        mechP1Desc: 'Adeziune teritorială la Filiala Sector 1 ➔ calitatea deplină de membru UGR Național.',
-        mechP2Title: '2. Vot & Decizie Locală',
-        mechP2Desc: 'Alegi reprezentanții filialei și mandatezi delegații oficiali pentru Congresul Național.',
-        mechP3Title: '3. Escaladare la BEX / ANCPI',
-        mechP3Desc: 'Sinteza spețelor BCPI Sector 1 este susținută de forul central în dialogul legislativ cu ANCPI.',
-        stepsTag: 'FLUX STATUTAR',
-        stepsTitle: 'Procedura Oficială de Aderare în 4 Pași',
-        step1Title: '01. Cerere Adeziune',
-        step1Desc: 'Descarcă și completează formularul tipizat oficial pentru persoane fizice sau societăți comerciale.',
-        step2Title: '02. Dosar Profesional',
-        step2Desc: 'Anexează copia actului de identitate, diplomă de licență (geodezie/topografie) și certificatul ANCPI.',
-        step3Title: '03. Plată Cotizație',
-        step3Desc: 'Achită taxa de înscriere (50 lei) și cotizația anuală (100 lei activi / 10 lei studenți) prin virament bancar.',
-        step4Title: '04. Validare BEX',
-        step4Desc: 'Dosarul este validat în ședința Biroului Executiv și se eliberează legitimația oficială cu număr național.',
-        feesTag: 'GRILĂ STATUTARĂ UGR',
-        feesTitle: 'Categorii de Membri & Grilă Cotizații Anuale',
-        feeTitularTax: '50 LEI',
-        feeTitularAnnual: '100 LEI / AN',
-        feeTitularDesc: 'Drept de vot în Adunarea Generală, reprezentare la OCPI/ANCPI, legitimație oficială UGR, reduceri congrese FIG/CLGE.',
-        feeStudentTax: '10 LEI',
-        feeStudentAnnual: '10 LEI / AN',
-        feeStudentDesc: 'Acces liber la conferințe naționale, stagii de practică la birouri membre, participare SGR Chișinău 2026.',
-        feeFirmaTax: '100 LEI',
-        feeFirmaAnnual: 'DIFERENȚIATĂ',
-        feeFirmaDesc: 'Promovare în Registrul Firmelor Partenere UGR, consultanță juridico-tehnică în proceduri cadastrale complexe.',
-        bankName: 'BRD Ag. Tei',
-        bankIban: 'RO57 BRDE 426S V810 0757 4450',
-        bankPurpose: 'Nume Prenume / CNP / Cotizație Filiala Sector 1'
-    },
-    contact: {
-        heroKicker: 'GHID & ASISTENȚĂ',
-        heroTitle: 'Întrebări Frecvente & Secretariat',
-        heroSubtitle: 'Răspunsuri oficiale la întrebările membrilor, inginerilor geodezi și studenților privind înscrierea în UGR, spețele la BCPI Sector 1 și activitățile profesionale.',
-        triageHeading: 'Unde vă adresați?',
-        triageSub: 'Pentru a primi un răspuns rapid, verificați dacă speța dumneavoastră ține de competența teritorială a Filialei Sector 1 sau de nivelul național al Sediului Central UGR.',
-        triageLocalTitle: 'Spețe Locale, BCPI Sector 1 & FIFIM',
-        triageLocalPhone: '0726 390 774',
-        triageLocalEmail: 'filiala.ugr.s1@gmail.com',
-        triageCentralTitle: 'Politici Naționale, ANCPI & SGR',
-        triageCentralPhone: '0723 587 081',
-        triageCentralEmail: 'office@ugr.ro',
         addressAcademic: 'FIFIM — USAMV București, Bulevardul Mărăști nr. 59, Sector 1',
         contactPresidentPhone: '0726 390 774 / 0748 912 263',
         contactSecretaryPhone: '0764 572 874',
@@ -206,6 +160,9 @@ export async function loadPagesData() {
     if (feedback) clearBannerFeedback(feedback);
 
     try {
+        // T-J11: „pagina_contact” rămâne în interogare doar pentru migrarea
+        // datelor vechi (adresă, telefoane, formular) în tab-ul „membri”,
+        // după eliminarea secțiunii separate FAQ & Contact de pe site.
         const { data, error } = await client
             .from('setari')
             .select('cheie, valoare')
@@ -217,17 +174,41 @@ export async function loadPagesData() {
             acasa: { ...defaultPagesData.acasa },
             despre: { ...defaultPagesData.despre },
             evenimente: { ...defaultPagesData.evenimente },
-            membri: { ...defaultPagesData.membri },
-            contact: { ...defaultPagesData.contact }
+            membri: { ...defaultPagesData.membri }
         };
 
         if (data && Array.isArray(data)) {
+            let legacyContact = null;
             data.forEach(item => {
                 const k = item.cheie.replace('pagina_', '');
+                if (k === 'contact') {
+                    legacyContact = item.valoare || {};
+                    return;
+                }
                 if (state.pagesData[k]) {
                     state.pagesData[k] = { ...state.pagesData[k], ...(item.valoare || {}) };
                 }
             });
+
+            // Migrare 1-dată: câmpurile de contact salvate anterior sub
+            // „pagina_contact” sunt reportate în „membri” dacă acesta nu are
+            // deja o valoare salvată explicit pentru acel câmp.
+            if (legacyContact) {
+                const migratableFields = [
+                    'addressAcademic', 'contactEmailLocal', 'contactPresidentPhone',
+                    'contactSecretaryPhone', 'contactCotizatiiPhone', 'addressCentral',
+                    'contactCentralPhone', 'contactCentralEmail', 'formTitle', 'formDesc'
+                ];
+                const membriHasOwnData = data.some(item => item.cheie === 'pagina_membri');
+                migratableFields.forEach(field => {
+                    const alreadySetByMembri = membriHasOwnData && Object.prototype.hasOwnProperty.call(
+                        data.find(item => item.cheie === 'pagina_membri').valoare || {}, field
+                    );
+                    if (!alreadySetByMembri && legacyContact[field] !== undefined) {
+                        state.pagesData.membri[field] = legacyContact[field];
+                    }
+                });
+            }
         }
 
         renderPagesForm();
@@ -321,7 +302,7 @@ export function renderPagesForm() {
     setVal('page-ev-axis-sub', ev.axisSub);
     renderEventsNodesFields(ev.events || defaultPagesData.evenimente.events);
 
-    // 4. Membri & Adeziune
+    // 4. Membri (include Date de Contact & Formular, fuzionate din FAQ&Contact)
     const m = d.membri || defaultPagesData.membri;
     setVal('page-membri-hero-kicker', m.heroKicker);
     setVal('page-membri-hero-title', m.heroTitle);
@@ -332,63 +313,16 @@ export function renderPagesForm() {
     setVal('page-membri-card-btn-primary', m.cardBtnPrimaryText);
     setVal('page-membri-card-btn-secondary', m.cardBtnSecondaryText);
     setVal('page-membri-card-btn-secondary-link', m.cardBtnSecondaryLink);
-    setVal('page-membri-mech-kicker', m.mechKicker);
-    setVal('page-membri-mech-title', m.mechanismTitle);
-    setVal('page-membri-mech-desc', m.mechanismDesc);
-    setVal('page-membri-mech-p1-title', m.mechP1Title);
-    setVal('page-membri-mech-p1-desc', m.mechP1Desc);
-    setVal('page-membri-mech-p2-title', m.mechP2Title);
-    setVal('page-membri-mech-p2-desc', m.mechP2Desc);
-    setVal('page-membri-mech-p3-title', m.mechP3Title);
-    setVal('page-membri-mech-p3-desc', m.mechP3Desc);
-    setVal('page-membri-steps-tag', m.stepsTag);
-    setVal('page-membri-steps-title', m.stepsTitle);
-    setVal('page-membri-step1-title', m.step1Title);
-    setVal('page-membri-step1-desc', m.step1Desc);
-    setVal('page-membri-step2-title', m.step2Title);
-    setVal('page-membri-step2-desc', m.step2Desc);
-    setVal('page-membri-step3-title', m.step3Title);
-    setVal('page-membri-step3-desc', m.step3Desc);
-    setVal('page-membri-step4-title', m.step4Title);
-    setVal('page-membri-step4-desc', m.step4Desc);
-    setVal('page-membri-fees-tag', m.feesTag);
-    setVal('page-membri-fees-title', m.feesTitle);
-    setVal('page-membri-fee-titular-tax', m.feeTitularTax);
-    setVal('page-membri-fee-titular-annual', m.feeTitularAnnual);
-    setVal('page-membri-fee-titular-desc', m.feeTitularDesc);
-    setVal('page-membri-fee-student-tax', m.feeStudentTax);
-    setVal('page-membri-fee-student-annual', m.feeStudentAnnual);
-    setVal('page-membri-fee-student-desc', m.feeStudentDesc);
-    setVal('page-membri-fee-firma-tax', m.feeFirmaTax);
-    setVal('page-membri-fee-firma-annual', m.feeFirmaAnnual);
-    setVal('page-membri-fee-firma-desc', m.feeFirmaDesc);
-    setVal('page-membri-bank-name', m.bankName);
-    setVal('page-membri-bank-iban', m.bankIban);
-    setVal('page-membri-bank-purpose', m.bankPurpose);
-
-    // 5. FAQ & Contact
-    const c = d.contact || defaultPagesData.contact;
-    setVal('page-contact-hero-kicker', c.heroKicker);
-    setVal('page-contact-hero-title', c.heroTitle);
-    setVal('page-contact-hero-subtitle', c.heroSubtitle);
-    setVal('page-contact-triage-heading', c.triageHeading);
-    setVal('page-contact-triage-sub', c.triageSub);
-    setVal('page-contact-triage-local-title', c.triageLocalTitle);
-    setVal('page-contact-triage-local-phone', c.triageLocalPhone);
-    setVal('page-contact-triage-local-email', c.triageLocalEmail);
-    setVal('page-contact-triage-central-title', c.triageCentralTitle);
-    setVal('page-contact-triage-central-phone', c.triageCentralPhone);
-    setVal('page-contact-triage-central-email', c.triageCentralEmail);
-    setVal('page-contact-addr-academic', c.addressAcademic);
-    setVal('page-contact-email-local', c.contactEmailLocal);
-    setVal('page-contact-phone-pres', c.contactPresidentPhone);
-    setVal('page-contact-phone-sec', c.contactSecretaryPhone);
-    setVal('page-contact-phone-cot', c.contactCotizatiiPhone);
-    setVal('page-contact-addr-central', c.addressCentral);
-    setVal('page-contact-central-phone', c.contactCentralPhone);
-    setVal('page-contact-central-email', c.contactCentralEmail);
-    setVal('page-contact-form-title', c.formTitle);
-    setVal('page-contact-form-desc', c.formDesc);
+    setVal('page-contact-addr-academic', m.addressAcademic);
+    setVal('page-contact-email-local', m.contactEmailLocal);
+    setVal('page-contact-phone-pres', m.contactPresidentPhone);
+    setVal('page-contact-phone-sec', m.contactSecretaryPhone);
+    setVal('page-contact-phone-cot', m.contactCotizatiiPhone);
+    setVal('page-contact-addr-central', m.addressCentral);
+    setVal('page-contact-central-phone', m.contactCentralPhone);
+    setVal('page-contact-central-email', m.contactCentralEmail);
+    setVal('page-contact-form-title', m.formTitle);
+    setVal('page-contact-form-desc', m.formDesc);
 
     // Read-only guard
     const allInputs = document.querySelectorAll('#view-pages input, #view-pages textarea');
@@ -480,8 +414,7 @@ const PAGE_LINK_FIELDS = {
     acasa: [{ field: 'heroBtnSecondaryLink', label: 'Link buton secundar (Acasă)' }],
     despre: [{ field: 'statutPdfUrl', label: 'Link statut (Despre)' }],
     membri: [{ field: 'cardBtnSecondaryLink', label: 'Link buton secundar (Membri)' }],
-    evenimente: [{ field: 'link1', label: 'Link eveniment', inside: 'events' }],
-    contact: []
+    evenimente: [{ field: 'link1', label: 'Link eveniment', inside: 'events' }]
 };
 
 /**
@@ -606,53 +539,6 @@ export function gatherCurrentPagesPayload(tabKey) {
             cardBtnPrimaryText: getVal('page-membri-card-btn-primary'),
             cardBtnSecondaryText: getVal('page-membri-card-btn-secondary'),
             cardBtnSecondaryLink: getVal('page-membri-card-btn-secondary-link'),
-            mechKicker: getVal('page-membri-mech-kicker'),
-            mechanismTitle: getVal('page-membri-mech-title'),
-            mechanismDesc: getVal('page-membri-mech-desc'),
-            mechP1Title: getVal('page-membri-mech-p1-title'),
-            mechP1Desc: getVal('page-membri-mech-p1-desc'),
-            mechP2Title: getVal('page-membri-mech-p2-title'),
-            mechP2Desc: getVal('page-membri-mech-p2-desc'),
-            mechP3Title: getVal('page-membri-mech-p3-title'),
-            mechP3Desc: getVal('page-membri-mech-p3-desc'),
-            stepsTag: getVal('page-membri-steps-tag'),
-            stepsTitle: getVal('page-membri-steps-title'),
-            step1Title: getVal('page-membri-step1-title'),
-            step1Desc: getVal('page-membri-step1-desc'),
-            step2Title: getVal('page-membri-step2-title'),
-            step2Desc: getVal('page-membri-step2-desc'),
-            step3Title: getVal('page-membri-step3-title'),
-            step3Desc: getVal('page-membri-step3-desc'),
-            step4Title: getVal('page-membri-step4-title'),
-            step4Desc: getVal('page-membri-step4-desc'),
-            feesTag: getVal('page-membri-fees-tag'),
-            feesTitle: getVal('page-membri-fees-title'),
-            feeTitularTax: getVal('page-membri-fee-titular-tax'),
-            feeTitularAnnual: getVal('page-membri-fee-titular-annual'),
-            feeTitularDesc: getVal('page-membri-fee-titular-desc'),
-            feeStudentTax: getVal('page-membri-fee-student-tax'),
-            feeStudentAnnual: getVal('page-membri-fee-student-annual'),
-            feeStudentDesc: getVal('page-membri-fee-student-desc'),
-            feeFirmaTax: getVal('page-membri-fee-firma-tax'),
-            feeFirmaAnnual: getVal('page-membri-fee-firma-annual'),
-            feeFirmaDesc: getVal('page-membri-fee-firma-desc'),
-            bankName: getVal('page-membri-bank-name'),
-            bankIban: getVal('page-membri-bank-iban'),
-            bankPurpose: getVal('page-membri-bank-purpose')
-        };
-    } else if (tabKey === 'contact') {
-        return {
-            heroKicker: getVal('page-contact-hero-kicker'),
-            heroTitle: getVal('page-contact-hero-title'),
-            heroSubtitle: getVal('page-contact-hero-subtitle'),
-            triageHeading: getVal('page-contact-triage-heading'),
-            triageSub: getVal('page-contact-triage-sub'),
-            triageLocalTitle: getVal('page-contact-triage-local-title'),
-            triageLocalPhone: getVal('page-contact-triage-local-phone'),
-            triageLocalEmail: getVal('page-contact-triage-local-email'),
-            triageCentralTitle: getVal('page-contact-triage-central-title'),
-            triageCentralPhone: getVal('page-contact-triage-central-phone'),
-            triageCentralEmail: getVal('page-contact-triage-central-email'),
             addressAcademic: getVal('page-contact-addr-academic'),
             contactEmailLocal: getVal('page-contact-email-local'),
             contactPresidentPhone: getVal('page-contact-phone-pres'),
@@ -718,7 +604,7 @@ export async function handleSaveAllPages() {
     }
 
     try {
-        const tabs = ['acasa', 'despre', 'evenimente', 'membri', 'contact'];
+        const tabs = ['acasa', 'despre', 'evenimente', 'membri'];
         const updates = tabs.map(tab => ({
             cheie: `pagina_${tab}`,
             valoare: gatherCurrentPagesPayload(tab),
@@ -741,7 +627,7 @@ export async function handleSaveAllPages() {
         });
 
         setDirtyState(false);
-        showToast('Toate cele 5 pagini au fost sincronizate cu succes în Supabase!', 'success');
+        showToast('Toate cele 4 pagini au fost sincronizate cu succes în Supabase!', 'success');
     } catch (err) {
         showToast(describeDbError(err, 'Eroare la salvare.'), 'error');
     }
@@ -752,8 +638,7 @@ function getTabLabel(tabKey) {
         acasa: 'Acasă',
         despre: 'Despre Noi',
         evenimente: 'Evenimente & Media',
-        membri: 'Membri & Adeziune',
-        contact: 'FAQ & Contact'
+        membri: 'Membri'
     };
     return labels[tabKey] || tabKey;
 }
