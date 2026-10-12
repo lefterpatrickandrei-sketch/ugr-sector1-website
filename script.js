@@ -96,8 +96,7 @@ function navigateTo(viewId) {
                 animationFrameId = null;
             }
         } else {
-            const btn3d = document.getElementById('btn-mode-3d');
-            if (btn3d && btn3d.classList.contains('active') && typeof window.startSatelliteAnimation === 'function') {
+            if (appState.globeInitialized && typeof window.startSatelliteAnimation === 'function') {
                 window.startSatelliteAnimation();
             }
         }
@@ -307,53 +306,16 @@ function selectNode(nodeKey) {
     }
 }
 
-function handleSkillFilterChange() {
-    const selector = document.getElementById('skill-selector');
-    const skill = selector ? selector.value : 'toate';
-    appState.selectedSkill = skill;
-
-    const allowedNodes = ugrData.skillMapping[skill] || ugrData.skillMapping.toate;
-
-    const vectorMap = {
-        chisinau: 'vec-chisinau',
-        cluj: 'vec-cluj',
-        iasi: 'vec-iasi',
-        constanta: 'vec-constanta',
-        timisoara: 'vec-timisoara'
-    };
-
-    Object.entries(vectorMap).forEach(([key, lineId]) => {
-        const line = document.getElementById(lineId);
-        if (line) {
-            if (allowedNodes.includes(key)) {
-                line.style.opacity = '1';
-                line.style.stroke = '#40B0F0';
-            } else {
-                line.style.opacity = '0.15';
-            }
-        }
-    });
-
-    if (allowedNodes.length > 0 && !allowedNodes.includes(appState.selectedNode)) {
-        selectNode(allowedNodes[0]);
-    } else if (myGlobe) {
-        updateGlobePoints(appState.selectedNode || 'bucuresti');
-    }
-}
-
 function toggleSpatialDrawer() {
     const drawer = document.getElementById('spatial-drawer-body');
-    const toggleText = document.getElementById('spatial-toggle-text');
     const chevron = document.getElementById('spatial-chevron');
     if (!drawer) return;
     const isExpanded = drawer.classList.contains('expanded');
     if (!isExpanded) {
         drawer.classList.add('expanded');
-        if (toggleText) toggleText.innerText = 'Ascunde';
         if (chevron) chevron.style.transform = 'rotate(180deg)';
     } else {
         drawer.classList.remove('expanded');
-        if (toggleText) toggleText.innerText = 'Detalii Nod';
         if (chevron) chevron.style.transform = 'rotate(0deg)';
     }
 }
@@ -370,122 +332,27 @@ let animationFrameId = null;
 
 function updateGlobeRings(activeKey) {
     if (!myGlobe || typeof myGlobe.ringsData !== 'function') return;
-    const curStyle = window.currentArcStyle || 'clean';
-
-    if (curStyle === 'clean' || curStyle === 'radar') {
-        const rings = Object.keys(ugrData.mapNodes).map(k => {
-            const n = ugrData.mapNodes[k];
-            const isAct = (k === activeKey);
-            const isChi = (k === 'chisinau');
-            return {
-                lat: n.lat,
-                lng: n.lon,
-                isAct: isAct,
-                isChi: isChi,
-                maxR: isAct ? 3.8 : 2.2,
-                speed: isAct ? 2.2 : 1.2,
-                repeat: isAct ? 950 : 2200
-            };
-        });
-        myGlobe
-            .ringsData(rings)
-            .ringColor(d => (t) => {
-                if (d.isChi) {
-                    return `rgba(255, 159, 28, ${Math.max(0, (d.isAct ? 0.95 : 0.45) * (1 - t))})`;
-                }
-                return `rgba(0, 229, 255, ${Math.max(0, (d.isAct ? 0.95 : 0.4) * (1 - t))})`;
-            })
-            .ringMaxRadius(d => d.maxR)
-            .ringPropagationSpeed(d => d.speed)
-            .ringRepeatPeriod(d => d.repeat);
-    } else {
-        const node = ugrData.mapNodes[activeKey];
-        if (!node) return;
-        const isChisinau = activeKey === 'chisinau';
-        myGlobe
-            .ringsData([{ lat: node.lat, lng: node.lon }])
-            .ringColor(() => (t) => isChisinau ? `rgba(255, 159, 28, ${Math.max(0, 0.9 * (1 - t))})` : `rgba(0, 229, 255, ${Math.max(0, 0.95 * (1 - t))})`)
-            .ringMaxRadius(3.5)
-            .ringPropagationSpeed(2.2)
-            .ringRepeatPeriod(950);
-    }
+    const node = ugrData.mapNodes.bucuresti;
+    myGlobe
+        .ringsData([{ lat: node.lat, lng: node.lon }])
+        .ringColor(() => (t) => `rgba(0, 229, 255, ${Math.max(0, 0.95 * (1 - t))})`)
+        .ringMaxRadius(3.8)
+        .ringPropagationSpeed(2.2)
+        .ringRepeatPeriod(950);
 }
 
 function updateGlobePoints(activeKey) {
     if (!myGlobe || typeof myGlobe.pointsData !== 'function') return;
-    const allowed = (ugrData.skillMapping[appState.selectedSkill] || ugrData.skillMapping.toate);
-    const updatedPoints = Object.keys(ugrData.mapNodes).map(key => {
-        const node = ugrData.mapNodes[key];
-        const isSelected = (key === activeKey);
-        const isAllowed = allowed.includes(key) || key === 'bucuresti';
-        return {
-            id: key,
-            labelTitle: (key === 'bucuresti' ? '★ SECTOR 1 ' : '') + node.name.toUpperCase(),
-            lat: node.lat,
-            lng: node.lon,
-            size: isSelected ? 0.32 : (isAllowed ? 0.18 : 0.08),
-            color: isSelected ? (key === 'chisinau' ? '#FF9F1C' : '#00FFFF') : (isAllowed ? (key === 'chisinau' ? 'rgba(255,159,28,0.85)' : 'rgba(64,176,240,0.85)') : 'rgba(255,255,255,0.15)'),
-            altitude: isSelected ? 0.03 : (isAllowed ? 0.018 : 0.008)
-        };
-    });
-    myGlobe.pointsData(updatedPoints);
-}
-
-function switchMapView(mode) {
-    const btn2d = document.getElementById('btn-mode-2d');
-    const btn3d = document.getElementById('btn-mode-3d');
-    const svgWrapper = document.getElementById('svg-map-wrapper');
-    const globeWrapper = document.getElementById('globe-3d-wrapper');
-
-    if (mode === '3d') {
-        btn3d.classList.add('active');
-        btn3d.setAttribute('aria-selected', 'true');
-        btn2d.classList.remove('active');
-        btn2d.setAttribute('aria-selected', 'false');
-
-        const arcPill = document.getElementById('arc-style-pill');
-        if (arcPill) arcPill.style.display = 'flex';
-
-        svgWrapper.style.display = 'none';
-        globeWrapper.style.display = 'block';
-
-        if (!appState.globeInitialized) {
-            init3DGlobe();
-        } else {
-            if (typeof window.startSatelliteAnimation === 'function') {
-                window.startSatelliteAnimation();
-            }
-            if (myGlobe) {
-                const activeKey = appState.selectedNode || 'bucuresti';
-                const node = ugrData.mapNodes[activeKey];
-                if (node) {
-                    myGlobe.pointOfView({ lat: node.lat, lng: node.lon, altitude: activeKey === 'bucuresti' ? 0.32 : 0.36 }, 1200);
-                    updateGlobeRings(activeKey);
-                    updateGlobePoints(activeKey);
-                    if (typeof updateLaserTracking === 'function') {
-                        updateLaserTracking();
-                    }
-                }
-            }
-        }
-    } else {
-        btn2d.classList.add('active');
-        btn2d.setAttribute('aria-selected', 'true');
-        btn3d.classList.remove('active');
-        btn3d.setAttribute('aria-selected', 'false');
-
-        const arcPill = document.getElementById('arc-style-pill');
-        if (arcPill) arcPill.style.display = 'none';
-
-        globeWrapper.style.display = 'none';
-        svgWrapper.style.display = 'block';
-
-        // Oprește loop-ul Three.js când modul 2D este activ
-        if (animationFrameId) {
-            cancelAnimationFrame(animationFrameId);
-            animationFrameId = null;
-        }
-    }
+    const node = ugrData.mapNodes.bucuresti;
+    myGlobe.pointsData([{
+        id: 'bucuresti',
+        labelTitle: '★ SECTOR 1 ' + node.name.toUpperCase(),
+        lat: node.lat,
+        lng: node.lon,
+        size: 0.32,
+        color: '#00FFFF',
+        altitude: 0.03
+    }]);
 }
 
 function init3DGlobe() {
@@ -508,29 +375,15 @@ function init3DGlobe() {
         .width(w)
         .height(h);
 
-    const activeKey = appState.selectedNode || 'bucuresti';
-    const pointsData = Object.keys(ugrData.mapNodes).map(key => {
-        const node = ugrData.mapNodes[key];
-        const isSelected = (key === activeKey);
-        return {
-            id: key,
-            labelTitle: (key === 'bucuresti' ? '★ SECTOR 1 ' : '') + node.name.toUpperCase(),
-            lat: node.lat,
-            lng: node.lon,
-            size: isSelected ? 0.32 : 0.18,
-            color: isSelected ? (key === 'chisinau' ? '#FF9F1C' : '#00FFFF') : (key === 'chisinau' ? 'rgba(255,159,28,0.85)' : 'rgba(64,176,240,0.85)'),
-            altitude: isSelected ? 0.03 : 0.018
-        };
-    });
+    const activeKey = 'bucuresti';
 
     myGlobe
-        .pointsData(pointsData)
         .pointColor('color')
         .pointAltitude('altitude')
         .pointRadius('size')
         .pointLabel(d => `
             <div style="display:inline-flex;align-items:center;gap:6px;">
-                <span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:${d.id === 'chisinau' ? '#FF9F1C' : '#00E5FF'};box-shadow:0 0 6px ${d.id === 'chisinau' ? '#FF9F1C' : '#00E5FF'};"></span>
+                <span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#00E5FF;box-shadow:0 0 6px #00E5FF;"></span>
                 <span>${escapeHtml(d.labelTitle)}</span>
             </div>
         `)
@@ -540,18 +393,10 @@ function init3DGlobe() {
             }
         });
 
+    updateGlobePoints(activeKey);
     updateGlobeRings(activeKey);
 
     let currentArcStyle = window.ARCS_STYLE || (new URLSearchParams(window.location.search).get('style')) || 'clean';
-
-    const triangulationPairs = [
-        { from: 'bucuresti', to: 'constanta' },
-        { from: 'bucuresti', to: 'cluj' },
-        { from: 'bucuresti', to: 'iasi' },
-        { from: 'cluj', to: 'timisoara' },
-        { from: 'cluj', to: 'iasi' },
-        { from: 'iasi', to: 'chisinau' }
-    ];
 
     function applyGlobeArcStyle(styleName) {
         if (!myGlobe || typeof myGlobe.arcsData !== 'function') return;
@@ -2365,6 +2210,7 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('hashchange', handleHashChange);
     handleHashChange();
 
+    init3DGlobe();
     selectNode('bucuresti');
 
     // Conectare la Supabase Realtime pentru monitorizarea vizitatorilor live
@@ -2624,7 +2470,7 @@ function initHeroPerformanceOptimizer() {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
                 ticker.style.animationPlayState = 'running';
-                if (appState.currentView === 'acasa' && document.getElementById('btn-mode-3d')?.classList.contains('active')) {
+                if (appState.currentView === 'acasa' && appState.globeInitialized) {
                     if (typeof window.startSatelliteAnimation === 'function') {
                         window.startSatelliteAnimation();
                     }
