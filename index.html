@@ -800,28 +800,17 @@
                     <div class="m-directory-header">
                         <div class="m-directory-header-text">
                             <span class="scroll-reveal reveal-left m-tag-cyan">Evidență Acreditată</span>
-                            <h3 class="scroll-reveal reveal-left m-section-subheading">Registrul Membrilor Autorizați UGR</h3>
+                            <h3 class="scroll-reveal reveal-left m-section-subheading">Registrul membrilor</h3>
                         </div>
                         <div id="members-count-badge" class="scroll-reveal reveal-right m-count-badge">
-                            Se afișează <b>8</b> membri autorizați
+                            Se afișează <b>51</b> membri autorizați
                         </div>
                     </div>
 
                     <!-- Filtre Live -->
                     <div class="scroll-reveal reveal-up m-filters-row">
                         <div style="flex: 1; min-width: 240px;">
-                            <input type="text" id="member-search-input" oninput="filterMembers()" onkeyup="filterMembers()" class="dark-filter-input" style="width: 100%;" placeholder="🔍 Caută după nume, serie autorizație sau ID...">
-                        </div>
-                        <div style="width: 220px;">
-                            <select id="member-county-select" onchange="filterMembers()" class="dark-filter-input" style="width: 100%;">
-                                <option value="toate">Toate filialele (41 județe)</option>
-                                <option value="București">București (Sector 1)</option>
-                                <option value="Cluj">Cluj</option>
-                                <option value="Iași">Iași</option>
-                                <option value="Timiș">Timiș</option>
-                                <option value="Constanța">Constanța</option>
-                                <option value="Chișinău">Chișinău (UTM)</option>
-                            </select>
+                            <input type="text" id="member-search-input" oninput="filterMembers()" onkeyup="filterMembers()" class="dark-filter-input" style="width: 100%;" placeholder="🔍 Caută după nume sau ID...">
                         </div>
                     </div>
 
@@ -832,7 +821,6 @@
                                     <th>Nr. Legitimație</th>
                                     <th>Nume &amp; Prenume</th>
                                     <th>Filială / Județ</th>
-                                    <th>Autorizație ANCPI</th>
                                     <th>Status</th>
                                 </tr>
                             </thead>
@@ -840,7 +828,6 @@
                                 <!-- Populat dinamic prin script.js cu table-row-animated -->
                             </tbody>
                         </table>
-                        <p class="members-demo-note" style="text-align: center; font-size: 12.5px; color: var(--ugr-text-muted); margin-top: 12px; margin-bottom: 4px; font-style: italic;">Date demonstrative: lista va fi înlocuită cu registrul real al membrilor.</p>
                     </div>
                 </div>
 
