@@ -888,21 +888,26 @@ function renderMembersTable(members) {
         'members-table-body-demo5'
     ];
 
-    const emptyRow = `<tr><td colspan="5" style="padding: 24px; text-align: center; color: rgba(250,251,252,0.6);">Nu a fost găsit niciun membru conform criteriilor de căutare.</td></tr>`;
+    const emptyRow = `<tr><td colspan="4" style="padding: 24px; text-align: center; color: rgba(250,251,252,0.6);">Nu a fost găsit niciun membru conform criteriilor de căutare.</td></tr>`;
 
-    const rowsHtml = members.length === 0 ? emptyRow : members.map((m, idx) => `
+    const rowsHtml = members.length === 0 ? emptyRow : members.map((m, idx) => {
+        const isInactive = (m.status || '').toLowerCase().startsWith('inactiv');
+        const statusColor = isInactive ? '#EF4444' : '#10B981';
+        const statusBg = isInactive ? 'rgba(239,68,68,0.15)' : 'rgba(16,185,129,0.15)';
+        const statusBorder = isInactive ? 'rgba(239,68,68,0.3)' : 'rgba(16,185,129,0.3)';
+        return `
         <tr class="table-row-animated" style="border-bottom: 1px solid rgba(255,255,255,0.06); animation-delay: ${idx * 40}ms;">
             <td style="padding: 13px 16px; font-family: var(--font-mono); font-weight: 600; color: #00E5FF;">${escapeHtml(m.id)}</td>
             <td style="padding: 13px 16px; font-weight: 600; color: #FFFFFF;">${escapeHtml(m.name)}</td>
             <td style="padding: 13px 16px; color: rgba(250,251,252,0.75);">${escapeHtml(m.judet)}</td>
-            <td style="padding: 13px 16px; font-family: var(--font-mono); font-size: 12px; color: rgba(250,251,252,0.85);">${escapeHtml(m.auth)}</td>
             <td style="padding: 13px 16px;">
-                <span class="member-status-badge" style="background: rgba(16,185,129,0.15); color: #10B981; border: 1px solid rgba(16,185,129,0.3); padding: 3px 8px; border-radius: 4px; font-size: 11px; font-family: var(--font-mono); font-weight: 700; display: inline-flex; align-items: center; gap: 5px;">
-                    <span class="status-live-dot" style="width: 6px; height: 6px; border-radius: 50%; background: #10B981; box-shadow: 0 0 6px #10B981;"></span> ${escapeHtml(m.status || 'activ').toUpperCase()}
+                <span class="member-status-badge" style="background: ${statusBg}; color: ${statusColor}; border: 1px solid ${statusBorder}; padding: 3px 8px; border-radius: 4px; font-size: 11px; font-family: var(--font-mono); font-weight: 700; display: inline-flex; align-items: center; gap: 5px;">
+                    <span class="status-live-dot" style="width: 6px; height: 6px; border-radius: 50%; background: ${statusColor}; box-shadow: 0 0 6px ${statusColor};"></span> ${escapeHtml(m.status || 'activ').toUpperCase()}
                 </span>
             </td>
         </tr>
-    `).join('');
+    `;
+    }).join('');
 
     tableIds.forEach(id => {
         const tbody = document.getElementById(id);
@@ -938,7 +943,7 @@ function filterMembers(sourcePrefix = '') {
     if (countySelect) countyVal = countySelect.value;
 
     const filtered = (ugrData.membersList || []).filter(m => {
-        const matchesSearch = m.name.toLowerCase().includes(searchVal) || m.auth.toLowerCase().includes(searchVal) || m.id.toLowerCase().includes(searchVal);
+        const matchesSearch = m.name.toLowerCase().includes(searchVal) || m.id.toLowerCase().includes(searchVal);
         const matchesCounty = (countyVal === 'toate') || (m.judet === countyVal);
         return matchesSearch && matchesCounty;
     });
