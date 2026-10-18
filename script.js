@@ -2772,7 +2772,13 @@ async function loadMembersFromSupabase() {
             return;
         }
 
-        const mappedMembers = (data || []).map(m => ({
+        if (!data || data.length === 0) {
+            // Tabela Supabase e goală (neconfigurată încă) — folosim registrul local
+            fallbackLoadMembersJson();
+            return;
+        }
+
+        const mappedMembers = data.map(m => ({
             id: m.id,
             name: m.nume,
             judet: m.judet,
