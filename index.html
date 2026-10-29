@@ -189,41 +189,6 @@
                         </div>
                     </div>
 
-                    <!-- Panou Interactiv: VisionOS Spatial Glass HUD (Harta 2D / Glob 3D cu Sateliți) -->
-                    <div class="glass-panel" id="spatial-hud-card" style="position: relative; overflow: hidden; padding: 0; min-height: 520px; display: flex; flex-direction: column; background: rgba(4, 14, 26, 0.40); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border: 1px solid rgba(0, 229, 255, 0.35); border-radius: 14px; box-shadow: 0 20px 50px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.15);">
-                        
-                        <!-- Canvas Central Harta (100% eliberat și aerisit) -->
-                        <div class="map-card-body" style="height: 380px; width: 100%; border: none; border-radius: 0; background: transparent; box-shadow: none;">
-                            <div id="globe-3d-wrapper" style="width: 100%; height: 100%;">
-                                <div id="globe-canvas-container" style="width: 100%; height: 380px;"></div>
-                            </div>
-                        </div>
-
-                        <!-- Bottom Floating Telemetry Dock (Progressive Disclosure) -->
-                        <div id="spatial-dock" style="position: absolute; bottom: 12px; left: 12px; right: 12px; z-index: 30; background: rgba(3, 11, 22, 0.82); backdrop-filter: blur(28px); -webkit-backdrop-filter: blur(28px); border: 1px solid rgba(0, 229, 255, 0.35); border-radius: 12px; box-shadow: 0 12px 35px rgba(0,0,0,0.6); padding: 10px 14px; transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);">
-                            <!-- Glance Header (Tot timpul vizibil, foarte aerisit) -->
-                            <div style="display: flex; align-items: center; justify-content: space-between; cursor: pointer;" onclick="toggleSpatialDrawer()">
-                                <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
-                                    <span id="spatial-node-badge" style="font-family: var(--font-mono); font-size: 11px; font-weight: 700; color: #00E5FF; letter-spacing: 0.04em;">★ Sector 1 București</span>
-                                    <span style="color: rgba(255,255,255,0.25);">•</span>
-                                    <span id="spatial-node-coords-short" style="font-family: var(--font-mono); font-size: 10px; color: rgba(250,251,252,0.85);">X: 328733.315 m | Y: 586483.430 m</span>
-                                </div>
-                                <span id="spatial-chevron" style="display: none;">▲</span>
-                            </div>
-
-                            <!-- Drawer Extensibil Smooth (Fără căsuțe false, 100% date reale) -->
-                            <div id="spatial-drawer-body" style="max-height: 0; opacity: 0; overflow: hidden; transition: max-height 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s ease, margin 0.35s ease; border-top: 1px solid transparent;">
-                                <p id="spatial-node-desc" style="font-size: 12px; line-height: 1.5; color: rgba(250,251,252,0.88); margin: 10px 0; transition: opacity 0.2s ease;">
-                                    Nod strategic național și pol legislativ al Capitalei: Filiala Sector 1 reprezintă comunitatea geodezilor autorizați din București în parteneriat tehnic-legislativ direct cu ANCPI și OCPI București.
-                                </p>
-                                <div style="display: flex; gap: 8px; margin-bottom: 2px;">
-                                    <a href="showcase/demos-calculator.html" target="_blank" rel="noopener noreferrer" class="btn-membership" style="padding: 6px 14px; font-size: 10.5px; text-decoration: none;">Calculează în Stereo 70 →</a>
-                                </div>
-                            </div>
-                        </div>
-
-                    </div>
-
                 </div>
             </div>
 
@@ -724,7 +689,7 @@
             </section></div>
 
         <!-- ================= 4. SECȚIUNE MEMBRI & ADEZIUNE (VARIANTA 4: MAGIC UI FINAL) ================= -->
-        <section id="view-membri" class="section-block section-dark view-section hidden" style="padding-top: 40px;">
+        <section id="view-membri" class="section-block view-section hidden" style="padding-top: 40px;">
             <div class="content-container">
 
                 <!-- 1. Section Header cu Animații de Text Fluide (Stagger 80ms) -->
@@ -748,9 +713,9 @@
                     <svg class="m-card-laser-svg" aria-hidden="true">
                         <defs>
                             <linearGradient id="cyanGoldLaserMembri" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" stop-color="#00E5FF" stop-opacity="1" />
+                                <stop offset="0%" stop-color="#1DA3EC" stop-opacity="1" />
                                 <stop offset="50%" stop-color="#FFE082" stop-opacity="1" />
-                                <stop offset="100%" stop-color="#00E5FF" stop-opacity="0" />
+                                <stop offset="100%" stop-color="#1DA3EC" stop-opacity="0" />
                             </linearGradient>
                         </defs>
                         <rect class="m-laser-track" x="1" y="1" width="calc(100% - 2px)" height="calc(100% - 2px)" rx="16" />
@@ -1116,7 +1081,7 @@
     </div>
 
     <!-- ══════════════════════════════════════════════════════════════════
-         SCRIPTOURI: Proj4.js, Three.js, Globe.gl, Date & Script Principal
+         SCRIPTOURI: Proj4.js, Date & Script Principal
          ══════════════════════════════════════════════════════════════════ -->
     <!-- Supabase JS Client for Realtime & Full Stack Database
          Versiunea este fixata pe 2.117.2, iar integrity blocheaza orice
@@ -1136,10 +1101,7 @@
             integrity="sha512-4w/AcXbU7AGdxOzJGUPCLrSqlTh+jnM25jQ+wmZByQckoKFyHvA10J9JLEavYV9cfp0JdTxIP6jddakO4xlOGA=="
             crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/proj4@2.9.0/dist/proj4.js"></script>
-    <script src="https://unpkg.com/three@0.146.0/build/three.min.js"></script>
-    <script src="https://unpkg.com/globe.gl@2.28.3/dist/globe.gl.min.js"></script>
-    
-    <script src="borders.js"></script>
+
     <script src="data.js"></script>
     <script src="script.js"></script>
 </body>
