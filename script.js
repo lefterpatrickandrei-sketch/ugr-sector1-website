@@ -6,9 +6,8 @@
  * 2. Meniu Mobil Drawer cu Închidere Automată & Stare Focus
  * 3. Calculator Geodezic Transversal Stereo 70 (EPSG:3844) ⇄ WGS84 Integrat (ANCPI)
  * 4. Harta Vectorială 2D & Filtru Competențe Tehnice
- * 5. Glob 3D WebGL (Globe.gl + Three.js) cu Sateliți și Rază Laser Dinamică
- * 6. Rendare Dinamică: Membri, Conducere BEX, Știri SGR Chișinău, Acordeon FAQ
- * 7. Modal Înscriere Multi-Step conform WCAG 2.2 AA (Capcană Focus & Taste)
+ * 5. Rendare Dinamică: Membri, Conducere BEX, Știri SGR Chișinău, Acordeon FAQ
+ * 6. Modal Înscriere Multi-Step conform WCAG 2.2 AA (Capcană Focus & Taste)
  * =========================================================================
  */
 
@@ -19,7 +18,6 @@ const appState = {
     selectedSkill: 'toate',
     modalStep: 1,
     selectedTier: 'fizica',
-    globeInitialized: false,
     lastFocusedElement: null
 };
 
@@ -89,17 +87,6 @@ function navigateTo(viewId) {
     // Declanșează animația de tipărire la prima vizită
     if (isPageChange) {
         playBrandTypewriter(false);
-        // Oprește loop-ul 3D WebGL dacă utilizatorul nu este pe pagina Acasă
-        if (viewId !== 'acasa') {
-            if (animationFrameId) {
-                cancelAnimationFrame(animationFrameId);
-                animationFrameId = null;
-            }
-        } else {
-            if (appState.globeInitialized && typeof window.startSatelliteAnimation === 'function') {
-                window.startSatelliteAnimation();
-            }
-        }
     }
 }
 
@@ -186,24 +173,6 @@ function selectNode(nodeKey) {
     }
     if (textEl) textEl.innerText = node.desc;
 
-    // Actualizare elemente VisionOS Spatial Glass HUD
-    const spatialBadge = document.getElementById('spatial-node-badge');
-    const spatialCoords = document.getElementById('spatial-node-coords-short');
-    const spatialDesc = document.getElementById('spatial-node-desc');
-    if (spatialBadge) {
-        spatialBadge.innerText = (nodeKey === 'bucuresti' ? '★ ' : '') + node.name;
-    }
-    if (spatialCoords) {
-        spatialCoords.innerText = node.stereo70Str || (node.latStr + ' / ' + node.lonStr);
-    }
-    if (spatialDesc) {
-        spatialDesc.style.opacity = '0';
-        setTimeout(() => {
-            spatialDesc.innerText = node.desc;
-            spatialDesc.style.opacity = '1';
-        }, 120);
-    }
-
     // Panou dinamic de telemetrie geodezică pentru nodul selectat
     let telemContainer = document.getElementById('node-telemetry-container');
     if (!telemContainer && textEl && textEl.parentNode) {
@@ -220,35 +189,35 @@ function selectNode(nodeKey) {
     if (telemContainer) {
         if (nodeKey === 'bucuresti') {
             telemContainer.innerHTML = `
-                <div class="telemetry-card" style="background: rgba(0,229,255,0.08); border: 1px solid rgba(0,229,255,0.3); padding: 6px 8px; border-radius: 4px; font-family: var(--font-mono); font-size: 10px;">
+                <div class="telemetry-card" style="background: rgba(29, 163, 236,0.08); border: 1px solid rgba(29, 163, 236,0.3); padding: 6px 8px; border-radius: 4px; font-family: var(--font-mono); font-size: 10px;">
                     <div style="color: var(--ugr-cyan); font-weight: 700; font-size: 9px; text-transform: uppercase;">STAȚII ROMPOS REF</div>
                     <div style="color: #fff; font-size: 10.5px;">BUCU (Tei) & BUC1 (Vest)</div>
                 </div>
-                <div class="telemetry-card" style="background: rgba(0,229,255,0.08); border: 1px solid rgba(0,229,255,0.3); padding: 6px 8px; border-radius: 4px; font-family: var(--font-mono); font-size: 10px;">
+                <div class="telemetry-card" style="background: rgba(29, 163, 236,0.08); border: 1px solid rgba(29, 163, 236,0.3); padding: 6px 8px; border-radius: 4px; font-family: var(--font-mono); font-size: 10px;">
                     <div style="color: var(--ugr-cyan); font-weight: 700; font-size: 9px; text-transform: uppercase;">REȚEA RGLMB S1</div>
                     <div style="color: #fff; font-size: 10.5px;">P. Victoriei / Arcul de Triumf</div>
                 </div>
-                <div class="telemetry-card" style="background: rgba(0,229,255,0.08); border: 1px solid rgba(0,229,255,0.3); padding: 6px 8px; border-radius: 4px; font-family: var(--font-mono); font-size: 10px;">
+                <div class="telemetry-card" style="background: rgba(29, 163, 236,0.08); border: 1px solid rgba(29, 163, 236,0.3); padding: 6px 8px; border-radius: 4px; font-family: var(--font-mono); font-size: 10px;">
                     <div style="color: var(--ugr-cyan); font-weight: 700; font-size: 9px; text-transform: uppercase;">DATUM / CRS</div>
                     <div style="color: #fff; font-size: 10.5px;">Stereo 70 / EPSG:3844</div>
                 </div>
-                <div class="telemetry-card" style="background: rgba(0,229,255,0.08); border: 1px solid rgba(0,229,255,0.3); padding: 6px 8px; border-radius: 4px; font-family: var(--font-mono); font-size: 10px;">
+                <div class="telemetry-card" style="background: rgba(29, 163, 236,0.08); border: 1px solid rgba(29, 163, 236,0.3); padding: 6px 8px; border-radius: 4px; font-family: var(--font-mono); font-size: 10px;">
                     <div style="color: var(--ugr-cyan); font-weight: 700; font-size: 9px; text-transform: uppercase;">PRECIZIE GEODEZICĂ</div>
                     <div style="color: #fff; font-size: 10.5px;">GNSS RTK 1-2cm / Niv. Clasa I</div>
                 </div>
             `;
         } else if (nodeKey === 'chisinau') {
             telemContainer.innerHTML = `
-                <div class="telemetry-card" style="background: rgba(255,159,28,0.1); border: 1px solid rgba(255,159,28,0.4); padding: 6px 8px; border-radius: 4px; font-family: var(--font-mono); font-size: 10px;">
-                    <div style="color: #FF9F1C; font-weight: 700; font-size: 9px; text-transform: uppercase;">CONGRES SGR 2026</div>
+                <div class="telemetry-card" style="background: rgba(29, 163, 236,0.1); border: 1px solid rgba(29, 163, 236,0.4); padding: 6px 8px; border-radius: 4px; font-family: var(--font-mono); font-size: 10px;">
+                    <div style="color: #1DA3EC; font-weight: 700; font-size: 9px; text-transform: uppercase;">CONGRES SGR 2026</div>
                     <div style="color: #fff; font-size: 10.5px;">11–14 Noiembrie Chișinău</div>
                 </div>
-                <div class="telemetry-card" style="background: rgba(255,159,28,0.1); border: 1px solid rgba(255,159,28,0.4); padding: 6px 8px; border-radius: 4px; font-family: var(--font-mono); font-size: 10px;">
-                    <div style="color: #FF9F1C; font-weight: 700; font-size: 9px; text-transform: uppercase;">GAZDĂ ACADEMICĂ</div>
+                <div class="telemetry-card" style="background: rgba(29, 163, 236,0.1); border: 1px solid rgba(29, 163, 236,0.4); padding: 6px 8px; border-radius: 4px; font-family: var(--font-mono); font-size: 10px;">
+                    <div style="color: #1DA3EC; font-weight: 700; font-size: 9px; text-transform: uppercase;">GAZDĂ ACADEMICĂ</div>
                     <div style="color: #fff; font-size: 10.5px;">UTM — Fac. Geodezie & Cadastru</div>
                 </div>
-                <div class="telemetry-card" style="background: rgba(255,159,28,0.1); border: 1px solid rgba(255,159,28,0.4); padding: 6px 8px; border-radius: 4px; font-family: var(--font-mono); font-size: 10px;">
-                    <div style="color: #FF9F1C; font-weight: 700; font-size: 9px; text-transform: uppercase;">SISTEM PROIECȚIE</div>
+                <div class="telemetry-card" style="background: rgba(29, 163, 236,0.1); border: 1px solid rgba(29, 163, 236,0.4); padding: 6px 8px; border-radius: 4px; font-family: var(--font-mono); font-size: 10px;">
+                    <div style="color: #1DA3EC; font-weight: 700; font-size: 9px; text-transform: uppercase;">SISTEM PROIECȚIE</div>
                     <div style="color: #fff; font-size: 10.5px;">MOLDREF 99 / EPSG:4026</div>
                 </div>
             `;
@@ -280,384 +249,20 @@ function selectNode(nodeKey) {
     if (nodeKey === 'bucuresti') {
         // Când este selectat București (Pol Regional), luminează toți vectorii de legătură naționali
         document.querySelectorAll('.edge-vector').forEach(line => {
-            line.style.stroke = '#00E5FF';
+            line.style.stroke = '#1DA3EC';
             line.style.strokeWidth = '1.6';
         });
     } else {
         const activeLine = document.getElementById(`vec-${nodeKey}`);
         if (activeLine) {
-            activeLine.style.stroke = nodeKey === 'chisinau' ? '#FF9F1C' : '#00E5FF';
+            activeLine.style.stroke = nodeKey === 'chisinau' ? '#1DA3EC' : '#1DA3EC';
             activeLine.style.strokeWidth = '2.2';
         }
     }
-
-    if (myGlobe) {
-        if (typeof myGlobe.pointOfView === 'function') {
-            myGlobe.pointOfView({ lat: node.lat, lng: node.lon, altitude: nodeKey === 'bucuresti' ? 0.32 : 0.36 }, 1400);
-        }
-        updateGlobeRings(nodeKey);
-        updateGlobePoints(nodeKey);
-        if (typeof updateLaserTracking === 'function') {
-            updateLaserTracking();
-        }
-        if (typeof window.setArcStyle === 'function' && window.currentArcStyle === 'orbital') {
-            window.setArcStyle('orbital');
-        }
-    }
-}
-
-function toggleSpatialDrawer() {
-    const drawer = document.getElementById('spatial-drawer-body');
-    const chevron = document.getElementById('spatial-chevron');
-    if (!drawer) return;
-    const isExpanded = drawer.classList.contains('expanded');
-    if (!isExpanded) {
-        drawer.classList.add('expanded');
-        if (chevron) chevron.style.transform = 'rotate(180deg)';
-    } else {
-        drawer.classList.remove('expanded');
-        if (chevron) chevron.style.transform = 'rotate(0deg)';
-    }
-}
-window.toggleSpatialDrawer = toggleSpatialDrawer;
-
-// ═══════════════════════════════════════════════════════════════════════════
-// 4. GLOB 3D WEBGL (THREE.JS + GLOBE.GL + SATELLIȚI + LASERE)
-// ═══════════════════════════════════════════════════════════════════════════
-
-let myGlobe = null;
-let satellites = [];
-let laserBeam = null;
-let animationFrameId = null;
-
-function updateGlobeRings(activeKey) {
-    if (!myGlobe || typeof myGlobe.ringsData !== 'function') return;
-    const node = ugrData.mapNodes.bucuresti;
-    myGlobe
-        .ringsData([{ lat: node.lat, lng: node.lon }])
-        .ringColor(() => (t) => `rgba(0, 229, 255, ${Math.max(0, 0.95 * (1 - t))})`)
-        .ringMaxRadius(3.8)
-        .ringPropagationSpeed(2.2)
-        .ringRepeatPeriod(950);
-}
-
-function updateGlobePoints(activeKey) {
-    if (!myGlobe || typeof myGlobe.pointsData !== 'function') return;
-    const node = ugrData.mapNodes.bucuresti;
-    myGlobe.pointsData([{
-        id: 'bucuresti',
-        labelTitle: '★ SECTOR 1 ' + node.name.toUpperCase(),
-        lat: node.lat,
-        lng: node.lon,
-        size: 0.32,
-        color: '#00FFFF',
-        altitude: 0.03
-    }]);
-}
-
-function init3DGlobe() {
-    const container = document.getElementById('globe-canvas-container');
-    if (!container || typeof Globe !== 'function') return;
-
-    appState.globeInitialized = true;
-
-    const w = container.clientWidth || 360;
-    const h = container.clientHeight || 290;
-
-    myGlobe = Globe()(container)
-        .globeImageUrl('https://unpkg.com/three-globe/example/img/earth-dark.jpg')
-        .bumpImageUrl('https://unpkg.com/three-globe/example/img/earth-topology.png')
-        .backgroundColor('rgba(0,0,0,0)')
-        .showAtmosphere(true)
-        .atmosphereColor('#00E5FF')
-        .atmosphereAltitude(0.18)
-        .showGraticules(true)
-        .width(w)
-        .height(h);
-
-    const activeKey = 'bucuresti';
-
-    myGlobe
-        .pointColor('color')
-        .pointAltitude('altitude')
-        .pointRadius('size')
-        .pointLabel(d => `
-            <div style="display:inline-flex;align-items:center;gap:6px;">
-                <span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#00E5FF;box-shadow:0 0 6px #00E5FF;"></span>
-                <span>${escapeHtml(d.labelTitle)}</span>
-            </div>
-        `)
-        .onPointClick(point => {
-            if (point && point.id) {
-                selectNode(point.id);
-            }
-        });
-
-    updateGlobePoints(activeKey);
-    updateGlobeRings(activeKey);
-
-    let currentArcStyle = window.ARCS_STYLE || (new URLSearchParams(window.location.search).get('style')) || 'clean';
-
-    function applyGlobeArcStyle(styleName) {
-        if (!myGlobe || typeof myGlobe.arcsData !== 'function') return;
-        currentArcStyle = styleName || 'clean';
-        window.currentArcStyle = currentArcStyle;
-
-        const btnClean = document.getElementById('btn-style-clean');
-        const btnTriangulation = document.getElementById('btn-style-triangulation');
-        if (btnClean && btnTriangulation) {
-            if (currentArcStyle === 'clean' || currentArcStyle === 'radar') {
-                btnClean.style.background = 'rgba(0,229,255,0.3)';
-                btnClean.style.borderColor = '#00E5FF';
-                btnClean.style.color = '#fff';
-                btnTriangulation.style.background = 'transparent';
-                btnTriangulation.style.borderColor = 'transparent';
-                btnTriangulation.style.color = 'rgba(255,255,255,0.65)';
-            } else {
-                btnTriangulation.style.background = 'rgba(0,229,255,0.3)';
-                btnTriangulation.style.borderColor = '#00E5FF';
-                btnTriangulation.style.color = '#fff';
-                btnClean.style.background = 'transparent';
-                btnClean.style.borderColor = 'transparent';
-                btnClean.style.color = 'rgba(255,255,255,0.65)';
-            }
-        }
-
-        // Demo 2A: ZERO arcuri la sol (fără benzi late), glob curat și triangulație prin satelit
-        myGlobe.arcsData([]);
-        updateGlobeRings(appState.selectedNode || 'bucuresti');
-        if (typeof window.updateLaserTracking === 'function') {
-            window.updateLaserTracking();
-        }
-    }
-    window.setArcStyle = applyGlobeArcStyle;
-
-    applyGlobeArcStyle(currentArcStyle);
-
-    if (typeof bordersGeoJson !== 'undefined' && bordersGeoJson.features) {
-        myGlobe
-            .polygonsData(bordersGeoJson.features)
-            .polygonCapColor(() => 'rgba(0, 180, 255, 0.08)')
-            .polygonSideColor(() => 'rgba(0, 229, 255, 0.22)')
-            .polygonStrokeColor(() => 'rgba(0, 229, 255, 0.75)')
-            .polygonAltitude(0.012);
-    }
-
-    myGlobe.pointOfView({ lat: 45.8, lng: 25.0, altitude: 2.2 }, 0);
-    setTimeout(() => {
-        const cur = ugrData.mapNodes[appState.selectedNode || 'bucuresti'];
-        if (cur) {
-            myGlobe.pointOfView({ lat: cur.lat, lng: cur.lon, altitude: 0.36 }, 1600);
-        }
-    }, 400);
-
-    const controls = myGlobe.controls();
-    if (controls) {
-        controls.autoRotate = false;
-        controls.enableZoom = true;
-        controls.enablePan = false;
-        controls.minDistance = 115;
-        controls.maxDistance = 500;
-    }
-
-    setupSatellitesAndLasers();
-
-    window.addEventListener('resize', () => {
-        if (myGlobe && container) {
-            myGlobe.width(container.clientWidth || 360);
-            myGlobe.height(container.clientHeight || 290);
-        }
-    });
-}
-
-function setupSatellitesAndLasers() {
-    if (!myGlobe || typeof THREE === 'undefined') return;
-
-    const scene = myGlobe.scene();
-    const orbitRadius = 140;
-
-    function buildSatelliteMesh(accentColor) {
-        const satGroup = new THREE.Group();
-
-        // Corp central aurit (Multilayer Insulation Foil)
-        const bodyGeom = new THREE.BoxGeometry(2.4, 1.6, 2.4);
-        const bodyMat = new THREE.MeshStandardMaterial({
-            color: 0xFBBF24,
-            metalness: 0.75,
-            roughness: 0.25
-        });
-        const bodyMesh = new THREE.Mesh(bodyGeom, bodyMat);
-        satGroup.add(bodyMesh);
-
-        // Panouri solare fotovoltaice (albastru orbital)
-        const panelGeom = new THREE.BoxGeometry(5.0, 0.3, 1.6);
-        const panelMat = new THREE.MeshBasicMaterial({ color: 0x0284C7 });
-        
-        const leftP = new THREE.Mesh(panelGeom, panelMat);
-        leftP.position.x = -3.8;
-        const rightP = new THREE.Mesh(panelGeom, panelMat);
-        rightP.position.x = 3.8;
-
-        satGroup.add(leftP);
-        satGroup.add(rightP);
-
-        // Antenă emițătoare cu accent spectral
-        const antennaGeom = new THREE.SphereGeometry(0.8, 8, 8);
-        const antennaMat = new THREE.MeshBasicMaterial({ color: accentColor || 0x00F0FF });
-        const antenna = new THREE.Mesh(antennaGeom, antennaMat);
-        antenna.position.y = -1.0;
-        satGroup.add(antenna);
-
-        return satGroup;
-    }
-
-    // Configurație Constelație Triunghiulară GNSS (Demo Nou):
-    // 3 sateliți poziționați în bolta cerească vizibilă a României (Line of Sight 100% garantat)
-    const triangleConfigs = [
-        { name: 'SAT-ALPHA (Nord-Zenit)', baseLat: 54.0, baseLon: 25.5, alt: 0.48, color: 0x00F0FF, phase: 0 },
-        { name: 'SAT-BETA (Sud-Est)',     baseLat: 34.0, baseLon: 36.0, alt: 0.46, color: 0x38BDF8, phase: 2.1 },
-        { name: 'SAT-GAMMA (Sud-Vest)',   baseLat: 34.0, baseLon: 15.0, alt: 0.46, color: 0xF59E0B, phase: 4.2 }
-    ];
-
-    // Curățăm sateliții anteriori dacă există
-    if (satellites && satellites.length > 0) {
-        satellites.forEach(s => {
-            if (s.mesh) scene.remove(s.mesh);
-            if (s.laserLine) scene.remove(s.laserLine);
-        });
-    }
-    if (window._triangleLineMesh) {
-        scene.remove(window._triangleLineMesh);
-    }
-
-    satellites = [];
-
-    // Linia triunghiulară celestă care unește cei 3 sateliți între ei în spațiu
-    const triangleGeom = new THREE.BufferGeometry().setFromPoints([
-        new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3()
-    ]);
-    const triangleMat = new THREE.LineBasicMaterial({
-        color: 0x00F0FF,
-        transparent: true,
-        opacity: 0.22,
-        blending: THREE.AdditiveBlending
-    });
-    const triangleLine = new THREE.Line(triangleGeom, triangleMat);
-    scene.add(triangleLine);
-    window._triangleLineMesh = triangleLine;
-
-    triangleConfigs.forEach(cfg => {
-        const satMesh = buildSatelliteMesh(cfg.color);
-        scene.add(satMesh);
-
-        // Fascicul laser fin (1px) de coborâre către sol
-        const laserGeom = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(), new THREE.Vector3()]);
-        const laserMat = new THREE.LineBasicMaterial({
-            color: cfg.color,
-            transparent: true,
-            opacity: 0.85,
-            blending: THREE.AdditiveBlending,
-            depthWrite: false
-        });
-        const laserLine = new THREE.Line(laserGeom, laserMat);
-        scene.add(laserLine);
-
-        satellites.push({
-            name: cfg.name,
-            mesh: satMesh,
-            laserLine: laserLine,
-            baseLat: cfg.baseLat,
-            baseLon: cfg.baseLon,
-            alt: cfg.alt,
-            color: cfg.color,
-            phase: cfg.phase
-        });
-    });
-
-    // Funcția de triangulație multi-satelit: toți cei 3 sateliți converg simultan pe stația activă
-    function updateLaserTracking() {
-        const activeNodeKey = appState.selectedNode || 'bucuresti';
-        const node = ugrData.mapNodes[activeNodeKey];
-
-        if (node && satellites.length > 0 && typeof myGlobe.getCoords === 'function') {
-            const targetCoords = myGlobe.getCoords(node.lat, node.lon, 0.035);
-            const targetVec = new THREE.Vector3(targetCoords.x, targetCoords.y, targetCoords.z);
-
-            satellites.forEach(sat => {
-                if (sat.laserLine) {
-                    sat.laserLine.geometry.setFromPoints([sat.mesh.position, targetVec]);
-                    sat.laserLine.geometry.attributes.position.needsUpdate = true;
-                    sat.laserLine.visible = true;
-                }
-            });
-        }
-    }
-    window.updateLaserTracking = updateLaserTracking;
-
-    let animTime = 0;
-    function animateSatellites() {
-        animTime += 0.015;
-        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-        
-        if (typeof myGlobe.getCoords === 'function') {
-            const satPositions = [];
-            const centerRomania = myGlobe.getCoords(45.5, 25.0, 0.0);
-            const centerVec = new THREE.Vector3(centerRomania.x, centerRomania.y, centerRomania.z);
-
-            satellites.forEach(sat => {
-                // Mișcare orbitală armonioasă (oscilație fină în spațiul vizibil al României)
-                const latShift = prefersReducedMotion ? 0 : Math.sin(animTime * 0.4 + sat.phase) * 2.5;
-                const lonShift = prefersReducedMotion ? 0 : Math.cos(animTime * 0.4 + sat.phase) * 3.5;
-                
-                const coords = myGlobe.getCoords(sat.baseLat + latShift, sat.baseLon + lonShift, sat.alt);
-                sat.mesh.position.set(coords.x, coords.y, coords.z);
-                sat.mesh.lookAt(centerVec);
-                satPositions.push(new THREE.Vector3(coords.x, coords.y, coords.z));
-            });
-
-            // Actualizăm triunghiul celest care unește sateliții în spațiu
-            if (satPositions.length === 3 && window._triangleLineMesh) {
-                window._triangleLineMesh.geometry.setFromPoints([
-                    satPositions[0], satPositions[1], satPositions[2], satPositions[0]
-                ]);
-                window._triangleLineMesh.geometry.attributes.position.needsUpdate = true;
-            }
-
-            updateLaserTracking();
-        }
-
-        const globeWrapper = document.getElementById('globe-3d-wrapper');
-        const isGlobeVisible = (appState.currentView === 'acasa' && globeWrapper && globeWrapper.style.display !== 'none');
-
-        if (!prefersReducedMotion && isGlobeVisible) {
-            animationFrameId = requestAnimationFrame(animateSatellites);
-        } else {
-            animationFrameId = null;
-        }
-    }
-
-    function startSatelliteAnimation() {
-        if (!animationFrameId && appState.globeInitialized) {
-            const globeWrapper = document.getElementById('globe-3d-wrapper');
-            if (appState.currentView === 'acasa' && globeWrapper && globeWrapper.style.display !== 'none') {
-                animationFrameId = requestAnimationFrame(animateSatellites);
-            }
-        }
-    }
-    window.startSatelliteAnimation = startSatelliteAnimation;
-
-    animateSatellites();
-
-    // Re-check animation if user changes preference at runtime
-    window.matchMedia('(prefers-reduced-motion: reduce)').addEventListener('change', (e) => {
-        if (!e.matches && appState.globeInitialized) {
-            startSatelliteAnimation();
-        }
-    });
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
-// 5. CALCULATOR STEREO 70 (EPSG:3844) ⇄ WGS84 (CONFORM NORME ANCPI)
+// 4. CALCULATOR STEREO 70 (EPSG:3844) ⇄ WGS84 (CONFORM NORME ANCPI)
 // ═══════════════════════════════════════════════════════════════════════════
 
 function initProj4() {
@@ -897,7 +502,7 @@ function renderMembersTable(members) {
         const statusBorder = isInactive ? 'rgba(239,68,68,0.3)' : 'rgba(16,185,129,0.3)';
         return `
         <tr class="table-row-animated" style="border-bottom: 1px solid rgba(255,255,255,0.06); animation-delay: ${idx * 40}ms;">
-            <td style="padding: 13px 16px; font-family: var(--font-mono); font-weight: 600; color: #00E5FF;">${escapeHtml(m.id)}</td>
+            <td style="padding: 13px 16px; font-family: var(--font-mono); font-weight: 600; color: #1DA3EC;">${escapeHtml(m.id)}</td>
             <td style="padding: 13px 16px; font-weight: 600; color: #FFFFFF;">${escapeHtml(m.name)}</td>
             <td style="padding: 13px 16px; color: rgba(250,251,252,0.75);">${escapeHtml(m.judet)}</td>
             <td style="padding: 13px 16px;">
@@ -1337,12 +942,12 @@ function updateFaqResultsCounter(filteredCount, totalCount) {
 
     let metaContext = '';
     if (currentFaqSearch) {
-        metaContext += ` pentru <strong style="color: var(--ugr-cyan, #00E5FF);">„${escapeHtml(currentFaqSearch)}”</strong>`;
+        metaContext += ` pentru <strong style="color: var(--ugr-cyan, #1DA3EC);">„${escapeHtml(currentFaqSearch)}”</strong>`;
     }
     if (currentFaqCategory !== 'all') {
         // T-J9: catName poate cădea pe currentFaqCategory, care nu vine dintr-o
         // listă de constante dacă cineva adaugă un data-category nou în HTML.
-        metaContext += ` în <span style="color: var(--ugr-hq-gold-bright, #F5D77F);">${escapeHtml(catName)}</span>`;
+        metaContext += ` în <span style="color: var(--ugr-hq-gold-bright, #5CC3F0);">${escapeHtml(catName)}</span>`;
     }
 
     const hasFilters = (currentFaqCategory !== 'all' || currentFaqSearch);
@@ -2215,7 +1820,6 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('hashchange', handleHashChange);
     handleHashChange();
 
-    init3DGlobe();
     selectNode('bucuresti');
 
     // Conectare la Supabase Realtime pentru monitorizarea vizitatorilor live
@@ -2475,17 +2079,8 @@ function initHeroPerformanceOptimizer() {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
                 ticker.style.animationPlayState = 'running';
-                if (appState.currentView === 'acasa' && appState.globeInitialized) {
-                    if (typeof window.startSatelliteAnimation === 'function') {
-                        window.startSatelliteAnimation();
-                    }
-                }
             } else {
                 ticker.style.animationPlayState = 'paused';
-                if (animationFrameId) {
-                    cancelAnimationFrame(animationFrameId);
-                    animationFrameId = null;
-                }
             }
         });
     }, { threshold: 0 });
