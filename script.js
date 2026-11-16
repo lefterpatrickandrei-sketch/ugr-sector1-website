@@ -1839,22 +1839,6 @@ document.addEventListener('DOMContentLoaded', () => {
     loadNewsFromSupabase();
     loadContentFromSupabase();
 
-    // 3. Date Instituționale & Contact
-    fetch('content/organization.json')
-        .then(r => r.ok ? r.json() : null)
-        .then(d => {
-            if (d && typeof d === 'object') {
-                if (d.name) ugrData.organization.name = d.name;
-                if (d.email) ugrData.organization.email = d.email;
-                if (d.phonePresident) ugrData.organization.phonePresident = d.phonePresident;
-                if (d.phoneSecretary) ugrData.organization.phoneSecretary = d.phoneSecretary;
-                if (d.academicCenterAddress) ugrData.organization.academicCenterAddress = d.academicCenterAddress;
-                if (d.cotizatiiContact) ugrData.organization.cotizatiiContact = d.cotizatiiContact;
-                if (d.phoneCotizatii) ugrData.organization.phoneCotizatii = d.phoneCotizatii;
-            }
-        })
-        .catch(() => {});
-
     window.addEventListener('hashchange', handleHashChange);
     handleHashChange();
 
@@ -2438,8 +2422,12 @@ function formatLocalDateRo(d) {
 async function loadNewsFromSupabase() {
     const client = getSupabaseClient();
     if (!client) {
-        // Fallback dacă clientul Supabase nu este încărcat
-        fallbackLoadNewsJson();
+        const message = 'Serviciul Supabase nu este disponibil. Știrile nu pot fi încărcate.';
+        console.error(`[News] ${message}`);
+        ugrData.newsList = [];
+        renderNewsBento();
+        renderEventsTimeline();
+        renderPublicSyncError('Știri', message);
         return;
     }
 
@@ -2459,13 +2447,17 @@ async function loadNewsFromSupabase() {
             .or(`data_publicare.is.null,data_publicare.lte.${azi}`)
             .order('data_publicare', { ascending: false });
 
-        if (error || !data || data.length === 0) {
-            // Dacă tabela stiri este goală sau cererea dă eroare, afișăm știrile locale
-            fallbackLoadNewsJson();
+        if (error) {
+            const message = error.message || 'Interogarea Supabase pentru știri a eșuat.';
+            console.error('[News] Supabase query failed:', error);
+            ugrData.newsList = [];
+            renderNewsBento();
+            renderEventsTimeline();
+            renderPublicSyncError('Știri', message);
             return;
         }
 
-        ugrData.newsList = data.map((item, idx) => ({
+        ugrData.newsList = (data || []).map((item, idx) => ({
             scope: item.scope || 'local',
             scopeLabel: item.scope === 'national' ? '[EVENIMENT NAȚIONAL UGR / FIG / CLGE]' : '[ACTIVITATE LOCALĂ FILIALA SECTOR 1]',
             category: item.categorie || 'Eveniment Oficial',
@@ -2479,8 +2471,13 @@ async function loadNewsFromSupabase() {
         }));
         renderNewsBento();
         renderEventsTimeline();
+        clearPublicSyncError('Știri');
     } catch (err) {
-        fallbackLoadNewsJson();
+        console.error('[News] Unexpected Supabase error:', err);
+        ugrData.newsList = [];
+        renderNewsBento();
+        renderEventsTimeline();
+        renderPublicSyncError('Știri', 'A apărut o eroare la încărcarea știrilor din Supabase.');
     }
 }
 
@@ -2521,7 +2518,27 @@ function getContextualNewsImage(item, index) {
 
 async function loadContentFromSupabase() {
     const client = getSupabaseClient();
-    if (!client) return;
+    if (!client) {
+        const message = 'Serviciul Supabase nu este disponibil. Conținutul public nu poate fi sincronizat.';
+        console.error(`[Content] ${message}`);
+        ugrData.leadership = [];
+        ugrData.branchLeadership = [];
+        ugrData.faqList = [];
+        ugrData.documentsList = [];
+        renderLeadership();
+        renderFaq();
+        renderDocuments();
+        renderPublicSyncError('Conținut public', message);
+        return;
+    }
+
+    ugrData.leadership = [];
+    ugrData.branchLeadership = [];
+    ugrData.faqList = [];
+    ugrData.documentsList = [];
+    renderLeadership();
+    renderFaq();
+    renderDocuments();
 
     // 1. SETĂRI INSTITUȚIONALE (ugrData.organization, ugrData.membershipGuide)
     try {
@@ -2529,7 +2546,11 @@ async function loadContentFromSupabase() {
             .from('setari')
             .select('cheie, valoare');
 
-        if (!setariErr && Array.isArray(setariData) && setariData.length > 0) {
+        if (setariErr) {
+            throw setariErr;
+        }
+
+        if (Array.isArray(setariData)) {
             setariData.forEach(item => {
                 if (item.cheie === 'organizatie' && item.valoare && typeof item.valoare === 'object') {
                     Object.assign(ugrData.organization, item.valoare);
@@ -2544,8 +2565,12 @@ async function loadContentFromSupabase() {
                     applyCustomPageData(item.cheie, item.valoare);
                 }
             });
+            clearPublicSyncError('Setări');
         }
-    } catch (e) {}
+    } catch (e) {
+        console.error('[Content] Settings query failed:', e);
+        renderPublicSyncError('Setări', e.message || 'Interogarea Supabase pentru setări a eșuat.');
+    }
 
 
     // 2. LEADERSHIP BEX NAȚIONAL & FILIALA SECTOR 1
@@ -2557,7 +2582,11 @@ async function loadContentFromSupabase() {
             .is('deleted_at', null)
             .order('ordine', { ascending: true });
 
-        if (!leadErr && Array.isArray(leadData) && leadData.length > 0) {
+        if (leadErr) {
+            throw leadErr;
+        }
+
+        if (Array.isArray(leadData)) {
             const central = leadData.filter(d => d.grup === 'central').map(d => ({
                 name: d.nume,
                 role: d.functie,
@@ -2572,11 +2601,15 @@ async function loadContentFromSupabase() {
                 email: d.email
             }));
 
-            if (central.length > 0) ugrData.leadership = central;
-            if (filiala.length > 0) ugrData.branchLeadership = filiala;
+            ugrData.leadership = central;
+            ugrData.branchLeadership = filiala;
             renderLeadership();
+            clearPublicSyncError('Leadership');
         }
-    } catch (e) {}
+    } catch (e) {
+        console.error('[Content] Leadership query failed:', e);
+        renderPublicSyncError('Leadership', e.message || 'Interogarea Supabase pentru leadership a eșuat.');
+    }
 
     // 3. ÎNTREBĂRI FRECVENTE (FAQ)
     try {
@@ -2587,7 +2620,11 @@ async function loadContentFromSupabase() {
             .is('deleted_at', null)
             .order('ordine', { ascending: true });
 
-        if (!faqErr && Array.isArray(faqData) && faqData.length > 0) {
+        if (faqErr) {
+            throw faqErr;
+        }
+
+        if (Array.isArray(faqData)) {
             ugrData.faqList = faqData.map(d => ({
                 category: d.categorie || 'general',
                 tag: d.tag || 'STATUT & PROTOCOL',
@@ -2595,8 +2632,12 @@ async function loadContentFromSupabase() {
                 a: d.raspuns
             }));
             renderFaq();
+            clearPublicSyncError('FAQ');
         }
-    } catch (e) {}
+    } catch (e) {
+        console.error('[Content] FAQ query failed:', e);
+        renderPublicSyncError('FAQ', e.message || 'Interogarea Supabase pentru FAQ a eșuat.');
+    }
 
     // 4. DOCUMENTE & FORMULARE TIPIZATE
     try {
@@ -2607,7 +2648,11 @@ async function loadContentFromSupabase() {
             .is('deleted_at', null)
             .order('ordine', { ascending: true });
 
-        if (!docErr && Array.isArray(docData) && docData.length > 0) {
+        if (docErr) {
+            throw docErr;
+        }
+
+        if (Array.isArray(docData)) {
             ugrData.documentsList = docData.map(d => ({
                 title: d.titlu,
                 desc: d.descriere || '',
@@ -2616,8 +2661,40 @@ async function loadContentFromSupabase() {
                 fileUrl: d.fisier_url
             }));
             renderDocuments();
+            clearPublicSyncError('Documente');
         }
-    } catch (e) {}
+    } catch (e) {
+        console.error('[Content] Documents query failed:', e);
+        renderPublicSyncError('Documente', e.message || 'Interogarea Supabase pentru documente a eșuat.');
+    }
+}
+
+function renderPublicSyncError(scope, message) {
+    let container = document.getElementById('public-sync-errors');
+    if (!container) {
+        container = document.createElement('div');
+        container.id = 'public-sync-errors';
+        container.setAttribute('role', 'alert');
+        container.style.cssText = 'position:fixed;left:1rem;right:1rem;bottom:1rem;z-index:9999;display:grid;gap:.5rem;';
+        document.body.appendChild(container);
+    }
+
+    const id = `public-sync-error-${scope.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
+    let alert = document.getElementById(id);
+    if (!alert) {
+        alert = document.createElement('div');
+        alert.id = id;
+        alert.style.cssText = 'padding:.75rem 1rem;border:1px solid #d97706;border-radius:.5rem;background:#fff7ed;color:#9a3412;font:500 14px/1.4 system-ui,sans-serif;box-shadow:0 4px 16px rgba(0,0,0,.15);';
+        container.appendChild(alert);
+    }
+    alert.textContent = `${scope}: ${message}`;
+}
+
+function clearPublicSyncError(scope) {
+    const id = `public-sync-error-${scope.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
+    document.getElementById(id)?.remove();
+    const container = document.getElementById('public-sync-errors');
+    if (container && container.children.length === 0) container.remove();
 }
 
 // T-J8: cârligele de editare din panou.
@@ -2886,31 +2963,6 @@ function applyCustomPageData(cheie, val) {
 }
 
 
-
-function fallbackLoadNewsJson() {
-    // Încărcare de rezervă din fișierul local content/news.json
-    fetch('content/news.json')
-        .then(r => r.ok ? r.json() : null)
-        .then(d => {
-            if (d && Array.isArray(d.news) && d.news.length > 0) {
-                ugrData.newsList = d.news.map((item, idx) => ({
-                    scope: item.scope || (item.category && item.category.toLowerCase().includes('local') ? 'local' : 'national'),
-                    scopeLabel: item.scopeLabel || (item.category && item.category.toLowerCase().includes('local') ? '[ACTIVITATE LOCALĂ FILIALA SECTOR 1]' : '[EVENIMENT NAȚIONAL UGR / FIG / CLGE]'),
-                    category: item.category || 'Eveniment Oficial',
-                    title: item.title,
-                    desc: item.desc,
-                    location: item.location || 'București',
-                    date: item.date || '2026',
-                    source: item.actionUrl ? { org: 'Link Detalii', url: item.actionUrl } : { org: 'Filiala Sector 1', url: '#contact' },
-                    image: getContextualNewsImage({ imagine_url: item.image, categorie: item.category, scope: item.scope, titlu: item.title }, idx),
-                    actionText: item.actionText || 'Detalii & Înscriere ↗'
-                }));
-                renderNewsBento();
-                renderEventsTimeline();
-            }
-        })
-        .catch(() => {});
-}
 
 function formatNewsDate(dateStr) {
     try {
