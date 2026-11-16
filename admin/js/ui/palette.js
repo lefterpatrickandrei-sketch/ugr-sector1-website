@@ -91,7 +91,7 @@ export function renderCommandPaletteResults(query) {
         { title: "Adaugă Întrebare Frecventă", desc: "Deschide formularul de adăugare FAQ", icon: "➕", action: () => { commandActions.switchView?.('faq'); commandActions.openAddFaqModal?.(); } },
         { title: "Adaugă Document Oficial", desc: "Deschide formularul de adăugare document", icon: "➕", action: () => { commandActions.switchView?.('documents'); commandActions.openAddDocModal?.(); } },
         { title: "Adaugă Administrator Nou", desc: "Înregistrează un cont de administrator", icon: "➕", action: () => { commandActions.switchView?.('roles'); commandActions.openAddAdminModal?.(); } },
-        { title: "Sincronizează Știri Locale", desc: "Importă cele 9 știri oficiale în Supabase", icon: "📥", action: () => commandActions.handleSyncDefaultNews?.() },
+        { title: "Sincronizează Știrile Publice", desc: "Importă știrile curente din pagina publică în Supabase", icon: "📥", action: () => commandActions.handleSyncDefaultNews?.() },
         { title: "Exportă CSV Membri", desc: "Descarcă registrul membrilor în format Excel", icon: "📁", action: () => commandActions.exportMembersToCsv?.() },
         { title: "Exportă CSV Cereri", desc: "Descarcă cererile înregistrate în CSV", icon: "📁", action: () => commandActions.exportRequestsToCsv?.() },
         { title: "Galerie Foto & Upload (Media)", desc: "Explorează și încarcă imagini în Supabase Storage", icon: "🖼️", action: () => commandActions.openMediaPickerModal?.() },

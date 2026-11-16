@@ -128,6 +128,32 @@ export const OFFICIAL_FALLBACK_NEWS = [
 let editingNewsId = null;
 let currentFilteredNews = [];
 
+async function loadPublicNewsDefaults() {
+    const response = await fetch('../content/news.json', { cache: 'no-store' });
+    if (!response.ok) {
+        throw new Error(`Sursa publică a răspuns cu HTTP ${response.status}.`);
+    }
+
+    const payload = await response.json();
+    if (!payload || !Array.isArray(payload.news) || payload.news.length === 0) {
+        throw new Error('Sursa publică nu conține știri valide.');
+    }
+
+    return payload.news.map(item => ({
+        titlu: item.title,
+        continut: item.desc,
+        imagine_url: item.image || null,
+        data_publicare: null,
+        publicat: true,
+        categorie: item.category || 'Eveniment Oficial',
+        scope: item.scope === 'international' ? 'national' : (item.scope || 'local'),
+        locatie: item.location || 'București',
+        link_actiune: item.actionUrl || null,
+        text_buton: item.actionText || 'Detalii ↗',
+        slug: item.id || null
+    }));
+}
+
 export async function handleSyncDefaultNews(btnTrigger) {
     if (btnTrigger) {
         btnTrigger.disabled = true;
@@ -140,39 +166,65 @@ export async function handleSyncDefaultNews(btnTrigger) {
         // în istoric și ar rămâne oricum șters).
         const { data: existing, error: readError } = await client
             .from('stiri')
-            .select('titlu');
+            .select('id, titlu, deleted_at');
 
         if (readError) {
             showToast('Nu am putut citi știrile existente: ' + readError.message, 'error');
             return;
         }
 
+        const publicNews = await loadPublicNewsDefaults();
         const normalize = (t) => String(t ?? '').trim().toLowerCase();
-        const existingTitles = new Set((existing || []).map(n => normalize(n.titlu)));
-        const missing = OFFICIAL_FALLBACK_NEWS.filter(n => !existingTitles.has(normalize(n.titlu)));
-        const alreadyThere = OFFICIAL_FALLBACK_NEWS.length - missing.length;
+        const existingByTitle = new Map((existing || []).map(item => [normalize(item.titlu), item]));
+        const missing = publicNews.filter(n => !existingByTitle.has(normalize(n.titlu)));
+        const updates = publicNews
+            .map(newsItem => ({
+                newsItem,
+                existingItem: existingByTitle.get(normalize(newsItem.titlu))
+            }))
+            .filter(({ existingItem }) => existingItem && !existingItem.deleted_at);
+        const alreadyThere = publicNews.length - missing.length;
+        const changes = missing.length + updates.length;
 
-        if (missing.length === 0) {
-            showToast(`Nu s-a adăugat nimic: toate cele ${OFFICIAL_FALLBACK_NEWS.length} comunicate există deja în bază.`, 'info');
+        if (changes === 0) {
+            showToast(`Nu s-a adăugat nimic: toate cele ${publicNews.length} știri publice există deja în bază.`, 'info');
             await loadNews();
             return;
         }
 
         const confirmSync = confirm(
-            `Se vor adăuga ${missing.length} comunicate oficiale.\n` +
-            (alreadyThere > 0 ? `${alreadyThere} există deja și nu vor fi dublate.\n` : '') +
+            `Se vor sincroniza ${changes} știri din pagina publică (${updates.length} actualizări, ${missing.length} inserări).\n` +
+            (alreadyThere > 0 ? `${alreadyThere} există deja; rândurile arhivate rămân neschimbate.\n` : '') +
             (existing && existing.length > 0 ? `\nBaza conține deja ${existing.length} articole.\n` : '') +
             '\nContinui?'
         );
         if (!confirmSync) return;
 
-        const { error } = await writeRows(
-            client
-                .from('stiri')
-                .insert(missing)
-                .select('id'),
-            { context: `sincronizarea a ${missing.length} comunicate oficiale`, expect: missing.length }
-        );
+        for (const { newsItem, existingItem } of updates) {
+            const { data_publicare: _sourceDate, ...updatePayload } = newsItem;
+            const { error } = await writeRows(
+                client
+                    .from('stiri')
+                    .update(updatePayload)
+                    .eq('id', existingItem.id)
+                    .select('id'),
+                { context: `actualizarea știrii „${newsItem.titlu}”` }
+            );
+            if (error) {
+                showToast(describeDbError(error, 'Eroare la actualizarea știrilor.'), 'error');
+                return;
+            }
+        }
+
+        const { error } = missing.length > 0
+            ? await writeRows(
+                client
+                    .from('stiri')
+                    .insert(missing)
+                    .select('id'),
+                { context: `inserarea a ${missing.length} știri din pagina publică`, expect: missing.length }
+            )
+            : { error: null };
 
         if (error) {
             showToast(describeDbError(error, 'Eroare la sincronizarea știrilor.'), 'error');
@@ -180,8 +232,8 @@ export async function handleSyncDefaultNews(btnTrigger) {
         }
 
         showToast(
-            `✓ ${missing.length} ${missing.length === 1 ? 'comunicat a fost adăugat' : 'comunicate au fost adăugate'}` +
-            (alreadyThere > 0 ? `, ${alreadyThere} existau deja` : '') + '.',
+            `✓ Sincronizare finalizată: ${updates.length} actualizări, ${missing.length} inserări` +
+            (alreadyThere > 0 ? `; ${alreadyThere} existau deja` : '') + '.',
             'success',
             5000
         );
@@ -191,7 +243,7 @@ export async function handleSyncDefaultNews(btnTrigger) {
     } finally {
         if (btnTrigger) {
             btnTrigger.disabled = false;
-            btnTrigger.textContent = '📥 Sincronizează știri locale';
+            btnTrigger.textContent = '📥 Sincronizează știrile din pagina publică';
         }
     }
 }
@@ -369,12 +421,12 @@ export function renderNewsEmptyState(isDatabaseEmpty) {
 
     if (isDatabaseEmpty) {
         title.textContent = 'Baza de date cu știri este nepopulată în Supabase';
-        desc.textContent = 'Site-ul public afișează temporar cele 9 comunicate oficiale din fișierul local content/news.json (SGR Chișinău, BEX UGR, USAMV FIFIM). Sincronizează-le acum în Supabase cu un singur clic pentru a le putea edita și administra direct din CMS!';
+        desc.textContent = 'Site-ul public afișează temporar știrile din content/news.json. Sincronizează-le acum în Supabase cu un singur clic pentru a le putea edita și administra direct din CMS!';
 
         const btnSync = document.createElement('button');
         btnSync.type = 'button';
         btnSync.className = 'btn btn-primary';
-        btnSync.textContent = '📥 Sincronizează cele 9 știri din site în Supabase';
+        btnSync.textContent = '📥 Sincronizează știrile din pagina publică în Supabase';
         btnSync.addEventListener('click', () => handleSyncDefaultNews(btnSync));
         actionsWrap.appendChild(btnSync);
 
