@@ -17,6 +17,7 @@ let editingMemberId = null;
 let convertingRequest = null;
 let currentFilteredMembers = [];
 let pendingCsvImportRows = [];
+let defaultMemberBootstrapAttempted = false;
 
 async function loadPublicMemberDefaults() {
     const response = await fetch('../content/members.json', { cache: 'no-store' });
@@ -41,7 +42,8 @@ async function loadPublicMemberDefaults() {
     })).filter(member => member.id && member.nume);
 }
 
-export async function handleSyncDefaultMembers() {
+export async function handleSyncDefaultMembers(options = {}) {
+    const skipConfirm = options.skipConfirm === true;
     const btn = document.getElementById('btn-sync-default-members');
     const membersFeedback = document.getElementById('members-feedback');
     if (btn) {
@@ -72,7 +74,7 @@ export async function handleSyncDefaultMembers() {
             return;
         }
 
-        const confirmed = confirm(
+        const confirmed = skipConfirm || confirm(
             `Se vor sincroniza ${missing.length + updates.length} membri din lista publică ` +
             `(${missing.length} inserări, ${updates.length} actualizări).\n` +
             'Membrii arhivați rămân arhivați. Continui?'
@@ -155,6 +157,11 @@ export async function loadMembers() {
         }
 
         state.allMembersData = data || [];
+        if (state.allMembersData.length === 0 && !defaultMemberBootstrapAttempted) {
+            defaultMemberBootstrapAttempted = true;
+            await handleSyncDefaultMembers({ skipConfirm: true });
+            return;
+        }
         updateMembersKpi();
         applyMembersFilter();
     } catch (err) {
