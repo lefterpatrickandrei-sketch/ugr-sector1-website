@@ -64,10 +64,8 @@ export async function handleSyncDefaultMembers(options = {}) {
         const sourceMembers = await loadPublicMemberDefaults();
         const existingById = new Map((existing || []).map(member => [member.id, member]));
         const missing = sourceMembers.filter(member => !existingById.has(member.id));
-        const updates = sourceMembers.filter(member => {
-            const existingMember = existingById.get(member.id);
-            return existingMember && !existingMember.deleted_at;
-        });
+        const updates = sourceMembers.filter(member => existingById.has(member.id));
+        const archivedUpdates = updates.filter(member => existingById.get(member.id)?.deleted_at);
 
         if (missing.length === 0 && updates.length === 0) {
             showToast('Lista publică a membrilor este deja sincronizată.', 'info');
@@ -77,7 +75,7 @@ export async function handleSyncDefaultMembers(options = {}) {
         const confirmed = skipConfirm || confirm(
             `Se vor sincroniza ${missing.length + updates.length} membri din lista publică ` +
             `(${missing.length} inserări, ${updates.length} actualizări).\n` +
-            'Membrii arhivați rămân arhivați. Continui?'
+            `${archivedUpdates.length} membri arhivați vor fi restaurați. Continui?`
         );
         if (!confirmed) return;
 
@@ -90,7 +88,8 @@ export async function handleSyncDefaultMembers(options = {}) {
                         judet: member.judet,
                         status: member.status,
                         afisare_publica: true,
-                        demonstrativ: true
+                        demonstrativ: true,
+                        deleted_at: null
                     })
                     .eq('id', member.id)
                     .select('id'),
@@ -118,7 +117,7 @@ export async function handleSyncDefaultMembers(options = {}) {
 
         setBannerFeedback(
             membersFeedback,
-            `Lista publică a fost sincronizată: ${missing.length} inserări și ${updates.length} actualizări.`,
+            `Lista publică a fost sincronizată: ${missing.length} inserări și ${updates.length} actualizări; ${archivedUpdates.length} restaurări.`,
             'success'
         );
         await loadMembers();
