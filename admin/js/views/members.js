@@ -46,6 +46,11 @@ export async function handleSyncDefaultMembers(options = {}) {
     const skipConfirm = options.skipConfirm === true;
     const btn = document.getElementById('btn-sync-default-members');
     const membersFeedback = document.getElementById('members-feedback');
+    const reportSyncError = (error, fallback) => {
+        const message = describeDbError(error, fallback);
+        setBannerFeedback(membersFeedback, message, 'error');
+        showToast(message, 'error');
+    };
     if (btn) {
         btn.disabled = true;
         btn.textContent = '↻ Se sincronizează...';
@@ -57,7 +62,7 @@ export async function handleSyncDefaultMembers(options = {}) {
             .select('id, deleted_at');
 
         if (readError) {
-            showToast(describeDbError(readError, 'Nu am putut citi registrul membrilor.'), 'error');
+            reportSyncError(readError, 'Nu am putut citi registrul membrilor.');
             return;
         }
 
@@ -96,7 +101,7 @@ export async function handleSyncDefaultMembers(options = {}) {
                 { context: `actualizarea membrului ${member.id}` }
             );
             if (error) {
-                showToast(describeDbError(error, 'Nu am putut actualiza lista membrilor.'), 'error');
+                reportSyncError(error, 'Nu am putut actualiza lista membrilor.');
                 return;
             }
         }
@@ -110,7 +115,7 @@ export async function handleSyncDefaultMembers(options = {}) {
                 { context: 'importul listei publice de membri', expect: missing.length }
             );
             if (error) {
-                showToast(describeDbError(error, 'Nu am putut importa lista membrilor.'), 'error');
+                reportSyncError(error, 'Nu am putut importa lista membrilor.');
                 return;
             }
         }
@@ -122,7 +127,7 @@ export async function handleSyncDefaultMembers(options = {}) {
         );
         await loadMembers();
     } catch (err) {
-        showToast(describeDbError(err, 'Eroare la sincronizarea listei publice de membri.'), 'error');
+        reportSyncError(err, 'Eroare la sincronizarea listei publice de membri.');
     } finally {
         if (btn) {
             btn.disabled = false;
