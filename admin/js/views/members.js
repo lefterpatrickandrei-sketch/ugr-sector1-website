@@ -38,7 +38,7 @@ async function loadPublicMemberDefaults() {
         categorie: 'Categoria A',
         status: String(member.status || 'Activ').trim().toLowerCase(),
         afisare_publica: true,
-        demonstrativ: true
+        demonstrativ: false
     })).filter(member => member.id && member.nume);
 }
 
@@ -93,7 +93,7 @@ export async function handleSyncDefaultMembers(options = {}) {
                         judet: member.judet,
                         status: member.status,
                         afisare_publica: true,
-                        demonstrativ: true,
+                        demonstrativ: false,
                         deleted_at: null
                     })
                     .eq('id', member.id)

@@ -76,9 +76,9 @@ export const defaultPagesData = {
         heroKicker: 'Comunicare Oficială & Evenimente',
         heroTitle: 'Articole și Evenimente Tehnice',
         heroSubtitle: 'Păstrează legătura cu modificările legislative din geodezie, congresele internaționale UGR și activitățile Filialei Sector 1 București.',
-        axisTag: 'Axă Temporală Geodezică',
-        axisTitle: 'Calendarul Evenimentelor & Jaloanelor UGR 2026',
-        axisSub: 'Sesiuni operative, consultări instituționale, parteneriate academice și congrese internaționale de referință.',
+        axisTag: 'Direct din Instagram',
+        axisTitle: 'Toate Postările @filiala.sector1.ugr',
+        axisSub: 'Fiecare postare publicată pe contul oficial de Instagram al Filialei Sector 1, cu poza principală și textul original, nealterate.',
         events: [
             {
                 data: '★ 11–14 NOIEMBRIE 2026',
@@ -411,10 +411,10 @@ function getVal(id) {
 // T-J7: câmpurile de link din paginile editabile. Fiecare valoare ajunge într-un
 // href pe site-ul public, deci javascript:/data: trebuie respinse la salvare.
 const PAGE_LINK_FIELDS = {
-    acasa: [{ field: 'heroBtnSecondaryLink', label: 'Link buton secundar (Acasă)' }],
+    acasa: [],
     despre: [{ field: 'statutPdfUrl', label: 'Link statut (Despre)' }],
     membri: [{ field: 'cardBtnSecondaryLink', label: 'Link buton secundar (Membri)' }],
-    evenimente: [{ field: 'link1', label: 'Link eveniment', inside: 'events' }]
+    evenimente: []
 };
 
 /**
@@ -457,11 +457,6 @@ export function gatherCurrentPagesPayload(tabKey) {
             heroTitle: getVal('page-acasa-hero-title'),
             heroLead: getVal('page-acasa-hero-lead'),
             heroBtnPrimaryText: getVal('page-acasa-hero-btn-primary'),
-            heroBtnSecondaryText: getVal('page-acasa-hero-btn-secondary'),
-            heroBtnSecondaryLink: getVal('page-acasa-hero-btn-secondary-link'),
-            spatialBadge: getVal('page-acasa-spatial-badge'),
-            spatialCoords: getVal('page-acasa-spatial-coords'),
-            spatialDesc: getVal('page-acasa-spatial-desc'),
             missionKicker: getVal('page-acasa-mission-kicker'),
             missionTitle: getVal('page-acasa-mission-title'),
             missionParagraph: getVal('page-acasa-mission-paragraph'),
@@ -491,16 +486,6 @@ export function gatherCurrentPagesPayload(tabKey) {
             heroTitle: getVal('page-despre-hero-title'),
             heroIntro: getVal('page-despre-hero-intro'),
             timeline,
-            objTag: getVal('page-despre-obj-tag'),
-            objTitle: getVal('page-despre-obj-title'),
-            objCallout: getVal('page-despre-obj-callout'),
-            obj1: getVal('page-despre-obj-1'),
-            obj2: getVal('page-despre-obj-2'),
-            obj3: getVal('page-despre-obj-3'),
-            obj4: getVal('page-despre-obj-4'),
-            obj5: getVal('page-despre-obj-5'),
-            obj6: getVal('page-despre-obj-6'),
-            obj7: getVal('page-despre-obj-7'),
             statutTag: getVal('page-despre-statut-tag'),
             statutTitle: getVal('page-despre-statut-title'),
             statutSub: getVal('page-despre-statut-sub'),
@@ -508,25 +493,13 @@ export function gatherCurrentPagesPayload(tabKey) {
             statutPdfUrl: getVal('page-despre-statut-pdf')
         };
     } else if (tabKey === 'evenimente') {
-        const events = [];
-        document.querySelectorAll('.event-node-edit-card').forEach(card => {
-            const data = card.querySelector('.page-ev-data')?.value.trim() || '';
-            const scope = card.querySelector('.page-ev-scope')?.value.trim() || '';
-            const titlu = card.querySelector('.page-ev-titlu')?.value.trim() || '';
-            const desc = card.querySelector('.page-ev-desc')?.value.trim() || '';
-            const link1 = card.querySelector('.page-ev-link1')?.value.trim() || '';
-            const link1Text = card.querySelector('.page-ev-link1text')?.value.trim() || '';
-            events.push({ data, scope, titlu, desc, link1, link1Text });
-        });
-
         return {
             heroKicker: getVal('page-ev-hero-kicker'),
             heroTitle: getVal('page-ev-hero-title'),
             heroSubtitle: getVal('page-ev-hero-subtitle'),
             axisTag: getVal('page-ev-axis-tag'),
             axisTitle: getVal('page-ev-axis-title'),
-            axisSub: getVal('page-ev-axis-sub'),
-            events
+            axisSub: getVal('page-ev-axis-sub')
         };
     } else if (tabKey === 'membri') {
         return {

@@ -128,6 +128,22 @@ export const OFFICIAL_FALLBACK_NEWS = [
 let editingNewsId = null;
 let currentFilteredNews = [];
 
+function resolveNewsDate(item) {
+    if (item.published_at && /^\d{4}-\d{2}-\d{2}$/.test(item.published_at)) return item.published_at;
+    const titlu = (item.title || '').toLowerCase();
+    if (titlu.includes('chișinău') || titlu.includes('chisinau') || titlu.includes('sgr')) return '2026-11-11';
+    if (titlu.includes('bex')) return '2026-05-21';
+    if (titlu.includes('ediția a ii-a') || titlu.includes('editia a ii-a')) return '2026-07-08';
+    if (titlu.includes('burse') || titlu.includes('bursă') || titlu.includes('gratuit')) return '2026-06-15';
+    if (titlu.includes('control survey') && titlu.includes('training')) return '2026-05-09';
+    if (titlu.includes('performanța') || titlu.includes('licențe') || titlu.includes('licente')) return '2026-07-10';
+    if (titlu.includes('uplr') || titlu.includes('25')) return '2026-06-11';
+    if (titlu.includes('prima ediție') || titlu.includes('prima editie')) return '2026-05-12';
+    if (titlu.includes('if im cad') || titlu.includes('simpozionul')) return '2026-05-08';
+    if (titlu.includes('clge')) return '2026-05-05';
+    return '2026-06-01';
+}
+
 async function loadPublicNewsDefaults() {
     const response = await fetch('../content/news.json', { cache: 'no-store' });
     if (!response.ok) {
@@ -143,7 +159,7 @@ async function loadPublicNewsDefaults() {
         titlu: item.title,
         continut: item.desc,
         imagine_url: item.image || null,
-        data_publicare: null,
+        data_publicare: resolveNewsDate(item),
         publicat: true,
         categorie: item.category || 'Eveniment Oficial',
         scope: item.scope === 'international' ? 'national' : (item.scope || 'local'),

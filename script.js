@@ -672,6 +672,11 @@ function renderEventsTimeline() {
     const axis = document.querySelector('.events-timeline-axis');
     if (!axis || !ugrData.newsList || ugrData.newsList.length === 0) return;
 
+    // Protejează fluxul oficial de Instagram (@filiala.sector1.ugr) din index.html
+    // împotriva suprascrierii accidentale la încărcarea știrilor din Supabase.
+    const isInstagramFeed = axis.querySelector('.events-badge-scope')?.textContent?.includes('INSTAGRAM');
+    if (isInstagramFeed) return;
+
     axis.innerHTML = ugrData.newsList.map(item => {
         const scope = (item.scope || 'local').toLowerCase();
 
@@ -824,6 +829,27 @@ function safeUrl(url) {
 }
 
 function renderLeadership() {
+    // 1. Grila Conducerii Filialei Sector 1 (.bex-executive-grid din #view-despre)
+    const branchGrid = document.querySelector('.bex-executive-grid');
+    if (branchGrid && Array.isArray(ugrData.branchLeadership) && ugrData.branchLeadership.length > 0) {
+        branchGrid.innerHTML = ugrData.branchLeadership.map(member => {
+            const avatarUrl = safeUrl(member.image) || 'logo_geodez.png';
+            return `
+            <div class="bex-card-v2 scroll-reveal reveal-up is-visible">
+                <div>
+                    <div class="bex-card-header">
+                        <img src="${escapeHtml(avatarUrl)}" alt="${escapeHtml(member.name)}" class="bex-avatar" />
+                        <div>
+                            <span class="bex-role-badge">${escapeHtml(member.role)}</span>
+                            <h3 class="bex-name">${escapeHtml(member.name)}</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>`;
+        }).join('');
+    }
+
+    // 2. Container opțional pentru conducerea centrală (dacă există în DOM)
     const container = document.getElementById('leadership-cards-container');
     if (!container || !ugrData.leadership) return;
 

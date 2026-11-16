@@ -1659,7 +1659,7 @@ button {
 @media (min-width: 720px) {
     .events-node-flex {
         flex-direction: row;
-        align-items: center;
+        align-items: flex-start;
         gap: 24px;
     }
 }
@@ -1679,6 +1679,8 @@ button {
     .events-node-thumb {
         max-width: 240px;
         height: 155px;
+        position: sticky;
+        top: 96px;
     }
 }
 .events-node-thumb img {
@@ -1847,6 +1849,7 @@ button {
     color: rgba(250, 251, 252, 0.82);
     line-height: 1.55;
     margin-bottom: 14px;
+    overflow-wrap: anywhere;
 }
 .events-action-link {
     display: inline-flex;
