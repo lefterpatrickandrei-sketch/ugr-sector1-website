@@ -18,7 +18,8 @@ const appState = {
     selectedSkill: 'toate',
     modalStep: 1,
     selectedTier: 'fizica',
-    lastFocusedElement: null
+    lastFocusedElement: null,
+    membersLoadError: null
 };
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -483,6 +484,7 @@ function formatDMS(deg, type) {
 
 function renderMembersTable(members) {
     if (!members) members = ugrData.membersList || [];
+    appState.membersLoadError = null;
 
     const tableIds = [
         'members-table-body',
@@ -533,7 +535,44 @@ function renderMembersTable(members) {
     });
 }
 
+function renderMembersLoadError(message) {
+    appState.membersLoadError = message;
+    ugrData.membersList = [];
+
+    const tableIds = [
+        'members-table-body',
+        'members-table-body-demo1',
+        'members-table-body-demo2',
+        'members-table-body-demo3',
+        'members-table-body-demo4',
+        'members-table-body-demo5'
+    ];
+    const errorRow = `<tr><td colspan="4" style="padding: 24px; text-align: center; color: #FCA5A5;">Nu se pot încărca membrii din baza de date. ${escapeHtml(message)}</td></tr>`;
+
+    tableIds.forEach(id => {
+        const tbody = document.getElementById(id);
+        if (tbody) tbody.innerHTML = errorRow;
+    });
+
+    [
+        'members-count-badge',
+        'm-demo1-count',
+        'm-demo2-count',
+        'm-demo3-count',
+        'm-demo4-count',
+        'm-demo5-count'
+    ].forEach(id => {
+        const badge = document.getElementById(id);
+        if (badge) badge.textContent = 'Membrii sunt indisponibili';
+    });
+}
+
 function filterMembers(sourcePrefix = '') {
+    if (appState.membersLoadError) {
+        renderMembersLoadError(appState.membersLoadError);
+        return;
+    }
+
     let searchVal = '';
     let countyVal = 'toate';
 
@@ -1787,7 +1826,6 @@ window.playBrandTypewriter = playBrandTypewriter;
 document.addEventListener('DOMContentLoaded', () => {
     initProj4();
 
-    renderMembersTable(ugrData.membersList);
     renderNewsBento();
     renderEventsTimeline();
     renderLeadership();
@@ -1795,7 +1833,7 @@ document.addEventListener('DOMContentLoaded', () => {
     renderFaq();
 
     // ═══════════════════════════════════════════════════════════════════════════
-    // Sincronizare date: Membri, Știri și Conținut din Supabase (cu Fallback local)
+    // Sincronizare date: Membri, Știri și Conținut din Supabase
     // ═══════════════════════════════════════════════════════════════════════════
     loadMembersFromSupabase();
     loadNewsFromSupabase();
@@ -2343,14 +2381,15 @@ function initSupabasePresence() {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
-// 11.2 CITIRE MEMBRI & ȘTIRI DIN SUPABASE (CU FALLBACK LOCAL)
+// 11.2 CITIRE MEMBRI & ȘTIRI DIN SUPABASE
 // ═══════════════════════════════════════════════════════════════════════════
 
 async function loadMembersFromSupabase() {
     const client = getSupabaseClient();
     if (!client) {
-        // Fallback dacă clientul Supabase nu este încărcat
-        fallbackLoadMembersJson();
+        const message = 'Serviciul Supabase nu este disponibil.';
+        console.error(`[Members] ${message}`);
+        renderMembersLoadError(message);
         return;
     }
 
@@ -2363,17 +2402,13 @@ async function loadMembersFromSupabase() {
             .order('nume', { ascending: true });
 
         if (error) {
-            fallbackLoadMembersJson();
+            const message = error.message || 'Interogarea Supabase a eșuat.';
+            console.error('[Members] Supabase query failed:', error);
+            renderMembersLoadError(message);
             return;
         }
 
-        if (!data || data.length === 0) {
-            // Tabela Supabase e goală (neconfigurată încă) — folosim registrul local
-            fallbackLoadMembersJson();
-            return;
-        }
-
-        const mappedMembers = data.map(m => ({
+        const mappedMembers = (data || []).map(m => ({
             id: m.id,
             name: m.nume,
             judet: m.judet,
@@ -2385,21 +2420,9 @@ async function loadMembersFromSupabase() {
         ugrData.membersList = mappedMembers;
         renderMembersTable(mappedMembers);
     } catch (err) {
-        fallbackLoadMembersJson();
+        console.error('[Members] Unexpected Supabase error:', err);
+        renderMembersLoadError('A apărut o eroare la încărcarea membrilor.');
     }
-}
-
-function fallbackLoadMembersJson() {
-    // Încărcare de rezervă din fișierul local content/members.json
-    fetch('content/members.json')
-        .then(r => r.ok ? r.json() : null)
-        .then(d => {
-            if (d && Array.isArray(d.members) && d.members.length > 0) {
-                ugrData.membersList = d.members;
-                renderMembersTable(d.members);
-            }
-        })
-        .catch(() => {});
 }
 
 // D2: data_publicare este o coloană de tip date, nu de tip timestamp. Trimitem
