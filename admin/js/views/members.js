@@ -18,6 +18,118 @@ let convertingRequest = null;
 let currentFilteredMembers = [];
 let pendingCsvImportRows = [];
 
+async function loadPublicMemberDefaults() {
+    const response = await fetch('../content/members.json', { cache: 'no-store' });
+    if (!response.ok) {
+        throw new Error(`Sursa publică a membrilor nu a putut fi citită (HTTP ${response.status}).`);
+    }
+
+    const payload = await response.json();
+    if (!payload || !Array.isArray(payload.members)) {
+        throw new Error('Sursa publică a membrilor are un format invalid.');
+    }
+
+    return payload.members.map(member => ({
+        id: String(member.id || '').trim(),
+        nume: String(member.name || '').trim(),
+        judet: String(member.judet || 'Sector 1').trim(),
+        serie_autorizatie: '',
+        categorie: 'Categoria A',
+        status: String(member.status || 'Activ').trim().toLowerCase(),
+        afisare_publica: true,
+        demonstrativ: true
+    })).filter(member => member.id && member.nume);
+}
+
+export async function handleSyncDefaultMembers() {
+    const btn = document.getElementById('btn-sync-default-members');
+    const membersFeedback = document.getElementById('members-feedback');
+    if (btn) {
+        btn.disabled = true;
+        btn.textContent = '↻ Se sincronizează...';
+    }
+
+    try {
+        const { data: existing, error: readError } = await client
+            .from('membri')
+            .select('id, deleted_at');
+
+        if (readError) {
+            showToast(describeDbError(readError, 'Nu am putut citi registrul membrilor.'), 'error');
+            return;
+        }
+
+        const sourceMembers = await loadPublicMemberDefaults();
+        const existingById = new Map((existing || []).map(member => [member.id, member]));
+        const missing = sourceMembers.filter(member => !existingById.has(member.id));
+        const updates = sourceMembers.filter(member => {
+            const existingMember = existingById.get(member.id);
+            return existingMember && !existingMember.deleted_at;
+        });
+
+        if (missing.length === 0 && updates.length === 0) {
+            showToast('Lista publică a membrilor este deja sincronizată.', 'info');
+            return;
+        }
+
+        const confirmed = confirm(
+            `Se vor sincroniza ${missing.length + updates.length} membri din lista publică ` +
+            `(${missing.length} inserări, ${updates.length} actualizări).\n` +
+            'Membrii arhivați rămân arhivați. Continui?'
+        );
+        if (!confirmed) return;
+
+        for (const member of updates) {
+            const { error } = await writeRows(
+                client
+                    .from('membri')
+                    .update({
+                        nume: member.nume,
+                        judet: member.judet,
+                        status: member.status,
+                        afisare_publica: true,
+                        demonstrativ: true
+                    })
+                    .eq('id', member.id)
+                    .select('id'),
+                { context: `actualizarea membrului ${member.id}` }
+            );
+            if (error) {
+                showToast(describeDbError(error, 'Nu am putut actualiza lista membrilor.'), 'error');
+                return;
+            }
+        }
+
+        if (missing.length > 0) {
+            const { error } = await writeRows(
+                client
+                    .from('membri')
+                    .insert(missing)
+                    .select('id'),
+                { context: 'importul listei publice de membri', expect: missing.length }
+            );
+            if (error) {
+                showToast(describeDbError(error, 'Nu am putut importa lista membrilor.'), 'error');
+                return;
+            }
+        }
+
+        setBannerFeedback(
+            membersFeedback,
+            `Lista publică a fost sincronizată: ${missing.length} inserări și ${updates.length} actualizări.`,
+            'success'
+        );
+        await loadMembers();
+    } catch (err) {
+        showToast(describeDbError(err, 'Eroare la sincronizarea listei publice de membri.'), 'error');
+    } finally {
+        if (btn) {
+            btn.disabled = false;
+            btn.textContent = '↻ Sincronizează lista publică';
+        }
+    }
+}
+
 
 export async function loadMembers() {
     const membersFeedback = document.getElementById('members-feedback');

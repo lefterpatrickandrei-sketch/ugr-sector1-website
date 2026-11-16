@@ -24,6 +24,7 @@ import {
 } from './views/requests.js';
 import {
     loadMembers,
+    handleSyncDefaultMembers,
     applyMembersFilter,
     renderMembersWithPagination,
     openAddMemberModal,
@@ -285,6 +286,7 @@ function bootAdminApp() {
     const membersStatusFilter = document.getElementById('members-status-filter');
     const membersJudetFilter = document.getElementById('members-judet-filter');
     const btnRefreshMembers = document.getElementById('btn-refresh-members');
+    const btnSyncDefaultMembers = document.getElementById('btn-sync-default-members');
     const btnExportMembersCsv = document.getElementById('btn-export-members-csv');
     const btnOpenAddMember = document.getElementById('btn-open-add-member');
     const btnCloseMemberModal = document.getElementById('btn-close-member-modal');
@@ -315,6 +317,7 @@ function bootAdminApp() {
     }
     if (membersJudetFilter) membersJudetFilter.addEventListener('change', applyMembersFilter);
     if (btnRefreshMembers) btnRefreshMembers.addEventListener('click', loadMembers);
+    if (btnSyncDefaultMembers) btnSyncDefaultMembers.addEventListener('click', handleSyncDefaultMembers);
     if (btnExportMembersCsv) btnExportMembersCsv.addEventListener('click', exportMembersToCsv);
     if (btnOpenAddMember) btnOpenAddMember.addEventListener('click', openAddMemberModal);
     if (btnCloseMemberModal) btnCloseMemberModal.addEventListener('click', closeMemberModal);
